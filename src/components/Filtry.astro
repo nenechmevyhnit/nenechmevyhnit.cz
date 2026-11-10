@@ -1,0 +1,29 @@
+---
+import type { KauzaZaznam } from '../lib/validace';
+import { vytvorPolozku } from '../lib/hledani';
+
+interface Props { zaznamy: KauzaZaznam[]; stitky: Map<string, string> }
+const { zaznamy, stitky } = Astro.props;
+const pouzite = [...new Set(zaznamy.flatMap(z => z.kauza.stitky))];
+const cipy = pouzite.map(id => ({ id, nazev: stitky.get(id) ?? id })).sort((a, b) => a.nazev.localeCompare(b.nazev, 'cs'));
+const data = JSON.stringify(zaznamy.map(vytvorPolozku));
+---
+{zaznamy.length > 0 && (
+  <div class="filtry f4">
+    <label class="f-hledat"><input type="search" placeholder="Hledat v kauzách…" aria-label="Hledat v kauzách"></label>
+    <div class="f-cipy-obal">
+      <button class="sipka vlevo" type="button" aria-label="Předchozí témata" hidden>‹</button>
+      <div class="f-cipy" role="group" aria-label="Témata">
+        {cipy.map(c => <button type="button" data-stitek={c.id} aria-pressed="false">{c.nazev}</button>)}
+      </div>
+      <button class="sipka vpravo" type="button" aria-label="Další témata" hidden>›</button>
+    </div>
+    <label class="f-prepinac"><input type="checkbox" data-jen-otevrene> jen neuzavřené</label>
+    <span class="vpravo"><span id="pocet" aria-live="polite"></span><button class="f-zrusit" type="button" hidden>Zrušit filtry</button></span>
+  </div>
+)}
+<script type="application/json" id="nv-hledani" set:html={data}></script>
+<script>
+  import { inicializujFiltry } from '../scripts/filtry';
+  inicializujFiltry();
+</script>

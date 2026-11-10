@@ -4,19 +4,21 @@ import Uvod from './Uvod.astro';
 import Osa from './Osa.astro';
 import Portret from './Portret.astro';
 import PatickaRadek from './PatickaRadek.astro';
-import { nactiKauzy } from '../lib/kauzy';
+import Filtry from './Filtry.astro';
+import { nactiKauzy, nactiStitky } from '../lib/kauzy';
 import type { KauzaZaznam } from '../lib/validace';
 import '../styles/hlavni.css';
 
 interface Props { otevrena?: KauzaZaznam }
 const { otevrena } = Astro.props;
 const zaznamy = nactiKauzy();
+const stitky = nactiStitky();
 const titulek = otevrena ? `${otevrena.kauza.nazev} — Nenechme vyhnít` : 'Nenechme vyhnít — kauzy Andreje Babiše';
 const popis = otevrena ? otevrena.kauza.shrnuti : 'Archiv kauz Andreje Babiše přehledně, s daty a zdroji. Každé tvrzení má zdroj, každá kauza stanovisko dotčené strany.';
 ---
 <Zaklad titulek={titulek} popis={popis} cesta={otevrena ? `/kauzy/${otevrena.slug}/` : '/'} styly="hlavni" aktivni="kauzy" otevrena={otevrena?.slug}>
   <Uvod />
-  <slot name="filtry" />
+  <Filtry zaznamy={zaznamy} stitky={stitky} />
   <Osa zaznamy={zaznamy} />
   <PatickaRadek legenda />
   <Fragment slot="mimo">
