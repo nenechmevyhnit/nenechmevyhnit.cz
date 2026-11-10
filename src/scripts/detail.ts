@@ -42,6 +42,11 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
     if (e.key === 'ArrowRight') ukaz(akt + 1);
   });
   dlg.addEventListener('click', e => {
+    // inicializujDetail běží při každém načtení kauzy do téhož <dialog>, posluchačů přibývá: kauzu otevřít jen jednou
+    const jina = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[data-kauza]');
+    if (jina) { e.preventDefault(); e.stopImmediatePropagation(); document.dispatchEvent(new CustomEvent('nv:otevri', { detail: jina.dataset.kauza })); return; }
+    const naMapu = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[data-na-mapu]');
+    if (naMapu) { e.preventDefault(); e.stopImmediatePropagation(); document.dispatchEvent(new CustomEvent('nv:na-mapu', { detail: naMapu.dataset.naMapu })); return; }
     const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[data-zdroj]');
     if (a) {
       e.preventDefault();

@@ -188,3 +188,41 @@ test('změna šířky okna z počítače na mobil v pohledu mapy', async ({ page
   await page.setViewportSize({ width: 1366, height: 768 });
   await expect(page.locator('.strom li[data-uzel="a:holding-omega"][data-hlavni] > .s-radek .s-akter')).toHaveAttribute('aria-expanded', 'true');
 });
+
+test('detail ukazuje aktéry a návaznosti a vede na mapu', async ({ page }) => {
+  await page.goto('/kauzy/zeta-stret/');
+  await page.getByRole('tab', { name: 'Souvislosti' }).click();
+  const blok = page.locator('.m2-panel[data-p="souv"] .vazby');
+  await expect(blok.getByRole('heading', { name: 'Aktéři a návaznosti' })).toBeVisible();
+  await expect(blok).toContainText('Holding Omega, předmět kauzy: Fiktivní úřad posuzuje střet zájmů u Holdingu Omega.');
+  await expect(blok).toContainText('Navazují na ni:');
+  await blok.getByRole('link', { name: 'Ukázat na mapě →' }).click();
+  await expect(page.locator('dialog#detail')).toBeHidden();
+  await expect(page).toHaveURL(/\/\?pohled=mapa$/);
+  await page.mouse.move(0, 0);
+  await expect(page.locator('.mapa-svg [data-uzel="k:zeta-stret"]')).toHaveClass(/zvyrazneno/);
+});
+
+test('návaznost v detailu přejde na druhou kauzu, opačný směr je dopočítaný', async ({ page }) => {
+  await page.goto('/kauzy/zeta-stret/');
+  await page.getByRole('tab', { name: 'Souvislosti' }).click();
+  await page.locator('.vazby').getByRole('link', { name: 'Testovací kauza Alfa' }).click();
+  await expect(page).toHaveURL(/\/kauzy\/alfa-dotace\/$/);
+  await expect(page.locator('dialog#detail h2')).toHaveText('Testovací kauza Alfa');
+  await page.getByRole('tab', { name: 'Souvislosti' }).click();
+  await expect(page.locator('.vazby')).toContainText('Navazují na ni:');
+  await expect(page.locator('.vazby').getByRole('link', { name: 'Testovací kauza Žeta' })).toBeVisible();
+});
+
+test('kauza bez vazeb nemá blok Aktéři a návaznosti', async ({ page }) => {
+  await page.goto('/kauzy/beta-archiv/');
+  await page.getByRole('tab', { name: 'Souvislosti' }).click();
+  await expect(page.locator('.vazby')).toHaveCount(0);
+});
+
+test('značka zdroje u vazby přepne na Zdroje', async ({ page }) => {
+  await page.goto('/kauzy/alfa-dotace/');
+  await page.getByRole('tab', { name: 'Souvislosti' }).click();
+  await page.locator('.vazby a[data-zdroj="2"]').first().click();
+  await expect(page.locator('.m2-panel[data-p="zdroje"]')).toBeVisible();
+});

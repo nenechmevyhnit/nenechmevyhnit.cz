@@ -1,5 +1,6 @@
 import { inicializujDetail } from './detail';
 import { vyberKauzu } from './osa';
+import { nastavPohled } from './mapa';
 
 const mezipamet = new Map<string, { html: string; trida: string; titulek: string }>();
 const TITULEK_HLAVNI = 'Nenechme vyhnít — kauzy Andreje Babiše';
@@ -84,4 +85,11 @@ export function inicializujNavigaci(): void {
 
   // mapa a odkazy mezi kauzami v detailu otevírají kauzu stejnou cestou jako osa
   document.addEventListener('nv:otevri', e => { otevriDetail((e as CustomEvent<string>).detail); });
+  // „Ukázat na mapě“ z detailu: přepnout na mapu, zavřít detail (adresa /?pohled=mapa) a nechat kauzu vybranou
+  document.addEventListener('nv:na-mapu', e => {
+    const slug = (e as CustomEvent<string>).detail;
+    nastavPohled('mapa', { zapsat: false });
+    zavriDetail();
+    vyberKauzu(slug);
+  });
 }

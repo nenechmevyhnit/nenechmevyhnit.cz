@@ -71,3 +71,9 @@
   .mapa .mapa-panel { display: none !important; }
   .mapa { padding: 4px 8px 8px; }
 }
+
+.m2-panel .vazby { margin-top: 16px; break-inside: avoid-column; }
+.m2-panel .vazby h3 { margin: 0 0 6px; font: 600 12px var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--meta); }
+.m2-panel .vazby ul { margin: 0; padding-left: 18px; }
+.m2-panel .vazby li { margin: 0 0 6px; }
+.m2-panel .vazby .na-mapu { display: inline-block; margin-top: 4px; font-weight: 600; color: var(--modra); }

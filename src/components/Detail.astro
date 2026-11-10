@@ -4,14 +4,16 @@ import { rozdelOdstavce, odstavecNaHtml } from '../lib/souvislosti';
 import { datumText, rozsahText, delkaText, polohaVKauze, popiskyRoku } from '../lib/casova-osa';
 import { popisekStavu } from '../lib/stavy';
 import { popisekKriteria } from '../lib/kriteria';
+import type { VazbyKauzy } from '../lib/mapa';
 
-interface Props { zaznam?: KauzaZaznam }
-const { zaznam } = Astro.props;
+interface Props { zaznam?: KauzaZaznam; vazby?: VazbyKauzy; naMapu?: boolean }
+const { zaznam, vazby, naMapu = false } = Astro.props;
 const REPO = 'https://github.com/nenechmevyhnit/nenechmevyhnit.cz';
 const k = zaznam?.kauza;
 const poloha = (d: string) => k ? polohaVKauze(d, k.od, k.do) : 0;
 const posledni = k ? k.udalosti.length - 1 : 0;
 const rokyOsy = k ? popiskyRoku(k.udalosti.map(u => ({ datum: u.datum, p: poloha(u.datum) }))) : [];
+const maVazby = !!vazby && (vazby.akteri.length + vazby.navazuje.length + vazby.navazujiNaNi.length) > 0;
 const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="chip" data-zdroj="${c}" aria-label="Zdroj ${c}">${c}</a>`).join('');
 ---
 <dialog class={`detail m2${k?.do === null ? ' otevrena' : ''}`} id="detail" aria-labelledby="detail-nadpis" data-slug={zaznam?.slug}>
@@ -58,6 +60,17 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
       </div>
       <div class="m2-panel" data-p="souv" role="tabpanel" hidden>
         {rozdelOdstavce(zaznam.telo).map(o => <p set:html={odstavecNaHtml(o)}></p>)}
+        {maVazby && vazby && (
+          <section class="vazby" aria-labelledby="vazby-nadpis">
+            <h3 id="vazby-nadpis">Aktéři a návaznosti</h3>
+            <ul>
+              {vazby.akteri.map(a => <li><strong>{a.nazev}</strong>, {a.roleText}: {a.popis}<span class="chipy" set:html={chipy(a.zdroje)}></span></li>)}
+              {vazby.navazuje.map(n => <li><em>Navazuje na:</em> <a href={`/kauzy/${n.slug}/`} data-kauza={n.slug}>{n.nazev}</a> ({n.roleText}): {n.popis}<span class="chipy" set:html={chipy(n.zdroje)}></span></li>)}
+              {vazby.navazujiNaNi.length > 0 && <li><em>Navazují na ni:</em> {vazby.navazujiNaNi.map((n, i) => <>{i > 0 && ', '}<a href={`/kauzy/${n.slug}/`} data-kauza={n.slug}>{n.nazev}</a></>)}</li>}
+            </ul>
+            {naMapu && <a class="na-mapu" href={`/?pohled=mapa&vyber=${zaznam.slug}`} data-na-mapu={zaznam.slug}>Ukázat na mapě →</a>}
+          </section>
+        )}
       </div>
       <div class="m2-panel" data-p="stav" role="tabpanel" hidden>
         <div class={`stav-box${k.do === null ? ' otevrena' : ''}`}>
