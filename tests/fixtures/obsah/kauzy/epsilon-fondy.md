@@ -35,5 +35,9 @@ kriterium: uredni-zjisteni
 proc:
   text: Fiktivní komise zjistila fiktivní střet zájmů při čerpání fondů Epsilon.
   zdroje: [1]
+akteri:
+  - { id: fond-sigma, role: predmet-kauzy, popis: Kauza se týká vložení fiktivního holdingu do Fondu Sigma., zdroje: [1] }
+navazuje:
+  - { kauza: zeta-stret, role: souvisejici-rizeni, popis: Fiktivní komise v kauze Epsilon vychází ze spisu kauzy Žeta., zdroje: [2] }
 ---
 Audit se týkal fiktivních fondů v letech 2017 až 2019.[^1]

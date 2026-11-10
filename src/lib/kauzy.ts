@@ -1,4 +1,5 @@
 import { overAdresar, type KauzaZaznam } from './validace';
+import type { Akter } from './schema';
 
 /** Lokální náhled neověřených konceptů (npm run koncepty). Veřejný build ho nikdy nezapíná. */
 export const rezimKonceptu = (): boolean => process.env.NV_KONCEPTY === 'ano';
@@ -18,3 +19,4 @@ function nacti() {
 
 export const nactiKauzy = (): KauzaZaznam[] => nacti().zaznamy;
 export const nactiStitky = (): Map<string, string> => nacti().stitky;
+export const nactiAktery = (): Map<string, Akter> => nacti().akteri;

@@ -39,6 +39,10 @@ kriterium: uredni-rizeni
 proc:
   text: Fiktivní státní zastupitelství viní osobu Žeta z fiktivního střetu zájmů.
   zdroje: [1, 2]
+akteri:
+  - { id: holding-omega, role: predmet-kauzy, popis: Fiktivní úřad posuzuje střet zájmů u Holdingu Omega., zdroje: [1] }
+navazuje:
+  - { kauza: alfa-dotace, role: souvisejici-rizeni, popis: Řízení se týká stejné fiktivní dotace jako kauza Alfa., zdroje: [1] }
 ---
 Prostředky rozdělilo fiktivní ministerstvo v roce 2018.[^2]
 

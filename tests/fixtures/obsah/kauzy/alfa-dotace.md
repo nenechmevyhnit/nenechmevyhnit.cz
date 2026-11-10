@@ -21,6 +21,8 @@ kriterium: uredni-rizeni
 proc:
   text: Fiktivní soud řeší, zda firma Alfa neměla na fiktivní dotaci pro malé podniky nárok.
   zdroje: [1]
+akteri:
+  - { id: firma-alfa, role: prijemce-dotace, popis: Firma Alfa žádala o fiktivní dotaci pro malé podniky., zdroje: [2] }
 ---
 Firma Alfa byla původně součástí holdingu.[^2]
 
