@@ -1,9 +1,10 @@
 ---
 nazev: Testovací kauza Žeta
-shrnuti: Fiktivní podezření ze střetu zájmů při rozdělování fiktivních prostředků Žeta.
+shrnuti: Fiktivní podezření ze střetu zájmů při rozdělování fiktivních prostředků Žeta. Shrnutí je schválně dlouhé, aby testy ověřily, že se v hlavičce detailu zobrazí celý a nic se z něj neusekne trojtečkou. Pokračuje další fiktivní větou o fiktivním úřadu, fiktivní kontrole a fiktivním výsledku řízení, který zatím není známý.
 od: 2018
 do: null
 stav: obzaloba
+stavPoznamka: Fiktivní obžaloba byla podána ke fiktivnímu soudu. Poznámka ke stavu je schválně dlouhá, fiktivní soud prvního stupně obžalovaného dvakrát nepravomocně zprostil, fiktivní odvolací soud obě rozhodnutí zrušil a věc vrátil. Fiktivní sněmovna následně nevyslovila souhlas se stíháním, takže řízení nelze po dobu mandátu vést. Věc spoluobžalované byla vyloučena k samostatnému projednání a skončila fiktivním pravomocným rozhodnutím.
 stitky: [stret-zajmu, eu-fondy]
 overeno: 2026-11-09
 zdroje:

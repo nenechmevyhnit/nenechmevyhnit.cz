@@ -33,10 +33,19 @@ body .m2-panel[data-p="chrono"] .udalost-velka { height: 100%; align-items: stre
 body .m2-panel[data-p="chrono"] .udalost-velka > div { min-height: 0; overflow-x: auto; overflow-y: hidden; column-width: 320px; column-gap: 32px; column-fill: auto; }
 body .m2-panel[data-p="chrono"] .udalost-velka h3 { break-after: avoid; }
 body .m2-panel[data-p="chrono"] .listovani { flex: none; }
-body .m2-panel[data-p="stav"]:not([hidden]) { display: block; overflow-x: auto; overflow-y: hidden; column-width: 300px; column-gap: 20px; column-fill: auto; }
-body .m2-panel[data-p="stav"] > * { margin: 0 0 16px; }
-body .m2-panel[data-p="stav"] .stav-box { break-inside: avoid; }
-body .m2-panel[data-p="stav"] .stanovisko, body .m2-panel[data-p="stav"] .opravy { box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+/* Stav a stanovisko: na počítači vedle sebe, každá polovina má při delším textu vlastní posuvník.
+   Na mobilu pokračují ve sloupcích do strany a nadpisy drží u svého textu. */
+@media (min-width: 761px) {
+  body .m2-panel[data-p="stav"]:not([hidden]) { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: minmax(0, 1fr); gap: 20px; align-items: start; }
+  body .m2-panel[data-p="stav"] .stav-box, body .m2-panel[data-p="stav"] .stav-vpravo { max-height: 100%; overflow-y: auto; margin: 0; }
+  body .m2-panel[data-p="stav"] .stav-vpravo > * + * { margin-top: 16px; }
+}
+@media (max-width: 760px) {
+  body .m2-panel[data-p="stav"]:not([hidden]) { display: block; overflow-x: auto; overflow-y: hidden; column-width: 300px; column-gap: 20px; column-fill: auto; }
+  body .m2-panel[data-p="stav"] .stav-box, body .m2-panel[data-p="stav"] .stav-vpravo > * { margin: 0 0 16px; }
+  body .m2-panel[data-p="stav"] .stanovisko, body .m2-panel[data-p="stav"] .opravy { box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+}
+body .m2-panel[data-p="stav"] h4 { break-after: avoid; }
 @media (max-width: 760px) {
   body .m2-panel[data-p="chrono"] .udalost-velka { grid-template-rows: auto minmax(0, 1fr); }
 }
@@ -75,3 +84,19 @@ body .koncepty-stitek {
   font: 600 12px/1.2 'JetBrains Mono', monospace; letter-spacing: .04em;
   pointer-events: none;
 }
+
+/* Názvy kauz na ose se nikdy neuříznou: širší sloupec (název má nejvýš 36 znaků, hlídá schéma)
+   a místo trojtečky případné zalomení. */
+@media (min-width: 761px) {
+  body .graf { --sl: 340px; }
+}
+body .radek .nazev strong { white-space: normal; overflow: visible; text-overflow: clip; }
+
+/* Shrnutí v hlavičce detailu se neusekne trojtečkou: na počítači má celou šířku (320 znaků se vejde),
+   na mobilu se delší shrnutí posouvá. */
+body .m2-hlava .perex { display: block; -webkit-line-clamp: none; max-width: none; overflow: visible; }
+@media (max-width: 760px) {
+  body .m2-hlava .perex { max-height: 4.5em; overflow-y: auto; }
+}
+/* boxy s vlastním posuvníkem ho ukazují trvale, aby bylo jasné, že text pokračuje */
+body .m2-panel[data-p="stav"] .stav-box, body .m2-panel[data-p="stav"] .stav-vpravo, body .m2-hlava .perex { scrollbar-width: thin; scrollbar-gutter: stable; }
