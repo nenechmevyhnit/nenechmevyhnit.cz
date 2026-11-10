@@ -9,3 +9,18 @@ a.radek-btn { color: inherit; text-decoration: none; }
 .portret img { user-select: none; }
 .hero.u2 .u2-pod { font-family: var(--f-text); font-weight: 400; color: var(--text2); font-size: clamp(15px, 1.3vw, 18px); margin: 8px 0 0; }
 .opravy h4 { margin: 14px 0 4px; font: 600 12px var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--meta); }
+/* Body mini-osy jsou tlačítka: vybraný bod nese aria-current (aria-selected na <button> nepatří). */
+.mini-osa .bod[aria-current="true"] { background: var(--okr); transform: scale(1.35); }
+/* Mobil: menu ukazuje všechny tři odkazy (prototyp skrýval Kauzy a Metodiku). Vyšší specificita kvůli pořadí stylů. */
+@media (max-width: 760px) {
+  body .top nav a:not(:last-child) { display: inline; }
+  body .top nav a { margin-left: 12px; font-size: 13px; }
+  body .top .brand { font-size: 16px; }
+}
+@media (max-width: 760px) {
+  body .top .brand, body .top nav a { white-space: nowrap; }
+  /* Karty Metodiky a O projektu: na mobilu se text nevejde, celá karta proto otevírá plné znění. */
+  body .v4-karta { position: relative; }
+  body .v4-karta h2 { font-size: 16px; }
+  body .v4-karta button[data-sekce]::after, body .v4-cta a::after { content: ""; position: absolute; inset: 0; }
+}

@@ -16,14 +16,14 @@ const pct = (r: number) => naProcenta(r, ROK_OD, DO);
       <div class="stitky">{znackyOsy(ROK_OD, DO).map(z => <span class={z.hlavni ? '' : 'malo'} style={`left:${pct(z.rok)}%`}>{z.rok}</span>)}</div>
     </div>
     <div class="pasmo"></div><span class="pilulka od"></span><span class="pilulka do"></span>
-    <div class="radky" role="list">
+    <div class="radky" role={zaznamy.length ? "list" : undefined}>
       {zaznamy.length === 0 && <div class="archiv-prazdny">Archiv se připravuje. První ověřené kauzy přibudou brzy.</div>}
       {zaznamy.map(({ slug, kauza: k }, i) => {
         const l = pct(k.od), r = pct(k.do ?? DO), w = Math.max(r - l, 0.8);
         const konec = k.do ?? DO;
         return (
           <div class="radek" role="listitem" data-slug={slug} data-od={l.toFixed(3)} data-do={r.toFixed(3)} data-od-rok={k.od} data-do-rok={k.do ?? 'dosud'} data-otevrena={k.do === null ? 'ano' : 'ne'} style={`--i:${i};view-transition-name:r-${slug}`}>
-            <a class="radek-btn" href={`/kauzy/${slug}/`} aria-haspopup="dialog" aria-label={`${k.nazev}, ${rozsahText(k.od, k.do)}. Otevřít detail kauzy.`}>
+            <a class="radek-btn" href={`/kauzy/${slug}/`} aria-haspopup="dialog">
               <span class="nazev"><strong title={k.nazev}>{k.nazev}</strong><small>{popisekStavu(k.stav)} · {sklonuj(k.zdroje.length, ['zdroj', 'zdroje', 'zdrojů'])}</small></span>
               <span class="stopa">
                 <span class="mrizka-roku" style="inset:0"></span>
@@ -37,7 +37,7 @@ const pct = (r: number) => naProcenta(r, ROK_OD, DO);
           </div>
         );
       })}
-      <div class="prazdno" hidden>Žádná kauza neodpovídá filtru. <button type="button" data-zrusit>Zrušit filtry</button></div>
+      <div class="prazdno" role="listitem" hidden>Žádná kauza neodpovídá filtru. <button type="button" data-zrusit>Zrušit filtry</button></div>
     </div>
   </div>
 </div>

@@ -25,3 +25,29 @@ test('Metodika obsahuje slovníček stavů', async ({ page }) => {
   await page.locator('.v4-karta button[data-sekce="stavy"]').click();
   await expect(page.locator('.slovnicek dt')).toHaveCount(9);
 });
+
+test.describe('mobil 390×700', () => {
+  test.use({ viewport: { width: 390, height: 700 } });
+
+  test('menu ukazuje všechny tři odkazy na jednom řádku', async ({ page }) => {
+    for (const cesta of ['/', '/metodika/']) {
+      await page.goto(cesta);
+      const odkazy = page.getByRole('navigation', { name: 'Hlavní' }).getByRole('link');
+      await expect(odkazy).toHaveCount(3);
+      for (const o of await odkazy.all()) await expect(o).toBeVisible();
+      const vysky = await odkazy.evaluateAll(a => a.map(x => x.getBoundingClientRect().height));
+      expect(Math.max(...vysky), 'odkaz se nesmí zalomit').toBeLessThan(30);
+    }
+  });
+
+  test('každou kartu Metodiky jde otevřít', async ({ page }) => {
+    await page.goto('/metodika/');
+    const karty = page.locator('.v4-karta:not(.v4-cta)');
+    for (let i = 0; i < 7; i++) {
+      await karty.nth(i).click({ position: { x: 20, y: 20 } });
+      await expect(page.locator('dialog.v4-dlg')).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(page.locator('dialog.v4-dlg')).not.toBeVisible();
+    }
+  });
+});

@@ -17,7 +17,7 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
     akt = Math.max(0, Math.min(polozky.length - 1, i));
     if (!smer || akt === pred) delete panelChrono.dataset.smer; else panelChrono.dataset.smer = akt > pred ? 'vpred' : 'zpet';
     polozky.forEach((li, j) => { li.hidden = j !== akt; });
-    body.forEach((b, j) => b.setAttribute('aria-selected', String(j === akt)));
+    body.forEach((b, j) => b.setAttribute('aria-current', String(j === akt)));
     popis.style.left = body[akt].style.left;
     popis.textContent = polozky[akt].querySelector('time')?.firstChild?.textContent ?? '';
     const nazev = (j: number) => polozky[j]?.querySelector('h3')?.textContent ?? '';
