@@ -1,0 +1,32 @@
+---
+import type { SekceStranky } from '../data/metodika';
+
+interface Props {
+  nadtitulek: string; nadpis: string; perex: string; sekce: SekceStranky[];
+  cta: { nadpis: string; text: string; odkaz: string; popisek: string };
+  paticka: string;
+}
+const { nadtitulek, nadpis, perex, sekce, cta, paticka } = Astro.props;
+const REPO = 'https://github.com/nenechmevyhnit/nenechmevyhnit.cz';
+---
+<section class="met-hlava"><p class="nad">{nadtitulek}</p><h1>{nadpis}</h1><p class="lead">{perex}</p></section>
+<main class="met">
+  <div class="v4-mrizka">
+    {sekce.map((s, n) => (
+      <article class="v4-karta"><span class="c">{String(n + 1).padStart(2, '0')}</span><h2>{s.nadpis}</h2><p>{s.shrnuti}</p><button type="button" data-sekce={s.id}>Celé znění →</button></article>
+    ))}
+    <article class="v4-karta v4-cta"><h2>{cta.nadpis}</h2><p>{cta.text}</p><a href={cta.odkaz}>{cta.popisek}</a></article>
+  </div>
+  <dialog class="detail v4-dlg" aria-labelledby={`v4-nadpis-${sekce[0].id}`}>
+    <button class="zavrit" type="button" aria-label="Zavřít">×</button>
+    <div class="v4-dlg-obal">
+      <nav class="v4-dlg-menu" aria-label="Části stránky">{sekce.map(s => <button type="button" data-sekce={s.id}>{s.nadpis}</button>)}</nav>
+      {sekce.map(s => <section class="v4-dlg-panel" data-sekce={s.id} hidden><h2 id={`v4-nadpis-${s.id}`}>{s.nadpis}</h2><Fragment set:html={s.html} /></section>)}
+    </div>
+  </dialog>
+</main>
+<div class="paticka-met"><span>{paticka} · <a href={`${REPO}/commits/main`} style="margin:0">historie změn</a></span><span><a href={`${REPO}/issues/new?template=oprava.yml`}>Nahlásit chybu</a><a href="mailto:nenechmevyhnit@gmail.com">nenechmevyhnit@gmail.com</a></span></div>
+<script>
+  import { inicializujKarty } from '../scripts/karty';
+  inicializujKarty();
+</script>
