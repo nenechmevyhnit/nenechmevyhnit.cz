@@ -12,7 +12,7 @@ export function svgMapy(r: Rozlozeni): string {
   const uzly = r.uzly.map(u =>
     `<g class="m-uzel m-${u.typ}" data-uzel="${e(u.id)}" transform="translate(${u.x} ${u.y})"><rect x="0" y="${-v / 2}" width="${u.w}" height="${v}" rx="3"/><text x="8" y="4.5">${e(u.nazev)}</text></g>`).join('');
   const popisky = r.cary.filter(c => c.popisek).map(c =>
-    `<text class="m-popisek" data-hrana="${c.id}" x="${c.px}" y="${c.py}"${c.druh === 'navaznost' ? '' : ' text-anchor="middle"'}>${e(c.popisek!)}</text>`).join('');
+    `<text class="m-popisek" data-hrana="${c.id}" x="${c.px}" y="${c.py}">${e(c.popisek!)}</text>`).join('');
   return `<svg class="mapa-svg" xmlns="http://www.w3.org/2000/svg" width="${r.sirka}" height="${r.vyska}" viewBox="0 0 ${r.sirka} ${r.vyska}" aria-hidden="true" focusable="false">`
     + `<g class="m-cary">${cary}</g><g class="m-uzly">${uzly}</g><g class="m-popisky">${popisky}</g></svg>`;
 }

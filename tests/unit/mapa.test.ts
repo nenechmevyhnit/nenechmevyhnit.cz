@@ -67,17 +67,27 @@ describe('rozlozMapu', () => {
   it('řádky v pořadí průchodu stromem, rodič uprostřed svých listů', () => {
     const poradi = r.uzly.filter(u => u.typ === 'kauza').sort((a, b) => a.y - b.y).map(u => u.id);
     expect(poradi).toEqual(['k:alfa-dotace', 'k:zeta-stret', 'k:epsilon-fondy', 'k:beta-archiv', 'k:gama-offshore', 'k:delta-dluhopisy']);
-    expect(m('k:alfa-dotace').y).toBe(31);
-    expect(m('a:holding-omega').y).toBe(46);
-    expect(m('a:fond-sigma').y).toBe(61);
-    expect(m('babis').y).toBe(106);
-    expect(r.vyska).toBe(2 * 16 + 6 * 30);
+    const radek = (n: number) => ROZMERY.okraj + n * ROZMERY.radek;
+    expect(m('k:alfa-dotace').y).toBe(radek(0.5));
+    expect(m('a:holding-omega').y).toBe(radek(1));
+    expect(m('a:fond-sigma').y).toBe(radek(1.5));
+    expect(m('babis').y).toBe(radek(3));
+    expect(r.vyska).toBe(2 * ROZMERY.okraj + 6 * ROZMERY.radek);
   });
   it('každá hrana má čáru, popisek jen hrany s rolí', () => {
     expect(r.cary).toHaveLength(12);
     expect(r.cary.filter(c => c.druh === 'stred').every(c => c.popisek === null)).toBe(true);
     expect(r.cary.find(c => c.druh === 'vztah' && c.popisek?.includes('1995–2017'))?.popisek).toBe('vlastní · 1995–2017');
   });
+  it('popisek hrany leží nad uzlem potomka (druhý pod ním), aby nepřekryl názvy uzlů', () => {
+    const holding = m('a:holding-omega');
+    const vztahy = graf.hrany.filter(h => h.druh === 'vztah' && h.potomek === 'a:holding-omega');
+    const hlavni = r.cary.find(c => c.id === vztahy.find(h => h.hlavni)!.id)!;
+    const vedlejsi = r.cary.find(c => c.id === vztahy.find(h => !h.hlavni)!.id)!;
+    expect([hlavni.px, hlavni.py]).toEqual([holding.x + 4, holding.y - ROZMERY.vyskaUzlu / 2 - 3]);
+    expect([vedlejsi.px, vedlejsi.py]).toEqual([holding.x + 4, holding.y + ROZMERY.vyskaUzlu / 2 + 11]);
+  });
+  it('mezi řádky je místo na popisek nad uzlem', () => expect(ROZMERY.radek - ROZMERY.vyskaUzlu).toBeGreaterThanOrEqual(16));
   it('návaznost je oblouk napravo od sloupce kauz', () => {
     const c = r.cary.find(c => c.druh === 'navaznost')!;
     expect(c.d.startsWith(`M${m('k:alfa-dotace').x + ROZMERY.kauza} `)).toBe(true);
@@ -86,7 +96,7 @@ describe('rozlozMapu', () => {
     const f = rozlozMapu(graf, ['beta-archiv']);
     expect(f.uzly.map(u => u.id).sort()).toEqual(['babis', 'k:beta-archiv']);
     expect(f.cary).toHaveLength(1);
-    expect(f.vyska).toBe(2 * 16 + 30);
+    expect(f.vyska).toBe(2 * ROZMERY.okraj + ROZMERY.radek);
   });
   it('nic viditelného = prázdné rozložení', () => expect(rozlozMapu(graf, [])).toEqual({ sirka: 0, vyska: 0, uzly: [], cary: [] }));
 });

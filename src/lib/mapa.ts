@@ -116,7 +116,8 @@ export function viditelneUzly(graf: Graf, viditelne: Iterable<string> | null): S
   return vysledek;
 }
 
-export const ROZMERY = { radek: 30, okraj: 16, vyskaUzlu: 22, stred: 120, akter: 200, kauza: 260, mezera: 36, oblouky: 130 } as const;
+/** radek: mezi uzly zbývá místo na popisek role nad uzlem (mezery mezi sloupci jsou na popisky úzké) */
+export const ROZMERY = { radek: 40, okraj: 16, vyskaUzlu: 22, stred: 120, akter: 200, kauza: 260, mezera: 36, oblouky: 150 } as const;
 export type UmisteniUzlu = { id: string; typ: TypUzlu; nazev: string; x: number; y: number; w: number };
 export type Cara = { id: string; druh: DruhHrany; d: string; popisek: string | null; px: number; py: number };
 export type Rozlozeni = { sirka: number; vyska: number; uzly: UmisteniUzlu[]; cary: Cara[] };
@@ -149,6 +150,14 @@ export function rozlozMapu(graf: Graf, viditelne: Iterable<string> | null): Rozl
     return { id, typ: u.typ, nazev: u.nazev, x, y: R.okraj + ((a + b) / 2 + 0.5) * R.radek, w };
   });
   const misto = new Map(uzly.map(u => [u.id, u]));
+  // popisek stromové hrany je u uzlu potomka: první (hlavní) nad ním, další pod ním
+  const poradiPopisku = new Map<string, number>();
+  const vstupy = new Map<string, Hrana[]>();
+  for (const h of graf.hrany) if (h.druh !== 'navaznost' && misto.has(h.rodic) && misto.has(h.potomek)) {
+    if (!vstupy.has(h.potomek)) vstupy.set(h.potomek, []);
+    vstupy.get(h.potomek)!.push(h);
+  }
+  for (const seznam of vstupy.values()) seznam.sort((a, b) => Number(b.hlavni) - Number(a.hlavni)).forEach((h, i) => poradiPopisku.set(h.id, i));
   const cary: Cara[] = [];
   for (const h of graf.hrany) {
     const a = misto.get(h.rodic), b = misto.get(h.potomek);
@@ -158,8 +167,9 @@ export function rozlozMapu(graf: Graf, viditelne: Iterable<string> | null): Rozl
       const x = kauzyX + R.kauza, ohyb = Math.min(40, 12 + Math.abs(b.y - a.y) / 8);
       cary.push({ id: h.id, druh: h.druh, d: `M${x} ${a.y} C${x + ohyb} ${a.y} ${x + ohyb} ${b.y} ${x} ${b.y}`, popisek, px: x + ohyb + 6, py: (a.y + b.y) / 2 + 4 });
     } else {
-      const x1 = a.x + a.w, x2 = b.x, sx = (x1 + x2) / 2;
-      cary.push({ id: h.id, druh: h.druh, d: `M${x1} ${a.y} C${sx} ${a.y} ${sx} ${b.y} ${x2} ${b.y}`, popisek, px: sx, py: (a.y + b.y) / 2 - 4 });
+      const x1 = a.x + a.w, x2 = b.x, sx = (x1 + x2) / 2, i = poradiPopisku.get(h.id) ?? 0;
+      const py = i === 0 ? b.y - R.vyskaUzlu / 2 - 3 : b.y + R.vyskaUzlu / 2 + 11 + (i - 1) * 12;
+      cary.push({ id: h.id, druh: h.druh, d: `M${x1} ${a.y} C${sx} ${a.y} ${sx} ${b.y} ${x2} ${b.y}`, popisek, px: b.x + 4, py });
     }
   }
   return { sirka: kauzyX + R.kauza + R.oblouky, vyska: 2 * R.okraj + radek * R.radek, uzly, cary };
