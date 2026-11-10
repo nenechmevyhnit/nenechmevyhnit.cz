@@ -89,11 +89,11 @@ Build selže, když:
 - aktér nemá `nazev`, platný `druh` nebo aspoň jeden vztah,
 - vztah, aktér v kauze nebo návaznost nemá zdroj, nebo role není ze slovníku pro daný druh vazby,
 - vztah odkazuje na neexistujícího nadřazeného, `do < od`, nebo vztahy tvoří kruh či z aktéra nevede cesta k `babis`,
-- kauza odkazuje na neexistujícího aktéra, na zdroj s neexistujícím `id`, nebo navazuje sama na sebe,
-- návaznost odkazuje na slug, který neexistuje ani mezi koncepty,
-- ve veřejném buildu má aktér `overeno` prázdné.
+- kauza odkazuje na zdroj s neexistujícím `id`, uvádí téhož aktéra nebo tutéž návaznost dvakrát, nebo navazuje sama na sebe,
+- ve veřejném buildu má aktér `overeno` prázdné,
+- **v režimu konceptů** kauza odkazuje na aktéra nebo kauzu, které neexistují. Tady leží všechny koncepty pohromadě, takže neexistující odkaz je vždy překlep.
 
-Ve veřejném buildu se návaznost na kauzu, která existuje jen v konceptech, **vynechá** a build vypíše varování. Ověřená kauza tak nečeká na neověřenou. Totéž platí pro aktéra, který je zatím jen v `_koncepty/obsah/akteri.yml`: vazba na něj se ve veřejném buildu nezobrazí a build upozorní. Do `obsah/akteri.yml` se aktér přesouvá až s vyplněným `overeno`.
+**Ve veřejném buildu** se odkaz na neexistujícího aktéra nebo kauzu **vynechá** a build vypíše varování. Veřejný build (a CI) adresář `_koncepty/` nevidí, takže nedokáže rozlišit překlep od kauzy či aktéra, kteří ještě čekají na ověření. Ověřená kauza tak nečeká na neověřenou a překlepy zachytí kontrola konceptů (`npx tsx _koncepty/over.ts`, `npm run koncepty`). Do `obsah/akteri.yml` se aktér přesouvá až s vyplněným `overeno`.
 
 ## 5. Mapa na počítači
 
