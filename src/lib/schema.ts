@@ -1,6 +1,7 @@
 import { z } from 'astro/zod';
 import { STAVY } from './stavy';
 import { KRITERIA } from './kriteria';
+import { ROLE_VZTAHU, ROLE_V_KAUZE, ROLE_NAVAZNOSTI, DRUHY_AKTERU } from './role';
 
 const naText = (v: unknown) =>
   v instanceof Date ? v.toISOString().slice(0, 10) : typeof v === 'number' ? String(v) : v;
@@ -51,6 +52,24 @@ export const udalostSchema = z.object({
   zdroje: odkazy('Událost'),
 }).strict();
 
+const idTvar = z.string().regex(/^[a-z0-9-]+$/, 'Id smí obsahovat jen malá písmena bez diakritiky, číslice a pomlčky');
+const popisVazby = text().max(200, 'Popis vazby smí mít nejvýš 200 znaků (jedna věta)');
+const rok = z.number().int().min(1950).max(2100);
+
+export const vazbaAkteraSchema = z.object({
+  id: idTvar,
+  role: z.enum(ROLE_V_KAUZE),
+  popis: popisVazby,
+  zdroje: odkazy('Vazba na aktéra'),
+}).strict();
+
+export const navaznostSchema = z.object({
+  kauza: idTvar,
+  role: z.enum(ROLE_NAVAZNOSTI),
+  popis: popisVazby,
+  zdroje: odkazy('Návaznost'),
+}).strict();
+
 export function rokZData(d: string): number {
   return Number(d.slice(0, 4));
 }
@@ -72,6 +91,8 @@ const vytvorKauzaSchema = (koncepty: boolean) => z
     stanovisko: z.object({ text: text(), zdroje: odkazy('Stanovisko') }).strict(),
     kriterium: z.enum(KRITERIA),
     proc: z.object({ text: text(), zdroje: odkazy('Proč je to kauza') }).strict(),
+    akteri: z.array(vazbaAkteraSchema).default([]),
+    navazuje: z.array(navaznostSchema).default([]),
     opravy: z.array(z.object({ datum: datumPresne, popis: text() }).strict()).default([]),
   })
   .strict()
@@ -87,6 +108,13 @@ const vytvorKauzaSchema = (koncepty: boolean) => z
     k.udalosti.forEach((u, i) => over(u.zdroje, `Událost ${i + 1} („${u.nazev}“)`));
     over(k.stanovisko.zdroje, 'Stanovisko');
     over(k.proc.zdroje, 'Proč je to kauza');
+    k.akteri.forEach(a => over(a.zdroje, `Vazba na aktéra „${a.id}“`));
+    k.navazuje.forEach(n => over(n.zdroje, `Návaznost na „${n.kauza}“`));
+    const dvakrat = (seznam: string[], co: string) => seznam
+      .filter((x, i) => seznam.indexOf(x) !== i)
+      .forEach(x => ctx.addIssue({ code: 'custom', message: `${co} „${x}“ je u kauzy uvedena dvakrát` }));
+    dvakrat(k.akteri.map(a => a.id), 'Vazba na aktéra');
+    dvakrat(k.navazuje.map(n => n.kauza), 'Návaznost na');
     // kritérium zařazení musí podložit zdroje uvedené u „Proč je to kauza“
     const zdrojeProc = k.zdroje.filter(z => k.proc.zdroje.includes(z.id));
     if (k.kriterium !== 'dve-redakce' && !zdrojeProc.some(z => z.druh === 'primarni'))
@@ -113,3 +141,27 @@ export const kauzaSchemaKoncepty = vytvorKauzaSchema(true);
 export type Kauza = z.infer<typeof kauzaSchemaKoncepty>;
 export type Zdroj = Kauza['zdroje'][number];
 export type Udalost = Kauza['udalosti'][number];
+
+const vztahSchema = z.object({
+  nadrazeny: idTvar,
+  role: z.enum(ROLE_VZTAHU),
+  od: rok,
+  do: rok.nullable(),
+  popis: popisVazby,
+  zdroje: z.array(zdrojSchema.omit({ id: true })).min(1, 'Vztah musí mít aspoň jeden zdroj'),
+}).strict().superRefine((v, ctx) => {
+  if (v.do !== null && v.do < v.od) ctx.addIssue({ code: 'custom', message: `Rok konce vztahu ${v.do} je dřív než rok začátku ${v.od}` });
+});
+
+/** koncepty = true: aktér zatím jen v _koncepty/obsah/akteri.yml, smí chybět datum ověření. */
+const vytvorAkterSchema = (koncepty: boolean) => z.object({
+  nazev: text().max(28, 'Název aktéra smí mít nejvýš 28 znaků, aby se vešel do mapy'),
+  druh: z.enum(DRUHY_AKTERU),
+  overeno: koncepty ? datumPresne.nullable().default(null) : datumPresne,
+  vztahy: z.array(vztahSchema).min(1, 'Aktér musí mít aspoň jeden vztah'),
+}).strict();
+
+export const akterSchema = vytvorAkterSchema(false);
+export const akterSchemaKoncepty = vytvorAkterSchema(true);
+export type Akter = z.infer<typeof akterSchemaKoncepty>;
+export type Vztah = Akter['vztahy'][number];
