@@ -1,0 +1,43 @@
+---
+import type { KauzaZaznam } from '../lib/validace';
+import { ROK_OD, rokDo, naProcenta, rokCislo, rozsahText, delkaText, znackyOsy } from '../lib/casova-osa';
+import { popisekStavu } from '../lib/stavy';
+import { sklonuj } from '../lib/cestina';
+
+interface Props { zaznamy: KauzaZaznam[] }
+const { zaznamy } = Astro.props;
+const DO = rokDo();
+const pct = (r: number) => naProcenta(r, ROK_OD, DO);
+---
+<div class="graf" id="graf">
+  <div class="graf-vnitrek">
+    <div class="osa-roku" aria-hidden="true">
+      <div class="nazev-sloupce">Kauza</div>
+      <div class="stitky">{znackyOsy(ROK_OD, DO).map(z => <span class={z.hlavni ? '' : 'malo'} style={`left:${pct(z.rok)}%`}>{z.rok}</span>)}</div>
+    </div>
+    <div class="pasmo"></div><span class="pilulka od"></span><span class="pilulka do"></span>
+    <div class="radky" role="list">
+      {zaznamy.length === 0 && <div class="archiv-prazdny">Archiv se připravuje. První ověřené kauzy přibudou brzy.</div>}
+      {zaznamy.map(({ slug, kauza: k }, i) => {
+        const l = pct(k.od), r = pct(k.do ?? DO), w = Math.max(r - l, 0.8);
+        const konec = k.do ?? DO;
+        return (
+          <div class="radek" role="listitem" data-slug={slug} data-od={l.toFixed(3)} data-do={r.toFixed(3)} data-od-rok={k.od} data-do-rok={k.do ?? 'dosud'} data-otevrena={k.do === null ? 'ano' : 'ne'} style={`--i:${i};view-transition-name:r-${slug}`}>
+            <a class="radek-btn" href={`/kauzy/${slug}/`} aria-haspopup="dialog" aria-label={`${k.nazev}, ${rozsahText(k.od, k.do)}. Otevřít detail kauzy.`}>
+              <span class="nazev"><strong title={k.nazev}>{k.nazev}</strong><small>{popisekStavu(k.stav)} · {sklonuj(k.zdroje.length, ['zdroj', 'zdroje', 'zdrojů'])}</small></span>
+              <span class="stopa">
+                <span class="mrizka-roku" style="inset:0"></span>
+                <span class={`pruh${k.do === null ? ' otevrena' : ''}${l > 45 ? ' konec' : ''}`} style={`left:${l}%;width:${w}%`}>
+                  <span class="popisek">{rozsahText(k.od, k.do)} <em>· {delkaText(k.od, k.do)}</em></span>
+                  {k.udalosti.map(u => <i style={`left:${Math.min(98, Math.max(0, ((rokCislo(u.datum) - k.od) / ((konec - k.od) || 1)) * 100))}%`}></i>)}
+                </span>
+              </span>
+              <span class="otevrit" aria-hidden="true">Detail&nbsp;<span class="sipka-d">→</span></span>
+            </a>
+          </div>
+        );
+      })}
+      <div class="prazdno" hidden>Žádná kauza neodpovídá filtru. <button type="button" data-zrusit>Zrušit filtry</button></div>
+    </div>
+  </div>
+</div>
