@@ -27,16 +27,8 @@ const popis = otevrena ? otevrena.kauza.shrnuti : 'Archiv kauz Andreje Babiše p
   </Fragment>
 </Zaklad>
 <script>
-  import { inicializujOsu, vyberKauzu } from '../scripts/osa';
-  import { inicializujDetail } from '../scripts/detail';
+  import { inicializujOsu } from '../scripts/osa';
+  import { inicializujNavigaci } from '../scripts/navigace';
   inicializujOsu();
-  const dlg = document.getElementById('detail') as HTMLDialogElement | null;
-  const otevrena = document.body.dataset.otevrena;
-  if (otevrena && dlg) {
-    inicializujDetail(dlg);
-    vyberKauzu(otevrena);
-    dlg.showModal();
-  }
-  dlg?.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
-  dlg?.querySelector('.zavrit')?.addEventListener('click', () => dlg.close());
+  inicializujNavigaci();
 </script>
