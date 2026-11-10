@@ -1,0 +1,9 @@
+/* Řádek osy je v produkci odkaz <a> (funguje i bez JavaScriptu), ne <button>. */
+a.radek-btn { color: inherit; text-decoration: none; }
+/* Chronologie: všechny události jsou v HTML, skript ukazuje vždy jednu. */
+.udalosti-seznam { list-style: none; margin: 0; padding: 0; }
+.udalosti-seznam > li[hidden] { display: none; }
+/* Prázdný archiv před spuštěním */
+.archiv-prazdny { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; color: var(--meta); font-size: 17px; }
+/* Portrét se načítá jako <img> s cestou z public/ */
+.portret img { user-select: none; }
