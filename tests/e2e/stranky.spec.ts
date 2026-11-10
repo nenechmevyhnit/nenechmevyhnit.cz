@@ -75,3 +75,11 @@ test.describe('mobil 390×700: hlavní stránka', () => {
     expect(svisle).toBeLessThanOrEqual(vyska);
   });
 });
+
+test('Metodika vysvětluje vazby mezi kauzami v oddílu Co do archivu patří', async ({ page }) => {
+  await page.goto('/metodika/');
+  await page.locator('.v4-karta button[data-sekce="kriteria"]').click();
+  const panel = page.locator('.v4-dlg-panel[data-sekce="kriteria"]');
+  await expect(panel.getByRole('heading', { name: 'Vazby mezi kauzami' })).toBeVisible();
+  await expect(panel).toContainText('Vazba sama o sobě neznamená vinu ani spoluodpovědnost.');
+});

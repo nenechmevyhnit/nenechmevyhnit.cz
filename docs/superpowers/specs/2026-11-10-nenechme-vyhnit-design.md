@@ -185,6 +185,7 @@ Obsah modalu:
 - hotové stránky Metodika a O projektu,
 - všechny kontroly v CI zelené,
 - splněný kontrolní seznam anonymity z oddílu 3 a pečlivý ruční výřez portrétu.
+- před zveřejněním mapy souvislostí: každá osoba-aktér splňuje pravidlo z `2026-11-10-mapa-souvislosti-design.md`, oddíl 3 (veřejně činná, nebo už jmenovaná ve zveřejněných kauzách v souvislosti s řízením).
 
 ## 12. Výchozí rozhodnutí k potvrzení a známá rizika
 
