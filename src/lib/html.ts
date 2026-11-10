@@ -1,5 +1,5 @@
 /** JSON bezpečný pro vložení do <script type="application/json">: znak < se zapíše jako <,
  *  takže text z obsahu nemůže ukončit skript (</script>) ani otevřít komentář (<!--). */
 export function jsonDoSkriptu(data: unknown): string {
-  return JSON.stringify(data).replace(/</g, '\u003c');
+  return JSON.stringify(data).replace(/</g, '\\u003c');
 }
