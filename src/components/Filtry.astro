@@ -20,7 +20,7 @@ const data = jsonDoSkriptu(zaznamy.map(vytvorPolozku));
       <button class="sipka vpravo" type="button" aria-label="Další témata" hidden>›</button>
     </div>
     <label class="f-prepinac"><input type="checkbox" data-jen-otevrene> jen neuzavřené</label>
-    <span class="vpravo"><span id="pocet" aria-live="polite"></span><button class="f-zrusit" type="button" hidden>Zrušit filtry</button></span>
+    <span class="vpravo"><span class="pocet" aria-live="polite"></span><button class="f-zrusit" type="button" hidden>Zrušit filtry</button></span>
   </div>
 )}
 <script type="application/json" id="nv-hledani" set:html={data}></script>

@@ -9,8 +9,9 @@ export function inicializujFiltry(): void {
   const hledat = panel.querySelector<HTMLInputElement>('.f-hledat input')!;
   const cipy = panel.querySelector<HTMLElement>('.f-cipy')!;
   const jen = panel.querySelector<HTMLInputElement>('[data-jen-otevrene]')!;
-  const pocet = document.getElementById('pocet')!;
-  const zrusit = panel.querySelector<HTMLButtonElement>('.f-zrusit')!;
+  // počítadlo a Zrušit filtry jsou dvakrát: v záhlaví osy (počítač) a v řádku filtrů (mobil), CSS ukáže jen jedno
+  const pocty = document.querySelectorAll<HTMLElement>('.pocet');
+  const zrusit = document.querySelectorAll<HTMLButtonElement>('.f-zrusit');
   const prazdno = document.querySelector<HTMLElement>('#graf .prazdno')!;
   const filtr: Filtr = { text: '', stitky: [], jenOtevrene: false };
 
@@ -24,8 +25,9 @@ export function inicializujFiltry(): void {
       if (ok) n++;
     }
     prazdno.hidden = n > 0;
-    pocet.textContent = n === polozky.length ? sklonuj(n, ['kauza', 'kauzy', 'kauz']) : `Zobrazeno ${n} z ${polozky.length} kauz`;
-    zrusit.hidden = !jeAktivni(filtr);
+    const text = n === polozky.length ? sklonuj(n, ['kauza', 'kauzy', 'kauz']) : `${n} z ${polozky.length} kauz`;
+    pocty.forEach(p => { p.textContent = text; });
+    zrusit.forEach(z => { z.hidden = !jeAktivni(filtr); });
   };
 
   const aplikuj = () => {
@@ -54,7 +56,7 @@ export function inicializujFiltry(): void {
     filtr.stitky = [...cipy.querySelectorAll<HTMLElement>('[aria-pressed="true"]')].map(x => x.dataset.stitek!);
     aplikuj();
   });
-  zrusit.addEventListener('click', reset);
+  zrusit.forEach(z => z.addEventListener('click', reset));
   prazdno.querySelector('[data-zrusit]')!.addEventListener('click', reset);
 
   // šipky u čipů (bez viditelného posuvníku)

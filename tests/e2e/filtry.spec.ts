@@ -10,14 +10,14 @@ test('hledání bez diakritiky i v událostech', async ({ page }) => {
   await page.getByRole('searchbox', { name: 'Hledat v kauzách' }).fill('zprava uradu olaf');
   await expect(viditelne(page)).toHaveCount(1);
   await expect(viditelne(page).locator('strong')).toHaveText('Testovací kauza Alfa');
-  await expect(page.locator('#pocet')).toHaveText('Zobrazeno 1 z 6 kauz');
+  await expect(page.locator('.pocet:visible')).toHaveText('1 z 6 kauz');
 });
 
 test('štítky jako NEBO a zrušení filtrů', async ({ page }) => {
   await page.locator('.f-cipy button[data-stitek="offshore"]').click();
   await page.locator('.f-cipy button[data-stitek="dane"]').click();
   await expect(viditelne(page)).toHaveCount(2);
-  const zrusit = page.locator('.f-zrusit');
+  const zrusit = page.locator('.f-zrusit:visible');
   await expect(zrusit).toBeVisible();
   await zrusit.click();
   await expect(viditelne(page)).toHaveCount(6);
@@ -62,4 +62,16 @@ test('označený čip je vidět: modré pozadí a bílý text', async ({ page })
   const { pozadi, barva } = await cip.evaluate(e => ({ pozadi: getComputedStyle(e).backgroundColor, barva: getComputedStyle(e).color }));
   expect(pozadi).toBe('rgb(40, 38, 97)');
   expect(barva).toBe('rgb(255, 255, 255)');
+});
+
+test('na počítači jsou počítadlo a Zrušit filtry v záhlaví osy, řádek filtrů nechávají čipům', async ({ page }) => {
+  await expect(page.locator('.osa-roku .pocet')).toHaveText('6 kauz');
+  await page.locator('.f-cipy button[data-stitek="offshore"]').click();
+  await expect(page.locator('.osa-roku .pocet')).toHaveText('1 z 6 kauz');
+  await expect(page.locator('.osa-roku .f-zrusit')).toBeVisible();
+  await expect(page.locator('.filtry .pocet')).toBeHidden();
+  await expect(page.locator('.filtry .f-zrusit')).toBeHidden();
+  await page.locator('.osa-roku .f-zrusit').click();
+  await expect(viditelne(page)).toHaveCount(6);
+  await expect(page.locator('.osa-roku .f-zrusit')).toBeHidden();
 });

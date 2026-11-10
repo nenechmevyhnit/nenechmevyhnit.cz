@@ -68,9 +68,9 @@ test.describe('mobil 390×700: hlavní stránka', () => {
   test('přepínač „jen neuzavřené“, počítadlo a Zrušit filtry jsou dostupné', async ({ page }) => {
     await page.goto('/');
     await expect(page.getByLabel('jen neuzavřené')).toBeVisible();
-    await expect(page.locator('#pocet')).toBeVisible();
+    await expect(page.locator('.pocet:visible')).toBeVisible();
     await page.getByLabel('jen neuzavřené').check();
-    await expect(page.locator('.f-zrusit')).toBeVisible();
+    await expect(page.locator('.f-zrusit:visible')).toBeVisible();
     const { svisle, vyska } = await page.evaluate(() => ({ svisle: document.scrollingElement!.scrollHeight, vyska: innerHeight }));
     expect(svisle).toBeLessThanOrEqual(vyska);
   });
