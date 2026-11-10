@@ -58,7 +58,7 @@ export function rokZData(d: string): number {
 const vytvorKauzaSchema = (koncepty: boolean) => z
   .object({
     typ: z.enum(['kauza']).default('kauza'),
-    nazev: text(),
+    nazev: text().max(36, 'Název smí mít nejvýš 36 znaků, aby byl na ose celý vidět (podrobnosti patří do shrnutí)'),
     shrnuti: text().max(320),
     od: z.number().int().min(1950).max(2100),
     do: z.number().int().min(1950).max(2100).nullable(),

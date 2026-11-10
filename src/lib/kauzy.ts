@@ -6,7 +6,8 @@ export const rezimKonceptu = (): boolean => process.env.NV_KONCEPTY === 'ano';
 let mezipamet: ReturnType<typeof overAdresar> | undefined;
 
 function nacti() {
-  if (!mezipamet) {
+  // ve vývoji se obsah čte pokaždé znovu, aby se úpravy kauz projevily bez restartu serveru
+  if (!mezipamet || import.meta.env.DEV) {
     mezipamet = overAdresar(process.env.NV_OBSAH ?? 'obsah', { koncepty: rezimKonceptu() });
     if (mezipamet.chyby.length) {
       throw new Error('Chybný obsah:\n' + mezipamet.chyby.map(c => `  ${c.soubor}: ${c.zprava}`).join('\n'));

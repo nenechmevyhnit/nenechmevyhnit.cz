@@ -104,4 +104,8 @@ describe('kauzaSchema — integrita dat (závěrečná kontrola)', () => {
   it('odmítne název ze samých mezer', () => {
     expect(chyby({ ...platnaKauza(), nazev: '   ' }).length).toBeGreaterThan(0);
   });
+  it('název smí mít nejvýš 36 znaků, aby byl na ose celý vidět', () => {
+    expect(chyby({ ...platnaKauza(), nazev: 'x'.repeat(36) })).toEqual([]);
+    expect(chyby({ ...platnaKauza(), nazev: 'x'.repeat(37) }).join(' ')).toMatch(/36 znaků/);
+  });
 });

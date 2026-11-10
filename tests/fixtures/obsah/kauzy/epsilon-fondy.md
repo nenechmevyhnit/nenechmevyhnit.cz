@@ -1,5 +1,5 @@
 ---
-nazev: Testovací kauza Epsilon s velmi dlouhým názvem, který se nevejde
+nazev: Testovací kauza Epsilon, delší název
 shrnuti: Fiktivní audit fiktivní komise k fondům, které čerpala fiktivní skupina Epsilon.
 od: 2017
 do: null
