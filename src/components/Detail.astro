@@ -1,15 +1,14 @@
 ---
 import type { KauzaZaznam } from '../lib/validace';
 import { rozdelOdstavce, odstavecNaHtml } from '../lib/souvislosti';
-import { datumText, rokCislo, rozsahText, delkaText, rokDo } from '../lib/casova-osa';
+import { datumText, rozsahText, delkaText, polohaVKauze } from '../lib/casova-osa';
 import { popisekStavu } from '../lib/stavy';
 
 interface Props { zaznam?: KauzaZaznam }
 const { zaznam } = Astro.props;
 const REPO = 'https://github.com/nenechmevyhnit/nenechmevyhnit.cz';
 const k = zaznam?.kauza;
-const konec = k ? (k.do ?? rokDo()) : 0;
-const poloha = (d: string) => k ? Math.min(100, Math.max(0, ((rokCislo(d) - k.od) / ((konec - k.od) || 1)) * 100)) : 0;
+const poloha = (d: string) => k ? polohaVKauze(d, k.od, k.do) : 0;
 const posledni = k ? k.udalosti.length - 1 : 0;
 let posledniRok = -99;
 const rokyOsy = k ? k.udalosti.flatMap(u => { const p = poloha(u.datum); if (p - posledniRok > 9) { posledniRok = p; return [{ p, rok: u.datum.slice(0, 4) }]; } return []; }) : [];

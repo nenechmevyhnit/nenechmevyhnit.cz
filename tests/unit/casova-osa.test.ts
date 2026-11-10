@@ -41,3 +41,17 @@ describe('časová osa', () => {
   });
   it('rokDo je aktuální rok', () => expect(rokDo(DNES)).toBe(2026));
 });
+
+import { konecRok, polohaVKauze } from '../../src/lib/casova-osa';
+
+describe('poloha v posledním roce kauzy', () => {
+  it('kauza končí koncem roku „do“ (u otevřené koncem letoška)', () => {
+    expect(konecRok(2014, DNES)).toBe(2015);
+    expect(konecRok(null, DNES)).toBe(2027);
+  });
+  it('události v posledním roce se neslijí na konec', () => {
+    const a = polohaVKauze('2014-01', 2012, 2014, DNES), b = polohaVKauze('2014-06', 2012, 2014, DNES);
+    expect(a).toBeLessThan(b);
+    expect(b).toBeLessThan(100);
+  });
+});

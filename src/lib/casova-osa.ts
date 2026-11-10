@@ -40,3 +40,11 @@ export function znackyOsy(od: number, doRok: number): { rok: number; hlavni: boo
   z.push({ rok: doRok, hlavni: true });
   return z;
 }
+
+/** Kauza trvá do konce roku „do“; otevřená kauza do konce letošního roku. */
+export const konecRok = (doRok: number | null, dnes: Date = new Date()): number => (doRok ?? rokDo(dnes)) + 1;
+
+/** Poloha události uvnitř pruhu kauzy v procentech (0–100). */
+export function polohaVKauze(datum: string, od: number, doRok: number | null, dnes: Date = new Date()): number {
+  return naProcenta(rokCislo(datum), od, konecRok(doRok, dnes));
+}
