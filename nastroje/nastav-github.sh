@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Jednorázově nastaví ochranu větve main a související nastavení repozitáře přes GitHub API.
 # Spouštět ve vlastním terminálu:  Git Bash: bash nastroje/nastav-github.sh
-# PowerShell (tam je „bash“ z WSL):  & "C:Program FilesGitbinbash.exe" nastroje/nastav-github.sh
+# PowerShell (tam je „bash“ z WSL):  & "C:\Program Files\Git\bin\bash.exe" nastroje/nastav-github.sh
 # Token se zadává skrytě a nikam se neukládá. Potřebuje fine-grained token účtu nenechmevyhnit,
 # omezený jen na repozitář nenechmevyhnit.cz, s oprávněním Administration: Read and write.
 set -euo pipefail
