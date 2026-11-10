@@ -1,0 +1,19 @@
+name: Nová kauza
+description: Navrhněte kauzu, která v archivu chybí
+title: "Nová kauza: "
+labels: [nova-kauza]
+body:
+  - type: markdown
+    attributes: { value: "Každá kauza musí splňovat [metodiku](https://nenechmevyhnit.cz/metodika/). Bez zdrojů návrh nemůžeme přijmout." }
+  - type: input
+    id: nazev
+    attributes: { label: Název kauzy }
+    validations: { required: true }
+  - type: textarea
+    id: popis
+    attributes: { label: O co jde, description: "Jedna až tři věty, věcně." }
+    validations: { required: true }
+  - type: textarea
+    id: zdroje
+    attributes: { label: Zdroje, description: "Odkazy na soudní rozhodnutí, úřední dokumenty nebo seriózní média, každý na samostatném řádku." }
+    validations: { required: true }

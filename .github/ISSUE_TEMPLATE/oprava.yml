@@ -1,0 +1,17 @@
+name: Oprava
+description: Nahlaste chybu v kauze nebo na webu
+title: "Oprava: "
+labels: [oprava]
+body:
+  - type: input
+    id: kde
+    attributes: { label: Kde je chyba, description: "Odkaz na kauzu nebo stránku" }
+    validations: { required: true }
+  - type: textarea
+    id: co
+    attributes: { label: Co je špatně a jak to má být }
+    validations: { required: true }
+  - type: textarea
+    id: zdroje
+    attributes: { label: Zdroje k opravě }
+    validations: { required: true }

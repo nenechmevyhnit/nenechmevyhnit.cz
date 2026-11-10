@@ -1,0 +1,44 @@
+name: Týdenní údržba zdrojů
+on:
+  schedule: [{ cron: '0 5 * * 1' }]
+  workflow_dispatch:
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+jobs:
+  odkazy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - id: lychee
+        # bez kauz (před spuštěním) není co kontrolovat; jinak by lychee hlásil chybu „žádné vstupy“ a založil zbytečné issue
+        if: hashFiles('obsah/kauzy/*.md') != ''
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --config lychee.toml 'obsah/kauzy/*.md'
+          fail: false
+          output: lychee/vysledek.md
+      - name: Nahlásit nefunkční odkazy
+        if: steps.lychee.outcome == 'success' && steps.lychee.outputs.exit_code != 0
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: Nefunkční odkazy na zdroje
+          content-filepath: lychee/vysledek.md
+          labels: zdroje
+  archivace:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: npm }
+      - run: npm ci
+      - run: npx tsx scripts/archivuj.ts
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          branch: automat/archivace-zdroju
+          title: Doplnění archivních kopií zdrojů
+          commit-message: Doplnění archivních kopií zdrojů
+          author: Nenechme vyhnít <354814288+nenechmevyhnit@users.noreply.github.com>
+          committer: Nenechme vyhnít <354814288+nenechmevyhnit@users.noreply.github.com>
+          body: Automaticky doplněné odkazy na Wayback Machine u zdrojů, které archivní kopii neměly.
