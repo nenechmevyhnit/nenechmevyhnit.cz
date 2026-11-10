@@ -19,7 +19,8 @@
 .mapa-prazdno { padding: 24px; color: var(--meta); }
 .mapa-prazdno[hidden] { display: none; }
 
-.mapa-svg { display: block; max-width: 100%; height: auto; font-family: var(--f-text); }
+/* mapa se nezmenšuje (písmo by bylo nečitelné), při nedostatku místa se .mapa posouvá do strany */
+.mapa-svg { display: block; font-family: var(--f-text); }
 .mapa-svg text { font-size: 13px; fill: var(--inkoust); }
 .mapa-svg .m-viditelna { fill: none; stroke: var(--meta); stroke-opacity: .55; stroke-width: 1.2; }
 .mapa-svg .m-cara-navaznost .m-viditelna { stroke-dasharray: 4 3; }
@@ -37,6 +38,11 @@
 .mapa-svg .m-cara.zvyrazneno .m-viditelna { stroke: var(--modra); stroke-opacity: 1; }
 .mapa-svg .m-popisek.zvyrazneno { display: inline; }
 .mapa-svg .m-uzel.fokus rect { stroke: var(--okr); stroke-width: 3; }
+.mapa-svg .m-cara.fokus .m-viditelna { stroke: var(--okr); stroke-opacity: 1; stroke-width: 3; }
+.mapa-svg .m-uzel.zvyrazneno:not(.m-stred) rect { stroke: var(--modra); }
+.mapa-panel .mapa-panel-role { font: 12px var(--f-mono); color: var(--meta); margin: 0 0 4px; }
+.mapa-preskocit { position: absolute; left: 8px; top: 4px; z-index: 6; padding: 4px 8px; background: var(--plocha); border: 1px solid var(--linka); }
+.mapa-preskocit:not(:focus) { width: 1px; height: 1px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); }
 
 .mapa-panel { position: absolute; z-index: 5; width: 300px; max-width: calc(100% - 16px); background: var(--plocha); border: 1px solid var(--linka); box-shadow: 0 6px 24px rgb(14 23 38 / .15); padding: 12px 14px; font-size: 14px; }
 .mapa-panel[hidden] { display: none; }

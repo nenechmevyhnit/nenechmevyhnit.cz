@@ -59,3 +59,11 @@ describe('stromMapy', () => {
     expect(beta).not.toContain('s-info');
   });
 });
+
+describe('strom: kauza pod každým svým aktérem', () => {
+  it('Žeta je pod Holdingem (hlavní) i pod Firmou Alfa (vedlejší řádek)', () => {
+    const html = stromMapy(graf);
+    expect(html.match(/<li class="s-kauza" data-uzel="k:zeta-stret" data-hrana="h\d+" data-hlavni/g)).toHaveLength(1);
+    expect(html.match(/<li class="s-kauza" data-uzel="k:zeta-stret" data-hrana="h\d+" data-slug/g)).toHaveLength(1);
+  });
+});

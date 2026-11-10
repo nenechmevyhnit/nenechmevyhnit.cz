@@ -48,7 +48,11 @@ export function sestavGraf(zaznamy: KauzaZaznam[], akteri: Map<string, Akter>): 
   for (const id of [...pouziti].sort()) {
     const a = akteri.get(id)!;
     uzly.push({ id: idAktera(id), typ: 'akter', nazev: a.nazev, hloubka: hloubka(id) });
-    const hlavni = a.vztahy.reduce((m, v) => (hloubka(v.nadrazeny) > hloubka(m.nadrazeny) ? v : m));
+    // hlavní rodič: nejhlubší nadřazený, při shodě ten s nejnovějším vztahem (aktuální stav)
+    const hlavni = a.vztahy.reduce((m, v) => {
+      const dv = hloubka(v.nadrazeny), dm = hloubka(m.nadrazeny);
+      return dv > dm || (dv === dm && v.od > m.od) ? v : m;
+    });
     hlavniRodic.set(idAktera(id), uzelRodice(hlavni.nadrazeny));
     for (const v of a.vztahy) pridej({
       druh: 'vztah', rodic: uzelRodice(v.nadrazeny), potomek: idAktera(id), hlavni: v === hlavni,
@@ -159,6 +163,7 @@ export function rozlozMapu(graf: Graf, viditelne: Iterable<string> | null): Rozl
   }
   for (const seznam of vstupy.values()) seznam.sort((a, b) => Number(b.hlavni) - Number(a.hlavni)).forEach((h, i) => poradiPopisku.set(h.id, i));
   const cary: Cara[] = [];
+  const soubezne = new Map<string, number>(); // víc vazeb mezi týmiž uzly: každá další čára o kus níž
   for (const h of graf.hrany) {
     const a = misto.get(h.rodic), b = misto.get(h.potomek);
     if (!a || !b) continue;
@@ -169,7 +174,10 @@ export function rozlozMapu(graf: Graf, viditelne: Iterable<string> | null): Rozl
     } else {
       const x1 = a.x + a.w, x2 = b.x, sx = (x1 + x2) / 2, i = poradiPopisku.get(h.id) ?? 0;
       const py = i === 0 ? b.y - R.vyskaUzlu / 2 - 3 : b.y + R.vyskaUzlu / 2 + 11 + (i - 1) * 12;
-      cary.push({ id: h.id, druh: h.druh, d: `M${x1} ${a.y} C${sx} ${a.y} ${sx} ${b.y} ${x2} ${b.y}`, popisek, px: b.x + 4, py });
+      const klic = `${h.rodic}>${h.potomek}`, k = soubezne.get(klic) ?? 0;
+      soubezne.set(klic, k + 1);
+      const y1 = a.y + k * 5, y2 = b.y + k * 5;
+      cary.push({ id: h.id, druh: h.druh, d: `M${x1} ${y1} C${sx} ${y1} ${sx} ${y2} ${x2} ${y2}`, popisek, px: b.x + 4, py });
     }
   }
   return { sirka: kauzyX + R.kauza + R.oblouky, vyska: 2 * R.okraj + radek * R.radek, uzly, cary };

@@ -16,7 +16,7 @@ export const metodika: { platiOd: string; sekce: SekceStranky[] } = {
 <p>Kroky vlády jako celku zatím nezařazujeme. Archiv je na jejich pozdější zařazení připravený.</p>
 <h3 id="vazby">Vazby mezi kauzami</h3>
 <p>Kauzy lze kromě časové osy zobrazit jako <strong>mapu souvislostí</strong>. Ukazuje, přes které firmy, osoby a nástroje (například svěřenské fondy) jsou kauzy spojené s Andrejem Babišem a které kauzy na sebe přímo navazují.</p>
-<ul><li>Každá vazba má <strong>roli</strong> z pevného seznamu (například <em>vlastní</em>, <em>příjemce dotace</em>, <em>vychází z</em>), <strong>období</strong>, kdy platila, a <strong>zdroj</strong>. Bez zdroje se web nesestaví.</li>
+<ul><li>Každá vazba má <strong>roli</strong> z pevného seznamu (například <em>vlastní</em>, <em>příjemce dotace</em>, <em>vychází z</em>), krátké vysvětlení a <strong>zdroj</strong>. Bez zdroje se web nesestaví. Vztahy firem, osob a nástrojů mají navíc období, kdy platily.</li>
 <li>Aktérem může být firma nebo nástroj, které Andrej Babiš nebo jeho firmy ovládaly, a to jen pro období, kdy je ovládaly. Osoba jen tehdy, když je veřejně činná nebo už byla jmenována ve zveřejněných kauzách v souvislosti s řízením.</li>
 <li>Úřady a instituce aktéry nejsou.</li>
 <li><strong>Vazba sama o sobě neznamená vinu ani spoluodpovědnost.</strong> Říká jen, že dvě věci spolu doloženě souvisejí.</li></ul>

@@ -87,8 +87,9 @@ test('klik na aktéra otevře panel s rolí, popisem a zdrojem; Esc ho zavře', 
   const panel = page.locator('.mapa-panel');
   await expect(panel).toBeVisible();
   await expect(panel.locator('.mapa-panel-nadpis')).toHaveText('Holding Omega → Firma Alfa');
-  await expect(panel).toContainText('Holding Omega vlastní Firmu Alfa od roku 2007.');
-  await expect(panel.locator('.mapa-panel-obsah a')).toHaveAttribute('href', 'https://example.com/omega/alfa');
+  await expect(panel.locator('.mapa-panel-role')).toHaveText('vlastní · 2015 – dosud');
+  await expect(panel).toContainText('Holding Omega znovu vlastní Firmu Alfa od roku 2015.');
+  await expect(panel.locator('.mapa-panel-obsah a')).toHaveAttribute('href', 'https://example.com/omega/alfa-2015');
   await page.keyboard.press('Escape');
   await expect(panel).toBeHidden();
 });
@@ -133,15 +134,18 @@ test('vybraná kauza zmizí z filtru: zvýraznění se zruší a po zrušení fi
 
 test('klávesnice: fokus ve stromu zvýrazní uzel, Enter na kauze otevře detail', async ({ page }) => {
   await page.goto('/?pohled=mapa');
-  await page.locator('.strom li[data-uzel="k:alfa-dotace"][data-hlavni] > .s-radek a').focus();
-  await expect(page.locator('.mapa-svg [data-uzel="k:alfa-dotace"]')).toHaveClass(/fokus/);
+  // Epsilon je pod přímým aktérem (rozbalená větev); hlubší větve jsou sbalené
+  await page.locator('.strom li[data-uzel="k:epsilon-fondy"][data-hlavni] > .s-radek a').focus();
+  await expect(page.locator('.mapa-svg [data-uzel="k:epsilon-fondy"]')).toHaveClass(/fokus/);
   await page.keyboard.press('Enter');
   await expect(page.locator('dialog#detail')).toBeVisible();
 });
 
-test('klávesnice: tlačítko aktéra ve stromu otevře panel a Esc vrátí fokus', async ({ page }) => {
+test('klávesnice: ⓘ ve stromu otevře panel (ohlášený jako dialog) a Esc vrátí fokus', async ({ page }) => {
   await page.goto('/?pohled=mapa');
-  const tlacitko = page.locator('.strom li[data-uzel="a:firma-alfa"][data-hlavni] > .s-radek .s-akter');
+  const tlacitko = page.locator('.strom li[data-uzel="a:fond-sigma"][data-hlavni] > .s-radek .s-info');
+  await expect(tlacitko).toHaveAttribute('aria-haspopup', 'dialog');
+  await expect(tlacitko).not.toHaveAttribute('aria-expanded', /.*/);
   await tlacitko.focus();
   await page.keyboard.press('Enter');
   await expect(page.locator('.mapa-panel')).toBeVisible();
@@ -161,10 +165,10 @@ test.describe('mobil', () => {
     const holding = page.locator('.strom li[data-uzel="a:holding-omega"][data-hlavni] > .s-radek .s-akter');
     await expect(page.locator('.strom li[data-uzel="a:fond-sigma"] > .s-radek .s-akter')).toHaveAttribute('aria-expanded', 'true');
     await expect(holding).toHaveAttribute('aria-expanded', 'false');
-    await expect(page.locator('.strom li[data-uzel="a:firma-alfa"]')).toBeHidden();
+    await expect(page.locator('.strom li[data-uzel="a:firma-alfa"][data-hlavni]')).toBeHidden();
     await holding.click();
     await expect(holding).toHaveAttribute('aria-expanded', 'true');
-    await expect(page.locator('.strom li[data-uzel="a:firma-alfa"]')).toBeVisible();
+    await expect(page.locator('.strom li[data-uzel="a:firma-alfa"][data-hlavni]')).toBeVisible();
   });
 
   test('ⓘ ukáže vysvětlení vazby pod řádkem, klepnutí na kauzu otevře detail', async ({ page }) => {
@@ -186,11 +190,14 @@ test('změna šířky okna z počítače na mobil v pohledu mapy', async ({ page
   await expect(page.locator('.strom')).toBeVisible();
   await expect(page.locator('.strom li[data-uzel="a:holding-omega"][data-hlavni] > .s-radek .s-akter')).toHaveAttribute('aria-expanded', 'false');
   await page.setViewportSize({ width: 1366, height: 768 });
-  await expect(page.locator('.strom li[data-uzel="a:holding-omega"][data-hlavni] > .s-radek .s-akter')).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('.mapa-svg')).toBeVisible();
+  await expect(page.locator('.strom .s-info').first()).toHaveAttribute('aria-haspopup', 'dialog');
 });
 
 test('detail ukazuje aktéry a návaznosti a vede na mapu', async ({ page }) => {
   await page.goto('/kauzy/zeta-stret/');
+  // až po úvodní animaci: přepnutí pohledu pak běží přes View Transition
+  await page.waitForFunction(() => document.body.classList.contains('nacteno'));
   await page.getByRole('tab', { name: 'Souvislosti' }).click();
   const blok = page.locator('.m2-panel[data-p="souv"] .vazby');
   await expect(blok.getByRole('heading', { name: 'Aktéři a návaznosti' })).toBeVisible();
@@ -225,4 +232,50 @@ test('značka zdroje u vazby přepne na Zdroje', async ({ page }) => {
   await page.getByRole('tab', { name: 'Souvislosti' }).click();
   await page.locator('.vazby a[data-zdroj="2"]').first().click();
   await expect(page.locator('.m2-panel[data-p="zdroje"]')).toBeVisible();
+});
+
+test('trvalý výběr kauzy zvýrazní cestu, ale zbytek mapy neztlumí', async ({ page }) => {
+  await page.goto('/?pohled=mapa&vyber=alfa-dotace');
+  await expect(page.locator('.mapa-svg [data-uzel="k:alfa-dotace"]')).toHaveClass(/zvyrazneno/);
+  await expect(page.locator('.mapa-svg')).not.toHaveClass(/ztlumeno/);
+});
+
+test('jméno aktéra ve stromu na počítači rozbaluje a sbaluje větev', async ({ page }) => {
+  await page.goto('/?pohled=mapa');
+  const fond = page.locator('.strom li[data-uzel="a:fond-sigma"] > .s-radek .s-akter');
+  await expect(fond).toHaveAttribute('aria-expanded', 'true');
+  await fond.focus();
+  await page.keyboard.press('Enter');
+  await expect(fond).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('.mapa-panel')).toBeHidden();
+});
+
+test('na počítači jsou hlubší větve stromu sbalené (méně zastávek klávesy Tab) a mapu jde přeskočit', async ({ page }) => {
+  await page.goto('/?pohled=mapa');
+  await expect(page.locator('.strom li[data-uzel="a:holding-omega"][data-hlavni] > .s-radek .s-akter')).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('.mapa-preskocit')).toHaveAttribute('href', '#mapa-konec');
+});
+
+test('fokus na odkazu „navazuje na“ zvýrazní cílovou kauzu, fokus na ⓘ čáru vazby', async ({ page }) => {
+  await page.goto('/?pohled=mapa');
+  const zeta = page.locator('.strom li[data-uzel="k:zeta-stret"][data-hlavni]');
+  await page.locator('.strom li[data-uzel="a:holding-omega"][data-hlavni] > .s-radek .s-akter').focus();
+  await page.keyboard.press('Enter');
+  const nav = zeta.locator('.s-navazuje').first();
+  await nav.locator('a[data-slug]').focus();
+  await expect(page.locator('.mapa-svg [data-uzel="k:alfa-dotace"]')).toHaveClass(/fokus/);
+  await expect(page.locator('.mapa-svg [data-uzel="k:zeta-stret"]')).not.toHaveClass(/fokus/);
+  const hrana = await nav.getAttribute('data-hrana');
+  await nav.locator('.s-info').focus();
+  await expect(page.locator(`.mapa-svg .m-cara[data-hrana="${hrana}"]`)).toHaveClass(/fokus/);
+});
+
+test('mapa se nezmenšuje, při nedostatku místa se posouvá do strany', async ({ page }) => {
+  await page.setViewportSize({ width: 1256, height: 528 });
+  await page.goto('/?pohled=mapa');
+  const { vykreslena, prirozena } = await page.locator('.mapa-svg').evaluate(s => ({
+    vykreslena: Math.round(s.getBoundingClientRect().width), prirozena: Number(s.getAttribute('width')),
+  }));
+  expect(vykreslena).toBe(prirozena);
+  await overBezPosouvani(page);
 });

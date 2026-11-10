@@ -7,6 +7,9 @@ const mobil = () => matchMedia('(max-width: 760px)').matches;
 
 export type Pohled = 'osa' | 'mapa';
 const graf = () => document.getElementById('graf');
+let pohled: Pohled = 'osa';
+/** Pohled platí hned po přepnutí, i když View Transition dokončí změnu DOM až později (adresa detailu, zavření). */
+export const aktualniPohled = (): Pohled => pohled;
 
 export const pohledZAdresy = (): Pohled => (new URLSearchParams(location.search).get('pohled') === 'mapa' ? 'mapa' : 'osa');
 
@@ -14,6 +17,7 @@ export const pohledZAdresy = (): Pohled => (new URLSearchParams(location.search)
 export function nastavPohled(p: Pohled, { zapsat = true } = {}): void {
   const g = graf();
   if (!g?.querySelector('.mapa')) return;
+  pohled = p;
   const proved = () => {
     g.dataset.pohled = p;
     document.querySelectorAll<HTMLButtonElement>('.pohled button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.pohled === p)));
@@ -48,10 +52,13 @@ export function inicializujMapu(): void {
   const uzly = new Map(grafMapy.uzly.map(u => [u.id, u]));
   let vybrano: string | null = g.dataset.vybrano ? idKauzy(g.dataset.vybrano) : null;
   let otvirac: HTMLElement | null = null;
+  let panelUzel: string | null = null;
 
-  const zvyrazni = (id: string | null) => {
+  /** docasne: najetí, fokus a otevřený panel ztlumí zbytek mapy; trvalý výběr kauzy jen zvýrazní cestu
+   *  (ztlumený text by neměl dost kontrastu). */
+  const zvyrazni = (id: string | null, docasne = false) => {
     const z = id ? zvyrazneni(grafMapy, id) : null;
-    svg.classList.toggle('ztlumeno', z !== null);
+    svg.classList.toggle('ztlumeno', docasne && z !== null);
     svg.querySelectorAll<SVGElement>('[data-uzel]').forEach(el => el.classList.toggle('zvyrazneno', !!z?.uzly.has(el.dataset.uzel!)));
     svg.querySelectorAll<SVGElement>('[data-hrana]').forEach(el => el.classList.toggle('zvyrazneno', !!z?.hrany.has(el.dataset.hrana!)));
   };
@@ -61,9 +68,12 @@ export function inicializujMapu(): void {
     return h.druh === 'navaznost' ? `${p} → ${r}` : `${r} → ${p}`;
   };
   const hlavniHrana = (uzel: string) => strom.querySelector<HTMLElement>(`li[data-uzel="${CSS.escape(uzel)}"][data-hlavni]`)?.dataset.hrana;
+  const klid = () => (panelUzel ? zvyrazni(panelUzel, true) : zvyrazni(vybrano));
   const zavriPanel = (vratitFokus = true) => {
     if (panel.hidden) return;
     panel.hidden = true;
+    panelUzel = null;
+    klid();
     if (vratitFokus) otvirac?.focus();
     otvirac = null;
   };
@@ -71,8 +81,16 @@ export function inicializujMapu(): void {
   const otevriPanel = (hrana: string, odkud: HTMLElement | null) => {
     const zdroj = document.getElementById(`s-vazba-${hrana}`);
     if (!zdroj) return;
+    const h = hrany.get(hrana)!;
     panelNadpis.textContent = nadpisHrany(hrana);
     panelObsah.innerHTML = zdroj.innerHTML;
+    const role = [h.roleText, h.obdobi].filter(Boolean).join(' · ');
+    if (role) {
+      const p = document.createElement('p');
+      p.className = 'mapa-panel-role';
+      p.textContent = role;
+      panelObsah.prepend(p);
+    }
     const kotva = svg.querySelector(`[data-uzel="${CSS.escape(hrany.get(hrana)!.potomek)}"]`);
     if (kotva) {
       const r = kotva.getBoundingClientRect(), o = obal.getBoundingClientRect();
@@ -80,6 +98,8 @@ export function inicializujMapu(): void {
       panel.style.top = `${r.top - o.top + obal.scrollTop}px`;
     }
     panel.hidden = false;
+    panelUzel = h.potomek;
+    zvyrazni(panelUzel, true);
     otvirac = odkud;
     panel.querySelector<HTMLElement>('.mapa-panel-zavrit')!.focus();
   };
@@ -134,9 +154,9 @@ export function inicializujMapu(): void {
     const tlacitko = t.closest<HTMLButtonElement>('.strom .s-info, .strom .s-akter');
     const nositel = tlacitko?.closest<HTMLElement>('[data-hrana]');
     if (!tlacitko || !nositel) return;
-    if (!mobil()) { otevriPanel(nositel.dataset.hrana!, tlacitko); return; }
-    // mobil: jméno aktéra rozbaluje větev, ⓘ (nebo jméno aktéra bez větve) ukáže vysvětlení pod řádkem
+    // jméno aktéra s větví ji rozbaluje (počítač i mobil); vysvětlení vazby: na počítači panel, na mobilu pod řádkem
     if (tlacitko.classList.contains('s-akter') && tlacitko.hasAttribute('aria-expanded')) { prepni(tlacitko); return; }
+    if (!mobil()) { otevriPanel(nositel.dataset.hrana!, tlacitko); return; }
     const i = tlacitko.classList.contains('s-info') ? tlacitko : nositel.querySelector<HTMLButtonElement>(':scope > .s-radek .s-info');
     if (i) prepni(i);
   });
@@ -145,37 +165,51 @@ export function inicializujMapu(): void {
   });
   obal.addEventListener('pointerover', e => {
     const u = (e.target as Element).closest<SVGGElement>('.mapa-svg [data-uzel]');
-    if (u) zvyrazni(u.dataset.uzel!);
+    if (u) zvyrazni(u.dataset.uzel!, true);
   });
   obal.addEventListener('pointerout', e => {
-    if ((e.target as Element).closest('.mapa-svg [data-uzel]')) zvyrazni(vybrano);
+    if ((e.target as Element).closest('.mapa-svg [data-uzel]')) klid();
   });
   strom.addEventListener('focusin', e => {
-    const li = (e.target as Element).closest<HTMLElement>('li[data-uzel]');
+    const prvek = e.target as HTMLElement;
+    const li = prvek.closest<HTMLElement>('li[data-uzel]');
     svg.querySelectorAll('.fokus').forEach(x => x.classList.remove('fokus'));
     if (!li) return;
-    zvyrazni(li.dataset.uzel!);
-    const u = svg.querySelector<SVGGElement>(`[data-uzel="${CSS.escape(li.dataset.uzel!)}"]`);
-    if (u && !mobil()) { u.classList.add('fokus'); u.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }
+    // odkaz „navazuje na“ vede na jinou kauzu: zvýraznit tu, kterou Enter otevře
+    const uzel = prvek.matches('.s-navazuje a[data-slug]') ? idKauzy(prvek.dataset.slug!) : li.dataset.uzel!;
+    zvyrazni(uzel, true);
+    if (mobil()) return;
+    // ⓘ vysvětluje vazbu, a proto má fokus na čáře, ne na uzlu
+    const nositel = prvek.closest<HTMLElement>('[data-hrana]');
+    const cil = prvek.matches('.s-info') && nositel
+      ? svg.querySelector<SVGGElement>(`.m-cara[data-hrana="${CSS.escape(nositel.dataset.hrana!)}"]`)
+      : svg.querySelector<SVGGElement>(`[data-uzel="${CSS.escape(uzel)}"]`);
+    if (cil) { cil.classList.add('fokus'); cil.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }
   });
   strom.addEventListener('focusout', () => {
     svg.querySelectorAll('.fokus').forEach(x => x.classList.remove('fokus'));
-    zvyrazni(vybrano);
+    klid();
   });
   document.addEventListener('nv:vyber', e => {
     const slug = (e as CustomEvent<string | null>).detail;
     vybrano = slug ? idKauzy(slug) : null;
-    zvyrazni(vybrano);
+    klid();
   });
 
-  /** Na mobilu rozbalení jen přímí aktéři, na počítači vše (strom tam slouží klávesnici a čtečkám). */
-  const nastavRozbaleni = () => strom.querySelectorAll<HTMLButtonElement>('.s-akter[aria-expanded]').forEach(b => {
-    const otevrit = !mobil() || Number(b.closest<HTMLElement>('li')!.dataset.hloubka) <= 1;
+  // výchozí rozbalení: přímí aktéři otevření, hlubší větve sbalené (na počítači to drží rozumný počet zastávek Tab)
+  strom.querySelectorAll<HTMLButtonElement>('.s-akter[aria-expanded]').forEach(b => {
+    const otevrit = Number(b.closest<HTMLElement>('li')!.dataset.hloubka) <= 1;
     b.setAttribute('aria-expanded', String(otevrit));
     document.getElementById(b.getAttribute('aria-controls')!)!.hidden = !otevrit;
   });
-  matchMedia('(max-width: 760px)').addEventListener('change', nastavRozbaleni);
-  nastavRozbaleni();
+  /** ⓘ na počítači otevírá panel (dialog), na mobilu rozbaluje vysvětlení pod řádkem: tomu odpovídá i ARIA. */
+  const nastavInfo = () => strom.querySelectorAll<HTMLButtonElement>('.s-info').forEach(b => {
+    const cil = document.getElementById(b.getAttribute('aria-controls')!);
+    if (mobil()) { b.removeAttribute('aria-haspopup'); b.setAttribute('aria-expanded', String(!!cil && !cil.hidden)); }
+    else { b.removeAttribute('aria-expanded'); b.setAttribute('aria-haspopup', 'dialog'); if (cil) cil.hidden = true; }
+  });
+  matchMedia('(max-width: 760px)').addEventListener('change', () => { zavriPanel(false); nastavInfo(); });
+  nastavInfo();
 
   nastavPohled(pohledZAdresy(), { zapsat: false });
   prekresli();

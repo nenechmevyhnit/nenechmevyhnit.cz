@@ -41,6 +41,7 @@ proc:
   zdroje: [1, 2]
 akteri:
   - { id: holding-omega, role: predmet-kauzy, popis: Fiktivní úřad posuzuje střet zájmů u Holdingu Omega., zdroje: [1] }
+  - { id: firma-alfa, role: ucastnik-rizeni, popis: Firma Alfa je v řízení vedlejším účastníkem., zdroje: [2] }
 navazuje:
   - { kauza: alfa-dotace, role: souvisejici-rizeni, popis: Řízení se týká stejné fiktivní dotace jako kauza Alfa., zdroje: [1] }
 ---

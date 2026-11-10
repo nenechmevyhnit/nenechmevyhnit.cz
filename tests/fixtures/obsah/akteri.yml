@@ -38,7 +38,14 @@ firma-alfa:
     - nadrazeny: holding-omega
       role: vlastni
       od: 2007
-      do: null
-      popis: Holding Omega vlastní Firmu Alfa od roku 2007.
+      do: 2012
+      popis: Holding Omega vlastnil Firmu Alfa v letech 2007–2012.
       zdroje:
         - { vydavatel: Fiktivní rejstřík, titulek: Výpis Firmy Alfa, datum: 2008-01-10, druh: primarni, url: "https://example.com/omega/alfa" }
+    - nadrazeny: holding-omega
+      role: vlastni
+      od: 2015
+      do: null
+      popis: Holding Omega znovu vlastní Firmu Alfa od roku 2015.
+      zdroje:
+        - { vydavatel: Fiktivní rejstřík, titulek: Výpis Firmy Alfa 2015, datum: 2015-03-02, druh: primarni, url: "https://example.com/omega/alfa-2015" }

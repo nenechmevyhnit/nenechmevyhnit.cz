@@ -1,6 +1,6 @@
 import { inicializujDetail } from './detail';
 import { vyberKauzu } from './osa';
-import { nastavPohled } from './mapa';
+import { nastavPohled, aktualniPohled } from './mapa';
 
 const mezipamet = new Map<string, { html: string; trida: string; titulek: string }>();
 const TITULEK_HLAVNI = 'Nenechme vyhnít — kauzy Andreje Babiše';
@@ -8,7 +8,7 @@ let zaviramZHistorie = false;
 
 const dialog = () => document.getElementById('detail') as HTMLDialogElement;
 /** Detail otevřený z mapy si pohled pamatuje v adrese, aby se po zavření vrátil na mapu. */
-const dotazPohledu = () => (document.getElementById('graf')?.dataset.pohled === 'mapa' ? '?pohled=mapa' : '');
+const dotazPohledu = () => (aktualniPohled() === 'mapa' ? '?pohled=mapa' : '');
 
 async function nactiDetail(slug: string) {
   if (!mezipamet.has(slug)) {

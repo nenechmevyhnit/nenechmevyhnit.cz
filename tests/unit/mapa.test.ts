@@ -22,9 +22,9 @@ describe('sestavGraf', () => {
     expect(graf.deti['a:holding-omega']).toEqual(['a:firma-alfa', 'k:zeta-stret']);
     expect(graf.deti['a:firma-alfa']).toEqual(['k:alfa-dotace']);
   });
-  it('hrany: čtyři vztahy, tři aktéři v kauzách, tři kauzy pod středem, dvě návaznosti', () => {
+  it('hrany: pět vztahů, čtyři aktéři v kauzách, tři kauzy pod středem, dvě návaznosti', () => {
     const pocet = (d: string) => graf.hrany.filter(h => h.druh === d).length;
-    expect([pocet('vztah'), pocet('akter'), pocet('stred'), pocet('navaznost')]).toEqual([4, 3, 3, 2]);
+    expect([pocet('vztah'), pocet('akter'), pocet('stred'), pocet('navaznost')]).toEqual([5, 4, 3, 2]);
   });
   it('aktér s více vztahy: hlavní je ten k nejhlubšímu nadřazenému, oba mají roli a období', () => {
     const vztahy = graf.hrany.filter(h => h.druh === 'vztah' && h.potomek === 'a:holding-omega');
@@ -75,7 +75,7 @@ describe('rozlozMapu', () => {
     expect(r.vyska).toBe(2 * ROZMERY.okraj + 6 * ROZMERY.radek);
   });
   it('každá hrana má čáru, popisek jen hrany s rolí', () => {
-    expect(r.cary).toHaveLength(12);
+    expect(r.cary).toHaveLength(14);
     expect(r.cary.filter(c => c.druh === 'stred').every(c => c.popisek === null)).toBe(true);
     expect(r.cary.find(c => c.druh === 'vztah' && c.popisek?.includes('1995–2017'))?.popisek).toBe('vlastní · 1995–2017');
   });
@@ -105,7 +105,7 @@ describe('zvyrazneni', () => {
   it('kauza: cesta ke středu přes všechny vztahy a navazující kauzy', () => {
     const z = zvyrazneni(graf, idKauzy('alfa-dotace'));
     expect([...z.uzly].sort()).toEqual(['a:firma-alfa', 'a:fond-sigma', 'a:holding-omega', 'babis', 'k:alfa-dotace', 'k:zeta-stret']);
-    expect(z.hrany.size).toBe(6);
+    expect(z.hrany.size).toBe(7);
   });
   it('aktér: nadřazení i vše pod ním, ne sousední větve', () => {
     const z = zvyrazneni(graf, idAktera('holding-omega'));
@@ -118,7 +118,10 @@ describe('zvyrazneni', () => {
 describe('vazbyKauzy', () => {
   it('aktéři, návaznosti a dopočítaný opačný směr', () => {
     expect(vazbyKauzy(zaznamy, akteri, 'zeta-stret')).toEqual({
-      akteri: [{ nazev: 'Holding Omega', roleText: 'předmět kauzy', popis: 'Fiktivní úřad posuzuje střet zájmů u Holdingu Omega.', zdroje: [1] }],
+      akteri: [
+        { nazev: 'Holding Omega', roleText: 'předmět kauzy', popis: 'Fiktivní úřad posuzuje střet zájmů u Holdingu Omega.', zdroje: [1] },
+        { nazev: 'Firma Alfa', roleText: 'účastník řízení', popis: 'Firma Alfa je v řízení vedlejším účastníkem.', zdroje: [2] },
+      ],
       navazuje: [{ slug: 'alfa-dotace', nazev: 'Testovací kauza Alfa', roleText: 'související řízení', popis: 'Řízení se týká stejné fiktivní dotace jako kauza Alfa.', zdroje: [1] }],
       navazujiNaNi: [{ slug: 'epsilon-fondy', nazev: 'Testovací kauza Epsilon, delší název' }],
     });
@@ -126,5 +129,22 @@ describe('vazbyKauzy', () => {
   it('kauza bez vazeb a neznámá kauza', () => {
     expect(vazbyKauzy(zaznamy, akteri, 'beta-archiv')).toEqual({ akteri: [], navazuje: [], navazujiNaNi: [] });
     expect(vazbyKauzy(zaznamy, akteri, 'neni')).toEqual({ akteri: [], navazuje: [], navazujiNaNi: [] });
+  });
+});
+
+describe('více vazeb mezi týmiž uzly a více aktérů u kauzy', () => {
+  const r = rozlozMapu(graf, null);
+  it('dva vztahy ke stejnému nadřazenému: hlavní je ten novější a čáry se nepřekrývají', () => {
+    const vztahy = graf.hrany.filter(h => h.druh === 'vztah' && h.potomek === 'a:firma-alfa');
+    expect(vztahy.map(h => [h.obdobi, h.hlavni])).toEqual([['2007–2012', false], ['2015 – dosud', true]]);
+    const d = vztahy.map(h => r.cary.find(c => c.id === h.id)!.d);
+    expect(d[0]).not.toBe(d[1]);
+  });
+  it('kauza se dvěma aktéry je na mapě jednou a vedou k ní dvě čáry od aktérů', () => {
+    expect(r.uzly.filter(u => u.id === 'k:zeta-stret')).toHaveLength(1);
+    const kZete = graf.hrany.filter(h => h.druh === 'akter' && h.potomek === 'k:zeta-stret').map(h => h.id);
+    expect(r.cary.filter(c => kZete.includes(c.id))).toHaveLength(2);
+    expect(graf.hrany.filter(h => h.druh === 'akter' && h.potomek === 'k:zeta-stret').map(h => [h.rodic, h.hlavni]))
+      .toEqual([['a:holding-omega', true], ['a:firma-alfa', false]]);
   });
 });

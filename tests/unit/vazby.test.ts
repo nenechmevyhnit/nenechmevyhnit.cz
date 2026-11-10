@@ -79,7 +79,7 @@ describe('overAdresar s aktéry', () => {
     expect(r.varovani).toEqual([]);
     expect([...r.akteri.keys()].sort()).toEqual(['firma-alfa', 'fond-sigma', 'holding-omega']);
     const zeta = r.zaznamy.find(z => z.slug === 'zeta-stret')!;
-    expect(zeta.kauza.akteri.map(a => a.id)).toEqual(['holding-omega']);
+    expect(zeta.kauza.akteri.map(a => a.id)).toEqual(['holding-omega', 'firma-alfa']);
     expect(zeta.kauza.navazuje.map(n => n.kauza)).toEqual(['alfa-dotace']);
   });
   it('archiv bez akteri.yml má prázdný slovník', () => expect(overAdresar('tests/fixtures/prazdny').akteri.size).toBe(0));

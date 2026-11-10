@@ -82,4 +82,5 @@ test('Metodika vysvětluje vazby mezi kauzami v oddílu Co do archivu patří', 
   const panel = page.locator('.v4-dlg-panel[data-sekce="kriteria"]');
   await expect(panel.getByRole('heading', { name: 'Vazby mezi kauzami' })).toBeVisible();
   await expect(panel).toContainText('Vazba sama o sobě neznamená vinu ani spoluodpovědnost.');
+  await expect(panel).toContainText('Vztahy firem, osob a nástrojů mají navíc období');
 });
