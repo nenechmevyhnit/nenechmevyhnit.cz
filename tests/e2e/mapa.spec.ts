@@ -149,3 +149,42 @@ test('klávesnice: tlačítko aktéra ve stromu otevře panel a Esc vrátí foku
   await page.keyboard.press('Escape');
   await expect(tlacitko).toBeFocused();
 });
+
+test.describe('mobil', () => {
+  test.use({ viewport: { width: 390, height: 700 } });
+
+  test('místo obrázku strom: přímí aktéři rozbalení, hlubší sbalení', async ({ page }) => {
+    await page.goto('/?pohled=mapa');
+    await expect(page.locator('.mapa-svg')).toBeHidden();
+    await expect(page.locator('.strom')).toBeVisible();
+    await expect(page.locator('.filtry .pohled').getByRole('button', { name: 'Mapa' })).toHaveAttribute('aria-pressed', 'true');
+    const holding = page.locator('.strom li[data-uzel="a:holding-omega"][data-hlavni] > .s-radek .s-akter');
+    await expect(page.locator('.strom li[data-uzel="a:fond-sigma"] > .s-radek .s-akter')).toHaveAttribute('aria-expanded', 'true');
+    await expect(holding).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.locator('.strom li[data-uzel="a:firma-alfa"]')).toBeHidden();
+    await holding.click();
+    await expect(holding).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('.strom li[data-uzel="a:firma-alfa"]')).toBeVisible();
+  });
+
+  test('ⓘ ukáže vysvětlení vazby pod řádkem, klepnutí na kauzu otevře detail', async ({ page }) => {
+    await page.goto('/?pohled=mapa');
+    const epsilon = page.locator('.strom li[data-uzel="k:epsilon-fondy"][data-hlavni]');
+    await epsilon.locator(':scope > .s-radek .s-info').click();
+    await expect(epsilon.locator(':scope > .s-vazba')).toBeVisible();
+    await expect(epsilon.locator(':scope > .s-vazba')).toContainText('Kauza se týká vložení fiktivního holdingu do Fondu Sigma.');
+    await epsilon.locator(':scope > .s-radek a').click();
+    await expect(page.locator('dialog#detail')).toBeVisible();
+  });
+});
+
+test('změna šířky okna z počítače na mobil v pohledu mapy', async ({ page }) => {
+  await page.goto('/?pohled=mapa');
+  await expect(page.locator('.mapa-svg')).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 700 });
+  await expect(page.locator('.mapa-svg')).toBeHidden();
+  await expect(page.locator('.strom')).toBeVisible();
+  await expect(page.locator('.strom li[data-uzel="a:holding-omega"][data-hlavni] > .s-radek .s-akter')).toHaveAttribute('aria-expanded', 'false');
+  await page.setViewportSize({ width: 1366, height: 768 });
+  await expect(page.locator('.strom li[data-uzel="a:holding-omega"][data-hlavni] > .s-radek .s-akter')).toHaveAttribute('aria-expanded', 'true');
+});

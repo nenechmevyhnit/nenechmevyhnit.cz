@@ -49,3 +49,25 @@
 @media (min-width: 761px) {
   .mapa .strom { position: absolute; top: 0; left: 0; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 }
+
+.mapa .strom, .mapa .strom ul { list-style: none; margin: 0; padding: 0; }
+.mapa .strom ul { padding-left: 14px; margin-left: 6px; border-left: 1px solid var(--linka); }
+.mapa .strom ul[hidden], .mapa .strom li[hidden], .mapa .strom .s-vazba[hidden] { display: none; }
+.mapa .strom .s-stred > .s-nazev { display: block; padding: 6px 0; font-weight: 600; color: var(--modra); }
+.mapa .strom .s-radek { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; padding: 5px 0; }
+.mapa .strom .s-akter { font: 600 15px var(--f-text); color: var(--inkoust); border: 0; background: none; padding: 2px 0; text-align: left; cursor: pointer; }
+.mapa .strom .s-akter[aria-expanded="false"]::before { content: "▸ "; }
+.mapa .strom .s-akter[aria-expanded="true"]::before { content: "▾ "; }
+.mapa .strom .s-kauza a { color: var(--inkoust); }
+.mapa .strom .s-role, .mapa .strom .s-roky { font: 12px var(--f-mono); color: var(--meta); }
+.mapa .strom .s-info { width: 24px; height: 24px; border: 1px solid var(--linka); border-radius: 50%; background: var(--plocha); font-size: 13px; line-height: 1; cursor: pointer; }
+.mapa .strom .s-vazba { padding: 0 0 8px; font-size: 14px; }
+.mapa .strom .s-vazba p { margin: 0; }
+.mapa .strom .s-zdroje { margin: 4px 0 0; padding-left: 18px; font-size: 13px; }
+.mapa .strom .s-navazuje { padding: 0 0 6px; font-size: 13px; }
+
+@media (max-width: 760px) {
+  .mapa .mapa-svg, .mapa .mapa-legenda { display: none; }
+  .mapa .mapa-panel { display: none !important; }
+  .mapa { padding: 4px 8px 8px; }
+}

@@ -168,6 +168,15 @@ export function inicializujMapu(): void {
     zvyrazni(vybrano);
   });
 
+  /** Na mobilu rozbalení jen přímí aktéři, na počítači vše (strom tam slouží klávesnici a čtečkám). */
+  const nastavRozbaleni = () => strom.querySelectorAll<HTMLButtonElement>('.s-akter[aria-expanded]').forEach(b => {
+    const otevrit = !mobil() || Number(b.closest<HTMLElement>('li')!.dataset.hloubka) <= 1;
+    b.setAttribute('aria-expanded', String(otevrit));
+    document.getElementById(b.getAttribute('aria-controls')!)!.hidden = !otevrit;
+  });
+  matchMedia('(max-width: 760px)').addEventListener('change', nastavRozbaleni);
+  nastavRozbaleni();
+
   nastavPohled(pohledZAdresy(), { zapsat: false });
   prekresli();
   const vyber = new URLSearchParams(location.search).get('vyber');
