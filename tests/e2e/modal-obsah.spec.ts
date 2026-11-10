@@ -68,3 +68,9 @@ for (const v of VELIKOSTI) {
     else if (p.skryto) expect(p.posuvnik, 'na mobilu se delší shrnutí dá posunout').toBe(true);
   });
 }
+
+test('záložky detailu nemají svislý posuvník', async ({ page }) => {
+  await page.goto('/kauzy/zeta-stret/');
+  const z = await page.locator('#detail .zalozky').evaluate(e => ({ vyska: e.scrollHeight, viditelna: e.clientHeight, oy: getComputedStyle(e).overflowY }));
+  expect(z.oy === 'hidden' || z.vyska <= z.viditelna, `obsah záložek ${z.vyska} px > ${z.viditelna} px`).toBe(true);
+});

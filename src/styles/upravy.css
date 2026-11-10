@@ -103,3 +103,8 @@ body .m2-panel[data-p="stav"] .stav-box, body .m2-panel[data-p="stav"] .stav-vpr
 
 /* Označený čip filtru: světlé pozadí čipů (.filtry .f-cipy button) jinak přebije modré pozadí označeného a bílý text zmizí. */
 body .filtry .f-cipy button[aria-pressed="true"] { border-color: var(--modra); background: var(--modra); color: #fff; }
+
+/* Záložky detailu bez svislého posuvníku: vybraná záložka už nepřesahuje dolů (margin -1px),
+   spodní linka je pozadím lišty a vybraná záložka ji svým pozadím zakryje. */
+body .zalozky { overflow-y: hidden; border-bottom: 0; background: linear-gradient(var(--inkoust), var(--inkoust)) left bottom / 100% 1px no-repeat; }
+body .zalozky button[aria-selected="true"] { margin-bottom: 0; }

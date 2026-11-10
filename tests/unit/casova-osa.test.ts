@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { rokCislo, naProcenta, rozsahText, delkaText, datumText, znackyOsy, rokDo } from '../../src/lib/casova-osa';
+import { rokCislo, naProcenta, rozsahText, delkaText, datumText, znackyOsy, rokDo, popiskyRoku } from '../../src/lib/casova-osa';
 
 const DNES = new Date('2026-11-10T12:00:00');
 
@@ -53,5 +53,16 @@ describe('poloha v posledním roce kauzy', () => {
     const a = polohaVKauze('2014-01', 2012, 2014, DNES), b = polohaVKauze('2014-06', 2012, 2014, DNES);
     expect(a).toBeLessThan(b);
     expect(b).toBeLessThan(100);
+  });
+});
+
+describe('popisky roků na mini-ose', () => {
+  it('stejný rok se nezopakuje, i když jsou události daleko od sebe', () => {
+    const r = popiskyRoku([{ datum: '2025-12', p: 10 }, { datum: '2026-02', p: 40 }, { datum: '2026-09', p: 80 }]);
+    expect(r.map(x => x.rok)).toEqual(['2025', '2026']);
+  });
+  it('příliš blízké popisky vynechá', () => {
+    const r = popiskyRoku([{ datum: '2010', p: 0 }, { datum: '2011', p: 5 }, { datum: '2015', p: 30 }]);
+    expect(r).toEqual([{ p: 0, rok: '2010' }, { p: 30, rok: '2015' }]);
   });
 });

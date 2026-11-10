@@ -1,7 +1,7 @@
 ---
 import type { KauzaZaznam } from '../lib/validace';
 import { rozdelOdstavce, odstavecNaHtml } from '../lib/souvislosti';
-import { datumText, rozsahText, delkaText, polohaVKauze } from '../lib/casova-osa';
+import { datumText, rozsahText, delkaText, polohaVKauze, popiskyRoku } from '../lib/casova-osa';
 import { popisekStavu } from '../lib/stavy';
 
 interface Props { zaznam?: KauzaZaznam }
@@ -10,8 +10,7 @@ const REPO = 'https://github.com/nenechmevyhnit/nenechmevyhnit.cz';
 const k = zaznam?.kauza;
 const poloha = (d: string) => k ? polohaVKauze(d, k.od, k.do) : 0;
 const posledni = k ? k.udalosti.length - 1 : 0;
-let posledniRok = -99;
-const rokyOsy = k ? k.udalosti.flatMap(u => { const p = poloha(u.datum); if (p - posledniRok > 9) { posledniRok = p; return [{ p, rok: u.datum.slice(0, 4) }]; } return []; }) : [];
+const rokyOsy = k ? popiskyRoku(k.udalosti.map(u => ({ datum: u.datum, p: poloha(u.datum) }))) : [];
 const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="chip" data-zdroj="${c}" aria-label="Zdroj ${c}">${c}</a>`).join('');
 ---
 <dialog class={`detail m2${k?.do === null ? ' otevrena' : ''}`} id="detail" aria-labelledby="detail-nadpis" data-slug={zaznam?.slug}>

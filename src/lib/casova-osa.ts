@@ -48,3 +48,14 @@ export const konecRok = (doRok: number | null, dnes: Date = new Date()): number 
 export function polohaVKauze(datum: string, od: number, doRok: number | null, dnes: Date = new Date()): number {
   return naProcenta(rokCislo(datum), od, konecRok(doRok, dnes));
 }
+
+/** Popisky roků pod body mini-osy: každý rok nejvýš jednou a ne blíž než `odstup` procent od předchozího. */
+export function popiskyRoku(body: { datum: string; p: number }[], odstup = 9): { p: number; rok: string }[] {
+  const vysledek: { p: number; rok: string }[] = [];
+  for (const { datum, p } of body) {
+    const rok = datum.slice(0, 4);
+    const pred = vysledek[vysledek.length - 1];
+    if (!pred || (p - pred.p > odstup && rok !== pred.rok)) vysledek.push({ p, rok });
+  }
+  return vysledek;
+}
