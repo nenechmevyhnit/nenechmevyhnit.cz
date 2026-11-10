@@ -1,0 +1,5 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "include": ["src", "scripts", "tests", "nastroje"],
+  "exclude": ["dist", "dist-e2e", "dist-prazdny", "design"]
+}
