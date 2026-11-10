@@ -1,5 +1,6 @@
 import { z } from 'astro/zod';
 import { STAVY } from './stavy';
+import { KRITERIA } from './kriteria';
 
 const naText = (v: unknown) =>
   v instanceof Date ? v.toISOString().slice(0, 10) : typeof v === 'number' ? String(v) : v;
@@ -69,6 +70,8 @@ const vytvorKauzaSchema = (koncepty: boolean) => z
     zdroje: z.array(zdrojSchema).min(1, 'Kauza musí mít aspoň jeden zdroj'),
     udalosti: z.array(udalostSchema).min(1, 'Kauza musí mít aspoň jednu událost'),
     stanovisko: z.object({ text: text(), zdroje: odkazy('Stanovisko') }).strict(),
+    kriterium: z.enum(KRITERIA),
+    proc: z.object({ text: text(), zdroje: odkazy('Proč je to kauza') }).strict(),
     opravy: z.array(z.object({ datum: datumPresne, popis: text() }).strict()).default([]),
   })
   .strict()
@@ -83,6 +86,13 @@ const vytvorKauzaSchema = (koncepty: boolean) => z
     };
     k.udalosti.forEach((u, i) => over(u.zdroje, `Událost ${i + 1} („${u.nazev}“)`));
     over(k.stanovisko.zdroje, 'Stanovisko');
+    over(k.proc.zdroje, 'Proč je to kauza');
+    // kritérium zařazení musí podložit zdroje uvedené u „Proč je to kauza“
+    const zdrojeProc = k.zdroje.filter(z => k.proc.zdroje.includes(z.id));
+    if (k.kriterium !== 'dve-redakce' && !zdrojeProc.some(z => z.druh === 'primarni'))
+      ctx.addIssue({ code: 'custom', message: 'Kritérium úřední řízení / úřední zjištění vyžaduje u „Proč je to kauza“ aspoň jeden primární zdroj' });
+    if (k.kriterium === 'dve-redakce' && new Set(zdrojeProc.filter(z => z.druh === 'media').map(z => z.vydavatel.trim().toLowerCase())).size < 2)
+      ctx.addIssue({ code: 'custom', message: 'Kritérium dvě redakce vyžaduje u „Proč je to kauza“ dva mediální zdroje od různých vydavatelů' });
     if (k.do !== null && k.do < k.od) ctx.addIssue({ code: 'custom', message: `Rok konce ${k.do} je dřív než rok začátku ${k.od}` });
     if (k.stav === 'jine' && !k.stavPoznamka) ctx.addIssue({ code: 'custom', message: 'Stav "jine" vyžaduje vyplněnou poznámku ke stavu (stavPoznamka)' });
     const konec = k.do ?? new Date().getFullYear();

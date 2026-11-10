@@ -12,6 +12,7 @@ export const metodika: { platiOd: string; sekce: SekceStranky[] } = {
 <ul><li>probíhá nebo proběhlo úřední řízení (policie, státní zastupitelství, soud, OLAF, Evropská komise, NKÚ, Ústavní soud),</li>
 <li>existuje úřední zjištění, například rozsudek, audit nebo rozhodnutí úřadu,</li>
 <li>věc nezávisle na sobě doložily aspoň dvě seriózní redakce.</li></ul>
+<p>U každé kauzy je hned na začátku vysvětleno, <strong>proč je to kauza</strong>: v čem je věc sporná a proč ji řešil úřad nebo média, se zdrojem. Uvádíme také, podle kterého kritéria je zařazena. Kontrola při sestavení webu ho ověřuje: úřední řízení a úřední zjištění musí doložit primární zdroj, dvě redakce musí doložit dva mediální zdroje od různých vydavatelů.</p>
 <p>Kroky vlády jako celku zatím nezařazujeme. Archiv je na jejich pozdější zařazení připravený.</p>`,
     },
     {

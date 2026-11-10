@@ -19,5 +19,7 @@ export function platnaKauza(): Record<string, unknown> {
       { datum: '2012-01-09', nazev: 'Rozsudek', popis: 'Soud rozhodl.', zdroje: [1] },
     ],
     stanovisko: { text: 'Firma Alfa pochybení odmítá.', zdroje: [2] },
+    kriterium: 'uredni-rizeni',
+    proc: { text: 'Fiktivní soud řeší, zda fiktivní dotace neměla být vyplacena.', zdroje: [1] },
   };
 }

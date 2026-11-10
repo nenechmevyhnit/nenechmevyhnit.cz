@@ -36,7 +36,7 @@ Web je úspěšný, když:
 
 Plné znění je na stránce Metodika (text v prototypu `design/03-detail/_metodika.py`). Shrnutí pravidel, která musí implementace vynucovat:
 
-- **Zařazení:** kauza se týká A. Babiše nebo jím ovládaných firem a splňuje aspoň jedno z kritérií: úřední řízení, úřední zjištění, nebo doložení dvěma nezávislými seriózními redakcemi.
+- **Zařazení:** kauza se týká A. Babiše nebo jím ovládaných firem a splňuje aspoň jedno z kritérií: úřední řízení, úřední zjištění, nebo doložení dvěma nezávislými seriózními redakcemi. Každá kauza uvádí, podle kterého kritéria je zařazena, a se zdrojem vysvětluje, proč je to kauza.
 - **Zdroje:** primární > seriózní média. Sociální sítě a názorové texty nejsou doklad faktu. Klíčová tvrzení mají primární zdroj nebo dva nezávislé mediální.
 - **Jazyk:** slovesa podle stavu řízení, bez hodnotících přívlastků. U neuzavřených věcí presumpce neviny.
 - **Druhá strana:** stanovisko dotčené strany je povinné a má vlastní zdroj.
@@ -74,6 +74,10 @@ udalosti:
 stanovisko:
   text: …
   zdroje: [10]
+kriterium: uredni-rizeni        # výčet: uredni-rizeni | uredni-zjisteni | dve-redakce
+proc:                           # „Proč je to kauza“: 1–3 věty, v čem je věc sporná a proč ji řešil úřad nebo média
+  text: …
+  zdroje: [1, 4]
 opravy:                         # nepovinné
   - datum: 2026-12-01
     popis: Co a proč bylo opraveno.
@@ -84,8 +88,10 @@ Volitelný text „Souvislosti“. Každý odstavec končí aspoň jednou pozná
 **Výčet stavů:** `provereni`, `obvineni`, `obzaloba`, `nepravomocne-odsouzen`, `pravomocne-odsouzen`, `nepravomocne-zprosten`, `pravomocne-zprosten`, `odlozeno`, `zastaveno`, `promlceno`, `soudni-rizeni`, `uredni-zjisteni`, `jine` (u `jine` je `stavPoznamka` povinná). Lidské popisky stavů jsou v jednom slovníku sdíleném s webem a se slovníčkem v Metodice.
 
 **Build selže, když:**
-- chybí `overeno`, `stanovisko`, aspoň jedna událost nebo aspoň jeden zdroj,
-- událost nebo stanovisko nemá zdroj, nebo odkazuje na neexistující `id`,
+- chybí `overeno`, `stanovisko`, `kriterium`, `proc`, aspoň jedna událost nebo aspoň jeden zdroj,
+- kritérium nepodkládají zdroje u `proc`: `uredni-rizeni` a `uredni-zjisteni` vyžadují aspoň jeden primární zdroj, `dve-redakce` dva mediální zdroje od různých vydavatelů,
+- `nazev` má víc než 36 znaků (musí být na ose celý vidět),
+- událost, stanovisko nebo `proc` nemá zdroj, nebo odkazuje na neexistující `id`,
 - `stav` není z výčtu, `do < od`, nebo datum události leží mimo `od`–(`do` nebo dnes),
 - zdroj nemá `url`, `vydavatel` nebo `druh`,
 - odstavec „Souvislostí“ nemá poznámku se zdrojem, nebo poznámka odkazuje na neexistující zdroj,
@@ -116,6 +122,7 @@ Obsah modalu:
 - nadtitulek (od–do · délka · stav), název a shrnutí (max. 3 řádky),
 - mini-osa kauzy s body událostí a popiskem vybrané události,
 - záložky:
+  - **Proč je to kauza** (otevřená jako první): text se zdroji a řádek „Zařazeno podle metodiky: …“ s odkazem na /metodika/#kriteria,
   - **Chronologie:** jedna událost, listování ← → i klávesnicí,
   - **Souvislosti:** text s poznámkami,
   - **Stav a stanovisko:** stav s datem ověření, presumpce neviny a stanovisko dotčené strany,

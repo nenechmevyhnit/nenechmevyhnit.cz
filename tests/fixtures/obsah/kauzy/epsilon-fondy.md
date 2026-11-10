@@ -31,5 +31,9 @@ udalosti:
 stanovisko:
   text: Skupina Epsilon závěry auditu odmítá.
   zdroje: [2]
+kriterium: uredni-zjisteni
+proc:
+  text: Fiktivní komise zjistila fiktivní střet zájmů při čerpání fondů Epsilon.
+  zdroje: [1]
 ---
 Audit se týkal fiktivních fondů v letech 2017 až 2019.[^1]

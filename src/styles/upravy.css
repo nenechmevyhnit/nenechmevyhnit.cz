@@ -116,3 +116,9 @@ body .zalozky button[aria-selected="true"] { margin-bottom: 0; }
   body .osa-roku .nazev-sloupce { display: flex; align-items: baseline; gap: 12px; white-space: nowrap; }
   body .osa-roku .f-zrusit { font: 12px var(--f-mono); text-transform: none; letter-spacing: 0; cursor: pointer; padding: 0 !important; }
 }
+
+/* Záložka „Proč je to kauza“ */
+body .m2-panel[data-p="proc"] .proc-text { margin: 0; max-width: 46em; font-size: 17px; line-height: 1.55; color: var(--inkoust); }
+body .m2-panel[data-p="proc"] .kriterium { margin: 14px 0 0; font: 13px var(--f-mono); color: var(--meta); }
+body .m2-panel[data-p="proc"] .kriterium a { color: var(--modra); }
+body .m2-panel[data-p="proc"]:not([hidden]) { overflow-y: auto; scrollbar-width: thin; }

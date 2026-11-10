@@ -31,5 +31,9 @@ udalosti:
 stanovisko:
   text: Firma Delta postup považuje za legální.
   zdroje: [2]
+kriterium: uredni-zjisteni
+proc:
+  text: Fiktivní finanční úřad zjistil, že fiktivní dluhopisy Delta snížily daň.
+  zdroje: [1, 2]
 ---
 Dluhopisy vydala firma Delta na konci roku 2012.[^2]

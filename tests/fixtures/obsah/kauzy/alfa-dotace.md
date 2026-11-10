@@ -17,6 +17,10 @@ udalosti:
   - { datum: 2017-12, nazev: Zpráva úřadu OLAF, popis: Fiktivní úřad uvádí pochybení., zdroje: [3] }
   - { datum: 2023-01-09, nazev: Nepravomocné zproštění, popis: Soud zprostil obžalované., zdroje: [1] }
 stanovisko: { text: Firma Alfa pochybení odmítá., zdroje: [2] }
+kriterium: uredni-rizeni
+proc:
+  text: Fiktivní soud řeší, zda firma Alfa neměla na fiktivní dotaci pro malé podniky nárok.
+  zdroje: [1]
 ---
 Firma Alfa byla původně součástí holdingu.[^2]
 

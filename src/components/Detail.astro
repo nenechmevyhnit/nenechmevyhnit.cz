@@ -3,6 +3,7 @@ import type { KauzaZaznam } from '../lib/validace';
 import { rozdelOdstavce, odstavecNaHtml } from '../lib/souvislosti';
 import { datumText, rozsahText, delkaText, polohaVKauze, popiskyRoku } from '../lib/casova-osa';
 import { popisekStavu } from '../lib/stavy';
+import { popisekKriteria } from '../lib/kriteria';
 
 interface Props { zaznam?: KauzaZaznam }
 const { zaznam } = Astro.props;
@@ -29,12 +30,17 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
         <span class="vybrany-popis"></span>
       </div>
       <div class="zalozky" role="tablist">
-        <button role="tab" type="button" data-p="chrono" aria-selected="true">Chronologie</button>
+        <button role="tab" type="button" data-p="proc" aria-selected="true">Proč je to kauza</button>
+        <button role="tab" type="button" data-p="chrono" aria-selected="false">Chronologie</button>
         <button role="tab" type="button" data-p="souv" aria-selected="false">Souvislosti</button>
         <button role="tab" type="button" data-p="stav" aria-selected="false">Stav a stanovisko</button>
         <button role="tab" type="button" data-p="zdroje" aria-selected="false">Zdroje ({k.zdroje.length})</button>
       </div>
-      <div class="m2-panel" data-p="chrono" role="tabpanel">
+      <div class="m2-panel" data-p="proc" role="tabpanel">
+        <p class="proc-text">{k.proc.text}<span class="chipy" set:html={chipy(k.proc.zdroje)}></span></p>
+        <p class="kriterium">Zařazeno podle metodiky: <a href="/metodika/#kriteria">{popisekKriteria(k.kriterium)}</a></p>
+      </div>
+      <div class="m2-panel" data-p="chrono" role="tabpanel" hidden>
         <ol class="udalosti-seznam">
           {k.udalosti.map((u, i) => (
             <li data-i={i} data-datum={u.datum}>

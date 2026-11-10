@@ -35,6 +35,10 @@ opravy:
 stanovisko:
   text: Obžalovaní vinu odmítají. Podle jejich fiktivního vyjádření postupovali v souladu s tehdy platnými fiktivními pravidly a veškeré podklady předali kontrolním orgánům, které žádné pochybení neshledaly. Podle jejich fiktivního vyjádření postupovali v souladu s tehdy platnými fiktivními pravidly a veškeré podklady předali kontrolním orgánům, které žádné pochybení neshledaly. Podle jejich fiktivního vyjádření postupovali v souladu s tehdy platnými fiktivními pravidly a veškeré podklady předali kontrolním orgánům, které žádné pochybení neshledaly.
   zdroje: [2]
+kriterium: uredni-rizeni
+proc:
+  text: Fiktivní státní zastupitelství viní osobu Žeta z fiktivního střetu zájmů.
+  zdroje: [1, 2]
 ---
 Prostředky rozdělilo fiktivní ministerstvo v roce 2018.[^2]
 

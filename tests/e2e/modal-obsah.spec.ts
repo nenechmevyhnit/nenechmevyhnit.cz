@@ -6,7 +6,7 @@ for (const v of VELIKOSTI) {
   test(`${v.width}×${v.height}: v žádné záložce detailu není oříznutý obsah`, async ({ page }) => {
     await page.setViewportSize(v);
     await page.goto('/kauzy/zeta-stret/');
-    for (const zalozka of ['Chronologie', 'Souvislosti', 'Stav a stanovisko', /^Zdroje/]) {
+    for (const zalozka of ['Proč je to kauza', 'Chronologie', 'Souvislosti', 'Stav a stanovisko', /^Zdroje/]) {
       await page.getByRole('tab', { name: zalozka }).click();
       const presah = await page.evaluate(() => {
         const panel = document.querySelector<HTMLElement>('#detail .m2-panel:not([hidden])')!;

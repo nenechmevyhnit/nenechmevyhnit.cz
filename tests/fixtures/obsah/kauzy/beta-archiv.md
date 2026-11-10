@@ -31,6 +31,10 @@ udalosti:
 stanovisko:
   text: Osoba Beta spolupráci popírá.
   zdroje: [2]
+kriterium: uredni-rizeni
+proc:
+  text: Fiktivní soudy rozhodovaly, zda je fiktivní evidence osoby Beta oprávněná.
+  zdroje: [1, 2]
 ---
 Svazek Beta je uložen ve fiktivním archivu.[^1]
 

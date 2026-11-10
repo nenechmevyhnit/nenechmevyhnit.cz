@@ -109,3 +109,38 @@ describe('kauzaSchema — integrita dat (závěrečná kontrola)', () => {
     expect(chyby({ ...platnaKauza(), nazev: 'x'.repeat(37) }).join(' ')).toMatch(/36 znaků/);
   });
 });
+
+describe('Proč je to kauza a kritérium zařazení', () => {
+  const media = [
+    { id: 1, vydavatel: 'Deník A', titulek: 'Článek A', datum: '2011-05', druh: 'media', url: 'https://example.com/a' },
+    { id: 2, vydavatel: 'Deník B', titulek: 'Článek B', datum: '2011-06', druh: 'media', url: 'https://example.com/b' },
+    { id: 3, vydavatel: 'Deník A', titulek: 'Článek A2', datum: '2011-07', druh: 'media', url: 'https://example.com/a2' },
+  ];
+  const sMedii = (proc: number[]) => ({
+    ...platnaKauza(), zdroje: media, kriterium: 'dve-redakce', proc: { text: 'Fiktivní důvod.', zdroje: proc },
+    udalosti: [{ datum: '2011-05', nazev: 'Událost', popis: 'Popis.', zdroje: [1] }], stanovisko: { text: 'Fiktivní stanovisko.', zdroje: [1] },
+  });
+  it('vyžaduje Proč je to kauza', () => {
+    const k = platnaKauza(); delete k.proc;
+    expect(chyby(k).length).toBeGreaterThan(0);
+  });
+  it('vyžaduje kritérium z výčtu', () => {
+    const k = platnaKauza(); delete k.kriterium;
+    expect(chyby(k).length).toBeGreaterThan(0);
+    expect(chyby({ ...platnaKauza(), kriterium: 'pocit' }).length).toBeGreaterThan(0);
+  });
+  it('Proč musí mít aspoň jeden existující zdroj', () => {
+    expect(chyby({ ...platnaKauza(), proc: { text: 'Důvod.', zdroje: [] } }).length).toBeGreaterThan(0);
+    expect(chyby({ ...platnaKauza(), proc: { text: 'Důvod.', zdroje: [9] } }).join(' ')).toMatch(/Proč je to kauza odkazuje na neexistující zdroj 9/);
+  });
+  it('úřední řízení i úřední zjištění potřebují mezi zdroji Proč primární zdroj', () => {
+    expect(chyby({ ...platnaKauza(), proc: { text: 'Důvod.', zdroje: [2] } }).join(' ')).toMatch(/primární zdroj/);
+    expect(chyby({ ...platnaKauza(), kriterium: 'uredni-zjisteni', proc: { text: 'Důvod.', zdroje: [2] } }).join(' ')).toMatch(/primární zdroj/);
+    expect(chyby({ ...platnaKauza(), kriterium: 'uredni-zjisteni', proc: { text: 'Důvod.', zdroje: [1, 2] } })).toEqual([]);
+  });
+  it('dvě redakce potřebují dva mediální zdroje od různých vydavatelů', () => {
+    expect(chyby(sMedii([1])).join(' ')).toMatch(/dva mediální zdroje od různých vydavatelů/);
+    expect(chyby(sMedii([1, 3])).join(' ')).toMatch(/dva mediální zdroje od různých vydavatelů/);
+    expect(chyby(sMedii([1, 2]))).toEqual([]);
+  });
+});
