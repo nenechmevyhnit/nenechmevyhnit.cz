@@ -1,0 +1,16 @@
+# neověřené koncepty kauz nesmí nikdy do veřejného repozitáře
+_koncepty/
+
+# návrhy obsahují ilustrační, neověřená data o skutečné osobě; necommitovat, dokud se nenahradí
+design/
+
+# build a závislosti
+node_modules/
+dist/
+.astro/
+
+# systém a editor
+.DS_Store
+Thumbs.db
+.vscode/
+*.log
