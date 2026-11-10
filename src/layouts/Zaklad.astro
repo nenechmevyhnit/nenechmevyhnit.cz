@@ -1,0 +1,43 @@
+---
+import '../styles/fonty.css';
+import '../styles/upravy.css';
+import Hlavicka from '../components/Hlavicka.astro';
+
+interface Props {
+  titulek: string;
+  popis: string;
+  cesta: string;
+  styly: 'hlavni' | 'stranky';
+  aktivni: 'kauzy' | 'metodika' | 'o-projektu';
+  otevrena?: string;
+}
+const { titulek, popis, cesta, styly, aktivni, otevrena } = Astro.props;
+const url = new URL(cesta, Astro.site).toString();
+const nahled = new URL('/obrazky/nahled.png', Astro.site).toString();
+---
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{titulek}</title>
+  <meta name="description" content={popis}>
+  <link rel="canonical" href={url}>
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="cs_CZ">
+  <meta property="og:site_name" content="Nenechme vyhnít">
+  <meta property="og:title" content={titulek}>
+  <meta property="og:description" content={popis}>
+  <meta property="og:url" content={url}>
+  <meta property="og:image" content={nahled}>
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+</head>
+<body data-otevrena={otevrena}>
+  <div class="wrap" id="obsah">
+    <Hlavicka aktivni={aktivni} />
+    <slot />
+  </div>
+  <slot name="mimo" />
+</body>
+</html>

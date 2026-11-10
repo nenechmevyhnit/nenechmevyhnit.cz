@@ -1,0 +1,15 @@
+---
+interface Props { aktivni: 'kauzy' | 'metodika' | 'o-projektu' }
+const { aktivni } = Astro.props;
+const polozky = [
+  { id: 'kauzy', nazev: 'Kauzy', href: '/' },
+  { id: 'metodika', nazev: 'Metodika', href: '/metodika/' },
+  { id: 'o-projektu', nazev: 'O projektu', href: '/o-projektu/' },
+] as const;
+---
+<header class="top">
+  <a class="brand" href="/">Nenechme vyhnít</a>
+  <nav aria-label="Hlavní">
+    {polozky.map(p => <a href={p.href} aria-current={p.id === aktivni ? 'page' : undefined}>{p.nazev}</a>)}
+  </nav>
+</header>

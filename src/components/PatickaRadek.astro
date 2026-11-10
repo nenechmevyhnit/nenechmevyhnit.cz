@@ -1,0 +1,15 @@
+---
+interface Props { legenda?: boolean }
+const { legenda = false } = Astro.props;
+const REPO = 'https://github.com/nenechmevyhnit/nenechmevyhnit.cz';
+---
+<div class="legenda">
+  {legenda && <><span><i></i>uzavřeno</span><span><i class="ok"></i>dosud neuzavřeno</span><span><i class="ud"></i>událost v kauze</span></>}
+  <span class="legenda-odkazy">
+    <a href="https://commons.wikimedia.org/wiki/File:Andrej_Babi%C5%A1_2025_(cropped).jpg" title="Andrej Babiš, únor 2025. Vox España, Wikimedia Commons, CC0">Foto: Vox España (CC0)</a>
+    <span>Nezávislý archiv</span>
+    <a href={`${REPO}/issues/new?template=oprava.yml`}>Nahlásit chybu</a>
+    <a href={`${REPO}/commits/main/obsah`}>Historie změn</a>
+    <a href="mailto:nenechmevyhnit@gmail.com">nenechmevyhnit@gmail.com</a>
+  </span>
+</div>

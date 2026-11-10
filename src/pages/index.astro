@@ -1,3 +1,8 @@
 ---
+import Zaklad from '../layouts/Zaklad.astro';
+import PatickaRadek from '../components/PatickaRadek.astro';
+import '../styles/hlavni.css';
 ---
-<html lang="cs"><head><meta charset="utf-8"><title>Nenechme vyhnít</title></head><body><p>Kostra</p></body></html>
+<Zaklad titulek="Nenechme vyhnít — kauzy Andreje Babiše" popis="Archiv kauz Andreje Babiše přehledně, s daty a zdroji." cesta="/" styly="hlavni" aktivni="kauzy">
+  <PatickaRadek legenda />
+</Zaklad>
