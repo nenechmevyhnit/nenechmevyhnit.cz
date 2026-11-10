@@ -1,5 +1,6 @@
 {
   "extends": "astro/tsconfigs/strict",
+  "compilerOptions": { "types": ["node"] },
   "include": ["src", "scripts", "tests", "nastroje"],
   "exclude": ["dist", "dist-e2e", "dist-prazdny", "design"]
 }
