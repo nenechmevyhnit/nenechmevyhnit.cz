@@ -58,7 +58,7 @@ test.describe('mobil 390×700: hlavní stránka', () => {
   test('osa je zúžená: všechny pruhy jsou vidět bez posouvání do strany', async ({ page }) => {
     await page.goto('/');
     const graf = (await page.locator('#graf').boundingBox())!;
-    for (const pruh of await page.locator('.radek .pruh').all()) {
+    for (const pruh of await page.locator('.radek:not([hidden]) .pruh').all()) {
       const b = (await pruh.boundingBox())!;
       expect(b.x).toBeGreaterThanOrEqual(graf.x - 1);
       expect(b.x + b.width).toBeLessThanOrEqual(graf.x + graf.width + 1);

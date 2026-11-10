@@ -21,3 +21,4 @@ dist-e2e/
 dist-prazdny/
 test-results/
 playwright-report/
+.gstack/

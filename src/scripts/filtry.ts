@@ -1,33 +1,98 @@
-import { odpovida, jeAktivni, type Filtr, type PolozkaHledani } from '../lib/hledani';
+import { odpovida, jeAktivni, seradit, PRAZDNY_FILTR, type Filtr, type PolozkaHledani } from '../lib/hledani';
+import { pocetNaStranku, pocetStranek, cislaStranek } from '../lib/strankovani';
 import { sklonuj } from '../lib/cestina';
 
 export function inicializujFiltry(): void {
   const panel = document.querySelector<HTMLElement>('.filtry');
   const data = document.getElementById('nv-hledani');
-  if (!panel || !data) return;
+  const graf = document.getElementById('graf');
+  if (!panel || !data || !graf) return;
   const polozky: PolozkaHledani[] = JSON.parse(data.textContent || '[]');
   const hledat = panel.querySelector<HTMLInputElement>('.f-hledat input')!;
   const cipy = panel.querySelector<HTMLElement>('.f-cipy')!;
   const jen = panel.querySelector<HTMLInputElement>('[data-jen-otevrene]')!;
+  const vybery = [...panel.querySelectorAll<HTMLSelectElement>('select[data-filtr]')];
+  const razeniVyber = panel.querySelector<HTMLSelectElement>('select[data-razeni]')!;
   // počítadlo a Zrušit filtry jsou dvakrát: v záhlaví osy (počítač) a v řádku filtrů (mobil), CSS ukáže jen jedno
   const pocty = document.querySelectorAll<HTMLElement>('.pocet');
   const zrusit = document.querySelectorAll<HTMLButtonElement>('.f-zrusit');
-  const prazdno = document.querySelector<HTMLElement>('#graf .prazdno')!;
-  const filtr: Filtr = { text: '', stitky: [], jenOtevrene: false };
+  const radky = graf.querySelector<HTMLElement>('.radky')!;
+  const prazdno = graf.querySelector<HTMLElement>('.prazdno')!;
+  const strankovani = graf.querySelector<HTMLElement>('.strankovani')!;
+  const rozsah = strankovani.querySelector<HTMLElement>('.s-rozsah')!;
+  const cisla = strankovani.querySelector<HTMLElement>('.s-cisla')!;
+  const pred = strankovani.querySelector<HTMLButtonElement>('.s-pred')!;
+  const dalsi = strankovani.querySelector<HTMLButtonElement>('.s-dalsi')!;
+
+  const radekPodle = new Map<string, HTMLElement>();
+  for (const p of polozky) {
+    const r = radky.querySelector<HTMLElement>(`.radek[data-slug="${CSS.escape(p.slug)}"]`);
+    if (r) radekPodle.set(p.slug, r);
+  }
+
+  const filtr: Filtr = { ...PRAZDNY_FILTR, stitky: [] };
+  let razeni = razeniVyber.value;
+  let poradi = seradit(polozky, razeni);
+  let shoda: PolozkaHledani[] = poradi;
+  let strana = 1;
+  let naStranku = Infinity; // Infinity = stránkování vypnuté (vše se vejde)
+
+  const vybrany = () => graf.dataset.vybrano ?? null;
+  const stranaKauzy = (slug: string | null) => {
+    const i = slug ? shoda.findIndex(p => p.slug === slug) : -1;
+    return i < 0 || !isFinite(naStranku) ? null : Math.floor(i / naStranku) + 1;
+  };
+
+  /** Kolik řádků se vejde na výšku osy; zapne stránkování, jen když se všechny kauzy nevejdou. */
+  const zmerStranku = () => {
+    const prvni = radekPodle.values().next().value;
+    if (!prvni) return;
+    strankovani.hidden = true;
+    radky.classList.remove('strankovane');
+    // aspoň 34 px, jinak se popisek let nad pruhem nevejde
+    const vyskaRadku = Math.max(parseFloat(getComputedStyle(prvni).minHeight) || 0, 34);
+    const bez = pocetNaStranku(radky.clientHeight, vyskaRadku);
+    if (polozky.length <= bez) { naStranku = Infinity; return; }
+    strankovani.hidden = false;
+    radky.classList.add('strankovane');
+    // označené pásmo kauzy končí nad lištou stránkování
+    graf.style.setProperty('--vyska-strankovani', `${strankovani.offsetHeight}px`);
+    naStranku = pocetNaStranku(radky.clientHeight, vyskaRadku);
+    // řádky všech stránek stejně vysoké, i na poslední neúplné stránce
+    radky.style.setProperty('--vyska-radku', `${radky.clientHeight / naStranku}px`);
+  };
+
+  const vykresliStrankovani = () => {
+    if (!isFinite(naStranku)) return;
+    const celkem = pocetStranek(shoda.length, naStranku);
+    const od = (strana - 1) * naStranku;
+    rozsah.textContent = shoda.length ? `${od + 1}–${Math.min(od + naStranku, shoda.length)} z ${shoda.length}` : '0 z 0';
+    pred.disabled = strana <= 1;
+    dalsi.disabled = strana >= celkem;
+    cisla.replaceChildren(...cislaStranek(strana, celkem).map(c => {
+      if (c === null) { const s = document.createElement('span'); s.className = 's-mezera'; s.textContent = '…'; return s; }
+      const b = document.createElement('button');
+      b.type = 'button'; b.textContent = String(c); b.dataset.strana = String(c);
+      b.setAttribute('aria-label', `Stránka ${c}`);
+      if (c === strana) b.setAttribute('aria-current', 'page');
+      return b;
+    }));
+  };
 
   const proved = () => {
-    let n = 0;
-    for (const p of polozky) {
-      const radek = document.querySelector<HTMLElement>(`.radek[data-slug="${CSS.escape(p.slug)}"]`);
-      if (!radek) continue;
-      const ok = odpovida(p, filtr);
-      radek.hidden = !ok;
-      if (ok) n++;
-    }
+    const naTeto = new Set<string>();
+    const celkem = pocetStranek(shoda.length, isFinite(naStranku) ? naStranku : shoda.length || 1);
+    strana = Math.min(Math.max(1, strana), celkem);
+    const od = isFinite(naStranku) ? (strana - 1) * naStranku : 0;
+    const konec = isFinite(naStranku) ? od + naStranku : shoda.length;
+    shoda.slice(od, konec).forEach(p => naTeto.add(p.slug));
+    for (const [slug, r] of radekPodle) r.hidden = !naTeto.has(slug);
+    const n = shoda.length;
     prazdno.hidden = n > 0;
     const text = n === polozky.length ? sklonuj(n, ['kauza', 'kauzy', 'kauz']) : `${n} z ${polozky.length} kauz`;
     pocty.forEach(p => { p.textContent = text; });
     zrusit.forEach(z => { z.hidden = !jeAktivni(filtr); });
+    vykresliStrankovani();
   };
 
   const aplikuj = () => {
@@ -40,24 +105,74 @@ export function inicializujFiltry(): void {
     setTimeout(() => { if (!hotovo) { t.skipTransition(); jednou(); } }, 200);
   };
 
-  const reset = () => {
-    filtr.text = ''; filtr.stitky = []; filtr.jenOtevrene = false;
-    hledat.value = ''; jen.checked = false;
-    cipy.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', 'false'));
+  /** Nový výsledek filtru: zpět na první stránku. */
+  const prefiltruj = () => {
+    shoda = poradi.filter(p => odpovida(p, filtr));
+    strana = 1;
     aplikuj();
   };
 
-  hledat.addEventListener('input', () => { filtr.text = hledat.value; aplikuj(); });
-  jen.addEventListener('change', () => { filtr.jenOtevrene = jen.checked; aplikuj(); });
+  const preskladej = () => {
+    poradi = seradit(polozky, razeni);
+    for (const p of poradi) { const r = radekPodle.get(p.slug); if (r) radky.insertBefore(r, prazdno); }
+  };
+
+  const reset = () => {
+    Object.assign(filtr, PRAZDNY_FILTR, { stitky: [] });
+    hledat.value = ''; jen.checked = false;
+    vybery.forEach(v => { v.value = ''; });
+    cipy.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', 'false'));
+    prefiltruj();
+  };
+
+  hledat.addEventListener('input', () => { filtr.text = hledat.value; prefiltruj(); });
+  jen.addEventListener('change', () => { filtr.jenOtevrene = jen.checked; prefiltruj(); });
+  vybery.forEach(v => v.addEventListener('change', () => {
+    filtr[v.dataset.filtr as 'stav' | 'trvani' | 'obdobi'] = v.value;
+    prefiltruj();
+  }));
+  razeniVyber.addEventListener('change', () => {
+    razeni = razeniVyber.value;
+    const sPohybem = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const zmena = () => { preskladej(); shoda = poradi.filter(p => odpovida(p, filtr)); strana = 1; proved(); };
+    if (!document.startViewTransition || !sPohybem || !document.body.classList.contains('nacteno')) return zmena();
+    const t = document.startViewTransition(zmena);
+    [t.ready, t.finished, t.updateCallbackDone].forEach(p => p.catch(() => {}));
+  });
   cipy.addEventListener('click', e => {
     const b = (e.target as HTMLElement).closest('button');
     if (!b) return;
     b.setAttribute('aria-pressed', String(b.getAttribute('aria-pressed') !== 'true'));
     filtr.stitky = [...cipy.querySelectorAll<HTMLElement>('[aria-pressed="true"]')].map(x => x.dataset.stitek!);
-    aplikuj();
+    prefiltruj();
   });
   zrusit.forEach(z => z.addEventListener('click', reset));
   prazdno.querySelector('[data-zrusit]')!.addEventListener('click', reset);
+
+  // stránkování
+  pred.addEventListener('click', () => { strana--; aplikuj(); });
+  dalsi.addEventListener('click', () => { strana++; aplikuj(); });
+  cisla.addEventListener('click', e => {
+    const b = (e.target as HTMLElement).closest<HTMLElement>('button[data-strana]');
+    if (b) { strana = Number(b.dataset.strana); aplikuj(); }
+  });
+  // otevřená kauza (detail) musí být na ose vidět: přepni na její stránku
+  document.addEventListener('nv:vyber', e => {
+    const s = stranaKauzy((e as CustomEvent<string | null>).detail);
+    if (s && s !== strana) { strana = s; proved(); }
+  });
+  // změna velikosti: přepočítat stránku a zůstat u vybrané kauzy, jinak u první kauzy dosavadní stránky
+  let posledniVyska = -1;
+  const prepocitej = () => {
+    const v = graf.clientHeight;
+    if (v === posledniVyska) return;
+    posledniVyska = v;
+    const kotva = vybrany() ?? (isFinite(naStranku) ? shoda[(strana - 1) * naStranku]?.slug : null) ?? null;
+    zmerStranku();
+    strana = stranaKauzy(kotva) ?? 1;
+    proved();
+  };
+  new ResizeObserver(prepocitej).observe(graf);
 
   // šipky u čipů (bez viditelného posuvníku)
   const obal = cipy.parentElement!, vl = obal.querySelector<HTMLButtonElement>('.vlevo')!, vp = obal.querySelector<HTMLButtonElement>('.vpravo')!;
@@ -72,5 +187,11 @@ export function inicializujFiltry(): void {
   cipy.addEventListener('scroll', sipky);
   addEventListener('resize', sipky);
   document.fonts.ready.then(sipky);
-  proved();
+
+  // prohlížeč mohl po návratu na stránku obnovit hodnoty polí: převzít je
+  filtr.text = hledat.value; filtr.jenOtevrene = jen.checked;
+  vybery.forEach(v => { filtr[v.dataset.filtr as 'stav' | 'trvani' | 'obdobi'] = v.value; });
+  if (razeni !== 'zacatek') preskladej();
+  shoda = poradi.filter(p => odpovida(p, filtr));
+  prepocitej();
 }

@@ -40,5 +40,14 @@ const pct = (r: number) => naProcenta(r, ROK_OD, DO + 1);
       })}
       <div class="prazdno" role="listitem" hidden>Žádná kauza neodpovídá filtru. <button type="button" data-zrusit>Zrušit filtry</button></div>
     </div>
+    <!-- stránkování zapíná skript, jen když se kauzy nevejdou na výšku osy (bez JS se seznam posouvá) -->
+    <nav class="strankovani" aria-label="Stránkování kauz" hidden>
+      <span class="s-rozsah" aria-live="polite"></span>
+      <span class="s-tlacitka">
+        <button type="button" class="s-pred" aria-label="Předchozí stránka">‹</button>
+        <span class="s-cisla"></span>
+        <button type="button" class="s-dalsi" aria-label="Další stránka">›</button>
+      </span>
+    </nav>
   </div>
 </div>

@@ -1,13 +1,20 @@
 ---
 import type { KauzaZaznam } from '../lib/validace';
-import { vytvorPolozku } from '../lib/hledani';
+import { vytvorPolozku, odpovida, PRAZDNY_FILTR, TRVANI, OBDOBI, RAZENI } from '../lib/hledani';
+import { STAVY, popisekStavu } from '../lib/stavy';
 import { jsonDoSkriptu } from '../lib/html';
 
 interface Props { zaznamy: KauzaZaznam[]; stitky: Map<string, string> }
 const { zaznamy, stitky } = Astro.props;
 const pouzite = [...new Set(zaznamy.flatMap(z => z.kauza.stitky))];
 const cipy = pouzite.map(id => ({ id, nazev: stitky.get(id) ?? id })).sort((a, b) => a.nazev.localeCompare(b.nazev, 'cs'));
-const data = jsonDoSkriptu(zaznamy.map(vytvorPolozku));
+const polozky = zaznamy.map(vytvorPolozku);
+const data = jsonDoSkriptu(polozky);
+// nabízíme jen volby, pod kterými je aspoň jedna kauza
+const stavy = STAVY.filter(s => polozky.some(p => p.stav === s));
+const neprazdne = (f: Partial<typeof PRAZDNY_FILTR>) => polozky.some(p => odpovida(p, { ...PRAZDNY_FILTR, ...f }));
+const trvani = TRVANI.filter(t => neprazdne({ trvani: t.id }));
+const obdobi = OBDOBI.filter(o => neprazdne({ obdobi: o.id }));
 ---
 {zaznamy.length > 0 && (
   <div class="filtry f4">
@@ -21,6 +28,14 @@ const data = jsonDoSkriptu(zaznamy.map(vytvorPolozku));
     </div>
     <label class="f-prepinac"><input type="checkbox" data-jen-otevrene> jen neuzavřené</label>
     <span class="vpravo"><span class="pocet" aria-live="polite"></span><button class="f-zrusit" type="button" hidden>Zrušit filtry</button></span>
+    <!-- další filtry a řazení se čtou jako věta; popisky pro čtečky nesou aria-label -->
+    <div class="f-dalsi" role="group" aria-label="Další filtry a řazení">
+      Ukázat kauzy
+      <select data-filtr="stav" aria-label="Stav"><option value="">v jakémkoli stavu</option>{stavy.map(s => <option value={s}>{s === 'jine' ? 's jiným stavem' : `ve stavu ${popisekStavu(s).toLowerCase()}`}</option>)}</select>,
+      <select data-filtr="trvani" aria-label="Trvání"><option value="">jakkoli dlouhé</option>{trvani.map(t => <option value={t.id}>trvající {t.nazev}</option>)}</select>,
+      <select data-filtr="obdobi" aria-label="Probíhala"><option value="">z kteréhokoli období</option>{obdobi.map(o => <option value={o.id}>probíhající {o.nazev}</option>)}</select>,
+      řazené <select data-razeni aria-label="Řadit">{RAZENI.map(r => <option value={r.id}>{r.nazev}</option>)}</select>
+    </div>
   </div>
 )}
 <script type="application/json" id="nv-hledani" set:html={data}></script>

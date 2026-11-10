@@ -75,3 +75,36 @@ test('na počítači jsou počítadlo a Zrušit filtry v záhlaví osy, řádek 
   await expect(viditelne(page)).toHaveCount(6);
   await expect(page.locator('.osa-roku .f-zrusit')).toBeHidden();
 });
+
+test('další filtry: stav řízení, doba trvání a období', async ({ page }) => {
+  await page.getByLabel('Stav').selectOption({ label: 've stavu obžaloba' });
+  await expect(viditelne(page)).toHaveCount(1);
+  await expect(viditelne(page).locator('strong')).toHaveText('Testovací kauza Žeta');
+  await page.getByLabel('Stav').selectOption('');
+  await page.getByLabel('Trvání').selectOption({ label: 'trvající přes 10 let' });
+  await expect(viditelne(page)).toHaveCount(3);
+  await page.getByLabel('Probíhala').selectOption({ label: 'probíhající do roku 1999' });
+  await expect(viditelne(page)).toHaveCount(1);
+  await expect(page.locator('.pocet:visible')).toHaveText('1 z 6 kauz');
+  await page.locator('.f-zrusit:visible').click();
+  await expect(viditelne(page)).toHaveCount(6);
+  await expect(page.getByLabel('Trvání')).toHaveValue('');
+  await expect(page.getByLabel('Probíhala')).toHaveValue('');
+});
+
+test('nabízí jen stavy, které v archivu jsou', async ({ page }) => {
+  const stavy = await page.getByLabel('Stav').locator('option').allTextContents();
+  expect(stavy).toContain('ve stavu obžaloba');
+  expect(stavy).not.toContain('ve stavu promlčeno');
+});
+
+test('řazení přeskládá řádky, zrušení filtrů řazení nemění', async ({ page }) => {
+  await page.getByLabel('Řadit').selectOption({ label: 'od nejnovější' });
+  await expect(viditelne(page).first().locator('strong')).toHaveText('Testovací kauza Žeta');
+  await expect(viditelne(page).last().locator('strong')).toHaveText('Testovací kauza Beta');
+  await page.getByLabel('Řadit').selectOption({ label: 'od nejdelší' });
+  await expect(viditelne(page).first().locator('strong')).toHaveText('Testovací kauza Beta');
+  await page.getByLabel('Řadit').selectOption({ label: 'od nejstarší' });
+  await expect(viditelne(page).first().locator('strong')).toHaveText('Testovací kauza Beta');
+  await expect(viditelne(page).nth(1).locator('strong')).toHaveText('Testovací kauza Alfa');
+});
