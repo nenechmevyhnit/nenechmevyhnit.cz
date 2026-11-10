@@ -1,12 +1,13 @@
 ---
 import type { KauzaZaznam } from '../lib/validace';
 import { vytvorPolozku } from '../lib/hledani';
+import { jsonDoSkriptu } from '../lib/html';
 
 interface Props { zaznamy: KauzaZaznam[]; stitky: Map<string, string> }
 const { zaznamy, stitky } = Astro.props;
 const pouzite = [...new Set(zaznamy.flatMap(z => z.kauza.stitky))];
 const cipy = pouzite.map(id => ({ id, nazev: stitky.get(id) ?? id })).sort((a, b) => a.nazev.localeCompare(b.nazev, 'cs'));
-const data = JSON.stringify(zaznamy.map(vytvorPolozku));
+const data = jsonDoSkriptu(zaznamy.map(vytvorPolozku));
 ---
 {zaznamy.length > 0 && (
   <div class="filtry f4">
