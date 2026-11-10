@@ -66,3 +66,12 @@ body .m2-panel[data-p="stav"] .stanovisko, body .m2-panel[data-p="stav"] .opravy
   body .filtry.f4 .f-prepinac { display: flex; font-size: 13px; }
   body .filtry.f4 .vpravo { display: flex; margin-left: auto; align-items: center; gap: 10px; font-size: 13px; }
 }
+
+/* Lokální náhled neověřených konceptů (npm run koncepty) */
+body .koncepty-stitek {
+  position: fixed; left: 50%; top: 10px; transform: translateX(-50%); z-index: 50;
+  padding: 6px 10px; border-radius: 4px;
+  background: #16153A; color: #fff;
+  font: 600 12px/1.2 'JetBrains Mono', monospace; letter-spacing: .04em;
+  pointer-events: none;
+}

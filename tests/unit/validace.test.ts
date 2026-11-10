@@ -43,3 +43,22 @@ describe('overAdresar', () => {
     expect(overAdresar('tests/fixtures/obsah').zaznamy.every(z => /^[a-z0-9-]+$/.test(z.slug))).toBe(true);
   });
 });
+
+describe('režim konceptů', () => {
+  const bezOvereni = () => { const k = platnaKauza(); k.overeno = null; return k; };
+  it('bez režimu konceptů je chybějící ověření chyba', () => {
+    expect(overKauzu('a.md', bezOvereni(), '', STITKY).chyby.length).toBeGreaterThan(0);
+  });
+  it('v režimu konceptů smí ověření chybět', () => {
+    const r = overKauzu('a.md', bezOvereni(), '', STITKY, { koncepty: true });
+    expect(r.chyby).toEqual([]);
+    expect(r.kauza?.overeno).toBeNull();
+  });
+  it('v režimu konceptů platí ostatní pravidla dál', () => {
+    const r = overKauzu('a.md', { ...bezOvereni(), stanovisko: undefined }, '', STITKY, { koncepty: true });
+    expect(r.chyby.length).toBeGreaterThan(0);
+  });
+  it('v režimu konceptů zůstává vyplněné ověření', () => {
+    expect(overKauzu('a.md', platnaKauza(), '', STITKY, { koncepty: true }).kauza?.overeno).toBe('2026-11-09');
+  });
+});

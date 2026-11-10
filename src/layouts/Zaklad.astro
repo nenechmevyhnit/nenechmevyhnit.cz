@@ -2,6 +2,7 @@
 import '../styles/fonty.css';
 import '../styles/upravy.css';
 import Hlavicka from '../components/Hlavicka.astro';
+import { rezimKonceptu } from '../lib/kauzy';
 
 interface Props {
   titulek: string;
@@ -39,5 +40,6 @@ const nahled = new URL('/obrazky/nahled.png', Astro.site).toString();
     <slot />
   </div>
   <slot name="mimo" />
+  {rezimKonceptu() && <div class="koncepty-stitek" role="note">Koncepty · neověřeno · jen lokálně</div>}
 </body>
 </html>

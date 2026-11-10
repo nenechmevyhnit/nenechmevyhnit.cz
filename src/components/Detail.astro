@@ -59,7 +59,7 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
           <div class="stav">{popisekStavu(k.stav)}</div>
           {k.stavPoznamka && <p>{k.stavPoznamka}</p>}
           {k.do === null && <p>Dokud soud pravomocně nerozhodne, platí presumpce neviny.</p>}
-          <div class="overeno">Naposledy ověřeno {datumText(k.overeno)}</div>
+          <div class="overeno">{k.overeno ? <>Naposledy ověřeno {datumText(k.overeno)}</> : <strong>Koncept, zatím neověřeno</strong>}</div>
         </div>
         <div class="stanovisko"><h4>Stanovisko dotčené strany</h4><p>{k.stanovisko.text}<span class="chipy" set:html={chipy(k.stanovisko.zdroje)}></span></p></div>
         {k.opravy.length > 0 && <div class="opravy"><h4>Opravy</h4><ul>{k.opravy.map(o => <li>{datumText(o.datum)}: {o.popis}</li>)}</ul></div>}

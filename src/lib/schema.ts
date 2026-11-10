@@ -54,7 +54,8 @@ export function rokZData(d: string): number {
   return Number(d.slice(0, 4));
 }
 
-export const kauzaSchema = z
+/** koncepty = true: lokální náhled neověřených konceptů, smí chybět datum ověření (overeno: null). */
+const vytvorKauzaSchema = (koncepty: boolean) => z
   .object({
     typ: z.enum(['kauza']).default('kauza'),
     nazev: text(),
@@ -64,7 +65,7 @@ export const kauzaSchema = z
     stav: z.enum(STAVY),
     stavPoznamka: z.string().optional(),
     stitky: z.array(z.string().regex(/^[a-z0-9-]+$/)).min(1),
-    overeno: datumPresne,
+    overeno: koncepty ? datumPresne.nullable().default(null) : datumPresne,
     zdroje: z.array(zdrojSchema).min(1, 'Kauza musí mít aspoň jeden zdroj'),
     udalosti: z.array(udalostSchema).min(1, 'Kauza musí mít aspoň jednu událost'),
     stanovisko: z.object({ text: text(), zdroje: odkazy('Stanovisko') }).strict(),
@@ -96,6 +97,9 @@ export const kauzaSchema = z
     });
   });
 
-export type Kauza = z.infer<typeof kauzaSchema>;
+export const kauzaSchema = vytvorKauzaSchema(false);
+export const kauzaSchemaKoncepty = vytvorKauzaSchema(true);
+
+export type Kauza = z.infer<typeof kauzaSchemaKoncepty>;
 export type Zdroj = Kauza['zdroje'][number];
 export type Udalost = Kauza['udalosti'][number];

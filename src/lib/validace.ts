@@ -2,15 +2,17 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, basename } from 'node:path';
 import matter from 'gray-matter';
 import { parse as parseYaml } from 'yaml';
-import { kauzaSchema, type Kauza } from './schema';
+import { kauzaSchema, kauzaSchemaKoncepty, type Kauza } from './schema';
 import { rozdelOdstavce, poznamkyVOdstavci } from './souvislosti';
 
 export type Chyba = { soubor: string; zprava: string };
 export type KauzaZaznam = { slug: string; kauza: Kauza; telo: string };
+/** koncepty: lokální náhled neověřených konceptů (smí chybět overeno). Nikdy pro veřejný web. */
+export type Rezim = { koncepty?: boolean };
 
-export function overKauzu(soubor: string, data: unknown, telo: string, stitky: Set<string>): { kauza?: Kauza; chyby: Chyba[] } {
+export function overKauzu(soubor: string, data: unknown, telo: string, stitky: Set<string>, rezim: Rezim = {}): { kauza?: Kauza; chyby: Chyba[] } {
   const chyby: Chyba[] = [];
-  const r = kauzaSchema.safeParse(data);
+  const r = (rezim.koncepty ? kauzaSchemaKoncepty : kauzaSchema).safeParse(data);
   if (!r.success) {
     for (const i of r.error.issues) chyby.push({ soubor, zprava: `${i.path.join('.') || 'kauza'}: ${i.message}` });
     return { chyby };
@@ -33,7 +35,7 @@ export function nactiSlovnikStitku(adresar: string): Map<string, string> {
   return new Map(Object.entries(data).map(([k, v]) => [k, String(v)]));
 }
 
-export function overAdresar(adresar: string): { zaznamy: KauzaZaznam[]; stitky: Map<string, string>; chyby: Chyba[] } {
+export function overAdresar(adresar: string, rezim: Rezim = {}): { zaznamy: KauzaZaznam[]; stitky: Map<string, string>; chyby: Chyba[] } {
   const stitky = nactiSlovnikStitku(adresar);
   const slozka = join(adresar, 'kauzy');
   const soubory = existsSync(slozka) ? readdirSync(slozka).filter(f => f.endsWith('.md')).sort() : [];
@@ -44,7 +46,7 @@ export function overAdresar(adresar: string): { zaznamy: KauzaZaznam[]; stitky: 
     const slug = basename(f, '.md');
     if (!/^[a-z0-9-]+$/.test(slug)) { chyby.push({ soubor, zprava: 'Název souboru smí obsahovat jen malá písmena bez diakritiky, číslice a pomlčky' }); continue; }
     const { data, content } = matter(readFileSync(soubor, 'utf8'));
-    const r = overKauzu(soubor, data, content, new Set(stitky.keys()));
+    const r = overKauzu(soubor, data, content, new Set(stitky.keys()), rezim);
     chyby.push(...r.chyby);
     if (r.kauza) zaznamy.push({ slug, kauza: r.kauza, telo: content });
   }
