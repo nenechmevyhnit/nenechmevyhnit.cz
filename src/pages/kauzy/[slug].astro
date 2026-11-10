@@ -1,0 +1,13 @@
+---
+import HlavniStranka from '../../components/HlavniStranka.astro';
+import Detail from '../../components/Detail.astro';
+import { nactiKauzy } from '../../lib/kauzy';
+
+export function getStaticPaths() {
+  return nactiKauzy().map(z => ({ params: { slug: z.slug }, props: { zaznam: z } }));
+}
+const { zaznam } = Astro.props;
+---
+<HlavniStranka otevrena={zaznam}>
+  <Detail slot="detail" zaznam={zaznam} />
+</HlavniStranka>

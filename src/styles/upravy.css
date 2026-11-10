@@ -8,3 +8,4 @@ a.radek-btn { color: inherit; text-decoration: none; }
 /* Portrét se načítá jako <img> s cestou z public/ */
 .portret img { user-select: none; }
 .hero.u2 .u2-pod { font-family: var(--f-text); font-weight: 400; color: var(--text2); font-size: clamp(15px, 1.3vw, 18px); margin: 8px 0 0; }
+.opravy h4 { margin: 14px 0 4px; font: 600 12px var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--meta); }

@@ -1,0 +1,87 @@
+---
+import type { KauzaZaznam } from '../lib/validace';
+import { rozdelOdstavce, odstavecNaHtml } from '../lib/souvislosti';
+import { datumText, rokCislo, rozsahText, delkaText, rokDo } from '../lib/casova-osa';
+import { popisekStavu } from '../lib/stavy';
+
+interface Props { zaznam?: KauzaZaznam }
+const { zaznam } = Astro.props;
+const REPO = 'https://github.com/nenechmevyhnit/nenechmevyhnit.cz';
+const k = zaznam?.kauza;
+const konec = k ? (k.do ?? rokDo()) : 0;
+const poloha = (d: string) => k ? Math.min(100, Math.max(0, ((rokCislo(d) - k.od) / ((konec - k.od) || 1)) * 100)) : 0;
+const posledni = k ? k.udalosti.length - 1 : 0;
+let posledniRok = -99;
+const rokyOsy = k ? k.udalosti.flatMap(u => { const p = poloha(u.datum); if (p - posledniRok > 9) { posledniRok = p; return [{ p, rok: u.datum.slice(0, 4) }]; } return []; }) : [];
+const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="chip" data-zdroj="${c}" aria-label="Zdroj ${c}">${c}</a>`).join('');
+---
+<dialog class={`detail m2${k?.do === null ? ' otevrena' : ''}`} id="detail" aria-labelledby="detail-nadpis" data-slug={zaznam?.slug}>
+  {k && zaznam && (
+    <>
+      <button class="zavrit" type="button" aria-label="Zavřít detail">×</button>
+      <header class="m2-hlava">
+        <div class="roky">{rozsahText(k.od, k.do)} · {delkaText(k.od, k.do)} · {popisekStavu(k.stav)}</div>
+        <h2 id="detail-nadpis">{k.nazev}</h2>
+        <p class="perex">{k.shrnuti}</p>
+      </header>
+      <div class="mini-osa" aria-label="Události kauzy v čase">
+        <div class="linie"></div>
+        {k.udalosti.map((u, i) => <button class="bod" type="button" data-i={i} style={`--i:${i};left:${poloha(u.datum)}%`} aria-label={`${datumText(u.datum)}: ${u.nazev}`}></button>)}
+        {rokyOsy.map(r => <span class="rok" style={`left:${r.p}%`}>{r.rok}</span>)}
+        <span class="vybrany-popis"></span>
+      </div>
+      <div class="zalozky" role="tablist">
+        <button role="tab" type="button" data-p="chrono" aria-selected="true">Chronologie</button>
+        <button role="tab" type="button" data-p="souv" aria-selected="false">Souvislosti</button>
+        <button role="tab" type="button" data-p="stav" aria-selected="false">Stav a stanovisko</button>
+        <button role="tab" type="button" data-p="zdroje" aria-selected="false">Zdroje ({k.zdroje.length})</button>
+      </div>
+      <div class="m2-panel" data-p="chrono" role="tabpanel">
+        <ol class="udalosti-seznam">
+          {k.udalosti.map((u, i) => (
+            <li data-i={i} data-datum={u.datum}>
+              <div class="udalost-velka">
+                <time>{datumText(u.datum)}<small>událost {i + 1} z {k.udalosti.length}</small></time>
+                <div><h3>{u.nazev}</h3><p>{u.popis}</p><div>Zdroje:<span class="chipy" set:html={chipy(u.zdroje)}></span></div></div>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <div class="listovani">
+          <button type="button" data-krok="-1"><small>← předchozí</small><span></span></button>
+          <button type="button" data-krok="1" style="text-align:right"><small>další →</small><span></span></button>
+        </div>
+      </div>
+      <div class="m2-panel" data-p="souv" role="tabpanel" hidden>
+        {rozdelOdstavce(zaznam.telo).map(o => <p set:html={odstavecNaHtml(o)}></p>)}
+      </div>
+      <div class="m2-panel" data-p="stav" role="tabpanel" hidden>
+        <div class={`stav-box${k.do === null ? ' otevrena' : ''}`}>
+          <div class="stav">{popisekStavu(k.stav)}</div>
+          {k.stavPoznamka && <p>{k.stavPoznamka}</p>}
+          {k.do === null && <p>Dokud soud pravomocně nerozhodne, platí presumpce neviny.</p>}
+          <div class="overeno">Naposledy ověřeno {datumText(k.overeno)}</div>
+        </div>
+        <div class="stanovisko"><h4>Stanovisko dotčené strany</h4><p>{k.stanovisko.text}<span class="chipy" set:html={chipy(k.stanovisko.zdroje)}></span></p></div>
+        {k.opravy.length > 0 && <div class="opravy"><h4>Opravy</h4><ul>{k.opravy.map(o => <li>{datumText(o.datum)}: {o.popis}</li>)}</ul></div>}
+      </div>
+      <div class="m2-panel" data-p="zdroje" role="tabpanel" hidden>
+        <p class="posun-napoveda">Další zdroje najdete posunem do strany →</p>
+        <ol class="zdroje">
+          {k.zdroje.map(z => (
+            <li id={`zdroj-${z.id}`}><div>
+              <span class="vyd">{z.vydavatel}</span><span class={`druh ${z.druh}`}>{z.druh === 'primarni' ? 'primární' : 'média'}</span><br>
+              {z.titulek}
+              <div class="odkazy">{datumText(z.datum)} · <a href={z.url} rel="noopener noreferrer" target="_blank">originál ↗</a>{z.archiv && <> · <a href={z.archiv} rel="noopener noreferrer" target="_blank">archivní kopie ↗</a></>}</div>
+            </div></li>
+          ))}
+        </ol>
+        <div class="paticka-detailu">
+          <a href={`${REPO}/commits/main/obsah/kauzy/${zaznam.slug}.md`}>Historie změn této kauzy</a>
+          <a href={`${REPO}/issues/new?template=oprava.yml&title=${encodeURIComponent('Oprava: ' + k.nazev)}`}>Nahlásit chybu</a>
+          <a href="#" data-sdilet>Zkopírovat odkaz na kauzu</a>
+        </div>
+      </div>
+    </>
+  )}
+</dialog>
