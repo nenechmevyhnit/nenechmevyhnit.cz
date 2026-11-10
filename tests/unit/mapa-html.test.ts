@@ -22,7 +22,7 @@ describe('svgMapy', () => {
     expect(svg.match(/class="m-uzel m-kauza"/g)).toHaveLength(6);
     expect(svg.match(/class="m-uzel m-akter"/g)).toHaveLength(3);
     expect(svg).toContain('data-uzel="k:alfa-dotace"');
-    expect(svg.match(/class="m-cara m-navaznost"/g)).toHaveLength(2);
+    expect(svg.match(/class="m-cara m-cara-navaznost"/g)).toHaveLength(2);
     expect(svg).toContain('>vlastní · 1995–2017</text>');
   });
   it('escapuje názvy', () => {

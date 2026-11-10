@@ -1,5 +1,6 @@
 import { overAdresar, type KauzaZaznam } from './validace';
 import type { Akter } from './schema';
+import { sestavGraf, type Graf } from './mapa';
 
 /** Lokální náhled neověřených konceptů (npm run koncepty). Veřejný build ho nikdy nezapíná. */
 export const rezimKonceptu = (): boolean => process.env.NV_KONCEPTY === 'ano';
@@ -20,3 +21,13 @@ function nacti() {
 export const nactiKauzy = (): KauzaZaznam[] => nacti().zaznamy;
 export const nactiStitky = (): Map<string, string> => nacti().stitky;
 export const nactiAktery = (): Map<string, Akter> => nacti().akteri;
+
+const grafy = new WeakMap<object, Graf>();
+export function nactiGraf(): Graf {
+  const d = nacti();
+  if (!grafy.has(d)) grafy.set(d, sestavGraf(d.zaznamy, d.akteri));
+  return grafy.get(d)!;
+}
+
+/** Přepínač Osa | Mapa: ve veřejném buildu až s prvním ověřeným aktérem, v náhledu konceptů vždy. */
+export const maMapu = (): boolean => nactiKauzy().length > 0 && (rezimKonceptu() || nactiAktery().size > 0);

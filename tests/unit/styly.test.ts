@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync, existsSync } from 'node:fs';
 
-const soubory = ['src/styles/fonty.css', 'src/styles/hlavni.css', 'src/styles/stranky.css', 'src/styles/upravy.css'];
+const soubory = ['src/styles/fonty.css', 'src/styles/hlavni.css', 'src/styles/stranky.css', 'src/styles/upravy.css', 'src/styles/mapa.css'];
 
 describe('styly', () => {
   it.each(soubory)('%s existuje a nenačítá nic z cizích serverů', s => {

@@ -8,7 +8,7 @@ export function svgMapy(r: Rozlozeni): string {
   if (r.uzly.length === 0) return '<svg class="mapa-svg" aria-hidden="true" focusable="false" width="0" height="0"></svg>';
   const v = ROZMERY.vyskaUzlu;
   const cary = r.cary.map(c =>
-    `<g class="m-cara m-${c.druh}" data-hrana="${c.id}"><path class="m-viditelna" d="${c.d}"/><path class="m-zasah" d="${c.d}"/></g>`).join('');
+    `<g class="m-cara m-cara-${c.druh}" data-hrana="${c.id}"><path class="m-viditelna" d="${c.d}"/><path class="m-zasah" d="${c.d}"/></g>`).join('');
   const uzly = r.uzly.map(u =>
     `<g class="m-uzel m-${u.typ}" data-uzel="${e(u.id)}" transform="translate(${u.x} ${u.y})"><rect x="0" y="${-v / 2}" width="${u.w}" height="${v}" rx="3"/><text x="8" y="4.5">${e(u.nazev)}</text></g>`).join('');
   const popisky = r.cary.filter(c => c.popisek).map(c =>

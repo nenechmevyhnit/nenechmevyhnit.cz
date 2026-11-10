@@ -1,0 +1,33 @@
+/* Mapa souvislostí (specifikace mapy, oddíly 5 a 6). Barvy jen z palety, žádná červená,
+   všechny čáry stejně silné. */
+#graf[data-pohled="mapa"] .osa-roku .stitky,
+#graf[data-pohled="mapa"] .radky,
+#graf[data-pohled="mapa"] .pasmo,
+#graf[data-pohled="mapa"] .pilulka,
+#graf[data-pohled="mapa"] .strankovani { display: none !important; }
+#graf:not([data-pohled="mapa"]) .mapa { display: none; }
+
+.pohled { display: inline-flex; border: 1px solid var(--linka); flex: none; }
+.pohled button { font: 500 12px var(--f-text); border: 0; background: var(--plocha); color: var(--inkoust); padding: 2px 9px; cursor: pointer; }
+.pohled button[aria-pressed="true"] { background: var(--modra); color: #fff; }
+
+.mapa { position: relative; flex: 1; min-height: 0; overflow: auto; padding: 4px 0 8px; }
+.mapa-legenda { display: flex; align-items: center; gap: 6px; margin: 0 0 2px 16px; font: 11px var(--f-mono); color: var(--meta); }
+.mapa-legenda .l-plna, .mapa-legenda .l-carkovana { display: inline-block; width: 22px; border-top: 1.5px solid var(--meta); margin-left: 8px; }
+.mapa-legenda .l-plna { margin-left: 0; }
+.mapa-legenda .l-carkovana { border-top-style: dashed; }
+.mapa-prazdno { padding: 24px; color: var(--meta); }
+.mapa-prazdno[hidden] { display: none; }
+
+.mapa-svg { display: block; max-width: 100%; height: auto; font-family: var(--f-text); }
+.mapa-svg text { font-size: 13px; fill: var(--inkoust); }
+.mapa-svg .m-viditelna { fill: none; stroke: var(--meta); stroke-opacity: .55; stroke-width: 1.2; }
+.mapa-svg .m-cara-navaznost .m-viditelna { stroke-dasharray: 4 3; }
+.mapa-svg .m-zasah { fill: none; stroke: transparent; stroke-width: 12; pointer-events: stroke; cursor: pointer; }
+.mapa-svg .m-uzel { cursor: pointer; }
+.mapa-svg .m-uzel rect { fill: var(--plocha); stroke: var(--linka); }
+.mapa-svg .m-akter rect { stroke: var(--modra); }
+.mapa-svg .m-stred { cursor: default; }
+.mapa-svg .m-stred rect { fill: var(--modra); stroke: var(--modra); }
+.mapa-svg .m-stred text { fill: #fff; font-weight: 600; }
+.mapa-svg .m-popisek { display: none; font: 11px var(--f-mono); fill: var(--meta); paint-order: stroke; stroke: var(--plocha); stroke-width: 3px; pointer-events: none; }

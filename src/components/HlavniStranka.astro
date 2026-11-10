@@ -5,21 +5,24 @@ import Osa from './Osa.astro';
 import Portret from './Portret.astro';
 import PatickaRadek from './PatickaRadek.astro';
 import Filtry from './Filtry.astro';
-import { nactiKauzy, nactiStitky } from '../lib/kauzy';
+import Mapa from './Mapa.astro';
+import { nactiKauzy, nactiStitky, nactiGraf, maMapu } from '../lib/kauzy';
 import type { KauzaZaznam } from '../lib/validace';
 import '../styles/hlavni.css';
+import '../styles/mapa.css';
 
 interface Props { otevrena?: KauzaZaznam }
 const { otevrena } = Astro.props;
 const zaznamy = nactiKauzy();
 const stitky = nactiStitky();
+const mapa = maMapu();
 const titulek = otevrena ? `${otevrena.kauza.nazev} — Nenechme vyhnít` : 'Nenechme vyhnít — kauzy Andreje Babiše';
 const popis = otevrena ? otevrena.kauza.shrnuti : 'Archiv kauz Andreje Babiše přehledně, s daty a zdroji. Každé tvrzení má zdroj, každá kauza stanovisko dotčené strany.';
 ---
 <Zaklad titulek={titulek} popis={popis} cesta={otevrena ? `/kauzy/${otevrena.slug}/` : '/'} styly="hlavni" aktivni="kauzy" otevrena={otevrena?.slug}>
   <Uvod />
-  <Filtry zaznamy={zaznamy} stitky={stitky} />
-  <Osa zaznamy={zaznamy} />
+  <Filtry zaznamy={zaznamy} stitky={stitky} mapa={mapa} />
+  <Osa zaznamy={zaznamy} mapa={mapa}>{mapa && <Mapa slot="mapa" graf={nactiGraf()} />}</Osa>
   <PatickaRadek legenda />
   <Fragment slot="mimo">
     <Portret />
@@ -28,7 +31,9 @@ const popis = otevrena ? otevrena.kauza.shrnuti : 'Archiv kauz Andreje Babiše p
 </Zaklad>
 <script>
   import { inicializujOsu } from '../scripts/osa';
+  import { inicializujMapu } from '../scripts/mapa';
   import { inicializujNavigaci } from '../scripts/navigace';
   inicializujOsu();
+  inicializujMapu();
   inicializujNavigaci();
 </script>

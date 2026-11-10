@@ -3,9 +3,10 @@ import type { KauzaZaznam } from '../lib/validace';
 import { vytvorPolozku, odpovida, PRAZDNY_FILTR, TRVANI, OBDOBI, RAZENI } from '../lib/hledani';
 import { STAVY, popisekStavu } from '../lib/stavy';
 import { jsonDoSkriptu } from '../lib/html';
+import PrepinacPohledu from './PrepinacPohledu.astro';
 
-interface Props { zaznamy: KauzaZaznam[]; stitky: Map<string, string> }
-const { zaznamy, stitky } = Astro.props;
+interface Props { zaznamy: KauzaZaznam[]; stitky: Map<string, string>; mapa?: boolean }
+const { zaznamy, stitky, mapa = false } = Astro.props;
 const pouzite = [...new Set(zaznamy.flatMap(z => z.kauza.stitky))];
 const cipy = pouzite.map(id => ({ id, nazev: stitky.get(id) ?? id })).sort((a, b) => a.nazev.localeCompare(b.nazev, 'cs'));
 const polozky = zaznamy.map(vytvorPolozku);
@@ -27,7 +28,7 @@ const obdobi = OBDOBI.filter(o => neprazdne({ obdobi: o.id }));
       <button class="sipka vpravo" type="button" aria-label="Další témata" hidden>›</button>
     </div>
     <label class="f-prepinac"><input type="checkbox" data-jen-otevrene> jen neuzavřené</label>
-    <span class="vpravo"><span class="pocet" aria-live="polite"></span><button class="f-zrusit" type="button" hidden>Zrušit filtry</button></span>
+    <span class="vpravo"><span class="pocet" aria-live="polite"></span><button class="f-zrusit" type="button" hidden>Zrušit filtry</button>{mapa && <PrepinacPohledu />}</span>
     <!-- další filtry a řazení se čtou jako věta; popisky pro čtečky nesou aria-label -->
     <div class="f-dalsi" role="group" aria-label="Další filtry a řazení">
       Ukázat kauzy

@@ -1,6 +1,7 @@
 import { odpovida, jeAktivni, seradit, PRAZDNY_FILTR, type Filtr, type PolozkaHledani } from '../lib/hledani';
 import { pocetNaStranku, pocetStranek, cislaStranek } from '../lib/strankovani';
 import { sklonuj } from '../lib/cestina';
+import { nastavViditelne } from './stav-filtru';
 
 export function inicializujFiltry(): void {
   const panel = document.querySelector<HTMLElement>('.filtry');
@@ -36,6 +37,7 @@ export function inicializujFiltry(): void {
   let shoda: PolozkaHledani[] = poradi;
   let strana = 1;
   let naStranku = Infinity; // Infinity = stránkování vypnuté (vše se vejde)
+  let posledniVysledek: string | null = null;
 
   const vybrany = () => graf.dataset.vybrano ?? null;
   const stranaKauzy = (slug: string | null) => {
@@ -93,6 +95,9 @@ export function inicializujFiltry(): void {
     pocty.forEach(p => { p.textContent = text; });
     zrusit.forEach(z => { z.hidden = !jeAktivni(filtr); });
     vykresliStrankovani();
+    // mapa se překresluje jen při změně výsledku, ne při listování stránkami
+    const klic = shoda.map(p => p.slug).join(' ');
+    if (klic !== posledniVysledek) { posledniVysledek = klic; nastavViditelne(shoda.map(p => p.slug)); }
   };
 
   const aplikuj = () => {
@@ -164,6 +169,8 @@ export function inicializujFiltry(): void {
   // změna velikosti: přepočítat stránku a zůstat u vybrané kauzy, jinak u první kauzy dosavadní stránky
   let posledniVyska = -1;
   const prepocitej = () => {
+    // v pohledu mapy jsou řádky osy skryté, měřit se nedají
+    if (graf.dataset.pohled === 'mapa') return;
     const v = graf.clientHeight;
     if (v === posledniVyska) return;
     posledniVyska = v;
@@ -173,6 +180,8 @@ export function inicializujFiltry(): void {
     proved();
   };
   new ResizeObserver(prepocitej).observe(graf);
+  // po návratu z mapy na osu přepočítat stránkování (velikost grafu se nezměnila, ResizeObserver mlčí)
+  document.addEventListener('nv:pohled', () => { posledniVyska = -1; prepocitej(); });
 
   // šipky u čipů (bez viditelného posuvníku)
   const obal = cipy.parentElement!, vl = obal.querySelector<HTMLButtonElement>('.vlevo')!, vp = obal.querySelector<HTMLButtonElement>('.vpravo')!;
