@@ -41,7 +41,7 @@ test('stav a stanovisko', async ({ page }) => {
   await page.goto('/kauzy/alfa-dotace/');
   await page.getByRole('tab', { name: 'Stav a stanovisko' }).click();
   await expect(page.locator('.stav-box .stav')).toHaveText('Soudní řízení');
-  await expect(page.locator('.stav-box')).toContainText('Naposledy ověřeno 12. 11. 2026');
+  await expect(page.locator('.stav-box')).toContainText('Naposledy ověřeno 9. 11. 2026');
   await expect(page.locator('.stanovisko')).toContainText('Firma Alfa pochybení odmítá.');
 });
 

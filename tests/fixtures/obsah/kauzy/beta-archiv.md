@@ -5,7 +5,7 @@ od: 1982
 do: 2018
 stav: pravomocne-zprosten
 stitky: [soudy]
-overeno: 2026-11-12
+overeno: 2026-11-09
 zdroje:
   - id: 1
     vydavatel: Fiktivní archiv

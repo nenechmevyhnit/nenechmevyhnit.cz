@@ -12,9 +12,9 @@ describe('kauzaSchema', () => {
   it('přijme platnou kauzu', () => expect(chyby(platnaKauza())).toEqual([]));
 
   it('převede datum z YAML (Date) na text', () => {
-    const k = { ...platnaKauza(), overeno: new Date('2026-11-12T00:00:00Z') };
+    const k = { ...platnaKauza(), overeno: new Date('2026-11-09T00:00:00Z') };
     const r = kauzaSchema.parse(k);
-    expect(r.overeno).toBe('2026-11-12');
+    expect(r.overeno).toBe('2026-11-09');
   });
 
   it('odmítne neznámý stav', () => expect(chyby({ ...platnaKauza(), stav: 'vinen' }).length).toBeGreaterThan(0));
@@ -70,5 +70,38 @@ describe('rokZData a stavy', () => {
   });
   it('každý stav má popisek', () => {
     for (const s of STAVY) expect(popisekStavu(s).length).toBeGreaterThan(0);
+  });
+});
+
+describe('kauzaSchema — integrita dat (závěrečná kontrola)', () => {
+  const zitra = new Date(Date.now() + 86400000).toISOString().slice(0, 10);
+  it('odmítne neexistující datum', () => {
+    const k = platnaKauza(); (k.udalosti as any)[1].datum = '2012-13-45';
+    expect(chyby(k).join(' ')).toMatch(/neexistující datum/);
+  });
+  it('odmítne neexistující měsíc', () => {
+    const k = platnaKauza(); (k.udalosti as any)[0].datum = '2010-13';
+    expect(chyby(k).join(' ')).toMatch(/neexistující datum/);
+  });
+  it('odmítne událost v budoucnosti', () => {
+    const k = platnaKauza(); (k.udalosti as any)[1].datum = zitra;
+    expect(chyby(k).join(' ')).toMatch(/v budoucnosti/);
+  });
+  it('odmítne datum ověření v budoucnosti', () => {
+    expect(chyby({ ...platnaKauza(), overeno: zitra }).join(' ')).toMatch(/v budoucnosti/);
+  });
+  it('odmítne události mimo časové pořadí', () => {
+    const k = platnaKauza(); (k.udalosti as any).reverse();
+    expect(chyby(k).join(' ')).toMatch(/pořadí/);
+  });
+  it('odmítne archivní odkaz s jiným než http(s) schématem', () => {
+    const k = platnaKauza(); (k.zdroje as any)[0].archiv = 'javascript:alert(1)';
+    expect(chyby(k).length).toBeGreaterThan(0);
+  });
+  it('odmítne neznámý klíč (překlep by tiše zahodil opravu)', () => {
+    expect(chyby({ ...platnaKauza(), oprava: [{ datum: '2026-11-01', popis: 'x' }] }).length).toBeGreaterThan(0);
+  });
+  it('odmítne název ze samých mezer', () => {
+    expect(chyby({ ...platnaKauza(), nazev: '   ' }).length).toBeGreaterThan(0);
   });
 });

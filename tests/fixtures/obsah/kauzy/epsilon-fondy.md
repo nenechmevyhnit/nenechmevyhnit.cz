@@ -5,7 +5,7 @@ od: 2017
 do: null
 stav: uredni-zjisteni
 stitky: [stret-zajmu]
-overeno: 2026-11-12
+overeno: 2026-11-09
 zdroje:
   - id: 1
     vydavatel: Fiktivní komise

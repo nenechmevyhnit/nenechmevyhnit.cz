@@ -6,7 +6,7 @@ do: null
 stav: soudni-rizeni
 stavPoznamka: Fiktivní odvolací soud vrátil věc k novému projednání.
 stitky: [dotace, eu-fondy]
-overeno: 2026-11-12
+overeno: 2026-11-09
 zdroje:
   - { id: 1, vydavatel: Fiktivní městský soud, titulek: Rozsudek ve věci Alfa, datum: 2023-01-09, druh: primarni, url: "https://example.com/alfa/rozsudek" }
   - { id: 2, vydavatel: Fiktivní deník, titulek: Jak Alfa získala dotaci, datum: 2016-02-15, druh: media, url: "https://example.com/alfa/clanek" }

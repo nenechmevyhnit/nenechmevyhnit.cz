@@ -6,7 +6,7 @@ do: 2021
 stav: zastaveno
 stavPoznamka: Fiktivní státní zastupitelství věc zastavilo.
 stitky: [offshore]
-overeno: 2026-11-12
+overeno: 2026-11-09
 zdroje:
   - id: 1
     vydavatel: Fiktivní konsorcium novinářů

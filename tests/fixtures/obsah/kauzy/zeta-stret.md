@@ -5,7 +5,7 @@ od: 2018
 do: null
 stav: obzaloba
 stitky: [stret-zajmu, eu-fondy]
-overeno: 2026-11-12
+overeno: 2026-11-09
 zdroje:
   - id: 1
     vydavatel: Fiktivní státní zastupitelství

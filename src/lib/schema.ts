@@ -4,26 +4,51 @@ import { STAVY } from './stavy';
 const naText = (v: unknown) =>
   v instanceof Date ? v.toISOString().slice(0, 10) : typeof v === 'number' ? String(v) : v;
 
-const datum = z.preprocess(naText, z.string().regex(/^\d{4}(-\d{2}(-\d{2})?)?$/, 'Datum musí být ve tvaru RRRR, RRRR-MM nebo RRRR-MM-DD'));
-const datumPresne = z.preprocess(naText, z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Datum musí být ve tvaru RRRR-MM-DD'));
+/** Existuje takové kalendářní datum? (RRRR, RRRR-MM nebo RRRR-MM-DD) */
+export function existujeDatum(d: string): boolean {
+  const [r, m, den] = d.split('-').map(Number);
+  if (m === undefined) return true;
+  if (m < 1 || m > 12) return false;
+  if (den === undefined) return true;
+  const dt = new Date(Date.UTC(r, m - 1, den));
+  return dt.getUTCMonth() === m - 1 && dt.getUTCDate() === den;
+}
+
+/** Leží datum (s libovolnou přesností) po dnešku? Porovnává se se stejně přesnou částí dnešního data. */
+export function jeVBudoucnosti(d: string, dnes: Date = new Date()): boolean {
+  const iso = `${dnes.getFullYear()}-${String(dnes.getMonth() + 1).padStart(2, '0')}-${String(dnes.getDate()).padStart(2, '0')}`;
+  return d > iso.slice(0, d.length);
+}
+
+const kontrolaData = (tvar: RegExp, hlaska: string) =>
+  z.preprocess(naText, z.string()
+    .regex(tvar, hlaska)
+    .superRefine((d, ctx) => {
+      if (!existujeDatum(d)) ctx.addIssue({ code: 'custom', message: `${d} je neexistující datum` });
+      else if (jeVBudoucnosti(d)) ctx.addIssue({ code: 'custom', message: `Datum ${d} leží v budoucnosti` });
+    }));
+const datum = kontrolaData(/^\d{4}(-\d{2}(-\d{2})?)?$/, 'Datum musí být ve tvaru RRRR, RRRR-MM nebo RRRR-MM-DD');
+const datumPresne = kontrolaData(/^\d{4}-\d{2}-\d{2}$/, 'Datum musí být ve tvaru RRRR-MM-DD');
+const text = () => z.string().trim().min(1, 'Text nesmí být prázdný');
+const odkazHttp = (co: string) => z.string().url().regex(/^https?:\/\//, `${co} musí začínat http:// nebo https://`);
 const odkazy = (co: string) => z.array(z.number().int().positive()).min(1, `${co} musí mít aspoň jeden zdroj`);
 
 export const zdrojSchema = z.object({
   id: z.number().int().positive(),
-  vydavatel: z.string().min(1, 'Zdroj musí mít vydavatele'),
-  titulek: z.string().min(1),
+  vydavatel: z.string().trim().min(1, 'Zdroj musí mít vydavatele'),
+  titulek: text(),
   datum,
   druh: z.enum(['primarni', 'media']),
-  url: z.string().url().regex(/^https?:\/\//, 'Odkaz zdroje musí začínat http:// nebo https://'),
-  archiv: z.string().url().optional(),
-});
+  url: odkazHttp('Odkaz zdroje'),
+  archiv: odkazHttp('Archivní odkaz').optional(),
+}).strict();
 
 export const udalostSchema = z.object({
   datum,
-  nazev: z.string().min(1),
-  popis: z.string().min(1),
+  nazev: text(),
+  popis: text(),
   zdroje: odkazy('Událost'),
-});
+}).strict();
 
 export function rokZData(d: string): number {
   return Number(d.slice(0, 4));
@@ -32,8 +57,8 @@ export function rokZData(d: string): number {
 export const kauzaSchema = z
   .object({
     typ: z.enum(['kauza']).default('kauza'),
-    nazev: z.string().min(1),
-    shrnuti: z.string().min(1).max(320),
+    nazev: text(),
+    shrnuti: text().max(320),
     od: z.number().int().min(1950).max(2100),
     do: z.number().int().min(1950).max(2100).nullable(),
     stav: z.enum(STAVY),
@@ -42,9 +67,10 @@ export const kauzaSchema = z
     overeno: datumPresne,
     zdroje: z.array(zdrojSchema).min(1, 'Kauza musí mít aspoň jeden zdroj'),
     udalosti: z.array(udalostSchema).min(1, 'Kauza musí mít aspoň jednu událost'),
-    stanovisko: z.object({ text: z.string().min(1), zdroje: odkazy('Stanovisko') }),
-    opravy: z.array(z.object({ datum: datumPresne, popis: z.string().min(1) })).default([]),
+    stanovisko: z.object({ text: text(), zdroje: odkazy('Stanovisko') }).strict(),
+    opravy: z.array(z.object({ datum: datumPresne, popis: text() }).strict()).default([]),
   })
+  .strict()
   .superRefine((k, ctx) => {
     const ids = new Set<number>();
     for (const z of k.zdroje) {
@@ -59,6 +85,11 @@ export const kauzaSchema = z
     if (k.do !== null && k.do < k.od) ctx.addIssue({ code: 'custom', message: `Rok konce ${k.do} je dřív než rok začátku ${k.od}` });
     if (k.stav === 'jine' && !k.stavPoznamka) ctx.addIssue({ code: 'custom', message: 'Stav "jine" vyžaduje vyplněnou poznámku ke stavu (stavPoznamka)' });
     const konec = k.do ?? new Date().getFullYear();
+    // Chronologie počítá s událostmi od nejstarší po nejnovější
+    for (let i = 1; i < k.udalosti.length; i++) {
+      const a = k.udalosti[i - 1].datum, b = k.udalosti[i].datum, n = Math.min(a.length, b.length);
+      if (a.slice(0, n) > b.slice(0, n)) ctx.addIssue({ code: 'custom', message: `Události nejsou v časovém pořadí: „${k.udalosti[i].nazev}“ (${b}) následuje po ${a}` });
+    }
     k.udalosti.forEach(u => {
       const r = rokZData(u.datum);
       if (r < k.od || r > konec) ctx.addIssue({ code: 'custom', message: `Událost „${u.nazev}“ (${u.datum}) leží mimo rozsah kauzy ${k.od}–${k.do ?? 'dosud'}` });

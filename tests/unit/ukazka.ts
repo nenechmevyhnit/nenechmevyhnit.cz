@@ -9,7 +9,7 @@ export function platnaKauza(): Record<string, unknown> {
     stav: 'soudni-rizeni',
     stavPoznamka: 'Fiktivní stav.',
     stitky: ['dotace'],
-    overeno: '2026-11-12',
+    overeno: '2026-11-09',
     zdroje: [
       { id: 1, vydavatel: 'Fiktivní soud', titulek: 'Rozsudek', datum: '2012-01-09', druh: 'primarni', url: 'https://example.com/rozsudek' },
       { id: 2, vydavatel: 'Fiktivní deník', titulek: 'Článek', datum: '2011-05', druh: 'media', url: 'https://example.com/clanek' },
