@@ -8,3 +8,4 @@
 - [ ] GitHub: Settings → Pages → Verified domains → ověřit `nenechmevyhnit.cz` (TXT záznam), Source = GitHub Actions, Custom domain = `nenechmevyhnit.cz`, Enforce HTTPS
 - [ ] Proměnná repozitáře `NASAZOVAT=ano`
 - [ ] Všechny kontroly v Actions zelené
+- [x] Ochrana větve `main` a nastavení repozitáře (ruleset, jen merge commity, Actions smí zakládat PR) — `nastroje/nastav-github.sh`, nastaveno 10. 11. 2026
