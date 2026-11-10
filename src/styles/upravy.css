@@ -100,3 +100,6 @@ body .m2-hlava .perex { display: block; -webkit-line-clamp: none; max-width: non
 }
 /* boxy s vlastním posuvníkem ho ukazují trvale, aby bylo jasné, že text pokračuje */
 body .m2-panel[data-p="stav"] .stav-box, body .m2-panel[data-p="stav"] .stav-vpravo, body .m2-hlava .perex { scrollbar-width: thin; scrollbar-gutter: stable; }
+
+/* Označený čip filtru: světlé pozadí čipů (.filtry .f-cipy button) jinak přebije modré pozadí označeného a bílý text zmizí. */
+body .filtry .f-cipy button[aria-pressed="true"] { border-color: var(--modra); background: var(--modra); color: #fff; }

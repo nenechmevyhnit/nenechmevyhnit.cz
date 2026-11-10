@@ -53,3 +53,13 @@ test('místo pro Zrušit filtry je rezervované (nic se neposune)', async ({ pag
   const po = await page.locator('.f-hledat').boundingBox();
   expect(po).toEqual(pred);
 });
+
+test('označený čip je vidět: modré pozadí a bílý text', async ({ page }) => {
+  const cip = page.locator('.f-cipy button').first();
+  await cip.click();
+  await page.mouse.move(0, 0);
+  await page.waitForTimeout(300);
+  const { pozadi, barva } = await cip.evaluate(e => ({ pozadi: getComputedStyle(e).backgroundColor, barva: getComputedStyle(e).color }));
+  expect(pozadi).toBe('rgb(40, 38, 97)');
+  expect(barva).toBe('rgb(255, 255, 255)');
+});
