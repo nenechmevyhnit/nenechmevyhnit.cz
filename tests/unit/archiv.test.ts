@@ -38,3 +38,15 @@ describe('ziskejArchiv', () => {
     expect(await ziskejArchiv('https://example.com/a', f as any)).toBeNull();
   });
 });
+
+describe('doplnArchiv — URL, která je předponou jiné', () => {
+  const PREDPONA = `zdroje:
+  - { id: 1, url: "https://soud.cz/r?id=12", druh: media }
+  - { id: 2, url: "https://soud.cz/r?id=1", druh: media }
+`;
+  it('řádkový zápis: doplní archiv jen ke shodné URL', () => {
+    const v = doplnArchiv(PREDPONA, 'https://soud.cz/r?id=1', 'https://web.archive.org/x');
+    expect(v).toContain('{ id: 1, url: "https://soud.cz/r?id=12", druh: media }');
+    expect(v).toContain('{ id: 2, url: "https://soud.cz/r?id=1", archiv: "https://web.archive.org/x", druh: media }');
+  });
+});

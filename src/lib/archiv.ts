@@ -2,9 +2,10 @@ const escapuj = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 export function doplnArchiv(text: string, url: string, archiv: string): string {
   const u = escapuj(url);
-  // řádkový zápis { ..., url: "x", ... }
-  const radek = new RegExp(`(\\{[^}\\n]*url:\\s*["']?${u}["']?)(?![^}\\n]*archiv:)([^}\\n]*\\})`);
-  if (radek.test(text)) return text.replace(radek, `$1, archiv: "${archiv}"$2`);
+  // řádkový zápis { ..., url: "x", ... } — za URL musí následovat konec hodnoty (uvozovka, čárka nebo }),
+  // jinak by se archiv vložil do delší URL, jejíž předponou hledaná URL je
+  const radek = new RegExp(`(\\{[^}\\n]*url:\\s*(["']?)${u}\\2(?=\\s*[,}]))(?![^}\\n]*archiv:)([^}\\n]*\\})`);
+  if (radek.test(text)) return text.replace(radek, `$1, archiv: "${archiv}"$3`);
   // blokový zápis
   const radky = text.split('\n');
   const i = radky.findIndex(r => new RegExp(`^(\\s*)url:\\s*["']?${u}["']?\\s*$`).test(r));
