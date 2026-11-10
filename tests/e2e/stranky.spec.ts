@@ -51,3 +51,27 @@ test.describe('mobil 390×700', () => {
     }
   });
 });
+
+test.describe('mobil 390×700: hlavní stránka', () => {
+  test.use({ viewport: { width: 390, height: 700 } });
+
+  test('osa je zúžená: všechny pruhy jsou vidět bez posouvání do strany', async ({ page }) => {
+    await page.goto('/');
+    const graf = (await page.locator('#graf').boundingBox())!;
+    for (const pruh of await page.locator('.radek .pruh').all()) {
+      const b = (await pruh.boundingBox())!;
+      expect(b.x).toBeGreaterThanOrEqual(graf.x - 1);
+      expect(b.x + b.width).toBeLessThanOrEqual(graf.x + graf.width + 1);
+    }
+  });
+
+  test('přepínač „jen neuzavřené“, počítadlo a Zrušit filtry jsou dostupné', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByLabel('jen neuzavřené')).toBeVisible();
+    await expect(page.locator('#pocet')).toBeVisible();
+    await page.getByLabel('jen neuzavřené').check();
+    await expect(page.locator('.f-zrusit')).toBeVisible();
+    const { svisle, vyska } = await page.evaluate(() => ({ svisle: document.scrollingElement!.scrollHeight, vyska: innerHeight }));
+    expect(svisle).toBeLessThanOrEqual(vyska);
+  });
+});

@@ -14,7 +14,7 @@ const pct = (r: number) => naProcenta(r, ROK_OD, DO + 1);
   <div class="graf-vnitrek">
     <div class="osa-roku" aria-hidden="true">
       <div class="nazev-sloupce">Kauza</div>
-      <div class="stitky">{znackyOsy(ROK_OD, DO).map(z => <span class={z.hlavni ? '' : 'malo'} style={`left:${pct(z.rok)}%`}>{z.rok}</span>)}</div>
+      <div class="stitky">{znackyOsy(ROK_OD, DO).map(z => <span class={[z.hlavni ? '' : 'malo', z.rok !== DO && DO - z.rok < 8 ? 'blizko' : ''].filter(Boolean).join(' ') || undefined} style={`left:${pct(z.rok)}%`}>{z.rok}</span>)}</div>
     </div>
     <div class="pasmo"></div><span class="pilulka od"></span><span class="pilulka do"></span>
     <div class="radky" role={zaznamy.length ? "list" : undefined}>

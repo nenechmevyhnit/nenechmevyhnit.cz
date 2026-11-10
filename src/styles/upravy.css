@@ -40,3 +40,29 @@ body .m2-panel[data-p="stav"] .stanovisko, body .m2-panel[data-p="stav"] .opravy
 @media (max-width: 760px) {
   body .m2-panel[data-p="chrono"] .udalost-velka { grid-template-rows: auto minmax(0, 1fr); }
 }
+/* Mobil: osa je zúžená na šířku displeje (celá vidět bez posouvání do strany, spec §7) a filtry mají
+   i přepínač „jen neuzavřené“, počítadlo a Zrušit filtry (na jednom řádku pod čipy). */
+@media (max-width: 760px) {
+  body .graf-vnitrek { min-width: 0; }
+  body .osa-roku .stitky span { font-size: 11px; }
+  body .osa-roku .stitky span.blizko { display: none; } /* značka těsně před letoškem by se překrývala */
+  /* dva řádky: hledání + přepínač, čipy + počítadlo; osa tak zůstane celá vidět */
+  body .filtry.f4 .f-hledat { order: 1; flex: 1 1 55%; width: auto; min-width: 0; }
+  body .filtry.f4 .f-prepinac { order: 2; }
+  body .filtry.f4 .f-cipy-obal { order: 3; flex: 1 1 55%; min-width: 0; }
+  body .filtry.f4 .vpravo { order: 4; }
+  body .filtry.f4 .f-zrusit[hidden] { display: none; }
+  /* řádky nesmí zmáčknout pruh pod název: nižší stopa a řádek se nezmenší pod svůj obsah */
+  body .graf .radek { min-height: 49px; }
+  body .hero.u2 h1 { font-size: 22px; }
+  body .legenda { font-size: 11px; gap: 4px 10px; }
+  body .filtry.f4 { padding: 6px 0; gap: 6px 10px; }
+  body .filtry.f4 .f-hledat input { padding-top: 6px; padding-bottom: 6px; }
+  body .radek .nazev { padding: 4px 14px 0; }
+  body .radek .nazev strong { font-size: 14px; line-height: 1.15; }
+  body .stopa { min-height: 29px; }
+  body .pruh { top: 16px; }
+  body .hero.u2 .u2-pod { font-size: 14px; margin-top: 4px; }
+  body .filtry.f4 .f-prepinac { display: flex; font-size: 13px; }
+  body .filtry.f4 .vpravo { display: flex; margin-left: auto; align-items: center; gap: 10px; font-size: 13px; }
+}
