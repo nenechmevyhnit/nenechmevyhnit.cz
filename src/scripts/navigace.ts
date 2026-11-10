@@ -6,6 +6,8 @@ const TITULEK_HLAVNI = 'Nenechme vyhnít — kauzy Andreje Babiše';
 let zaviramZHistorie = false;
 
 const dialog = () => document.getElementById('detail') as HTMLDialogElement;
+/** Detail otevřený z mapy si pohled pamatuje v adrese, aby se po zavření vrátil na mapu. */
+const dotazPohledu = () => (document.getElementById('graf')?.dataset.pohled === 'mapa' ? '?pohled=mapa' : '');
 
 async function nactiDetail(slug: string) {
   if (!mezipamet.has(slug)) {
@@ -32,7 +34,7 @@ export async function otevriDetail(slug: string, { pridatDoHistorie = true } = {
     document.title = mezipamet.get(slug)?.titulek ?? document.title;
   }
   vyberKauzu(slug);
-  if (pridatDoHistorie) history.pushState({ slug }, '', `/kauzy/${slug}/`);
+  if (pridatDoHistorie) history.pushState({ slug }, '', `/kauzy/${slug}/${dotazPohledu()}`);
   if (!dlg.open) dlg.showModal();
 }
 
@@ -40,7 +42,7 @@ export function zavriDetail({ pridatDoHistorie = true } = {}): void {
   const dlg = dialog();
   zaviramZHistorie = !pridatDoHistorie;
   if (dlg.open) dlg.close();
-  else if (pridatDoHistorie && location.pathname !== '/') history.pushState({}, '', '/');
+  else if (pridatDoHistorie && location.pathname !== '/') history.pushState({}, '', `/${dotazPohledu()}`);
 }
 
 export function inicializujNavigaci(): void {
@@ -67,7 +69,7 @@ export function inicializujNavigaci(): void {
 
   dlg.addEventListener('close', () => {
     document.title = TITULEK_HLAVNI;
-    if (!zaviramZHistorie && location.pathname !== '/') history.pushState({}, '', '/');
+    if (!zaviramZHistorie && location.pathname !== '/') history.pushState({}, '', `/${dotazPohledu()}`);
     zaviramZHistorie = false;
   });
   dlg.addEventListener('click', e => {
@@ -79,4 +81,7 @@ export function inicializujNavigaci(): void {
     if (slug) otevriDetail(slug, { pridatDoHistorie: false });
     else zavriDetail({ pridatDoHistorie: false });
   });
+
+  // mapa a odkazy mezi kauzami v detailu otevírají kauzu stejnou cestou jako osa
+  document.addEventListener('nv:otevri', e => { otevriDetail((e as CustomEvent<string>).detail); });
 }

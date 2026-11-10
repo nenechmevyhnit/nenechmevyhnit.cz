@@ -31,3 +31,21 @@
 .mapa-svg .m-stred rect { fill: var(--modra); stroke: var(--modra); }
 .mapa-svg .m-stred text { fill: #fff; font-weight: 600; }
 .mapa-svg .m-popisek { display: none; font: 11px var(--f-mono); fill: var(--meta); paint-order: stroke; stroke: var(--plocha); stroke-width: 3px; pointer-events: none; }
+
+.mapa-svg.ztlumeno .m-uzel:not(.zvyrazneno),
+.mapa-svg.ztlumeno .m-cara:not(.zvyrazneno) { opacity: .25; }
+.mapa-svg .m-cara.zvyrazneno .m-viditelna { stroke: var(--modra); stroke-opacity: 1; }
+.mapa-svg .m-popisek.zvyrazneno { display: inline; }
+.mapa-svg .m-uzel.fokus rect { stroke: var(--okr); stroke-width: 3; }
+
+.mapa-panel { position: absolute; z-index: 5; width: 300px; max-width: calc(100% - 16px); background: var(--plocha); border: 1px solid var(--linka); box-shadow: 0 6px 24px rgb(14 23 38 / .15); padding: 12px 14px; font-size: 14px; }
+.mapa-panel[hidden] { display: none; }
+.mapa-panel-nadpis { margin: 0 24px 6px 0; font-size: 15px; }
+.mapa-panel-zavrit { position: absolute; top: 4px; right: 6px; border: 0; background: none; font-size: 20px; line-height: 1; padding: 4px; cursor: pointer; color: var(--inkoust); }
+.mapa-panel p { margin: 0; }
+.mapa-panel .s-zdroje { margin: 6px 0 0; padding-left: 18px; font-size: 13px; }
+
+/* Strom je na počítači vizuálně skrytý: ovládá se přes něj klávesnicí a čte ho čtečka */
+@media (min-width: 761px) {
+  .mapa .strom { position: absolute; top: 0; left: 0; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
