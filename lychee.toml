@@ -1,4 +1,8 @@
 max_retries = 3
 timeout = 30
-accept = [200, 206, 429]
-exclude = ["^https://example\\.com"]
+# 403: české a slovenské zpravodajské weby (iROZHLAS, Radio Prague, TN Nova, Denník N) odmítají servery GitHubu,
+# z běžného připojení se otevřou. Smazaný článek vrací 404 nebo 410, ty kontrola dál zachytí.
+accept = [200, 206, 403, 429]
+# eur-lex.europa.eu a europarl.europa.eu odmítají automatické kontroly (202 s ověřením prohlížeče, 403),
+# nalus.usoud.cz spojení se servery GitHubu ukončí. V prohlížeči se otevřou, ověřují se ručně při ověření kauzy.
+exclude = ['^https://example\.com', '^https://eur-lex\.europa\.eu/', '^https://www\.europarl\.europa\.eu/', '^https://nalus\.usoud\.cz/']
