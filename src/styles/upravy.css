@@ -8,7 +8,7 @@ a.radek-btn { color: inherit; text-decoration: none; }
 /* Portrét se načítá jako <img> s cestou z public/ */
 .portret img { user-select: none; }
 .hero.u2 .u2-pod { font-family: var(--f-text); font-weight: 400; color: var(--text2); font-size: clamp(15px, 1.3vw, 18px); margin: 8px 0 0; }
-.opravy h4 { margin: 14px 0 4px; font: 600 12px var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--meta); }
+.opravy h4 { margin: 14px 0 4px; font: italic 400 15px var(--f-text); color: var(--meta); }
 /* Body mini-osy jsou tlačítka: vybraný bod nese aria-current (aria-selected na <button> nepatří). */
 .mini-osa .bod[aria-current="true"] { background: var(--okr); transform: scale(1.35); }
 /* Mobil: menu ukazuje všechny tři odkazy (prototyp skrýval Kauzy a Metodiku). Vyšší specificita kvůli pořadí stylů. */
@@ -59,7 +59,7 @@ body .m2-panel[data-p="stav"] h4 { break-after: avoid; }
   body .filtry.f4 .f-hledat { order: 1; flex: 1 1 55%; width: auto; min-width: 0; }
   body .filtry.f4 .f-prepinac { order: 2; }
   body .filtry.f4 .f-cipy-obal { order: 3; flex: 1 1 55%; min-width: 0; }
-  body .filtry.f4 .vpravo { order: 4; }
+  body .filtry.f4 > .vpravo { order: 4; }
   body .filtry.f4 .f-zrusit[hidden] { display: none; }
   /* řádky nesmí zmáčknout pruh pod název: nižší stopa a řádek se nezmenší pod svůj obsah */
   body .graf .radek { min-height: 49px; }
@@ -73,7 +73,7 @@ body .m2-panel[data-p="stav"] h4 { break-after: avoid; }
   body .pruh { top: 16px; }
   body .hero.u2 .u2-pod { font-size: 14px; margin-top: 4px; }
   body .filtry.f4 .f-prepinac { display: flex; font-size: 13px; }
-  body .filtry.f4 .vpravo { display: flex; margin-left: auto; align-items: center; gap: 10px; font-size: 13px; }
+  body .filtry.f4 > .vpravo { display: flex; margin-left: auto; align-items: center; gap: 10px; font-size: 13px; }
 }
 
 /* Lokální náhled neověřených konceptů (npm run koncepty) */
@@ -81,7 +81,7 @@ body .koncepty-stitek {
   position: fixed; left: 50%; top: 10px; transform: translateX(-50%); z-index: 50;
   padding: 6px 10px; border-radius: 4px;
   background: #16153A; color: #fff;
-  font: 600 12px/1.2 'JetBrains Mono', monospace; letter-spacing: .04em;
+  font: 600 12px/1.2 ui-monospace, monospace; letter-spacing: .04em;
   pointer-events: none;
 }
 
@@ -112,9 +112,9 @@ body .zalozky button[aria-selected="true"] { margin-bottom: 0; }
 /* Počítadlo a Zrušit filtry: na počítači v záhlaví sloupce názvů na ose, aby řádek filtrů zůstal čipům.
    Na mobilu (záhlaví sloupce tam není) zůstávají v řádku filtrů. */
 @media (min-width: 761px) {
-  body .filtry .vpravo { display: none; }
+  body .filtry > .vpravo { display: none; }
   body .osa-roku .nazev-sloupce { display: flex; align-items: baseline; gap: 12px; white-space: nowrap; }
-  body .osa-roku .f-zrusit { font: 12px var(--f-mono); text-transform: none; letter-spacing: 0; cursor: pointer; padding: 0 !important; }
+  body .osa-roku .f-zrusit { font: 15px var(--f-text); text-transform: none; letter-spacing: 0; cursor: pointer; padding: 0 !important; }
 }
 
 /* Další filtry a řazení: druhý řádek pod hledáním a čipy, čte se jako věta („Ukázat kauzy v jakémkoli stavu,
@@ -161,14 +161,18 @@ body .filtry.f4 { flex-wrap: wrap; row-gap: 4px; }
    seznam se tak nikdy neposouvá. */
 .graf .radky.strankovane { overflow-y: hidden; }
 .graf .radky.strankovane .radek { flex: none; height: var(--vyska-radku); min-height: 0; max-height: none; }
-.strankovani { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 18px; border-top: 1px solid var(--inkoust); background: var(--plocha); font: 12px var(--f-mono); color: var(--meta); position: sticky; left: 0; }
+/* měření (skript): každý řádek, i skrytý, na chvíli dostane přirozenou výšku podle obsahu */
+.graf .radky.meri .radek { display: flex !important; flex: none !important; height: auto !important; min-height: 0 !important; }
+.graf .radky.meri .radek-btn { min-height: 0; }
+.strankovani { flex: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 18px; border-top: 1px solid var(--inkoust); background: var(--plocha); font: 14px var(--f-text); font-variant-numeric: tabular-nums; color: var(--meta); position: sticky; left: 0; }
 .strankovani[hidden] { display: none; }
 /* označené pásmo vybrané kauzy nesmí zasahovat do lišty stránkování */
 .graf-vnitrek:has(> .strankovani:not([hidden])) .pasmo { bottom: var(--vyska-strankovani, 35px); }
 .strankovani { z-index: 3; }
 .s-tlacitka { display: flex; align-items: center; gap: 4px; }
+.s-rozsah { white-space: nowrap; }
 .s-cisla { display: flex; align-items: center; gap: 4px; }
-.strankovani button { min-width: 28px; height: 26px; padding: 0 6px; border: 1px solid var(--linka); background: var(--plocha); color: var(--inkoust); font: 600 12px var(--f-mono); cursor: pointer; }
+.strankovani button { min-width: 28px; height: 26px; padding: 0 6px; border: 1px solid var(--linka); background: var(--plocha); color: var(--inkoust); font: 700 14px var(--f-text); font-variant-numeric: tabular-nums; cursor: pointer; }
 .strankovani button:hover:not(:disabled) { border-color: var(--modra); color: var(--modra); }
 .strankovani button[aria-current="page"] { border-color: var(--modra); background: var(--modra); color: #fff; }
 .strankovani button:disabled { opacity: .35; cursor: default; }
@@ -179,9 +183,133 @@ body .filtry.f4 { flex-wrap: wrap; row-gap: 4px; }
 
 /* Záložka „Proč je to kauza“ */
 body .m2-panel[data-p="proc"] .proc-text { margin: 0; max-width: 46em; font-size: 17px; line-height: 1.55; color: var(--inkoust); }
-body .m2-panel[data-p="proc"] .kriterium { margin: 14px 0 0; font: 13px var(--f-mono); color: var(--meta); }
+body .m2-panel[data-p="proc"] .kriterium { margin: 14px 0 0; font: italic 15px var(--f-text); color: var(--meta); }
 body .m2-panel[data-p="proc"] .kriterium a { color: var(--modra); }
 body .m2-panel[data-p="proc"]:not([hidden]) { overflow-y: auto; scrollbar-width: thin; }
 
 /* Zdroj druhu „stanovisko dotčené strany“: čárkovaný rámeček, aby se nepletl s primárním zdrojem */
 body ol.zdroje .druh.vyjadreni { border-style: dashed; }
+
+/* ===== Ručně, ne šablonou =====
+   Web nemá vypadat jako tisíc dalších: žádné programátorské písmo u popisků, žádné přechody barev,
+   žádné vyjíždění při načtení. Všechno je v jednom písmu (Redaction), čísla mají pevnou šířku. */
+
+/* Popisky, roky a počty jsou v Redaction místo neproporcionálního písma. Proměnná --f-mono zůstává kvůli
+   vygenerovaným stylům, ukazuje ale na text. Redaction je při stejné velikosti drobnější, proto o 2 px víc. */
+html:root { --f-mono: "Redaction 10", Georgia, serif; }
+body .osa-roku .stitky span, body .pruh .popisek, body .pilulka, body .znacka span, body .chipy a, body sup a.pozn,
+body ol.zdroje li::before, body .m2-hlava .roky, body .mini-osa .rok, body .mini-osa .vybrany-popis,
+body .met ol.kroky li::marker, body .met ol.stupne li::marker { font-variant-numeric: tabular-nums lining-nums; }
+body .filtry > .vpravo { font-size: 15px; }
+body .osa-roku .nazev-sloupce { font-size: 15px; text-transform: none; letter-spacing: 0; }
+body .osa-roku .stitky span { font-size: 14px; }
+body .radek .nazev small { font-size: 12.5px; line-height: 1.05; margin-top: 0; font-style: italic; }
+@media (min-width: 761px) { body .radek .nazev { padding-top: 2px; padding-bottom: 2px; } } /* řádek osy má jen asi 34 px */
+body .pruh .popisek { font-size: 13px; line-height: 1.05; font-weight: 700; margin-bottom: 2px; padding-top: 0; padding-bottom: 0; }
+body .pruh .popisek em { margin-left: .3em; }
+body .pilulka { font-size: 13px; font-weight: 700; }
+body .znacka span { font-size: 12px; font-weight: 700; }
+body .chipy a, body sup a.pozn { font-size: 12px; font-weight: 700; }
+body ol.zdroje li::before { font-size: 14px; font-weight: 700; }
+body ol.zdroje .druh { font-size: 13px; font-style: italic; }
+body ol.zdroje .odkazy { font-size: 14px; }
+body .stav-box .overeno { font-size: 14px; font-style: italic; }
+body .m2-hlava .roky { font-size: 16px; font-weight: 700; }
+body .mini-osa .rok { font-size: 14px; }
+body .mini-osa .vybrany-popis { font-size: 13px; font-weight: 700; }
+body .udalost-velka time small, body .posun-napoveda { font-size: 14px; font-style: italic; }
+body .listovani button small { font-size: 13px; font-style: italic; }
+body .f-nazev { font-size: 14px; }
+body .met ol.kroky li::marker, body .met ol.stupne li::marker { font-size: 16px; font-weight: 700; }
+/* štítky nad nadpisy: kurzíva v běžné sazbě, ne verzálky s proložením */
+body .stanovisko h4 { font: italic 400 15px var(--f-text); text-transform: none; letter-spacing: 0; }
+body .u2-nad, body .met-hlava .nad { font: italic 400 17px/1.3 var(--f-text); text-transform: none; letter-spacing: 0; }
+@media (max-width: 760px) {
+  body .u2-nad, body .met-hlava .nad { font-size: 15px; }
+  body .mini-osa .rok { font-size: 12px; } /* na úzké mini-ose by se větší roky překrývaly */
+}
+
+/* Neuzavřená kauza: konec pruhu je šrafovaný (jako nedokončený úsek v tištěném grafu), ne přechod do světlé barvy se šipkou. */
+body .pruh.otevrena, body .legenda i.ok {
+  --srafa: 40px;
+  background:
+    repeating-linear-gradient(-45deg, var(--modra) 0 2.5px, transparent 2.5px 5.5px) right / var(--srafa) 100% no-repeat,
+    linear-gradient(var(--modra), var(--modra)) left / calc(100% - var(--srafa)) 100% no-repeat;
+  border-radius: 2px 0 0 2px;
+}
+body .pruh.otevrena::after { display: none; }
+body .legenda i.ok { --srafa: 11px; }
+
+/* Při načtení se nic nevysouvá ani neprolíná. Zůstává jediný pohyb, který něco říká: pruhy dorostou do délky trvání kauzy. */
+html body:not(.nacteno) .hero > *, html body:not(.nacteno) .filtry, html body:not(.nacteno) .graf,
+html body:not(.nacteno) .legenda, html body:not(.nacteno) .radek .nazev { animation: none; }
+
+/* Titulek úvodu se ke konci drolí: tučné rozpadlé řezy Redaction 20, 35, 50 a 70.
+   Jen skutečná tučná váha (umělé ztučnění pixelové tvary rozmaže) a nic silnějšího než 70, aby šel konec přečíst. */
+.hero.u2 h1 .drol { font-style: normal; font-weight: 700; font-synthesis: none; }
+.hero.u2 h1 .d1 { font-family: "Redaction 20", var(--f-nadpis); }
+.hero.u2 h1 .d2 { font-family: "Redaction 35", var(--f-nadpis); }
+.hero.u2 h1 .d3 { font-family: "Redaction 50", var(--f-nadpis); }
+.hero.u2 h1 .d4 { font-family: "Redaction 70", var(--f-nadpis); }
+
+/* Témata (čipy): jeden řádek bez posouvání a bez mizení do ztracena. Co se nevejde, otevře textové tlačítko
+   „+N další“ (skript vybírá, která témata se vejdou; vybraná jsou vidět vždy). Rozbalená témata se zalomí pod sebe.
+   Pravidla počítadla míří jen na přímého potomka (.filtry > .vpravo), aby nezasahovala do ničeho uvnitř řádku. */
+body .filtry.f4 .f-cipy { overflow: hidden; mask-image: none; flex-wrap: nowrap; }
+body .filtry.f4 .f-cipy-obal.rozbalene .f-cipy { flex-wrap: wrap; row-gap: 6px; }
+body .filtry.f4 .f-cipy button[hidden] { display: none; }
+body .filtry.f4 .f-cipy .f-vice {
+  flex: none; border: 0; background: none; padding: 5px 4px; border-radius: 0;
+  font: 600 14px var(--f-text); color: var(--modra); text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; cursor: pointer;
+}
+body .filtry.f4 .f-cipy .f-vice:hover { text-decoration-thickness: 2px; }
+@media (min-width: 761px) {
+  body .filtry.f4 { align-items: flex-start; }
+  body .filtry.f4 .f-hledat, body .filtry.f4 .f-prepinac { min-height: 34px; display: flex; align-items: center; }
+}
+/* Osa se vejde na šířku i u menších notebooků (kolem 1100 px): na rok stačí 12 px, značky let jsou po pěti letech. */
+@media (min-width: 761px) {
+  body .graf-vnitrek { min-width: calc(var(--sl) + var(--sp) + 46 * 12px); }
+}
+/* Hlavička: k názvu patří věcný podtitul, aby bylo hned jasné, co je web zač. Na mobilu se nevejde. */
+.top .hlavicka-znacka { display: flex; align-items: baseline; gap: 14px; }
+.top .hlavicka-pod { font: 400 14px var(--f-text); color: var(--text2); white-space: nowrap; }
+@media (max-width: 760px) { .top .hlavicka-pod { display: none; } }
+/* Aktivní položka menu: platí na všech stránkách (hlavní i textových), proto ve sdílených úpravách. */
+.top nav a[aria-current="page"] { font-weight: 700; text-decoration: underline; text-decoration-color: #DB1F2D; text-underline-offset: 6px; text-decoration-thickness: 2px; }
+/* Stránka 404: obsah uprostřed zbytku okna, ilustrace nad nadpisem. Moucha bzučí jen bez omezení pohybu. */
+.chyba404 { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 16px 0 6vh; }
+.chyba404-obr { width: min(330px, 78vw, 40vh); height: auto; flex: none; display: block; margin-bottom: 10px; }
+.chyba404-nad { font: 600 12px var(--f-mono); color: #DB1F2D; letter-spacing: .08em; text-transform: uppercase; margin: 0 0 10px; }
+.chyba404 h1 { font-family: var(--f-nadpis); font-weight: 700; font-size: clamp(34px, 5.2vw, 64px); line-height: 1.04; letter-spacing: -0.015em; color: var(--inkoust); margin: 0; }
+.chyba404 h1 .drol { font-style: normal; font-weight: 700; font-synthesis: none; }
+.chyba404 h1 .d1 { font-family: "Redaction 20", var(--f-nadpis); }
+.chyba404 h1 .d2 { font-family: "Redaction 35", var(--f-nadpis); }
+.chyba404 h1 .d3 { font-family: "Redaction 50", var(--f-nadpis); }
+.chyba404 h1 .d4 { font-family: "Redaction 70", var(--f-nadpis); }
+.chyba404-text { font-size: clamp(16px, 1.4vw, 19px); color: var(--text2); max-width: 30em; margin: 14px 0 26px; }
+.chyba404-tlacitko { display: inline-block; background: var(--modra); color: #fff; font: 600 15px var(--f-text); text-decoration: none; padding: 12px 26px; border-radius: 2px; transition: background .15s; }
+.chyba404-tlacitko:hover { background: var(--inkoust); color: #fff; }
+.chyba404-tlacitko:focus-visible { outline: 3px solid #DB1F2D; outline-offset: 3px; }
+@media (prefers-reduced-motion: no-preference) {
+  .chyba404 .moucha { animation: nv-bzz .5s steps(4) infinite; }
+  .chyba404 .kridlo { animation: nv-mavani .12s linear infinite alternate; }
+  .chyba404 .cerv { animation: nv-cerv 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: 20% 100%; }
+}
+@keyframes nv-bzz { 0% { transform: translate(0, 0); } 25% { transform: translate(2px, -3px); } 50% { transform: translate(-2px, 1px); } 75% { transform: translate(1px, 3px); } }
+@keyframes nv-mavani { to { opacity: .35; } }
+@keyframes nv-cerv { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-4deg); } }
+/* Modaly Metodiky a O projektu: delší text se neořízne, pokračuje ve sloupcích do strany (stejně jako v detailu kauzy).
+   Nápovědu k posunu ukazuje skript jen u oddílu, který se do modalu nevejde. */
+/* mezera = pravý okraj panelu (64px), aby další sloupec nevykukoval ořezaný na kraji */
+body .v4-dlg-panel { overflow-x: auto; overflow-y: hidden; column-gap: 64px; overscroll-behavior-x: contain; }
+@media (max-width: 760px) { body .v4-dlg-panel { column-gap: 32px; } }
+body .v4-dlg-panel h3 { break-after: avoid; }
+body .v4-dlg-panel .posun-napoveda { column-span: all; margin: -4px 0 12px; font: italic 14px var(--f-text); color: var(--meta); }
+body .v4-dlg-panel .posun-napoveda[hidden] { display: none; }
+/* Mobil: slovníček v modalu pod sebe, jinak dlouhý pojem (např. „škoda podle obvinění“) zúží vysvětlení na pár slov. */
+@media (max-width: 760px) {
+  body .v4-dlg-panel .slovnicek { grid-template-columns: 1fr; gap: 0; }
+  body .v4-dlg-panel .slovnicek dt { break-after: avoid; }
+  body .v4-dlg-panel .slovnicek dd { margin-bottom: 10px; }
+}

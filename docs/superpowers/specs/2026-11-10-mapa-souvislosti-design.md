@@ -108,21 +108,25 @@ Build selže, když:
 - Aktér s více vztahy stojí ve sloupci podle své nejhlubší cesty k Babišovi a vede k němu víc čar.
 - Kauzy jsou seskupené podle prvního aktéra (kauzy bez aktéra tvoří vlastní skupinu pod Babišem) a ve skupině seřazené podle `od`.
 - Kauza s více aktéry je na mapě jednou a vede k ní víc čar.
+- Hlavní strom se kreslí lomenými čarami se společným svislým kmenem u rodiče; rodič stojí na řádku svého prvního potomka, takže Babiš je vlevo nahoře a strom se čte shora jako osnova (doplněno 12. 11. 2026).
+- Šířka sloupce se řídí nejdelším názvem v něm.
 - Když se mapa nevejde, posouvá se uvnitř své plochy jako celek. Stránka se svisle neposouvá.
 - Pozadí mapy je stejně poloprůhledné jako u osy a portrét zůstává vzadu.
 
 ### Vzhled
 - Jen barvy z palety webu. Červená se nepoužívá.
 - Čáry jsou tenké a stejně silné. Tloušťka čar ani velikost uzlů nevyjadřují počet kauz.
+- Vedlejší vazby (další aktér kauzy, další vztah aktéra) a návaznosti jsou v klidu světlejší než hlavní strom, aby se mapa dala číst; po najetí se zvýrazní stejně jako hlavní čáry.
 - Vztahy a aktéři v kauze jsou plné čáry, návaznosti čárkované oblouky mezi kauzami.
-- V klidu jsou vidět jen názvy uzlů. Role a období se zobrazí u zvýrazněné cesty.
+- Na mapě jsou jen názvy uzlů. Role a období ukazuje **karta vazeb** v rohu plochy (12. 11. 2026 místo popisků u čar, které se u uzlů s mnoha vazbami překrývaly): po najetí nebo fokusu na kauzu *Aktéři v kauze*, *Navazuje na* a *Navazují na ni*, na aktéra *Nadřazení*, *Aktéři pod ním* a *V kauzách*, na čáru nadpis vazby, roli a větu popisu. Víc vazeb k témuž uzlu je jeden řádek („vlastní · 1999–2017, 2024–2026“). Když je vedle mapy místo (aspoň 160 px), stojí karta i panel se zdroji (po kliknutí na aktéra nebo vazbu mezi aktéry) **nalevo vedle mapy**, karta se při delším obsahu posune výš; jinak (úzký okraj, Zvětšit plochu) je karta v rohu plochy naproti uzlu a panel u uzlu. Karta na nízké ploše zkracuje seznamy („a 6 dalších“) a pro čtečky je skrytá (totéž obsahuje strom).
 
 ### Ovládání
 - Najetí myší nebo fokus na uzel zvýrazní jeho cestu k Babišovi a navazující kauzy, ostatní se ztlumí.
-- Klik na kauzu otevře detail (stávající navigace přes History API).
+- Klik na kauzu nebo na čáru, která ke kauze vede (od aktéra, od Babiše, návaznost: navazující kauza), otevře detail kauzy s časovou osou (stávající navigace přes History API).
 - Klik na aktéra nebo čáru otevře panel s rolí, obdobím, větou popisu a odkazy na zdroje. Esc ho zavře.
 - Filtry (hledání, štítky, jen neuzavřené) platí i pro mapu. Kauzy mimo filtr zmizí a s nimi aktéři, kterým nezbude žádná kauza. Počítadlo se chová stejně jako u osy.
 - Přechod Osa ↔ Mapa přes View Transitions. Při `prefers-reduced-motion` bez animace.
+- Měřítko a posouvání (doplněno 12. 11. 2026): lišta v záhlaví vedle přepínače má legendu a tlačítka −, procenta (návrat na 100 %), +, Celá mapa a Zvětšit plochu. Mapa se sama zmenší na šířku plochy, nejvýš na 80 %. Tažení myší posouvá, Ctrl/⌘ + kolečko přibližuje k ukazateli, dvojklik na prázdné místo přiblíží; v přehledu (pod 60 %) přiblíží místo na 100 % už jeden klik. Zvětšit plochu roztáhne osu s mapou přes celé okno, Esc ji vrátí. Výběr kauzy z detailu posune mapu tak, aby byla kauza vidět.
 
 ## 6. Strom: mobil a přístupnost
 
@@ -185,5 +189,5 @@ Klik na kauzu přejde do jejího detailu stávající navigací. Značky zdrojů
 
 - Instituce jako aktéři.
 - Shlukování podle podobných vzorců bez společného aktéra.
-- Přibližování a posouvání mapy myší, export obrázku.
+- Export obrázku mapy.
 - Vazby mezi aktéry mimo strom vlastnictví a vztahů k Babišovi (např. známosti).

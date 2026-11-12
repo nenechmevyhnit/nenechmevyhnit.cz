@@ -17,6 +17,28 @@ describe('kauzaSchema', () => {
     expect(r.overeno).toBe('2026-11-09');
   });
 
+  it('přijme částku a doplní měnu CZK', () => {
+    const k = { ...platnaKauza(), castky: [{ castka: 50000000, druh: 'dotace', popis: 'fiktivní dotace', zdroje: [1] }] };
+    expect(chyby(k)).toEqual([]);
+    expect(kauzaSchema.parse(k).castky[0].mena).toBe('CZK');
+  });
+  it('bez částek je pole prázdné', () => expect(kauzaSchema.parse(platnaKauza()).castky).toEqual([]));
+  it('odmítne částku bez zdroje', () => {
+    const k = { ...platnaKauza(), castky: [{ castka: 1, druh: 'pokuta', popis: 'p', zdroje: [] }] };
+    expect(chyby(k).join(' ')).toMatch(/Částka musí mít aspoň jeden zdroj/);
+  });
+  it('odmítne částku s neexistujícím zdrojem', () => {
+    const k = { ...platnaKauza(), castky: [{ castka: 1, druh: 'pokuta', popis: 'pokuta úřadu', zdroje: [9] }] };
+    expect(chyby(k).join(' ')).toMatch(/Částka „pokuta úřadu“ odkazuje na neexistující zdroj 9/);
+  });
+  it('odmítne neznámý druh částky (např. obecnou „škodu“)', () => {
+    const k = { ...platnaKauza(), castky: [{ castka: 1, druh: 'skoda', popis: 'p', zdroje: [1] }] };
+    expect(chyby(k).length).toBeGreaterThan(0);
+  });
+  it('odmítne zápornou nebo necelou částku', () => {
+    for (const castka of [-5, 1.5, 0]) expect(chyby({ ...platnaKauza(), castky: [{ castka, druh: 'pokuta', popis: 'p', zdroje: [1] }] }).length).toBeGreaterThan(0);
+  });
+
   it('odmítne neznámý stav', () => expect(chyby({ ...platnaKauza(), stav: 'vinen' }).length).toBeGreaterThan(0));
   it('odmítne kauzu bez zdrojů', () => expect(chyby({ ...platnaKauza(), zdroje: [] }).length).toBeGreaterThan(0));
   it('odmítne událost bez zdroje', () => {

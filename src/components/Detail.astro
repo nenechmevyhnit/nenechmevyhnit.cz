@@ -4,7 +4,8 @@ import { rozdelOdstavce, odstavecNaHtml } from '../lib/souvislosti';
 import { datumText, rozsahText, delkaText, polohaVKauze, popiskyRoku } from '../lib/casova-osa';
 import { popisekStavu } from '../lib/stavy';
 import { popisekKriteria } from '../lib/kriteria';
-import { popisekDruhu } from '../lib/zdroje';
+import { popisekDruhu as popisekDruhuZdroje } from '../lib/zdroje';
+import { castkaText, popisekDruhu } from '../lib/castky';
 import type { VazbyKauzy } from '../lib/mapa';
 
 interface Props { zaznam?: KauzaZaznam; vazby?: VazbyKauzy; naMapu?: boolean }
@@ -25,6 +26,12 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
         <div class="roky">{rozsahText(k.od, k.do)} · {delkaText(k.od, k.do)} · {popisekStavu(k.stav)}</div>
         <h2 id="detail-nadpis">{k.nazev}</h2>
         <p class="perex">{k.shrnuti}</p>
+        {k.castky.length > 0 && (
+          <ul class="castky" aria-label="Částky v kauze">
+            {k.castky.map(c => <li class={c.druh === 'objem' ? 'objem' : undefined}><strong>{castkaText(c)}</strong> <span class="druh-castky">{popisekDruhu(c.druh)}</span> <span class="popis-castky">{c.popis}<span class="chipy" set:html={chipy(c.zdroje)}></span></span></li>)}
+            <li class="castky-metodika"><a href="/metodika/#jazyk">Co částky znamenají</a></li>
+          </ul>
+        )}
       </header>
       <div class="mini-osa" aria-label="Události kauzy v čase">
         <div class="linie"></div>
@@ -90,7 +97,7 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
         <ol class="zdroje">
           {k.zdroje.map(z => (
             <li id={`zdroj-${z.id}`}><div>
-              <span class="vyd">{z.vydavatel}</span>{/* třída „stanovisko“ už patří boxu stanoviska, proto u zdroje „vyjadreni“ */}<span class={`druh ${z.druh === 'stanovisko' ? 'vyjadreni' : z.druh}`}>{popisekDruhu(z.druh)}</span><br>
+              <span class="vyd">{z.vydavatel}</span>{/* třída „stanovisko“ už patří boxu stanoviska, proto u zdroje „vyjadreni“ */}<span class={`druh ${z.druh === 'stanovisko' ? 'vyjadreni' : z.druh}`}>{popisekDruhuZdroje(z.druh)}</span><br>
               {z.titulek}
               <div class="odkazy">{datumText(z.datum)} · <a href={z.url} rel="noopener noreferrer" target="_blank">originál ↗</a>{z.archiv && <> · <a href={z.archiv} rel="noopener noreferrer" target="_blank">archivní kopie ↗</a></>}</div>
             </div></li>

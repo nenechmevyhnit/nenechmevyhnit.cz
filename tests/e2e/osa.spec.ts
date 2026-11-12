@@ -17,7 +17,7 @@ test('osa vykreslí kauzy seřazené podle začátku', async ({ page }) => {
 
 test('úvod U2 a portrét', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Za půl roku si to nebudete pamatovat.');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Za půl roku si to nikdo nebude pamatovat.');
   await expect(page.locator('.portret img')).toHaveAttribute('src', '/obrazky/portret.webp');
   await overBezPosouvani(page);
 });

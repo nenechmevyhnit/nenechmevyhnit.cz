@@ -120,67 +120,93 @@ export function viditelneUzly(graf: Graf, viditelne: Iterable<string> | null): S
   return vysledek;
 }
 
-/** radek: mezi uzly zbývá místo na popisek role nad uzlem (mezery mezi sloupci jsou na popisky úzké) */
-export const ROZMERY = { radek: 40, okraj: 16, vyskaUzlu: 22, stred: 120, akter: 200, kauza: 260, mezera: 36, oblouky: 150 } as const;
+/** Role a období se na mapě nepíšou (u uzlu s mnoha vazbami by se popisky překrývaly), ukazuje je karta
+ *  vazeb (kartaUzlu, kartaHrany), proto stačí nízké řádky. Šířky sloupců se počítají z nejdelšího názvu
+ *  (min* jsou spodní meze), aby mapa nebyla zbytečně široká. kmen: odsazení svislé čáry od rodiče. */
+export const ROZMERY = {
+  radek: 30, okraj: 16, vyskaUzlu: 20, mezera: 32, kmen: 14, oblouky: 130,
+  minStred: 90, minAkter: 80, minKauza: 160, odsazeniTextu: 8,
+} as const;
 export type UmisteniUzlu = { id: string; typ: TypUzlu; nazev: string; x: number; y: number; w: number };
-export type Cara = { id: string; druh: DruhHrany; d: string; popisek: string | null; px: number; py: number };
+/** hlavni: čára hlavního stromu (lomená, plná); vedlejší vazby a návaznosti se kreslí obloukem a slaběji.
+ *  dz: dráha pro klepnutí a najetí (u lomené čáry jen vodorovný úsek k potomkovi, kmen sdílí víc čar). */
+export type Cara = { id: string; druh: DruhHrany; hlavni: boolean; d: string; dz: string };
 export type Rozlozeni = { sirka: number; vyska: number; uzly: UmisteniUzlu[]; cary: Cara[] };
 
-/** Vrstvy zleva doprava: střed → aktéři podle hloubky → sloupec kauz. y uzlu je střed jeho řádku. */
+/** Odhad šířky názvu v px (písmo 13 px). Bez DOM, aby rozložení šlo spočítat při buildu i v prohlížeči;
+ *  raději o kus víc než méně. */
+export function sirkaNazvu(nazev: string, tucne = false): number {
+  let w = 0;
+  for (const z of nazev) w += z === ' ' ? 3.6 : z !== z.toLowerCase() ? 10 : 6.6;
+  return Math.ceil(w * (tucne ? 1.08 : 1));
+}
+
+/** Vrstvy zleva doprava: střed → aktéři podle hloubky → sloupec kauz. Rodič stojí na řádku svého
+ *  prvního potomka (strom se čte shora jako osnova, Babiš je vlevo nahoře), y uzlu je střed řádku. */
 export function rozlozMapu(graf: Graf, viditelne: Iterable<string> | null): Rozlozeni {
   const R = ROZMERY;
   const vid = viditelneUzly(graf, viditelne);
   if (vid.size === 1) return { sirka: 0, vyska: 0, uzly: [], cary: [] };
   const podle = new Map(graf.uzly.map(u => [u.id, u]));
-  const maxHloubka = Math.max(0, ...graf.uzly.filter(u => u.typ === 'akter' && vid.has(u.id)).map(u => u.hloubka));
-  const sloupecX = (h: number) => (h === 0 ? R.okraj : R.okraj + R.stred + R.mezera + (h - 1) * (R.akter + R.mezera));
-  const kauzyX = sloupecX(maxHloubka) + (maxHloubka === 0 ? R.stred : R.akter) + R.mezera;
+  const viditelneUzlyGrafu = graf.uzly.filter(u => vid.has(u.id));
+  const maxHloubka = Math.max(0, ...viditelneUzlyGrafu.filter(u => u.typ === 'akter').map(u => u.hloubka));
+  const pad = 2 * R.odsazeniTextu + 4;
+  const sirkaSloupce = (min: number, uzly: Uzel[], tucne = false) => Math.max(min, ...uzly.map(u => sirkaNazvu(u.nazev, tucne) + pad));
+  const sirky = [sirkaSloupce(R.minStred, viditelneUzlyGrafu.filter(u => u.typ === 'stred'), true)];
+  for (let h = 1; h <= maxHloubka; h++) sirky.push(sirkaSloupce(R.minAkter, viditelneUzlyGrafu.filter(u => u.typ === 'akter' && u.hloubka === h)));
+  const sirkaKauz = sirkaSloupce(R.minKauza, viditelneUzlyGrafu.filter(u => u.typ === 'kauza'));
+  const sloupecX: number[] = [R.okraj];
+  for (let h = 1; h <= maxHloubka; h++) sloupecX.push(sloupecX[h - 1] + sirky[h - 1] + R.mezera);
+  const kauzyX = sloupecX[maxHloubka] + sirky[maxHloubka] + R.mezera;
 
-  // každý list (kauza nebo aktér bez viditelných dětí) dostane řádek, rodič je uprostřed svých listů
-  const rozsah = new Map<string, [number, number]>();
+  // každý list (kauza nebo aktér bez viditelných dětí) dostane řádek, rodič stojí na řádku prvního listu
+  const prvni = new Map<string, number>();
   let radek = 0;
   const projdi = (id: string): void => {
+    prvni.set(id, radek);
     const deti = (graf.deti[id] ?? []).filter(d => vid.has(d));
-    if (deti.length === 0) { rozsah.set(id, [radek, radek]); radek++; return; }
+    if (deti.length === 0) { radek++; return; }
     deti.forEach(projdi);
-    rozsah.set(id, [rozsah.get(deti[0])![0], rozsah.get(deti[deti.length - 1])![1]]);
   };
   projdi(STRED.id);
 
-  const uzly: UmisteniUzlu[] = [...rozsah].map(([id, [a, b]]) => {
+  const uzly: UmisteniUzlu[] = [...prvni].map(([id, r]) => {
     const u = podle.get(id)!;
-    const x = u.typ === 'stred' ? sloupecX(0) : u.typ === 'akter' ? sloupecX(u.hloubka) : kauzyX;
-    const w = u.typ === 'stred' ? R.stred : u.typ === 'akter' ? R.akter : R.kauza;
-    return { id, typ: u.typ, nazev: u.nazev, x, y: R.okraj + ((a + b) / 2 + 0.5) * R.radek, w };
+    const x = u.typ === 'kauza' ? kauzyX : sloupecX[u.typ === 'stred' ? 0 : u.hloubka];
+    const w = u.typ === 'kauza' ? sirkaKauz : sirky[u.typ === 'stred' ? 0 : u.hloubka];
+    return { id, typ: u.typ, nazev: u.nazev, x, y: R.okraj + (r + 0.5) * R.radek, w };
   });
   const misto = new Map(uzly.map(u => [u.id, u]));
-  // popisek stromové hrany je u uzlu potomka: první (hlavní) nad ním, další pod ním
-  const poradiPopisku = new Map<string, number>();
-  const vstupy = new Map<string, Hrana[]>();
-  for (const h of graf.hrany) if (h.druh !== 'navaznost' && misto.has(h.rodic) && misto.has(h.potomek)) {
-    if (!vstupy.has(h.potomek)) vstupy.set(h.potomek, []);
-    vstupy.get(h.potomek)!.push(h);
-  }
-  for (const seznam of vstupy.values()) seznam.sort((a, b) => Number(b.hlavni) - Number(a.hlavni)).forEach((h, i) => poradiPopisku.set(h.id, i));
   const cary: Cara[] = [];
-  const soubezne = new Map<string, number>(); // víc vazeb mezi týmiž uzly: každá další čára o kus níž
+  const soubezne = new Map<string, number>(); // víc vedlejších vazeb mezi týmiž uzly: každá další čára o kus níž
   for (const h of graf.hrany) {
     const a = misto.get(h.rodic), b = misto.get(h.potomek);
     if (!a || !b) continue;
-    const popisek = [h.roleText, h.obdobi].filter(Boolean).join(' · ') || null;
     if (h.druh === 'navaznost') {
-      const x = kauzyX + R.kauza, ohyb = Math.min(40, 12 + Math.abs(b.y - a.y) / 8);
-      cary.push({ id: h.id, druh: h.druh, d: `M${x} ${a.y} C${x + ohyb} ${a.y} ${x + ohyb} ${b.y} ${x} ${b.y}`, popisek, px: x + ohyb + 6, py: (a.y + b.y) / 2 + 4 });
+      // vzdálenější kauzy mají širší oblouk, aby se oblouky do sebe vnořily a nesplývaly
+      const x = kauzyX + sirkaKauz, ohyb = Math.min(R.oblouky - 50, 14 + Math.abs(b.y - a.y) / 10);
+      const d = `M${x} ${a.y} C${x + ohyb} ${a.y} ${x + ohyb} ${b.y} ${x} ${b.y}`;
+      cary.push({ id: h.id, druh: h.druh, hlavni: false, d, dz: d });
+      continue;
+    }
+    const x1 = a.x + a.w, x2 = b.x;
+    if (h.hlavni) {
+      // lomená čára: od rodiče ke kmeni, po kmeni dolů a vodorovně k potomkovi (sourozenci sdílí kmen)
+      const k = x1 + R.kmen, dy = b.y - a.y, r = Math.min(6, Math.abs(dy) / 2), s = Math.sign(dy);
+      const d = dy === 0 ? `M${x1} ${a.y} H${x2}`
+        : `M${x1} ${a.y} H${k - r} Q${k} ${a.y} ${k} ${a.y + s * r} V${b.y - s * r} Q${k} ${b.y} ${k + r} ${b.y} H${x2}`;
+      cary.push({ id: h.id, druh: h.druh, hlavni: true, d, dz: dy === 0 ? d : `M${k} ${b.y} H${x2}` });
     } else {
-      const x1 = a.x + a.w, x2 = b.x, sx = (x1 + x2) / 2, i = poradiPopisku.get(h.id) ?? 0;
-      const py = i === 0 ? b.y - R.vyskaUzlu / 2 - 3 : b.y + R.vyskaUzlu / 2 + 11 + (i - 1) * 12;
       const klic = `${h.rodic}>${h.potomek}`, k = soubezne.get(klic) ?? 0;
       soubezne.set(klic, k + 1);
-      const y1 = a.y + k * 5, y2 = b.y + k * 5;
-      cary.push({ id: h.id, druh: h.druh, d: `M${x1} ${y1} C${sx} ${y1} ${sx} ${y2} ${x2} ${y2}`, popisek, px: b.x + 4, py });
+      const y1 = a.y + k * 5, y2 = b.y + k * 5, sx = (x1 + x2) / 2;
+      const d = `M${x1} ${y1} C${sx} ${y1} ${sx} ${y2} ${x2} ${y2}`;
+      cary.push({ id: h.id, druh: h.druh, hlavni: false, d, dz: d });
     }
   }
-  return { sirka: kauzyX + R.kauza + R.oblouky, vyska: 2 * R.okraj + radek * R.radek, uzly, cary };
+  // vedlejší vazby a návaznosti pod hlavní strom, aby přes ně byl strom čitelný
+  cary.sort((a, b) => Number(a.hlavni) - Number(b.hlavni));
+  return { sirka: kauzyX + sirkaKauz + R.oblouky, vyska: 2 * R.okraj + radek * R.radek, uzly, cary };
 }
 
 /** Co zvýraznit při najetí nebo fokusu: cesta ke středu (všemi vztahy), vše pod uzlem
@@ -209,6 +235,100 @@ export function zvyrazneni(graf: Graf, id: string): { uzly: Set<string>; hrany: 
     uzly.add(h.rodic === id ? h.potomek : h.rodic);
   }
   return { uzly, hrany };
+}
+
+export type PolozkaKarty = { nazev: string; role: string | null };
+export type SkupinaKarty = { nadpis: string; polozky: PolozkaKarty[]; dalsich: number };
+/** Karta vazeb: co se ukáže v rohu mapy při najetí na uzel nebo čáru (místo popisků na mapě). */
+export type Karta = { nazev: string; podnadpis: string | null; text: string | null; skupiny: SkupinaKarty[]; akce: string | null };
+
+const roleHrany = (h: Hrana): string | null => [h.roleText, h.obdobi].filter(Boolean).join(' · ') || null;
+
+/** Nadpis vazby ve směru čtení: od nadřazeného k podřízenému, u návaznosti od navazující kauzy. */
+export function nadpisHrany(graf: Graf, id: string): string {
+  const h = graf.hrany.find(x => x.id === id)!;
+  const nazev = (u: string) => graf.uzly.find(x => x.id === u)!.nazev;
+  return h.druh === 'navaznost' ? `${nazev(h.potomek)} → ${nazev(h.rodic)}` : `${nazev(h.rodic)} → ${nazev(h.potomek)}`;
+}
+
+/** Role více vazeb k témuž uzlu v jednom řádku: stejná role jednou, období za sebou
+ *  („vlastní · 1999–2017, 2024–2026“), různé role oddělené středníkem. */
+function roleVazeb(hrany: Hrana[]): string | null {
+  const podleRole = new Map<string, string[]>();
+  for (const h of hrany) {
+    const klic = h.roleText ?? '';
+    if (!podleRole.has(klic)) podleRole.set(klic, []);
+    if (h.obdobi) podleRole.get(klic)!.push(h.obdobi);
+  }
+  return [...podleRole].map(([r, obdobi]) => [r, obdobi.join(', ')].filter(Boolean).join(' · ')).filter(Boolean).join('; ') || null;
+}
+
+/** Skupina karty: více vazeb k témuž uzlu je jedna položka, nejvýš max položek. */
+function skupina(graf: Graf, nadpis: string, hrany: Hrana[], uzelVazby: (h: Hrana) => string, max: number): SkupinaKarty[] {
+  const podle = new Map(graf.uzly.map(u => [u.id, u]));
+  const polozky = new Map<string, Hrana[]>();
+  for (const h of hrany) {
+    const u = uzelVazby(h);
+    if (!polozky.has(u)) polozky.set(u, []);
+    polozky.get(u)!.push(h);
+  }
+  if (polozky.size === 0) return [];
+  const vse = [...polozky].map(([u, hh]) => ({ nazev: podle.get(u)!.nazev, role: roleVazeb(hh) }));
+  return [{ nadpis, polozky: vse.slice(0, max), dalsich: Math.max(0, vse.length - max) }];
+}
+
+export function kartaUzlu(graf: Graf, id: string, max = 8): Karta {
+  const u = graf.uzly.find(x => x.id === id)!;
+  const vstupni = graf.hrany.filter(h => h.potomek === id && h.druh !== 'navaznost');
+  const vystupni = graf.hrany.filter(h => h.rodic === id && h.druh !== 'navaznost');
+  if (u.typ === 'kauza') {
+    const navazuje = graf.hrany.filter(h => h.druh === 'navaznost' && h.potomek === id);
+    const navazujiNaNi = graf.hrany.filter(h => h.druh === 'navaznost' && h.rodic === id);
+    const akteri = vstupni.filter(h => h.druh === 'akter');
+    return {
+      nazev: u.nazev, podnadpis: u.roky ?? null,
+      text: akteri.length ? null : 'Kauza nemá uvedené další aktéry.',
+      skupiny: [
+        ...skupina(graf, 'Aktéři v kauze', akteri, h => h.rodic, max),
+        ...skupina(graf, 'Navazuje na', navazuje, h => h.rodic, max),
+        ...skupina(graf, 'Navazují na ni', navazujiNaNi, h => h.potomek, max),
+      ],
+      akce: 'Kliknutím otevřete detail kauzy.',
+    };
+  }
+  // pod uzlem nejdřív děti hlavního stromu v jeho pořadí, pak ostatní podle abecedy
+  const hl = graf.deti[id] ?? [];
+  const nazev = (x: string) => graf.uzly.find(y => y.id === x)!.nazev;
+  const poradi = (a: Hrana, b: Hrana) => {
+    const i = hl.indexOf(a.potomek), j = hl.indexOf(b.potomek);
+    return (i < 0 ? Infinity : i) - (j < 0 ? Infinity : j) || nazev(a.potomek).localeCompare(nazev(b.potomek), 'cs');
+  };
+  const dolu = vystupni.slice().sort(poradi);
+  const nahoru = vstupni;
+  return {
+    nazev: u.nazev, podnadpis: null, text: null,
+    skupiny: [
+      ...skupina(graf, 'Nadřazení', nahoru, h => h.rodic, max),
+      ...skupina(graf, 'Aktéři pod ním', dolu.filter(h => h.druh === 'vztah'), h => h.potomek, max),
+      ...skupina(graf, u.typ === 'stred' ? 'Kauzy bez dalších aktérů' : 'V kauzách', dolu.filter(h => h.druh !== 'vztah'), h => h.potomek, max),
+    ],
+    akce: u.typ === 'stred' ? null : 'Kliknutím zobrazíte zdroje vazby.',
+  };
+}
+
+/** Kauza, jejíž detail otevře klik na čáru: u vazby aktéra (nebo středu) na kauzu ta kauza, u návaznosti
+ *  navazující kauza. Vazba mezi aktéry kauzu nemá. */
+export function kauzaHrany(graf: Graf, id: string): string | null {
+  const h = graf.hrany.find(x => x.id === id)!;
+  return h.druh === 'vztah' ? null : h.potomek;
+}
+
+export function kartaHrany(graf: Graf, id: string): Karta {
+  const h = graf.hrany.find(x => x.id === id)!;
+  const kauza = kauzaHrany(graf, id);
+  const akce = kauza ? `Kliknutím otevřete detail kauzy ${graf.uzly.find(u => u.id === kauza)!.nazev}.`
+    : h.popis ? 'Kliknutím zobrazíte zdroje.' : null;
+  return { nazev: nadpisHrany(graf, id), podnadpis: roleHrany(h), text: h.popis, skupiny: [], akce };
 }
 
 export type VazbyKauzy = {

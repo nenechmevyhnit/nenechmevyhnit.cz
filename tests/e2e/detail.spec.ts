@@ -71,7 +71,7 @@ test('stav a stanovisko', async ({ page }) => {
 test('neexistující kauza vrátí stránku 404', async ({ page }) => {
   const odpoved = await page.goto('/kauzy/neexistuje/');
   expect(odpoved?.status()).toBe(404);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tahle stránka neexistuje');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tahle stránka vyhnila');
 });
 
 test('vyjádření dotčené strany je ve zdrojích označené jako stanovisko, ne jako primární zdroj', async ({ page }) => {

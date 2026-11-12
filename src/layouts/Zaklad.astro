@@ -9,7 +9,7 @@ interface Props {
   popis: string;
   cesta: string;
   styly: 'hlavni' | 'stranky';
-  aktivni: 'kauzy' | 'metodika' | 'o-projektu';
+  aktivni?: 'kauzy' | 'metodika' | 'o-projektu';
   otevrena?: string;
 }
 const { titulek, popis, cesta, styly, aktivni, otevrena } = Astro.props;

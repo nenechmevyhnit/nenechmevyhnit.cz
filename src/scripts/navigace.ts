@@ -3,7 +3,7 @@ import { vyberKauzu } from './osa';
 import { nastavPohled, aktualniPohled } from './mapa';
 
 const mezipamet = new Map<string, { html: string; trida: string; titulek: string }>();
-const TITULEK_HLAVNI = 'Nenechme vyhnít — kauzy Andreje Babiše';
+const TITULEK_HLAVNI = 'Archiv kauz Andreje Babiše — Nenechme vyhnít';
 let zaviramZHistorie = false;
 
 const dialog = () => document.getElementById('detail') as HTMLDialogElement;
@@ -72,6 +72,9 @@ export function inicializujNavigaci(): void {
     document.title = TITULEK_HLAVNI;
     if (!zaviramZHistorie && location.pathname !== '/') history.pushState({}, '', `/${dotazPohledu()}`);
     zaviramZHistorie = false;
+    // po zavření detailu nemá na ose zůstat pásmo a popisky od/do zavřené kauzy.
+    // Na mapě (i po „Ukázat na mapě“, které přepne pohled ještě před zavřením) kauza zůstane zvýrazněná.
+    if (aktualniPohled() !== 'mapa') vyberKauzu(null);
   });
   dlg.addEventListener('click', e => {
     if (e.target === dlg || (e.target as HTMLElement).closest('.zavrit')) dlg.close();

@@ -108,3 +108,29 @@ test('řazení přeskládá řádky, zrušení filtrů řazení nemění', async
   await expect(viditelne(page).first().locator('strong')).toHaveText('Testovací kauza Beta');
   await expect(viditelne(page).nth(1).locator('strong')).toHaveText('Testovací kauza Alfa');
 });
+
+test.describe('témata, která se nevejdou do řádku', () => {
+  test.use({ viewport: { width: 390, height: 700 } });
+  test('schovají se pod „+N další“, vybrané téma zůstane vidět a nic se neposouvá do strany', async ({ page }) => {
+    const cipy = page.locator('.f-cipy button[data-stitek]');
+    const vice = page.locator('.f-cipy .f-vice');
+    await expect(vice).toBeVisible();
+    await expect(vice).toHaveAttribute('aria-expanded', 'false');
+    const skryte = await cipy.evaluateAll(cs => cs.filter(c => (c as HTMLElement).hidden).length);
+    expect(skryte).toBeGreaterThan(0);
+    await expect(vice).toContainText(`+${skryte} dalš`);
+    expect(await page.locator('.f-cipy').evaluate(e => e.scrollWidth <= e.clientWidth + 1)).toBe(true);
+
+    await vice.click();
+    await expect(vice).toHaveAttribute('aria-expanded', 'true');
+    await expect(vice).toHaveText('méně');
+    for (const c of await cipy.all()) await expect(c).toBeVisible();
+
+    // téma z konce abecedy vybrané v rozbaleném seznamu zůstane vidět i po sbalení
+    const posledni = cipy.last();
+    await posledni.click();
+    await vice.click();
+    await expect(posledni).toBeVisible();
+    await expect(posledni).toHaveAttribute('aria-pressed', 'true');
+  });
+});

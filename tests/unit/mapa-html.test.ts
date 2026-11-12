@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { overAdresar } from '../../src/lib/validace';
 import { sestavGraf, rozlozMapu } from '../../src/lib/mapa';
-import { svgMapy, stromMapy } from '../../src/lib/mapa-html';
+import { svgMapy, stromMapy, kartaHtml } from '../../src/lib/mapa-html';
 import { escapujHtml } from '../../src/lib/html';
 
 const { zaznamy, akteri } = overAdresar('tests/fixtures/obsah');
@@ -22,14 +22,39 @@ describe('svgMapy', () => {
     expect(svg.match(/class="m-uzel m-kauza"/g)).toHaveLength(6);
     expect(svg.match(/class="m-uzel m-akter"/g)).toHaveLength(3);
     expect(svg).toContain('data-uzel="k:alfa-dotace"');
-    expect(svg.match(/class="m-cara m-cara-navaznost"/g)).toHaveLength(2);
-    expect(svg).toContain('>vlastní · 1995–2017</text>');
+    expect(svg.match(/class="m-cara m-cara-navaznost m-vedlejsi"/g)).toHaveLength(2);
+    // hlavní strom bez m-vedlejsi; vedlejší vazby (druhý aktér, další vztah) se kreslí slaběji
+    const r = rozlozMapu(graf, null);
+    expect(svg.match(/class="m-cara m-cara-[a-z]+"/g)).toHaveLength(r.cary.filter(c => c.hlavni).length);
+    const lomena = r.cary.find(c => c.hlavni && c.dz !== c.d)!;
+    expect(svg).toContain(`<path class="m-zasah" d="${lomena.dz}"/>`);
+    // role a období na mapě nejsou, ukazuje je karta vazeb
+    expect(svg).not.toContain('m-popisek');
+    expect(svg).not.toContain('vlastní · 1995–2017');
   });
   it('escapuje názvy', () => {
     const r = { sirka: 100, vyska: 50, uzly: [{ id: 'k:x', typ: 'kauza' as const, nazev: '<script>', x: 0, y: 20, w: 50 }], cary: [] };
     expect(svgMapy(r)).toContain('&lt;script&gt;');
   });
   it('prázdné rozložení = prázdné SVG', () => expect(svgMapy(rozlozMapu(graf, []))).toBe('<svg class="mapa-svg" aria-hidden="true" focusable="false" width="0" height="0"></svg>'));
+});
+
+describe('kartaHtml', () => {
+  it('nadpis, podnadpis, skupiny s rolemi, zbytek a akce; vše escapované', () => {
+    const html = kartaHtml({
+      nazev: '<b>Kauza</b>', podnadpis: '2018 – dosud', text: null, akce: 'Kliknutím otevřete detail kauzy.',
+      skupiny: [{ nadpis: 'Aktéři v kauze', polozky: [{ nazev: 'A & B', role: 'příjemce dotace' }, { nazev: 'C', role: null }], dalsich: 3 }],
+    });
+    expect(html).toContain('<p class="k-nadpis">&lt;b&gt;Kauza&lt;/b&gt;</p>');
+    expect(html).toContain('<li><span class="k-nazev">A &amp; B</span><span class="k-role">příjemce dotace</span></li>');
+    expect(html).toContain('<li><span class="k-nazev">C</span></li>');
+    expect(html).toContain('<li class="k-dalsi">a 3 dalších</li>');
+    expect(html).toContain('<p class="k-akce">Kliknutím otevřete detail kauzy.</p>');
+  });
+  it('bez vypsaných položek řekne jen počet', () => {
+    expect(kartaHtml({ nazev: 'X', podnadpis: null, text: null, akce: null, skupiny: [{ nadpis: 'V kauzách', polozky: [], dalsich: 4 }] }))
+      .toContain('<li class="k-dalsi">celkem 4</li>');
+  });
 });
 
 describe('stromMapy', () => {

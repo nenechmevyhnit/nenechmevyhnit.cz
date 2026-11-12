@@ -1,11 +1,16 @@
-// Jednorázově stáhne Redaction 10 a JetBrains Mono (latin + latin-ext) z Google Fonts do public/fonty
+// Jednorázově stáhne Redaction 10 a tučné rozpadlé řezy Redaction 20/35/50/70 (titulek úvodu) (latin + latin-ext) z Google Fonts do public/fonty
 // a vytvoří src/styles/fonty.css. Za běhu webu se Google Fonts nepoužívají.
 import { mkdirSync, writeFileSync } from 'node:fs';
 
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36';
 const RODINY = [
   'family=Redaction+10:ital,wght@0,400;0,700;1,400',
-  'family=JetBrains+Mono:wght@400;600',
+  // rozpadlé řezy: titulek „Za půl roku si to nebudete pamatovat.“ se během čtení drolí.
+  // Jen skutečná tučná váha: uměle ztučněné pixelové tvary jsou nečitelné. Řezy 100 a silnější se nedají přečíst.
+  'family=Redaction+20:wght@700',
+  'family=Redaction+35:wght@700',
+  'family=Redaction+50:wght@700',
+  'family=Redaction+70:wght@700',
 ];
 mkdirSync('public/fonty', { recursive: true });
 let vystup = '/* Vygenerováno nastroje/stahni-fonty.mjs — písma jsou hostovaná lokálně (OFL). */\n';

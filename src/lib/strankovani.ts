@@ -1,8 +1,11 @@
-/** Kolik celých řádků se vejde do dané výšky (aspoň jeden). */
-export function pocetNaStranku(vyska: number, vyskaRadku: number): number {
+/** Nejvýš tolik kauz na jedné stránce osy, i když by se jich na výšku vešlo víc. */
+export const NEJVIC_NA_STRANKU = 10;
+
+/** Kolik celých řádků se vejde do dané výšky (aspoň jeden, nejvýš `max`). */
+export function pocetNaStranku(vyska: number, vyskaRadku: number, max: number = NEJVIC_NA_STRANKU): number {
   if (!(vyskaRadku > 0)) return 1;
   // drobná tolerance kvůli zaokrouhlení subpixelových výšek
-  return Math.max(1, Math.floor((vyska + 0.5) / vyskaRadku));
+  return Math.max(1, Math.min(max, Math.floor((vyska + 0.5) / vyskaRadku)));
 }
 
 export function pocetStranek(n: number, naStranku: number): number {

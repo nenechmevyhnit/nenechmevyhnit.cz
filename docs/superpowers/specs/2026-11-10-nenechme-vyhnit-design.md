@@ -111,12 +111,12 @@ Shora dolů (prototyp `design/03-detail/portret-p4.html`):
 4. **Osa (F):**
    - sloupec názvů vlevo (přilepený), osa roků 1980 až aktuální rok, sloupec „Detail →“ vpravo (přilepený),
    - každá kauza je řádek s pruhem v reálném měřítku, popiskem „od–do · N let“ a čárkami událostí. Neuzavřené kauzy mají světlý konec se šipkou,
-   - výběr kauzy zvýrazní pásmo přes celý graf a popisky od/do na ose roků. Ostatní řádky se ztlumí a výběr zůstane i po zavření detailu,
+   - výběr kauzy zvýrazní pásmo přes celý graf a popisky od/do na ose roků. Ostatní řádky se ztlumí. Zavření detailu výběr na ose zruší (v pohledu mapy, i po „Ukázat na mapě“, kauza zůstane zvýrazněná),
    - prázdný výsledek filtru ukáže hlášku s tlačítkem „Zrušit filtry“.
 5. **Řádek patičky:** legenda vlevo, kredit fotky, „Nezávislý archiv“, Nahlásit chybu, Historie změn a e-mail vpravo.
 
 ### Detail kauzy `/kauzy/<slug>/` (M2)
-Statická stránka pro každou kauzu se stejným rozvržením jako hlavní stránka a otevřeným modalem. Vlastní `<title>`, popis a Open Graph umožňují náhled při sdílení. Mezi kauzami se přechází bez načítání stránky, mění se jen adresa (History API). Zavření modalu vrátí adresu na `/` a výběr na ose zůstane.
+Statická stránka pro každou kauzu se stejným rozvržením jako hlavní stránka a otevřeným modalem. Vlastní `<title>`, popis a Open Graph umožňují náhled při sdílení. Mezi kauzami se přechází bez načítání stránky, mění se jen adresa (History API). Zavření modalu vrátí adresu na `/` a zruší výběr na ose.
 
 Obsah modalu:
 - nadtitulek (od–do · délka · stav), název a shrnutí (max. 3 řádky),
@@ -174,7 +174,7 @@ Obsah modalu:
 - **Vitest:** schéma a validace. Vzorová správná kauza projde a pro každé pravidlo z oddílu 5 existuje vzorová chybná kauza, která selže. K tomu testy `casova-osa.ts` a `hledani.ts`.
 - **Playwright:**
   - osa vykreslí všechny kauzy seřazené podle začátku, filtry (hledání bez diakritiky, čipy NEBO, jen neuzavřené, zrušení, prázdný stav),
-  - otevření detailu z řádku i přímou adresou, listování událostmi, přepnutí na zdroj, zavření a zachování výběru,
+  - otevření detailu z řádku i přímou adresou, listování událostmi, přepnutí na zdroj, zavření a zrušení výběru,
   - **žádné svislé posouvání:** `document.scrollingElement.scrollHeight <= innerHeight` na všech velikostech z oddílu 7, a celá osa je ve viewportu,
   - axe bez závažných chyb přístupnosti.
 - **lychee:** kontrola odkazů v CI.

@@ -13,11 +13,11 @@ export const metodika: { platiOd: string; sekce: SekceStranky[] } = {
 <li>existuje úřední zjištění, například rozsudek, audit nebo rozhodnutí úřadu,</li>
 <li>věc nezávisle na sobě doložily aspoň dvě seriózní redakce.</li></ul>
 <p>U každé kauzy je hned na začátku vysvětleno, <strong>proč je to kauza</strong>: v čem je věc sporná a proč ji řešil úřad nebo média, se zdrojem. Uvádíme také, podle kterého kritéria je zařazena. Kontrola při sestavení webu ho ověřuje: úřední řízení a úřední zjištění musí doložit primární zdroj, dvě redakce musí doložit dva mediální zdroje od různých vydavatelů.</p>
-<p>Kroky vlády jako celku zatím nezařazujeme. Archiv je na jejich pozdější zařazení připravený.</p>
+<p>Kroky vlády jako celku zatím nezařazujeme.</p>
 <h3 id="vazby">Vazby mezi kauzami</h3>
 <p>Kauzy lze kromě časové osy zobrazit jako <strong>mapu souvislostí</strong>. Ukazuje, přes které firmy, osoby a nástroje (například svěřenské fondy) jsou kauzy spojené s Andrejem Babišem a které kauzy na sebe přímo navazují.</p>
 <ul><li>Každá vazba má <strong>roli</strong> z pevného seznamu (například <em>vlastní</em>, <em>příjemce dotace</em>, <em>vychází z</em>), krátké vysvětlení a <strong>zdroj</strong>. Bez zdroje se web nesestaví. Vztahy firem, osob a nástrojů mají navíc období, kdy platily.</li>
-<li>Aktérem může být firma nebo nástroj, které Andrej Babiš nebo jeho firmy ovládaly, a to jen pro období, kdy je ovládaly. Osoba jen tehdy, když je veřejně činná nebo už byla jmenována ve zveřejněných kauzách v souvislosti s řízením.</li>
+<li>Aktérem může být firma nebo nástroj, které Andrej Babiš nebo jeho firmy ovládaly, a to jen pro období, kdy je ovládaly. Osoba jen tehdy, když je veřejně činná nebo už byla v souvislosti s řízením jmenována v médiích nebo v úředních dokumentech.</li>
 <li>Úřady a instituce aktéry nejsou.</li>
 <li><strong>Vazba sama o sobě neznamená vinu ani spoluodpovědnost.</strong> Říká jen, že dvě věci spolu doloženě souvisejí.</li></ul>
 <p>Vazby ověřuje člověk stejně jako ostatní obsah kauzy.</p>`,
@@ -35,18 +35,32 @@ export const metodika: { platiOd: string; sekce: SekceStranky[] } = {
     {
       id: "jazyk",
       nadpis: "Jak píšeme",
-      shrnuti: "Věcně a podle stavu řízení. Žádné hodnotící přívlastky, u neuzavřených věcí platí presumpce neviny.",
+      shrnuti: "Věcně a podle stavu řízení. Žádné hodnotící přívlastky, u neuzavřených věcí platí presumpce neviny. U částek vždy říkáme, co znamenají.",
       html: `<ul><li>Používáme slovesa podle skutečného stavu řízení: <em>obviněn, obžalován, zproštěn, odsouzen nepravomocně / pravomocně</em>.</li>
 <li>Nepoužíváme hodnotící přívlastky ani spekulace o úmyslech.</li>
 <li>U každé kauzy je vidět její aktuální stav a datum, kdy jsme ho naposledy ověřili.</li>
-<li>Dokud soud pravomocně nerozhodne, platí presumpce neviny. Připomínáme to přímo u kauzy.</li></ul>`,
+<li>Dokud soud pravomocně nerozhodne, platí presumpce neviny. Připomínáme to přímo u kauzy.</li></ul>
+<h3 id="castky">Částky</h3>
+<p>U kauz, ve kterých jde o peníze, uvádíme v detailu nejvýš tři částky. Každá má zdroj a označení, co znamená:</p>
+<dl class="slovnicek">
+<dt>dotace</dt><dd>Přiznaná nebo vyplacená dotace či jiná podpora z veřejných peněz.</dd>
+<dt>škoda podle obvinění / obžaloby</dt><dd>Škoda, kterou vyčíslila policie nebo státní zástupce. Není to rozhodnutí soudu.</dd>
+<dt>škoda podle rozsudku</dt><dd>Škoda, kterou stanovil soud.</dd>
+<dt>vráceno nebo k vrácení</dt><dd>Co příjemce vrátil nebo podle rozhodnutí úřadu vrátit musí.</dd>
+<dt>finanční korekce</dt><dd>Výdaje, které po auditu nebyly proplaceny z rozpočtu EU nebo je stát musel vrátit.</dd>
+<dt>pozastavené platby</dt><dd>Platby, které úřad dočasně zadržel. O konečném výsledku to nic neříká.</dd>
+<dt>pokuta</dt><dd>Pokuta, peněžitý trest nebo jiná peněžní sankce.</dd>
+<dt>objem peněz</dt><dd>Kolik peněz v kauze prošlo, například zakázky, nákupy, dary nebo výdaje. <strong>Neznamená to, že o ně stát přišel.</strong></dd>
+</dl>
+<p><strong>Na ose, při řazení a ve filtru podle částky objem peněz nepoužíváme.</strong> Číslo bez souvislostí by mohlo vyvolat dojem, že o ty peníze někdo přišel, i když šlo o běžný obchod s protihodnotou. Objem proto ukazujeme jen v detailu kauzy, vždy s popisem, o jaké peníze jde.</p>
+<p>Škodu uvádíme jen tehdy, když ji vyčíslila policie, obžaloba nebo soud. Částky různého druhu nesčítáme. Částku z cizí měny nepřepočítáváme; pro řazení a filtr podle částky ji jen přibližně převedeme na koruny, přepočtené číslo ale nikde neukazujeme. Pokutu, která nenabyla právní moci nebo byla zrušena, na ose neukazujeme.</p>`,
     },
     {
       id: "strana",
-      nadpis: "Druhá strana má slovo",
-      shrnuti: "U každé kauzy je stanovisko Andreje Babiše nebo jeho obhajoby, s vlastním zdrojem.",
-      html: `<p>Každá kauza obsahuje <strong>stanovisko dotčené strany</strong>, tedy vyjádření Andreje Babiše, jeho obhajoby nebo mluvčího. I stanovisko má svůj zdroj.</p>
-<p>Kauzu bez stanoviska nezveřejníme. Pokud se dotčená strana nevyjádřila, uvedeme to i s datem, kdy jsme o vyjádření usilovali.</p>`,
+      nadpis: "Stanovisko dotčené strany",
+      shrnuti: "U každé kauzy je stanovisko Andreje Babiše, jeho obhajoby, firem nebo hnutí, s vlastním zdrojem.",
+      html: `<p>Každá kauza obsahuje <strong>stanovisko dotčené strany</strong>, tedy vyjádření Andreje Babiše, jeho obhajoby, mluvčího, jeho firem nebo hnutí. I stanovisko má svůj zdroj.</p>
+<p>Kauzu bez stanoviska nezveřejníme. Pokud se dotčená strana k věci veřejně nevyjádřila, uvedeme to.</p>`,
     },
     {
       id: "postup",
@@ -55,7 +69,7 @@ export const metodika: { platiOd: string; sekce: SekceStranky[] } = {
       html: `<ol class="kroky"><li>Vznikne koncept kauzy se zdroji. Do ověření není veřejný.</li>
 <li>Člověk otevře každý zdroj a ověří, že tvrzení skutečně podporuje.</li>
 <li>Zapíše se datum ověření a kauza se zveřejní.</li></ol>
-<p>Pravidla hlídá i stroj. Když kauze chybí zdroj, stanovisko druhé strany, stav řízení nebo datum ověření, web se nesestaví. Ke každému zdroji ukládáme archivní kopii pro případ, že původní článek zmizí.</p>`,
+<p>Pravidla hlídá i stroj. Když kauze chybí zdroj, stanovisko dotčené strany, stav řízení nebo datum ověření, web se nesestaví. Ke zdrojům ukládáme archivní kopie pro případ, že původní článek zmizí.</p>`,
     },
     {
       id: "opravy",

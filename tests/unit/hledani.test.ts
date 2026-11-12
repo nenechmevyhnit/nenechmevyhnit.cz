@@ -3,7 +3,7 @@ import { normalizuj, odpovida, jeAktivni, seradit, delkaLet, PRAZDNY_FILTR, type
 
 const DNES = new Date('2026-11-10T12:00:00');
 const p: PolozkaHledani = {
-  slug: 'alfa', nazev: 'Alfa', od: 2007, do: null, stav: 'obzaloba', posledni: '2026-03-05',
+  slug: 'alfa', nazev: 'Alfa', od: 2007, do: null, stav: 'obzaloba', posledni: '2026-03-05', castka: null,
   otevrena: true, stitky: ['dotace', 'eu-fondy'], text: normalizuj('Čapí Alfa zpráva úřadu OLAF'),
 };
 const prazdny: Filtr = { ...PRAZDNY_FILTR };
@@ -72,11 +72,23 @@ describe('období', () => {
   });
 });
 
+describe('filtr podle částky', () => {
+  const s = (castka: number | null, f: string) => sedi({ ...p, castka }, { castka: f });
+  it('jen s uvedenou částkou', () => { expect(s(31000, 'ano')).toBe(true); expect(s(null, 'ano')).toBe(false); });
+  it('přes 100 mil. Kč', () => { expect(s(272e6, 'nad-100m')).toBe(true); expect(s(50e6, 'nad-100m')).toBe(false); });
+  it('přes 1 mld. Kč', () => { expect(s(19e9, 'nad-1mld')).toBe(true); expect(s(272e6, 'nad-1mld')).toBe(false); expect(s(null, 'nad-1mld')).toBe(false); });
+  it('filtr částky je aktivní filtr', () => expect(jeAktivni({ ...prazdny, castka: 'ano' })).toBe(true));
+});
+
 describe('řazení', () => {
   const a = { ...p, slug: 'a', nazev: 'Čapí hnízdo', od: 2007, do: null, posledni: '2026-08-31' };
   const b = { ...p, slug: 'b', nazev: 'Agrofert', od: 1994, do: null, posledni: '2023' };
   const c = { ...p, slug: 'c', nazev: 'Lety', od: 2016, do: 2018, posledni: '2018-06' };
   const slugy = (r: string) => seradit([a, b, c], r, DNES).map(x => x.slug);
+  it('podle částky: největší první, kauzy bez částky na konec', () => {
+    const s = seradit([{ ...a, castka: 50e6 }, { ...b, castka: null }, { ...c, castka: 19e9 }], 'castka', DNES).map(x => x.slug);
+    expect(s).toEqual(['c', 'a', 'b']);
+  });
   it('od nejstarší je výchozí', () => expect(slugy('zacatek')).toEqual(['b', 'a', 'c']));
   it('od nejnovější', () => expect(slugy('novejsi')).toEqual(['c', 'a', 'b']));
   it('podle poslední události', () => expect(slugy('aktivita')).toEqual(['a', 'b', 'c']));

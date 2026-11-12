@@ -12,12 +12,27 @@ test('klik na řádek otevře detail bez načtení stránky', async ({ page }) =
   await expect(page.locator('#graf')).toHaveAttribute('data-vybrano', 'gama-offshore');
 });
 
-test('zavření vrátí adresu na / a výběr zůstane', async ({ page }) => {
+test('zavření vrátí adresu na / a zruší výběr na ose', async ({ page }) => {
   await page.goto('/kauzy/alfa-dotace/');
   await page.getByRole('button', { name: 'Zavřít detail' }).click();
   await expect(page.locator('dialog#detail')).not.toBeVisible();
   await expect(page).toHaveURL(/\/$/);
-  await expect(page.locator('#graf')).toHaveAttribute('data-vybrano', 'alfa-dotace');
+  await expect(page.locator('#graf')).not.toHaveAttribute('data-vybrano');
+  await expect(page.locator('.radek.vybrany')).toHaveCount(0);
+  await expect(page.locator('.pasmo')).toBeHidden();
+});
+
+test('Escape i Zpět po zavření detailu zruší výběr na ose', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('.radek[data-slug="beta-archiv"] a.radek-btn').click();
+  await expect(page.locator('#graf')).toHaveAttribute('data-vybrano', 'beta-archiv');
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#graf')).not.toHaveAttribute('data-vybrano');
+  await page.locator('.radek[data-slug="beta-archiv"] a.radek-btn').click();
+  await expect(page.locator('#graf')).toHaveAttribute('data-vybrano', 'beta-archiv');
+  await page.goBack();
+  await expect(page.locator('dialog#detail')).not.toBeVisible();
+  await expect(page.locator('#graf')).not.toHaveAttribute('data-vybrano');
 });
 
 test('tlačítko Zpět zavře detail, Vpřed ho znovu otevře', async ({ page }) => {

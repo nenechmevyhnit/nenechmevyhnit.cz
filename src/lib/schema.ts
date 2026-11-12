@@ -3,6 +3,7 @@ import { STAVY } from './stavy';
 import { KRITERIA } from './kriteria';
 import { DRUHY_ZDROJU } from './zdroje';
 import { ROLE_VZTAHU, ROLE_V_KAUZE, ROLE_NAVAZNOSTI, DRUHY_AKTERU } from './role';
+import { DRUHY_CASTEK, MENY, PRESNOSTI } from './castky';
 
 const naText = (v: unknown) =>
   v instanceof Date ? v.toISOString().slice(0, 10) : typeof v === 'number' ? String(v) : v;
@@ -71,6 +72,16 @@ export const navaznostSchema = z.object({
   zdroje: odkazy('Návaznost'),
 }).strict();
 
+/** Částka, o kterou v kauze jde. Druh říká, co číslo znamená (dotace, pokuta, objem…), škodu tvrdí jen druhy skoda-*. */
+export const castkaSchema = z.object({
+  castka: z.number().int().positive('Částka musí být kladné celé číslo'),
+  mena: z.enum(MENY).default('CZK'),
+  presnost: z.enum(PRESNOSTI).optional(),
+  druh: z.enum(DRUHY_CASTEK),
+  popis: text().max(80, 'Popis částky smí mít nejvýš 80 znaků'),
+  zdroje: odkazy('Částka'),
+}).strict();
+
 export function rokZData(d: string): number {
   return Number(d.slice(0, 4));
 }
@@ -94,6 +105,8 @@ const vytvorKauzaSchema = (koncepty: boolean) => z
     proc: z.object({ text: text(), zdroje: odkazy('Proč je to kauza') }).strict(),
     akteri: z.array(vazbaAkteraSchema).default([]),
     navazuje: z.array(navaznostSchema).default([]),
+    /** na ose se ukáže první částka, která není objem (viz hlavniCastka) */
+    castky: z.array(castkaSchema).max(3, 'Kauza smí mít nejvýš 3 částky').default([]),
     opravy: z.array(z.object({ datum: datumPresne, popis: text() }).strict()).default([]),
   })
   .strict()
@@ -111,6 +124,7 @@ const vytvorKauzaSchema = (koncepty: boolean) => z
     over(k.proc.zdroje, 'Proč je to kauza');
     k.akteri.forEach(a => over(a.zdroje, `Vazba na aktéra „${a.id}“`));
     k.navazuje.forEach(n => over(n.zdroje, `Návaznost na „${n.kauza}“`));
+    k.castky.forEach(c => over(c.zdroje, `Částka „${c.popis}“`));
     const dvakrat = (seznam: string[], co: string) => seznam
       .filter((x, i) => seznam.indexOf(x) !== i)
       .forEach(x => ctx.addIssue({ code: 'custom', message: `${co} „${x}“ je u kauzy uvedena dvakrát` }));

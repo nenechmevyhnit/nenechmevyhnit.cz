@@ -3,7 +3,9 @@ import { pocetNaStranku, pocetStranek, cislaStranek } from '../../src/lib/strank
 
 describe('stránkování', () => {
   it('na stránku se vejde tolik řádků, kolik dovolí výška', () => {
-    expect(pocetNaStranku(580, 34)).toBe(17);
+    expect(pocetNaStranku(580, 34, Infinity)).toBe(17);
+    expect(pocetNaStranku(580, 34)).toBe(10);
+    expect(pocetNaStranku(200, 34)).toBe(5);
     expect(pocetNaStranku(33.6, 34)).toBe(1);
     expect(pocetNaStranku(0, 34)).toBe(1);
     expect(pocetNaStranku(100, 0)).toBe(1);

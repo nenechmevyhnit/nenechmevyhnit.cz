@@ -16,7 +16,7 @@ const { otevrena } = Astro.props;
 const zaznamy = nactiKauzy();
 const stitky = nactiStitky();
 const mapa = maMapu();
-const titulek = otevrena ? `${otevrena.kauza.nazev} — Nenechme vyhnít` : 'Nenechme vyhnít — kauzy Andreje Babiše';
+const titulek = otevrena ? `${otevrena.kauza.nazev} — Nenechme vyhnít` : 'Archiv kauz Andreje Babiše — Nenechme vyhnít';
 const popis = otevrena ? otevrena.kauza.shrnuti : 'Archiv kauz Andreje Babiše přehledně, s daty a zdroji. Každé tvrzení má zdroj, každá kauza stanovisko dotčené strany.';
 ---
 <Zaklad titulek={titulek} popis={popis} cesta={otevrena ? `/kauzy/${otevrena.slug}/` : '/'} styly="hlavni" aktivni="kauzy" otevrena={otevrena?.slug}>

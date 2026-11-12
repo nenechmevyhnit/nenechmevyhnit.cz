@@ -78,7 +78,7 @@ test('řádky jedné stránky jsou stejně vysoké', async ({ page }) => {
 test('označené pásmo vybrané kauzy končí nad lištou stránkování', async ({ page }) => {
   await page.goto('/kauzy/zeta-stret/');
   await zmensiOsu(page);
-  await page.keyboard.press('Escape');
+  // pásmo se měří pod otevřeným detailem: zavření výběr zruší
   const pasmo = (await page.locator('.pasmo').boundingBox())!;
   const lista = (await page.locator('.strankovani').boundingBox())!;
   expect(pasmo.y + pasmo.height).toBeLessThanOrEqual(lista.y + 1);

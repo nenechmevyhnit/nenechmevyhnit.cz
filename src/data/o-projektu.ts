@@ -8,27 +8,29 @@ export const oProjektu: { sekce: SekceStranky[] } = {
       nadpis: "Proč archiv vznikl",
       shrnuti: "Kauzy zapadají. Za půl roku si nikdo nepamatuje, co se stalo, a právě na to se spoléhá.",
       html: `<p>Každý týden přijde nová kauza, novela nebo rozhodnutí a ta předchozí zapadne. Za půl roku si ji pamatuje málokdo, za tři roky skoro nikdo.</p>
-<p>Myšlenka vzešla z rozhovoru v podcastu <em>Kecy a politika</em>: někdo by měl tyhle věci soustavně zapisovat a archivovat, jinak zmizí. Tento web se o to pokouší, přehledně, v čase a se zdrojem u každého tvrzení.</p>`,
+<p>Myšlenka vzešla z rozhovoru v podcastu <em>Kecy a politika</em>: někdo by měl tyhle věci soustavně zapisovat a archivovat, jinak zmizí. Tento web se o to pokouší, přehledně, v čase a se zdrojem u každého tvrzení.</p>
+<p>Název odkazuje na rčení „nechat věc vyhnít“, tedy nechat ji ležet, dokud sama nevyšumí. Archiv drží kauzy na očích i potom, co zmizí ze zpráv.</p>`,
     },
     {
       id: "kdo",
       nadpis: "Kdo za webem stojí",
       shrnuti: "Nezávislý volič. Bez vazby na politickou stranu, hnutí nebo sponzora.",
-      html: `<p>Web vede nezávislý volič, který není členem žádné politické strany ani hnutí a nikdo ho neplatí.</p>
+      html: `<p>Web vede jeden člověk, nezávislý volič, který není členem žádné politické strany ani hnutí a nikdo ho neplatí.</p>
 <p>Autor zůstává anonymní záměrně: obsah se má posuzovat podle zdrojů, ne podle toho, kdo ho napsal. Každé tvrzení má odkaz na zdroj, takže si ho můžete ověřit sami a nemusíte nikomu věřit na slovo.</p>`,
     },
     {
       id: "penize",
       nadpis: "Financování",
       shrnuti: "Žádné peníze, žádné reklamy. Web běží zdarma.",
-      html: `<p>Web nemá příjmy ani výdaje. Běží zdarma na službě GitHub Pages, nemá reklamy a nepřijímá dary od politických stran, hnutí ani firem.</p>
+      html: `<p>Web nemá žádné příjmy. Jediný výdaj je doména, kterou autor platí ze svého. Web běží zdarma na službě GitHub Pages, nemá reklamy a nepřijímá dary od politických stran, hnutí ani firem.</p>
 <p>Kdyby se cokoli z toho změnilo, zveřejníme to právě tady, s datem.</p>`,
     },
     {
       id: "soukromi",
       nadpis: "Soukromí",
       shrnuti: "Žádné sledování, žádné cookies, žádné skripty třetích stran.",
-      html: `<p>Web nesbírá žádné údaje o návštěvnících. Nepoužívá analytiku, cookies ani skripty reklamních sítí a sociálních sítí. Písma hostujeme sami.</p>
+      html: `<p>Sami žádné údaje o návštěvnících nesbíráme. Web nepoužívá analytiku, cookies ani skripty reklamních a sociálních sítí. Písma hostujeme sami.</p>
+<p>Hosting GitHub Pages ukládá kvůli provozu a bezpečnosti běžné technické záznamy o přístupech, například IP adresu. My k nim přístup nemáme.</p>
 <p>Proto tu také nenajdete lištu se souhlasem s cookies: není k čemu souhlasit.</p>`,
     },
     {
