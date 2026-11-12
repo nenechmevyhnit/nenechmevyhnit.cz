@@ -294,6 +294,31 @@ zdroje:
     datum: 2026-11-12
     druh: primarni
     url: https://or.justice.cz/ias/ui/rejstrik-firma.vysledky?subjektId=713630&typ=UPLNY   # otevřeno: jediný akcionář AGROFERT HOLDING (IČ 26185610) 14. 8. 2008 – 30. 1. 2014, od 30. 1. 2014 SynBiol; fúze s Farmou Čapí hnízdo zapsána 1. 6. 2014
+  # zdroje 48–51 převzaty 12. 11. 2026 ze sloučeného konceptu vymena-ministra-spravedlnosti-2019
+  - id: 48
+    vydavatel: Seznam Zprávy (ČTK)
+    titulek: "Reakce na konec Kněžínka: Zemanova hra, Babišovo rozhodnutí"
+    datum: 2019-04-18
+    druh: media
+    url: https://www.seznamzpravy.cz/clanek/ministr-spravedlnosti-jan-knezinek-oznamil-demisi-70616
+  - id: 49
+    vydavatel: Radio Prague International (Český rozhlas)
+    titulek: "Justice minister‘s resignation raises concerns about possible political pressure on judiciary"
+    datum: 2019-04-23
+    druh: media
+    url: https://english.radio.cz/node/8132978
+  - id: 50
+    vydavatel: e15 (ČTK)
+    titulek: "Proti Babišovi a jmenování Benešové vyšly do pražských ulic tisíce lidí"
+    datum: 2019-04-29
+    druh: media
+    url: https://www.e15.cz/domaci/proti-babisovi-a-jmenovani-benesove-vysly-do-prazskych-ulic-tisice-lidi-1358455
+  - id: 51
+    vydavatel: e15 (ČTK)
+    titulek: "Babiš se po protestech znovu zastal Benešové. Případné personální změny jsou prý její věc"
+    datum: 2019-04-30
+    druh: media
+    url: https://www.e15.cz/domaci/babis-se-po-protestech-znovu-zastal-benesove-pripadne-personalni-zmeny-jsou-pry-jeji-vec-1358485
 udalosti:
   - datum: 2007
     nazev: Vyvedení Farmy Čapí hnízdo z Agrofertu
@@ -339,6 +364,10 @@ udalosti:
     nazev: Věc syna vyloučena k samostatnému řízení
     popis: Část věci týkající se Babišova syna byla vyloučena k samostatnému řízení, protože ho policie nemohla vyslechnout. Vyšetřování hlavní větve kauzy policie ukončila 26. 3. 2019.
     zdroje: [27, 29]
+  - datum: 2019-04-18
+    nazev: Výměna ministra spravedlnosti
+    popis: Den poté, co policie navrhla A. Babiše obžalovat, oznámil ministr spravedlnosti Jan Kněžínek (za ANO) demisi. Na Babišův návrh ho 30. 4. 2019 nahradila Marie Benešová, bývalá nejvyšší státní zástupkyně. Opozice a spolek Milion chvilek pro demokracii načasování kritizovaly a svolaly protesty. Kněžínek i Babiš souvislost s kauzou odmítli. Žádný úřad souvislost nezkoumal.
+    zdroje: [48, 49, 50, 51]
   - datum: 2019-09-13
     nazev: Městské státní zastupitelství zastavilo stíhání
     popis: Městské státní zastupitelství v Praze zastavilo trestní stíhání A. Babiše a dalších pěti lidí. Rozhodnutí měl následně přezkoumat nejvyšší státní zástupce Pavel Zeman.
