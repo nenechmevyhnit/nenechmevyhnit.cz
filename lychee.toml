@@ -3,4 +3,4 @@ timeout = 30
 accept = [200, 206, 429]
 # eur-lex.europa.eu a europarl.europa.eu automatické kontroly odmítají (202 s ověřením prohlížeče, 403),
 # v prohlížeči se otevřou. Ověřují se ručně, při ověření kauzy.
-exclude = ["^https://example\.com", "^https://eur-lex\.europa\.eu/", "^https://www\.europarl\.europa\.eu/"]
+exclude = ['^https://example\.com', '^https://eur-lex\.europa\.eu/', '^https://www\.europarl\.europa\.eu/']
