@@ -20,9 +20,13 @@ const titulek = otevrena ? `${otevrena.kauza.nazev} — Nenechme vyhnít` : 'Arc
 const popis = otevrena ? otevrena.kauza.shrnuti : 'Archiv kauz Andreje Babiše přehledně, s daty a zdroji. Každé tvrzení má zdroj, každá kauza stanovisko dotčené strany.';
 ---
 <Zaklad titulek={titulek} popis={popis} cesta={otevrena ? `/kauzy/${otevrena.slug}/` : '/'} styly="hlavni" aktivni="kauzy" otevrena={otevrena?.slug}>
-  <Uvod />
-  <Filtry zaznamy={zaznamy} stitky={stitky} mapa={mapa} />
-  <Osa zaznamy={zaznamy} mapa={mapa}>{mapa && <Mapa slot="mapa" graf={nactiGraf()} />}</Osa>
+  <main class="hlavni-obsah">
+    <Uvod />
+    <h2 class="jen-ctecka">Hledání a filtry</h2>
+    <Filtry zaznamy={zaznamy} stitky={stitky} mapa={mapa} />
+    <h2 class="jen-ctecka">Kauzy</h2>
+    <Osa zaznamy={zaznamy} mapa={mapa}>{mapa && <Mapa slot="mapa" graf={nactiGraf()} />}</Osa>
+  </main>
   <PatickaRadek legenda />
   <Fragment slot="mimo">
     <Portret />

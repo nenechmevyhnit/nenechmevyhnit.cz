@@ -18,14 +18,16 @@ const rokyOsy = k ? popiskyRoku(k.udalosti.map(u => ({ datum: u.datum, p: poloha
 const maVazby = !!vazby && (vazby.akteri.length + vazby.navazuje.length + vazby.navazujiNaNi.length) > 0;
 const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="chip" data-zdroj="${c}" aria-label="Zdroj ${c}">${c}</a>`).join('');
 ---
-<dialog class={`detail m2${k?.do === null ? ' otevrena' : ''}`} id="detail" aria-labelledby="detail-nadpis" data-slug={zaznam?.slug}>
+<!-- Stránka kauzy má dialog otevřený už v HTML, aby byl obsah vidět i bez JavaScriptu; skript ho přepne na modální. -->
+<dialog class={`detail m2${k?.do === null ? ' otevrena' : ''}`} id="detail" aria-labelledby="detail-nadpis" data-slug={zaznam?.slug} open={k ? true : undefined}>
   {k && zaznam && (
     <>
       <button class="zavrit" type="button" aria-label="Zavřít detail">×</button>
       <header class="m2-hlava">
         <div class="roky">{rozsahText(k.od, k.do)} · {delkaText(k.od, k.do)} · {popisekStavu(k.stav)}</div>
         <h2 id="detail-nadpis">{k.nazev}</h2>
-        <p class="perex">{k.shrnuti}</p>
+        <p class="perex" id="detail-perex">{k.shrnuti}</p>
+        <button class="perex-vice" type="button" aria-expanded="false" aria-controls="detail-perex" hidden>celé shrnutí</button>
         {k.castky.length > 0 && (
           <ul class="castky" aria-label="Částky v kauze">
             {k.castky.map(c => <li class={c.druh === 'objem' ? 'objem' : undefined}><strong>{castkaText(c)}</strong> <span class="druh-castky">{popisekDruhu(c.druh)}</span> <span class="popis-castky">{c.popis}<span class="chipy" set:html={chipy(c.zdroje)}></span></span></li>)}
@@ -47,10 +49,12 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
         <button role="tab" type="button" data-p="zdroje" aria-selected="false">Zdroje ({k.zdroje.length})</button>
       </div>
       <div class="m2-panel" data-p="proc" role="tabpanel">
+        <h3 class="panel-nadpis">Proč je to kauza</h3>{/* jen bez JavaScriptu, kdy jsou všechny části pod sebou */}
         <p class="proc-text">{k.proc.text}<span class="chipy" set:html={chipy(k.proc.zdroje)}></span></p>
         <p class="kriterium">Zařazeno podle metodiky: <a href="/metodika/#kriteria">{popisekKriteria(k.kriterium)}</a></p>
       </div>
       <div class="m2-panel" data-p="chrono" role="tabpanel" hidden>
+        <h3 class="panel-nadpis">Chronologie</h3>{/* jen bez JavaScriptu, kdy jsou všechny části pod sebou */}
         <ol class="udalosti-seznam">
           {k.udalosti.map((u, i) => (
             <li data-i={i} data-datum={u.datum}>
@@ -67,6 +71,7 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
         </div>
       </div>
       <div class="m2-panel" data-p="souv" role="tabpanel" hidden>
+        <h3 class="panel-nadpis">Souvislosti</h3>{/* jen bez JavaScriptu, kdy jsou všechny části pod sebou */}
         {rozdelOdstavce(zaznam.telo).map(o => <p set:html={odstavecNaHtml(o)}></p>)}
         {maVazby && vazby && (
           <section class="vazby" aria-labelledby="vazby-nadpis">
@@ -81,6 +86,7 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
         )}
       </div>
       <div class="m2-panel" data-p="stav" role="tabpanel" hidden>
+        <h3 class="panel-nadpis">Stav a stanovisko</h3>{/* jen bez JavaScriptu, kdy jsou všechny části pod sebou */}
         <div class={`stav-box${k.do === null ? ' otevrena' : ''}`}>
           <div class="stav">{popisekStavu(k.stav)}</div>
           {k.stavPoznamka && <p>{k.stavPoznamka}</p>}
@@ -93,6 +99,7 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
         </div>
       </div>
       <div class="m2-panel" data-p="zdroje" role="tabpanel" hidden>
+        <h3 class="panel-nadpis">{`Zdroje (${k.zdroje.length})`}</h3>{/* jen bez JavaScriptu, kdy jsou všechny části pod sebou */}
         <p class="posun-napoveda">Další zdroje najdete posunem do strany →</p>
         <ol class="zdroje">
           {k.zdroje.map(z => (

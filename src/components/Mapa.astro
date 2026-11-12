@@ -18,7 +18,8 @@ const { graf } = Astro.props;
       <button type="button" data-meritko="plocha" aria-pressed="false">Zvětšit plochu</button>
     </div>
   </div>
-  <div class="mapa-plocha">
+  <!-- plocha se posouvá i šipkami z klávesnice (je v pořadí Tab); obsah mapy pro čtečky je ve stromu pod ní -->
+  <div class="mapa-plocha" tabindex="0" role="group" aria-label="Plocha mapy, posouvá se šipkami">
     <Fragment set:html={svgMapy(rozlozMapu(graf, null))} />
     <div class="mapa-panel" role="dialog" aria-modal="false" aria-labelledby="mapa-panel-nadpis" hidden>
       <button type="button" class="mapa-panel-zavrit" aria-label="Zavřít">×</button>

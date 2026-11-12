@@ -134,3 +134,25 @@ test.describe('témata, která se nevejdou do řádku', () => {
     await expect(posledni).toHaveAttribute('aria-pressed', 'true');
   });
 });
+
+test('hledání řekne, když se hledaný text shoduje jen s textem kauzy, ne s názvem', async ({ page }) => {
+  const hledat = page.getByRole('searchbox', { name: 'Hledat v kauzách' });
+  await hledat.fill('dluhopisy');
+  await expect(viditelne(page)).toHaveCount(1);
+  await expect(viditelne(page).first()).toHaveAttribute('data-shoda-v-textu', '');
+  await hledat.fill('delta');
+  await expect(viditelne(page).first()).not.toHaveAttribute('data-shoda-v-textu');
+});
+
+test('prázdný výsledek neukazuje stránkování „0 z 0“', async ({ page }) => {
+  await page.setViewportSize({ width: 1342, height: 565 });
+  await page.goto('/');
+  await page.addStyleTag({ content: '#graf { flex: none !important; height: 180px !important; }' });
+  await page.evaluate(() => dispatchEvent(new Event('resize')));
+  await expect(page.locator('.strankovani')).toBeVisible();
+  await page.getByRole('searchbox', { name: 'Hledat v kauzách' }).fill('nic takoveho neexistuje');
+  await expect(page.locator('.prazdno')).toBeVisible();
+  await expect(page.locator('.strankovani')).toBeHidden();
+  await page.locator('.prazdno').getByRole('button', { name: 'Zrušit filtry' }).click();
+  await expect(page.locator('.strankovani')).toBeVisible();
+});

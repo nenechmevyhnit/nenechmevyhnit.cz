@@ -1,4 +1,4 @@
-import { odpovida, jeAktivni, seradit, PRAZDNY_FILTR, type Filtr, type PolozkaHledani } from '../lib/hledani';
+import { odpovida, jeAktivni, seradit, normalizuj, PRAZDNY_FILTR, type Filtr, type PolozkaHledani } from '../lib/hledani';
 import { pocetNaStranku, pocetStranek, cislaStranek } from '../lib/strankovani';
 import { sklonuj } from '../lib/cestina';
 import { nastavViditelne } from './stav-filtru';
@@ -76,6 +76,8 @@ export function inicializujFiltry(): void {
 
   const vykresliStrankovani = () => {
     if (!isFinite(naStranku)) return;
+    // prázdný výsledek: hláška se „Zrušit filtry“ stačí, lišta „0 z 0“ s jedinou stránkou by jen mátla
+    strankovani.hidden = shoda.length === 0;
     const celkem = pocetStranek(shoda.length, naStranku);
     const od = (strana - 1) * naStranku;
     rozsah.textContent = shoda.length ? `${od + 1}–${Math.min(od + naStranku, shoda.length)} z ${shoda.length}` : '0 z 0';
@@ -99,6 +101,14 @@ export function inicializujFiltry(): void {
     const konec = isFinite(naStranku) ? od + naStranku : shoda.length;
     shoda.slice(od, konec).forEach(p => naTeto.add(p.slug));
     for (const [slug, r] of radekPodle) r.hidden = !naTeto.has(slug);
+    // hledaný text v názvu není: řádek řekne, že se shoduje text kauzy (jinak výsledek vypadá jako omyl)
+    const hledane = normalizuj(filtr.text).split(/\s+/).filter(Boolean);
+    for (const p of polozky) {
+      const r = radekPodle.get(p.slug);
+      if (!r) continue;
+      const nazev = normalizuj(p.nazev);
+      r.toggleAttribute('data-shoda-v-textu', hledane.length > 0 && !hledane.every(w => nazev.includes(w)));
+    }
     const n = shoda.length;
     prazdno.hidden = n > 0;
     const text = n === polozky.length ? sklonuj(n, ['kauza', 'kauzy', 'kauz']) : `${n} z ${polozky.length} kauz`;

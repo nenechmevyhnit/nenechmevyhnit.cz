@@ -15,5 +15,6 @@ export function odstavecNaHtml(odstavec: string): string {
   return escapuj(odstavec)
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(POZNAMKA, (_, n) => `<sup><a class="pozn" href="#zdroj-${n}" data-zdroj="${n}">[${n}]</a></sup>`);
+    // stejná značka zdroje jako všude jinde v detailu (číslo v rámečku), ne horní index v hranatých závorkách
+    .replace(POZNAMKA, (_, n) => `<span class="chipy"><a class="pozn" href="#zdroj-${n}" data-zdroj="${n}" aria-label="Zdroj ${n}">${n}</a></span>`);
 }

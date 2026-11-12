@@ -64,10 +64,33 @@ for (const v of VELIKOSTI) {
       zkraceno: getComputedStyle(e).webkitLineClamp !== 'none' && getComputedStyle(e).webkitLineClamp !== '',
     }));
     expect(p.zkraceno, 'shrnutí se nesmí zkracovat trojtečkou').toBe(false);
-    if (v.width > 760) expect(p.skryto, 'na počítači je shrnutí vidět celé').toBe(false);
-    else if (p.skryto) expect(p.posuvnik, 'na mobilu se delší shrnutí dá posunout').toBe(true);
+    const vice = page.locator('#detail .perex-vice');
+    if (v.width > 760) {
+      expect(p.skryto, 'na počítači je shrnutí vidět celé').toBe(false);
+      await expect(vice).toBeHidden();
+    } else if (p.skryto) {
+      // na mobilu je delší shrnutí zkrácené na tři řádky a tlačítko ho rozbalí celé
+      await expect(vice).toBeVisible();
+      await vice.click();
+      await expect(vice).toHaveAttribute('aria-expanded', 'true');
+      const poRozbaleni = await page.locator('#detail .perex').evaluate(e => e.scrollHeight <= e.clientHeight + 1);
+      expect(poRozbaleni, 'po rozbalení je vidět celé shrnutí').toBe(true);
+    }
   });
 }
+
+// Záložky, které se na mobilu nevejdou, se posouvají a okraj, za kterým pokračují, se vytrácí.
+test('mobil: záložky detailu naznačí, že pokračují, a vybraná je celá vidět', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 700 });
+  await page.goto('/kauzy/zeta-stret/');
+  const lista = page.locator('#detail .zalozky');
+  await expect(lista).toHaveClass(/mizi-vpravo/);
+  await page.getByRole('tab', { name: /^Zdroje/ }).click();
+  const tab = await page.getByRole('tab', { name: /^Zdroje/ }).boundingBox();
+  const okno = await lista.boundingBox();
+  expect(tab!.x + tab!.width).toBeLessThanOrEqual(okno!.x + okno!.width + 1);
+  await expect(lista).toHaveClass(/mizi-vlevo/);
+});
 
 test('záložky detailu nemají svislý posuvník', async ({ page }) => {
   await page.goto('/kauzy/zeta-stret/');

@@ -36,3 +36,27 @@ test('prázdný archiv ukáže hlášku a stránka se neposouvá', async ({ page
   expect(chyby).toEqual([]);
   await overBezPosouvani(page);
 });
+
+// Mezi mobilem a počítačem (tablet, malý notebook) se osa vejde na šířku: poslední rok, sloupec Detail
+// i stránkování musí být vidět bez posouvání do strany.
+for (const width of [768, 900, 1024]) {
+  test(`${width} px: osa se vejde na šířku bez posouvání do strany`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 800 });
+    await page.goto('/');
+    const graf = await page.locator('#graf').evaluate(g => ({ sw: g.scrollWidth, cw: g.clientWidth, right: g.getBoundingClientRect().right }));
+    expect(graf.sw, 'osa se nesmí posouvat do strany').toBeLessThanOrEqual(graf.cw);
+    const detail = await page.locator('.radek .otevrit').first().boundingBox();
+    expect(detail!.x + detail!.width).toBeLessThanOrEqual(graf.right);
+  });
+}
+
+test('mobil: všechny volby ve větě filtrů jsou vidět (věta se zalomí)', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 700 });
+  await page.goto('/');
+  for (const s of await page.locator('.f-dalsi select').all()) {
+    const b = (await s.boundingBox())!;
+    expect(b.x + b.width).toBeLessThanOrEqual(390);
+  }
+  const f = await page.locator('.f-dalsi').evaluate(e => ({ sw: e.scrollWidth, cw: e.clientWidth }));
+  expect(f.sw).toBeLessThanOrEqual(f.cw);
+});

@@ -76,7 +76,8 @@
 /* Karta vazeb: role a období místo popisků na mapě. Neruší ukazatel (tažení, najetí jde skrz ni). */
 .mapa-karta { position: absolute; z-index: 5; top: 8px; right: 14px; width: 300px; max-width: calc(100% - 28px); max-height: calc(100% - 16px); overflow: hidden;
   background: var(--plocha); border: 1px solid var(--linka); box-shadow: 0 6px 24px rgb(14 23 38 / .15); padding: 10px 14px; font-size: 13px; pointer-events: none; }
-.mapa-karta.vlevo { right: auto; left: 14px; }
+/* uzel vpravo: karta vlevo dole, aby nezakryla Babiše (kořen mapy vlevo nahoře) a začátek zvýrazněné cesty */
+.mapa-karta.vlevo { right: auto; left: 14px; top: auto; bottom: 8px; }
 /* vedle mapy (mimo ni): poloha a šířka z okna, viz mistoVedle ve skriptu */
 .mapa-karta.venku, .mapa-panel.venku { position: fixed; z-index: 45; right: auto; max-width: none; }
 .mapa-panel.venku { overflow: auto; }

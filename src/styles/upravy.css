@@ -9,8 +9,16 @@ a.radek-btn { color: inherit; text-decoration: none; }
 .portret img { user-select: none; }
 .hero.u2 .u2-pod { font-family: var(--f-text); font-weight: 400; color: var(--text2); font-size: clamp(15px, 1.3vw, 18px); margin: 8px 0 0; }
 .opravy h4 { margin: 14px 0 4px; font: italic 400 15px var(--f-text); color: var(--meta); }
-/* Body mini-osy jsou tlačítka: vybraný bod nese aria-current (aria-selected na <button> nepatří). */
-.mini-osa .bod[aria-current="true"] { background: var(--okr); transform: scale(1.35); }
+/* Body mini-osy jsou tlačítka: vybraný bod nese aria-current (aria-selected na <button> nepatří).
+   Tlačítko má 24 × 24 px (pohodlný cíl pro prst i myš), viditelný bod je menší kolečko uprostřed. U blízkých dat
+   skript cíl zúží (--sirka), aby se sousední cíle nepřekrývaly; takové body mají rovnocennou náhradu
+   v listování Chronologie (předchozí / další). */
+body .mini-osa .bod { top: 44px; width: var(--sirka, 24px); height: 24px; margin-left: calc(var(--sirka, 24px) / -2); border: 0; border-radius: 12px; background: none; box-sizing: border-box; }
+body .mini-osa .bod::before { content: ""; position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -7px 0 0 -7px; border: 2px solid var(--plocha); border-radius: 50%; background: var(--inkoust); transition: transform .22s, background-color .22s; }
+body .mini-osa .bod:hover::before { transform: scale(1.25); }
+body .mini-osa .bod[aria-current="true"] { background: none; transform: none; z-index: 1; }
+body .mini-osa .bod[aria-current="true"]::before { background: var(--okr); transform: scale(1.4); }
+body .mini-osa .bod:focus-visible { outline-offset: 0; }
 /* Mobil: menu ukazuje všechny tři odkazy (prototyp skrýval Kauzy a Metodiku). Vyšší specificita kvůli pořadí stylů. */
 @media (max-width: 760px) {
   body .top nav a:not(:last-child) { display: inline; }
@@ -32,6 +40,11 @@ body .m2-panel[data-p="chrono"] .udalosti-seznam > li:not([hidden]) { height: 10
 body .m2-panel[data-p="chrono"] .udalost-velka { height: 100%; align-items: stretch; grid-template-rows: minmax(0, 1fr); }
 body .m2-panel[data-p="chrono"] .udalost-velka > div { min-height: 0; overflow-x: auto; overflow-y: hidden; column-width: 320px; column-gap: 32px; column-fill: auto; }
 body .m2-panel[data-p="chrono"] .udalost-velka h3 { break-after: avoid; }
+/* Nadpis události jde přes všechny sloupce a text začíná až pod ním. Jinak velký nadpis zabral většinu prvního
+   sloupce a popis přeskočil do dalšího uprostřed věty. */
+@media (min-width: 761px) {
+  body .m2-panel[data-p="chrono"] .udalost-velka h3 { column-span: all; }
+}
 body .m2-panel[data-p="chrono"] .listovani { flex: none; }
 /* Stav a stanovisko: na počítači vedle sebe, každá polovina má při delším textu vlastní posuvník.
    Na mobilu pokračují ve sloupcích do strany a nadpisy drží u svého textu. */
@@ -95,11 +108,18 @@ body .radek .nazev strong { white-space: normal; overflow: visible; text-overflo
 /* Shrnutí v hlavičce detailu se neusekne trojtečkou: na počítači má celou šířku (320 znaků se vejde),
    na mobilu se delší shrnutí posouvá. */
 body .m2-hlava .perex { display: block; -webkit-line-clamp: none; max-width: none; overflow: visible; }
+/* Na mobilu jsou vidět tři řádky, které se dole vytrácejí, a tlačítko „celé shrnutí“ (skript ho ukáže, jen když
+   text pokračuje). Bez trojtečky. Dřív to bylo okénko s posuvníkem, které na telefonu nebylo poznat, takže
+   zbytek shrnutí (často se stanoviskem dotčené strany) zůstal skrytý. */
+body .perex-vice { display: inline-block; margin: 2px 0 0; padding: 2px 0; border: 0; background: none; font: italic 14px var(--f-text); color: var(--modra); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+body .perex-vice[hidden] { display: none; }
 @media (max-width: 760px) {
-  body .m2-hlava .perex { max-height: 4.5em; overflow-y: auto; }
+  body .m2-hlava .perex { line-height: 1.5; max-height: 4.5em; overflow: hidden; }
+  body .m2-hlava:has(.perex-vice:not([hidden])):not(.rozbalene) .perex { mask-image: linear-gradient(#000 60%, transparent); }
+  body .m2-hlava.rozbalene .perex { max-height: 40dvh; overflow-y: auto; }
 }
 /* boxy s vlastním posuvníkem ho ukazují trvale, aby bylo jasné, že text pokračuje */
-body .m2-panel[data-p="stav"] .stav-box, body .m2-panel[data-p="stav"] .stav-vpravo, body .m2-hlava .perex { scrollbar-width: thin; scrollbar-gutter: stable; }
+body .m2-panel[data-p="stav"] .stav-box, body .m2-panel[data-p="stav"] .stav-vpravo { scrollbar-width: thin; scrollbar-gutter: stable; }
 
 /* Označený čip filtru: světlé pozadí čipů (.filtry .f-cipy button) jinak přebije modré pozadí označeného a bílý text zmizí. */
 body .filtry .f-cipy button[aria-pressed="true"] { border-color: var(--modra); background: var(--modra); color: #fff; }
@@ -108,6 +128,15 @@ body .filtry .f-cipy button[aria-pressed="true"] { border-color: var(--modra); b
    spodní linka je pozadím lišty a vybraná záložka ji svým pozadím zakryje. */
 body .zalozky { overflow-y: hidden; border-bottom: 0; background: linear-gradient(var(--inkoust), var(--inkoust)) left bottom / 100% 1px no-repeat; }
 body .zalozky button[aria-selected="true"] { margin-bottom: 0; }
+/* Když se záložky nevejdou (mobil), okraj, za kterým další pokračují, se vytrácí. Třídy nastavuje skript podle posunu. */
+body .zalozky { scrollbar-width: none; }
+body .zalozky::-webkit-scrollbar { display: none; }
+body .zalozky.mizi-vpravo { mask-image: linear-gradient(90deg, #000 calc(100% - 56px), transparent); }
+body .zalozky.mizi-vlevo { mask-image: linear-gradient(90deg, transparent, #000 56px); }
+body .zalozky.mizi-vlevo.mizi-vpravo { mask-image: linear-gradient(90deg, transparent, #000 56px, #000 calc(100% - 56px), transparent); }
+@media (max-width: 760px) {
+  body .zalozky button { padding: 10px 12px; }
+}
 
 /* Počítadlo a Zrušit filtry: na počítači v záhlaví sloupce názvů na ose, aby řádek filtrů zůstal čipům.
    Na mobilu (záhlaví sloupce tam není) zůstávají v řádku filtrů. */
@@ -153,8 +182,11 @@ body .filtry.f4 { flex-wrap: wrap; row-gap: 4px; }
   .f-dalsi option:checked { color: var(--modra); font-weight: 600; }
   .f-dalsi option:checked::before { content: "✓ "; }
 }
+/* Věta se na užším okně zalomí mezi volbami (dřív se posouvala do strany a filtry vpravo nebyly vidět). */
+body .filtry.f4 .f-dalsi { white-space: normal; overflow: visible; }
+.f-dalsi .f-cast { white-space: nowrap; }
 @media (max-width: 760px) {
-  body .filtry.f4 .f-dalsi { order: 5; font-size: 14px; mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent); padding-right: 32px; }
+  body .filtry.f4 .f-dalsi { order: 5; font-size: 14px; line-height: 1.5; }
 }
 
 /* Stránkování osy: zapíná ho skript, jen když se kauzy nevejdou na výšku. Řádky jedné stránky mají stejnou výšku,
@@ -271,6 +303,14 @@ body .filtry.f4 .f-cipy .f-vice:hover { text-decoration-thickness: 2px; }
 @media (min-width: 761px) {
   body .graf-vnitrek { min-width: calc(var(--sl) + var(--sp) + 46 * 12px); }
 }
+/* Tablet a malý notebook (761–1099 px): osa se vejde celá bez posouvání do strany, jinak by poslední roky,
+   sloupec Detail i stránkování zůstaly mimo obraz. Užší sloupec názvů a značky let po deseti letech. */
+@media (min-width: 761px) and (max-width: 1099px) {
+  body .graf { --sl: 250px; --sp: 76px; }
+  body .graf-vnitrek { min-width: 0; }
+  body .osa-roku .stitky span.malo, body .osa-roku .stitky span.blizko { display: none; }
+  body .osa-roku .nazev-sloupce { flex-wrap: wrap; row-gap: 2px; white-space: normal; }
+}
 /* Hlavička: k názvu patří věcný podtitul, aby bylo hned jasné, co je web zač. Na mobilu se nevejde. */
 .top .hlavicka-znacka { display: flex; align-items: baseline; gap: 14px; }
 .top .hlavicka-pod { font: 400 14px var(--f-text); color: var(--text2); white-space: nowrap; }
@@ -312,4 +352,42 @@ body .v4-dlg-panel .posun-napoveda[hidden] { display: none; }
   body .v4-dlg-panel .slovnicek { grid-template-columns: 1fr; gap: 0; }
   body .v4-dlg-panel .slovnicek dt { break-after: avoid; }
   body .v4-dlg-panel .slovnicek dd { margin-bottom: 10px; }
+}
+
+/* ===== Bez JavaScriptu (html:not(.js)) =====
+   Osa: řádky mají přirozenou výšku a seznam se posouvá (stránkování zapíná až skript).
+   Stránka kauzy: detail je otevřený pod hlavičkou webu a všechny části jsou pod sebou s nadpisy. */
+body .panel-nadpis { display: none; }
+html:not(.js) body .graf .radek { flex: none; height: auto; max-height: none; }
+html:not(.js) body .graf .radek-btn { overflow: visible; }
+html:not(.js) body dialog.detail[open] {
+  position: fixed; z-index: 30; inset: 64px 0 0; margin: 0 auto; width: min(1000px, 100vw); height: auto; max-height: none;
+  display: block; overflow-y: auto; opacity: 1; transform: none; box-shadow: 0 0 0 1px var(--linka);
+}
+html:not(.js) body dialog.detail .zavrit, html:not(.js) body .zalozky, html:not(.js) body .listovani,
+html:not(.js) body .mini-osa .vybrany-popis, html:not(.js) body .posun-napoveda, html:not(.js) body [data-sdilet] { display: none; }
+html:not(.js) body .m2-panel, html:not(.js) body .m2-panel[hidden],
+html:not(.js) body .m2-panel[data-p="chrono"] .udalost-velka, html:not(.js) body .m2-panel[data-p="chrono"] .udalost-velka > div {
+  display: block; height: auto; overflow: visible; columns: auto; border-top: 1px solid var(--linka);
+}
+html:not(.js) body .m2-panel[data-p="chrono"] .udalost-velka, html:not(.js) body .m2-panel[data-p="chrono"] .udalost-velka > div { border-top: 0; }
+html:not(.js) body .m2-panel[data-p="chrono"] .udalosti-seznam > li + li { margin-top: 18px; }
+html:not(.js) body .panel-nadpis { display: block; margin: 0 0 12px; font: 700 20px var(--f-nadpis); }
+
+/* Fokus na řádku osy: rámeček uvnitř řádku přes všechny sloupce. Obrys kolem řádku by ořízl posuvný seznam
+   a překryly by ho přilepené sloupce názvu a Detailu. */
+body .radek-btn:focus-visible { outline: none; }
+body .radek-btn:focus-visible::after { content: ""; position: absolute; inset: 0; z-index: 4; border: 3px solid var(--okr); pointer-events: none; }
+
+/* Text jen pro čtečky (nadpisy oddílů hlavní stránky) */
+.jen-ctecka { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* Hlavní obsah stránky (oblast main) neruší rozvržení na výšku okna: jeho části jsou dál přímo v pruhu #obsah. */
+.hlavni-obsah { display: contents; }
+.hlavni-obsah > .hero, .hlavni-obsah > .filtry { flex: none; }
+
+/* Hledání: když se hledaný text neshoduje s názvem kauzy, řádek to řekne (shoda je ve shrnutí nebo událostech). */
+body .radek[data-shoda-v-textu] .nazev small::after { content: " · shoda v textu kauzy"; font-style: italic; color: var(--modra); }
+/* Štítek náhledu konceptů na mobilu dole, ne přes logo a menu (jen lokální náhled, veřejný web ho nemá). */
+@media (max-width: 760px) {
+  body .koncepty-stitek { top: auto; bottom: 4px; padding: 3px 8px; font-size: 10px; opacity: .85; }
 }

@@ -55,6 +55,9 @@ export function inicializujNavigaci(): void {
     inicializujDetail(dlg);
     vyberKauzu(otevrena);
     history.replaceState({ slug: otevrena }, '');
+    // v HTML je dialog otevřený (kvůli návštěvníkům bez JavaScriptu); modálně ho jde otevřít jen zavřený.
+    // Odebrání atributu neposílá událost close, takže se adresa nemění.
+    dlg.removeAttribute('open');
     dlg.showModal();
   } else {
     history.replaceState({}, '');
@@ -70,6 +73,12 @@ export function inicializujNavigaci(): void {
 
   dlg.addEventListener('close', () => {
     document.title = TITULEK_HLAVNI;
+    // Detail otevřený rovnou z adresy nemá kam vrátit fokus (skončil by na <body>): vrátí se na řádek kauzy na ose.
+    const slug = dlg.dataset.slug;
+    delete document.body.dataset.otevrena;
+    if ((document.activeElement === document.body || !document.activeElement) && slug && aktualniPohled() !== 'mapa') {
+      document.querySelector<HTMLElement>(`#graf .radek[data-slug="${CSS.escape(slug)}"]:not([hidden]) a.radek-btn`)?.focus();
+    }
     if (!zaviramZHistorie && location.pathname !== '/') history.pushState({}, '', `/${dotazPohledu()}`);
     zaviramZHistorie = false;
     // po zavření detailu nemá na ose zůstat pásmo a popisky od/do zavřené kauzy.
