@@ -62,7 +62,26 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
       b.style.setProperty('--sirka', `${Math.max(14, Math.min(24, Math.floor(mezera)))}px`);
     });
   };
-  premerAktualni = () => { okrajeLisy(); zmerPerex(); sirkyBodu(); };
+  /** Seznam zdrojů se posouvá svisle; spodní okraj se vytrácí, dokud pod ním další zdroje pokračují. */
+  const seznamZdroju = dlg.querySelector<HTMLElement>('.m2-panel[data-p="zdroje"] ol.zdroje');
+  const okrajeZdroju = () => {
+    if (!seznamZdroju) return;
+    seznamZdroju.classList.toggle('pokracuje', seznamZdroju.scrollTop < seznamZdroju.scrollHeight - seznamZdroju.clientHeight - 2);
+  };
+  seznamZdroju?.addEventListener('scroll', okrajeZdroju, { passive: true });
+  /** Filtr zdrojů podle skupiny; prázdná skupina = všechny. */
+  const filtrujZdroje = (skupina: string) => {
+    if (!seznamZdroju) return;
+    dlg.querySelectorAll<HTMLElement>('.zdroje-filtr [data-skupina]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.skupina === skupina)));
+    seznamZdroju.querySelectorAll<HTMLElement>(':scope > li').forEach(li => { li.hidden = !!skupina && li.dataset.skupina !== skupina; });
+    seznamZdroju.scrollTop = 0;
+    okrajeZdroju();
+  };
+  dlg.querySelector('.zdroje-filtr')?.addEventListener('click', e => {
+    const b = (e.target as HTMLElement).closest<HTMLElement>('[data-skupina]');
+    if (b) filtrujZdroje(b.dataset.skupina!);
+  });
+  premerAktualni = () => { okrajeLisy(); zmerPerex(); sirkyBodu(); okrajeZdroju(); };
   lista.addEventListener('scroll', okrajeLisy, { passive: true });
   vice.addEventListener('click', () => {
     const rozbaleno = hlava.classList.toggle('rozbalene');
@@ -75,6 +94,7 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
   const prepni = (p: string) => {
     dlg.querySelectorAll<HTMLElement>('.zalozky [role="tab"]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.p === p)));
     dlg.querySelectorAll<HTMLElement>('.m2-panel').forEach(x => { x.hidden = x.dataset.p !== p; });
+    if (p === 'zdroje') okrajeZdroju();
     // vybraná záložka musí být celá vidět, i když se lišta posouvá do strany
     const b = lista.querySelector<HTMLElement>(`[role="tab"][data-p="${p}"]`);
     if (b) {
@@ -124,6 +144,7 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
       e.preventDefault();
       prepni('zdroje');
       const cil = dlg.querySelector<HTMLElement>(`#zdroj-${a.dataset.zdroj}`);
+      if (cil?.hidden) filtrujZdroje(''); // odkazovaný zdroj schovává filtr: ukázat zase všechny
       if (cil) { cil.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); cil.classList.add('blik'); setTimeout(() => cil.classList.remove('blik'), 1600); }
       return;
     }

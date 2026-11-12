@@ -60,6 +60,40 @@ test('záložky a skok na zdroj', async ({ page }) => {
   await expect(page).toHaveURL(/\/kauzy\/alfa-dotace\/$/);
 });
 
+test('zdroje: seznam se nepřelévá do strany a patička stojí pod ním', async ({ page }) => {
+  await page.setViewportSize({ width: 1100, height: 800 });
+  await page.goto('/kauzy/alfa-dotace/');
+  await page.getByRole('tab', { name: /Zdroje/ }).click();
+  const seznam = page.locator('.m2-panel[data-p="zdroje"] ol.zdroje');
+  const { sw, cw, oy } = await seznam.evaluate(e => ({ sw: e.scrollWidth, cw: e.clientWidth, oy: getComputedStyle(e).overflowY }));
+  expect(sw).toBeLessThanOrEqual(cw + 1);
+  expect(oy).toBe('auto');
+  const paticka = page.locator('.m2-panel[data-p="zdroje"] .paticka-detailu');
+  await expect(paticka.getByRole('link', { name: 'Nahlásit chybu' })).toBeInViewport();
+  const s = (await seznam.boundingBox())!, p = (await paticka.boundingBox())!;
+  expect(p.y).toBeGreaterThanOrEqual(s.y + s.height - 1);
+});
+
+test('filtr zdrojů ukáže jen vybranou skupinu, čísla zdrojů zůstanou a skok na zdroj filtr zruší', async ({ page }) => {
+  await page.goto('/kauzy/alfa-dotace/');
+  await page.getByRole('tab', { name: /Zdroje/ }).click();
+  const filtr = page.getByRole('group', { name: 'Zobrazit zdroje' });
+  await expect(filtr.getByRole('button')).toHaveText(['Vše 6', 'Soudy 1', 'Parlament 1', 'Úřady a registry 1', 'Média 2', 'Dotčená strana 1']);
+  const viditelne = page.locator('ol.zdroje > li:visible');
+  await filtr.getByRole('button', { name: /Média/ }).click();
+  await expect(filtr.getByRole('button', { name: /Média/ })).toHaveAttribute('aria-pressed', 'true');
+  await expect(viditelne).toHaveCount(2);
+  expect(await page.locator('#zdroj-3').evaluate(e => getComputedStyle(e, '::before').content)).toBe('"[3]"');
+  await filtr.getByRole('button', { name: /Soudy/ }).click();
+  await expect(viditelne).toHaveCount(1);
+  await expect(page.locator('#zdroj-1')).toBeVisible();
+  await page.getByRole('tab', { name: 'Souvislosti' }).click();
+  await page.locator('.m2-panel[data-p="souv"] a.pozn[data-zdroj="3"]').click();
+  await expect(page.locator('#zdroj-3')).toBeVisible();
+  await expect(filtr.getByRole('button', { name: /Vše/ })).toHaveAttribute('aria-pressed', 'true');
+  await expect(viditelne).toHaveCount(6);
+});
+
 test('stav a stanovisko', async ({ page }) => {
   await page.goto('/kauzy/alfa-dotace/');
   await page.getByRole('tab', { name: 'Stav a stanovisko' }).click();
