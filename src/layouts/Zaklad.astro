@@ -2,13 +2,14 @@
 import '../styles/fonty.css';
 import '../styles/upravy.css';
 import Hlavicka from '../components/Hlavicka.astro';
+import { rezimKonceptu } from '../lib/kauzy';
 
 interface Props {
   titulek: string;
   popis: string;
   cesta: string;
   styly: 'hlavni' | 'stranky';
-  aktivni: 'kauzy' | 'metodika' | 'o-projektu';
+  aktivni?: 'kauzy' | 'metodika' | 'o-projektu';
   otevrena?: string;
 }
 const { titulek, popis, cesta, styly, aktivni, otevrena } = Astro.props;
@@ -32,6 +33,8 @@ const nahled = new URL('/obrazky/nahled.png', Astro.site).toString();
   <meta property="og:image" content={nahled}>
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <!-- třída js: styly pro návštěvníky bez JavaScriptu (html:not(.js)) se použijí jen tehdy, když skripty neběží -->
+  <script is:inline>document.documentElement.classList.add('js')</script>
 </head>
 <body data-otevrena={otevrena}>
   <div class="wrap" id="obsah">
@@ -39,5 +42,6 @@ const nahled = new URL('/obrazky/nahled.png', Astro.site).toString();
     <slot />
   </div>
   <slot name="mimo" />
+  {rezimKonceptu() && <aside class="koncepty-stitek" aria-label="Režim náhledu">Koncepty · neověřeno · jen lokálně</aside>}
 </body>
 </html>

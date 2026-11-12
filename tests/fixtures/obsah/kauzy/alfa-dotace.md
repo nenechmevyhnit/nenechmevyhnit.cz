@@ -11,12 +11,19 @@ zdroje:
   - { id: 1, vydavatel: Fiktivní městský soud, titulek: Rozsudek ve věci Alfa, datum: 2023-01-09, druh: primarni, url: "https://example.com/alfa/rozsudek" }
   - { id: 2, vydavatel: Fiktivní deník, titulek: Jak Alfa získala dotaci, datum: 2016-02-15, druh: media, url: "https://example.com/alfa/clanek" }
   - { id: 3, vydavatel: Fiktivní rozhlas, titulek: Alfa olaf vyšetřování, datum: 2017-12-21, druh: media, url: "https://example.com/alfa/olaf" }
+  - { id: 4, vydavatel: Fiktivní firma Alfa, titulek: Prohlášení firmy Alfa k dotaci, datum: 2016-02-16, druh: stanovisko, url: "https://example.com/alfa/prohlaseni" }
 udalosti:
   - { datum: 2007-12, nazev: Vyčlenění firmy, popis: Firma Alfa byla vyčleněna z holdingu., zdroje: [2] }
   - { datum: 2008-03, nazev: Žádost o dotaci, popis: Alfa žádá o dotaci pro malé podniky., zdroje: [2] }
   - { datum: 2017-12, nazev: Zpráva úřadu OLAF, popis: Fiktivní úřad uvádí pochybení., zdroje: [3] }
   - { datum: 2023-01-09, nazev: Nepravomocné zproštění, popis: Soud zprostil obžalované., zdroje: [1] }
-stanovisko: { text: Firma Alfa pochybení odmítá., zdroje: [2] }
+stanovisko: { text: Firma Alfa pochybení odmítá., zdroje: [2, 4] }
+kriterium: uredni-rizeni
+proc:
+  text: Fiktivní soud řeší, zda firma Alfa neměla na fiktivní dotaci pro malé podniky nárok.
+  zdroje: [1]
+akteri:
+  - { id: firma-alfa, role: prijemce-dotace, popis: Firma Alfa žádala o fiktivní dotaci pro malé podniky., zdroje: [2] }
 ---
 Firma Alfa byla původně součástí holdingu.[^2]
 

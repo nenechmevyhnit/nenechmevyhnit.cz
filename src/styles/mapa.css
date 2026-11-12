@@ -1,0 +1,135 @@
+/* Mapa souvislostí (specifikace mapy, oddíly 5 a 6). Barvy jen z palety, žádná červená,
+   všechny čáry stejně silné. */
+#graf[data-pohled="mapa"] .osa-roku .stitky,
+#graf[data-pohled="mapa"] .radky,
+#graf[data-pohled="mapa"] .pasmo,
+#graf[data-pohled="mapa"] .pilulka,
+#graf[data-pohled="mapa"] .strankovani { display: none !important; }
+#graf:not([data-pohled="mapa"]) .mapa { display: none; }
+
+.pohled { display: inline-flex; border: 1px solid var(--linka); flex: none; }
+.pohled button { font: 500 12px var(--f-text); border: 0; background: var(--plocha); color: var(--inkoust); padding: 2px 9px; cursor: pointer; }
+.pohled button[aria-pressed="true"] { background: var(--modra); color: #fff; }
+
+/* na počítači se posouvá jen plocha s obrázkem. Lišta s legendou a měřítkem leží v záhlaví vedle přepínače
+   Osa | Mapa (místo popisků roků, které mapa nemá), aby mapě nebrala výšku. */
+.mapa { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.mapa-lista { position: absolute; z-index: 4; right: 0; bottom: calc(100% + 1px); height: 44px; display: flex; align-items: center; gap: 16px; padding: 0 12px; }
+.mapa-legenda, .mapa-napoveda { display: flex; align-items: center; gap: 6px; margin: 0; font: 11px var(--f-mono); color: var(--meta); }
+.mapa-napoveda { margin-left: auto; }
+.mapa-legenda .l-plna, .mapa-legenda .l-vedlejsi, .mapa-legenda .l-carkovana { display: inline-block; width: 22px; border-top: 1.5px solid var(--meta); margin-left: 8px; }
+.mapa-legenda .l-plna { margin-left: 0; }
+.mapa-legenda .l-vedlejsi { opacity: .45; }
+.mapa-legenda .l-carkovana { border-top-style: dashed; opacity: .7; }
+@media (max-width: 1180px) { .mapa-napoveda { display: none; } }
+@media (max-width: 1000px) { .mapa-legenda { display: none; } }
+.mapa-meritko { display: inline-flex; border: 1px solid var(--linka); flex: none; }
+.mapa-meritko button { font: 500 12px var(--f-text); min-width: 26px; border: 0; border-left: 1px solid var(--linka); background: var(--plocha); color: var(--inkoust); padding: 2px 8px; cursor: pointer; }
+.mapa-meritko button:first-child { border-left: 0; }
+.mapa-meritko button:hover:not(:disabled) { background: color-mix(in srgb, var(--modra) 10%, var(--plocha)); }
+.mapa-meritko button:disabled { color: var(--meta); cursor: default; }
+.mapa-meritko .mapa-procenta { min-width: 52px; font-variant-numeric: tabular-nums; }
+.mapa-meritko button[aria-pressed="true"] { background: var(--modra); color: #fff; }
+/* velká plocha: osa s mapou přes celé okno (filtry a úvod zůstanou pod ní), Esc nebo totéž tlačítko ji vrátí */
+#graf.velka-plocha { position: fixed; inset: 10px; z-index: 40; margin: 0; background: var(--plocha); box-shadow: 0 10px 40px rgb(14 23 38 / .25); }
+.mapa-plocha { position: relative; flex: 1; min-height: 0; overflow: auto; cursor: grab; overscroll-behavior: contain; }
+.mapa-plocha.prehled { cursor: zoom-in; }
+.mapa-plocha.tazeni { cursor: grabbing; }
+.mapa-plocha.tazeni .mapa-svg * { cursor: grabbing !important; }
+.mapa-prazdno { padding: 24px; color: var(--meta); }
+.mapa-prazdno[hidden] { display: none; }
+
+/* mapa se sama zmenší nejvýš na 80 % (menší písmo by bylo špatně čitelné), dál ji zmenší jen uživatel;
+   při nedostatku místa se plocha posouvá */
+.mapa-svg { display: block; margin: 0 auto; font-family: var(--f-text); user-select: none; -webkit-user-select: none; }
+.mapa-svg text { font-size: 13px; fill: var(--inkoust); }
+.mapa-svg .m-viditelna { fill: none; stroke: var(--meta); stroke-opacity: .7; stroke-width: 1.2; pointer-events: none; }
+/* vedlejší vazby (další aktér kauzy, další vztah aktéra) a návaznosti jsou v klidu světlejší, aby hlavní strom
+   zůstal čitelný; tloušťka je stejná a po najetí se zvýrazní stejně jako hlavní čáry */
+.mapa-svg .m-vedlejsi .m-viditelna { stroke-opacity: .3; }
+.mapa-svg .m-cara-navaznost .m-viditelna { stroke-dasharray: 4 3; stroke-opacity: .45; }
+.mapa-svg .m-zasah { fill: none; stroke: transparent; stroke-width: 12; pointer-events: stroke; cursor: pointer; }
+.mapa-svg .m-uzel { cursor: pointer; }
+.mapa-svg .m-uzel rect { fill: var(--plocha); stroke: var(--linka); }
+.mapa-svg .m-akter rect { stroke: var(--modra); }
+.mapa-svg .m-stred { cursor: default; }
+.mapa-svg .m-stred rect { fill: var(--modra); stroke: var(--modra); }
+.mapa-svg .m-stred text { fill: #fff; font-weight: 600; }
+
+.mapa-svg.ztlumeno .m-uzel:not(.zvyrazneno),
+.mapa-svg.ztlumeno .m-cara:not(.zvyrazneno) { opacity: .25; }
+.mapa-svg .m-cara.zvyrazneno .m-viditelna { stroke: var(--modra); stroke-opacity: 1; }
+.mapa-svg .m-uzel.fokus rect { stroke: var(--okr); stroke-width: 3; }
+.mapa-svg .m-cara.fokus .m-viditelna { stroke: var(--okr); stroke-opacity: 1; stroke-width: 3; }
+.mapa-svg .m-uzel.zvyrazneno:not(.m-stred) rect { stroke: var(--modra); }
+.mapa-panel .mapa-panel-role { font: 12px var(--f-mono); color: var(--meta); margin: 0 0 4px; }
+.mapa-preskocit { position: absolute; left: 8px; top: 4px; z-index: 6; padding: 4px 8px; background: var(--plocha); border: 1px solid var(--linka); }
+.mapa-preskocit:not(:focus) { width: 1px; height: 1px; padding: 0; border: 0; overflow: hidden; clip-path: inset(50%); }
+
+.mapa-panel { position: absolute; z-index: 5; width: 300px; max-width: calc(100% - 16px); cursor: auto; background: var(--plocha); border: 1px solid var(--linka); box-shadow: 0 6px 24px rgb(14 23 38 / .15); padding: 12px 14px; font-size: 14px; }
+.mapa-panel[hidden] { display: none; }
+.mapa-panel-nadpis { margin: 0 24px 6px 0; font-size: 15px; }
+.mapa-panel-zavrit { position: absolute; top: 4px; right: 6px; border: 0; background: none; font-size: 20px; line-height: 1; padding: 4px; cursor: pointer; color: var(--inkoust); }
+.mapa-panel p { margin: 0; }
+.mapa-panel .s-zdroje { margin: 6px 0 0; padding-left: 18px; font-size: 13px; }
+
+/* Karta vazeb: role a období místo popisků na mapě. Neruší ukazatel (tažení, najetí jde skrz ni). */
+.mapa-karta { position: absolute; z-index: 5; top: 8px; right: 14px; width: 300px; max-width: calc(100% - 28px); max-height: calc(100% - 16px); overflow: hidden;
+  background: var(--plocha); border: 1px solid var(--linka); box-shadow: 0 6px 24px rgb(14 23 38 / .15); padding: 10px 14px; font-size: 13px; pointer-events: none; }
+/* uzel vpravo: karta vlevo dole, aby nezakryla Babiše (kořen mapy vlevo nahoře) a začátek zvýrazněné cesty */
+.mapa-karta.vlevo { right: auto; left: 14px; top: auto; bottom: 8px; }
+/* vedle mapy (mimo ni): poloha a šířka z okna, viz mistoVedle ve skriptu */
+.mapa-karta.venku, .mapa-panel.venku { position: fixed; z-index: 45; right: auto; max-width: none; }
+.mapa-panel.venku { overflow: auto; }
+.mapa-karta.uzka li { display: block; }
+.mapa-karta.uzka .k-role { display: block; text-align: left; white-space: normal; }
+.mapa-karta.uzka, .mapa-panel.uzka { padding: 10px 11px; font-size: 13px; }
+.mapa-panel.uzka .mapa-panel-nadpis { font-size: 14px; }
+.mapa-panel.uzka .s-zdroje { padding-left: 14px; }
+.mapa-karta[hidden] { display: none; }
+.mapa-karta p { margin: 0; }
+.mapa-karta .k-nadpis { font-weight: 600; font-size: 15px; line-height: 1.3; }
+.mapa-karta .k-podnadpis { font: 12px var(--f-mono); color: var(--meta); margin-top: 2px; }
+.mapa-karta .k-text { margin-top: 6px; line-height: 1.4; }
+.mapa-karta .k-skupina { margin: 10px 0 2px; font: 600 11px var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--meta); }
+.mapa-karta ul { list-style: none; margin: 0; padding: 0; }
+.mapa-karta li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 3px 0; border-bottom: 1px solid color-mix(in srgb, var(--linka) 50%, transparent); }
+.mapa-karta .k-nazev { min-width: 0; }
+.mapa-karta .k-role { font: 11.5px var(--f-mono); color: var(--meta); text-align: right; white-space: nowrap; }
+.mapa-karta .k-dalsi { color: var(--meta); border-bottom: 0; }
+.mapa-karta .k-akce { margin-top: 8px; font-size: 12px; color: var(--meta); }
+
+/* Strom je na počítači vizuálně skrytý: ovládá se přes něj klávesnicí a čte ho čtečka */
+@media (min-width: 761px) {
+  .mapa .strom { position: absolute; top: 0; left: 0; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+}
+
+.mapa .strom, .mapa .strom ul { list-style: none; margin: 0; padding: 0; }
+.mapa .strom ul { padding-left: 14px; margin-left: 6px; border-left: 1px solid var(--linka); }
+.mapa .strom ul[hidden], .mapa .strom li[hidden], .mapa .strom .s-vazba[hidden] { display: none; }
+.mapa .strom .s-stred > .s-nazev { display: block; padding: 6px 0; font-weight: 600; color: var(--modra); }
+.mapa .strom .s-radek { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; padding: 5px 0; }
+.mapa .strom .s-akter { font: 600 15px var(--f-text); color: var(--inkoust); border: 0; background: none; padding: 2px 0; text-align: left; cursor: pointer; }
+.mapa .strom .s-akter[aria-expanded="false"]::before { content: "▸ "; }
+.mapa .strom .s-akter[aria-expanded="true"]::before { content: "▾ "; }
+.mapa .strom .s-kauza a { color: var(--inkoust); }
+.mapa .strom .s-role, .mapa .strom .s-roky { font: 12px var(--f-mono); color: var(--meta); }
+.mapa .strom .s-info { width: 24px; height: 24px; border: 1px solid var(--linka); border-radius: 50%; background: var(--plocha); font-size: 13px; line-height: 1; cursor: pointer; }
+.mapa .strom .s-vazba { padding: 0 0 8px; font-size: 14px; }
+.mapa .strom .s-vazba p { margin: 0; }
+.mapa .strom .s-zdroje { margin: 4px 0 0; padding-left: 18px; font-size: 13px; }
+.mapa .strom .s-navazuje { padding: 0 0 6px; font-size: 13px; }
+
+@media (max-width: 760px) {
+  .mapa .mapa-lista, .mapa .mapa-plocha, .mapa .mapa-karta { display: none; }
+  .mapa { display: block; overflow: auto; padding: 4px 8px 8px; }
+}
+
+.m2-panel .vazby { margin-top: 16px; break-inside: avoid-column; }
+.m2-panel .vazby h3 { margin: 0 0 6px; font: 600 12px var(--f-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--meta); }
+.m2-panel .vazby ul { margin: 0; padding-left: 18px; }
+.m2-panel .vazby li { margin: 0 0 6px; }
+.m2-panel .vazby .na-mapu { display: inline-block; margin-top: 4px; font-weight: 600; color: var(--modra); }
+@media (min-width: 761px) {
+  .mapa .mapa-prazdno { position: absolute; top: 36px; left: 0; }
+}

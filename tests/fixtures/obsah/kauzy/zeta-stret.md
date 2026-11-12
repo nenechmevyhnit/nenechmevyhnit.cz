@@ -1,9 +1,10 @@
 ---
 nazev: Testovací kauza Žeta
-shrnuti: Fiktivní podezření ze střetu zájmů při rozdělování fiktivních prostředků Žeta.
+shrnuti: Fiktivní podezření ze střetu zájmů při rozdělování fiktivních prostředků Žeta. Shrnutí je schválně dlouhé, aby testy ověřily, že se v hlavičce detailu zobrazí celý a nic se z něj neusekne trojtečkou. Pokračuje další fiktivní větou o fiktivním úřadu, fiktivní kontrole a fiktivním výsledku řízení, který zatím není známý.
 od: 2018
 do: null
 stav: obzaloba
+stavPoznamka: Fiktivní obžaloba byla podána ke fiktivnímu soudu. Poznámka ke stavu je schválně dlouhá, fiktivní soud prvního stupně obžalovaného dvakrát nepravomocně zprostil, fiktivní odvolací soud obě rozhodnutí zrušil a věc vrátil. Fiktivní sněmovna následně nevyslovila souhlas se stíháním, takže řízení nelze po dobu mandátu vést. Věc spoluobžalované byla vyloučena k samostatnému projednání a skončila fiktivním pravomocným rozhodnutím.
 stitky: [stret-zajmu, eu-fondy]
 overeno: 2026-11-09
 zdroje:
@@ -34,6 +35,15 @@ opravy:
 stanovisko:
   text: Obžalovaní vinu odmítají. Podle jejich fiktivního vyjádření postupovali v souladu s tehdy platnými fiktivními pravidly a veškeré podklady předali kontrolním orgánům, které žádné pochybení neshledaly. Podle jejich fiktivního vyjádření postupovali v souladu s tehdy platnými fiktivními pravidly a veškeré podklady předali kontrolním orgánům, které žádné pochybení neshledaly. Podle jejich fiktivního vyjádření postupovali v souladu s tehdy platnými fiktivními pravidly a veškeré podklady předali kontrolním orgánům, které žádné pochybení neshledaly.
   zdroje: [2]
+kriterium: uredni-rizeni
+proc:
+  text: Fiktivní státní zastupitelství viní osobu Žeta z fiktivního střetu zájmů.
+  zdroje: [1, 2]
+akteri:
+  - { id: holding-omega, role: predmet-kauzy, popis: Fiktivní úřad posuzuje střet zájmů u Holdingu Omega., zdroje: [1] }
+  - { id: firma-alfa, role: ucastnik-rizeni, popis: Firma Alfa je v řízení vedlejším účastníkem., zdroje: [2] }
+navazuje:
+  - { kauza: alfa-dotace, role: souvisejici-rizeni, popis: Řízení se týká stejné fiktivní dotace jako kauza Alfa., zdroje: [1] }
 ---
 Prostředky rozdělilo fiktivní ministerstvo v roce 2018.[^2]
 

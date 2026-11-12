@@ -1,0 +1,36 @@
+---
+import { rozlozMapu, type Graf } from '../lib/mapa';
+import { svgMapy, stromMapy } from '../lib/mapa-html';
+import { jsonDoSkriptu } from '../lib/html';
+
+interface Props { graf: Graf }
+const { graf } = Astro.props;
+---
+<div class="mapa" role="region" aria-label="Mapa souvislostí">
+  <div class="mapa-lista">
+    <p class="mapa-legenda" aria-hidden="true"><span class="l-plna"></span>aktér nebo vlastnictví <span class="l-vedlejsi"></span>další vazba <span class="l-carkovana"></span>návaznost mezi kauzami</p>
+    <p class="mapa-napoveda" aria-hidden="true">tažením posunete, Ctrl + kolečko přiblíží</p>
+    <div class="mapa-meritko" role="group" aria-label="Velikost mapy">
+      <button type="button" data-meritko="oddalit" aria-label="Oddálit">−</button>
+      <button type="button" data-meritko="puvodni" class="mapa-procenta" aria-label="Původní velikost, nyní 100 %">100 %</button>
+      <button type="button" data-meritko="priblizit" aria-label="Přiblížit">+</button>
+      <button type="button" data-meritko="cela">Celá mapa</button>
+      <button type="button" data-meritko="plocha" aria-pressed="false">Zvětšit plochu</button>
+    </div>
+  </div>
+  <!-- plocha se posouvá i šipkami z klávesnice (je v pořadí Tab); obsah mapy pro čtečky je ve stromu pod ní -->
+  <div class="mapa-plocha" tabindex="0" role="group" aria-label="Plocha mapy, posouvá se šipkami">
+    <Fragment set:html={svgMapy(rozlozMapu(graf, null))} />
+    <div class="mapa-panel" role="dialog" aria-modal="false" aria-labelledby="mapa-panel-nadpis" hidden>
+      <button type="button" class="mapa-panel-zavrit" aria-label="Zavřít">×</button>
+      <h3 class="mapa-panel-nadpis" id="mapa-panel-nadpis"></h3>
+      <div class="mapa-panel-obsah"></div>
+    </div>
+  </div>
+  <div class="mapa-karta" aria-hidden="true" hidden></div>
+  <a class="mapa-preskocit" href="#mapa-konec">Přeskočit mapu</a>
+  <Fragment set:html={stromMapy(graf)} />
+  <p class="mapa-prazdno" hidden>Žádná kauza neodpovídá filtru.</p>
+  <span id="mapa-konec" tabindex="-1"></span>
+</div>
+<script type="application/json" id="nv-mapa" set:html={jsonDoSkriptu(graf)}></script>

@@ -4,6 +4,8 @@ const graf = () => document.getElementById('graf') as HTMLElement | null;
 export function vyberKauzu(slug: string | null): void {
   const g = graf();
   if (!g) return;
+  // filtry přepnou stránkování na stránku s touto kauzou
+  document.dispatchEvent(new CustomEvent('nv:vyber', { detail: slug }));
   g.querySelectorAll<HTMLElement>('.radek').forEach(r => r.classList.toggle('vybrany', r.dataset.slug === slug));
   const radek = slug ? g.querySelector<HTMLElement>(`.radek[data-slug="${CSS.escape(slug)}"]`) : null;
   if (!radek) { g.removeAttribute('data-vybrano'); return; }

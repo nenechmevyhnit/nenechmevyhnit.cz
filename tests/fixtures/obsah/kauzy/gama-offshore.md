@@ -32,5 +32,9 @@ udalosti:
 stanovisko:
   text: Společnost Gama uvádí, že postupovala v souladu se zákonem.
   zdroje: [2]
+kriterium: dve-redakce
+proc:
+  text: Dvě fiktivní redakce nezávisle popsaly fiktivní offshorový nákup Gama.
+  zdroje: [1, 2]
 ---
 Nákup proběhl přes několik fiktivních společností.[^1][^2]

@@ -1,0 +1,51 @@
+# Fiktivní aktéři jen pro testy. Neodkazují na skutečné osoby ani firmy.
+fond-sigma:
+  nazev: Fond Sigma
+  druh: nastroj
+  overeno: 2026-11-09
+  vztahy:
+    - nadrazeny: babis
+      role: zalozil
+      od: 2017
+      do: null
+      popis: Fiktivní osoba založila Fond Sigma v roce 2017.
+      zdroje:
+        - { vydavatel: Fiktivní rejstřík, titulek: Zápis Fondu Sigma, datum: 2017-02-03, druh: primarni, url: "https://example.com/sigma/zapis" }
+holding-omega:
+  nazev: Holding Omega
+  druh: firma
+  overeno: 2026-11-09
+  vztahy:
+    - nadrazeny: babis
+      role: vlastni
+      od: 1995
+      do: 2017
+      popis: Fiktivní osoba vlastnila Holding Omega do roku 2017.
+      zdroje:
+        - { vydavatel: Fiktivní rejstřík, titulek: Výpis Holdingu Omega, datum: 2017-02-01, druh: primarni, url: "https://example.com/omega/vypis" }
+    - nadrazeny: fond-sigma
+      role: vlastni
+      od: 2017
+      do: null
+      popis: Od roku 2017 vlastní Holding Omega Fond Sigma.
+      zdroje:
+        - { vydavatel: Fiktivní deník, titulek: Holding Omega přešel do fondu, datum: 2017-02-05, druh: media, url: "https://example.com/omega/fond" }
+firma-alfa:
+  nazev: Firma Alfa
+  druh: firma
+  overeno: 2026-11-09
+  vztahy:
+    - nadrazeny: holding-omega
+      role: vlastni
+      od: 2007
+      do: 2012
+      popis: Holding Omega vlastnil Firmu Alfa v letech 2007–2012.
+      zdroje:
+        - { vydavatel: Fiktivní rejstřík, titulek: Výpis Firmy Alfa, datum: 2008-01-10, druh: primarni, url: "https://example.com/omega/alfa" }
+    - nadrazeny: holding-omega
+      role: vlastni
+      od: 2015
+      do: null
+      popis: Holding Omega znovu vlastní Firmu Alfa od roku 2015.
+      zdroje:
+        - { vydavatel: Fiktivní rejstřík, titulek: Výpis Firmy Alfa 2015, datum: 2015-03-02, druh: primarni, url: "https://example.com/omega/alfa-2015" }

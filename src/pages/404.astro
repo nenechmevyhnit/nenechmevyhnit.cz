@@ -2,6 +2,76 @@
 import Zaklad from '../layouts/Zaklad.astro';
 import '../styles/stranky.css';
 ---
-<Zaklad titulek="Stránka neexistuje — Nenechme vyhnít" popis="Tahle stránka neexistuje." cesta="/404/" styly="stranky" aktivni="kauzy">
-  <section class="met-hlava"><p class="nad">Chyba 404</p><h1>Tahle stránka neexistuje</h1><p class="lead">Možná byla kauza přejmenována. <a href="/">Zpět na časovou osu</a>.</p></section>
+<Zaklad titulek="Stránka neexistuje — Nenechme vyhnít" popis="Tahle stránka neexistuje." cesta="/404/" styly="stranky">
+  <main class="chyba404">
+    {/* Ilustrace: list archivu, kterému červ s brýlemi ukousal roh. Jen ozdoba, nadpis říká totéž. */}
+    <svg class="chyba404-obr" aria-hidden="true" viewBox="0 0 320 270" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="158" cy="252" rx="104" ry="9" fill="#16153A" opacity=".07" />
+      <g transform="rotate(-4 155 135)">
+        {/* list papíru s ukousaným pravým dolním rohem */}
+        <path d="M70 30 H240 V165 L234 173 L238 180 L229 185 L231 194 L221 197 L218 206 L207 205 L202 213 L193 210 L187 217 L180 224 L176 232 L168 236 L163 240 H70 Z"
+          fill="#FFFFFF" stroke="#D3D3E2" stroke-width="1.5" stroke-linejoin="round" />
+        {/* hniloba podél okraje a skvrny */}
+        <g fill="#7A6A2E">
+          <ellipse cx="231" cy="181" rx="11" ry="9" opacity=".22" />
+          <ellipse cx="216" cy="200" rx="14" ry="10" opacity=".26" />
+          <ellipse cx="194" cy="214" rx="13" ry="9" opacity=".22" />
+          <ellipse cx="174" cy="231" rx="12" ry="8" opacity=".25" />
+          <ellipse cx="224" cy="192" rx="5" ry="4" opacity=".35" />
+          <ellipse cx="185" cy="224" rx="5" ry="4" opacity=".35" />
+          <ellipse cx="96" cy="214" rx="9" ry="6" opacity=".12" />
+          <ellipse cx="210" cy="60" rx="6" ry="5" opacity=".1" />
+        </g>
+        {/* díry */}
+        <circle cx="122" cy="196" r="6" fill="#F5F5F8" stroke="#7A6A2E" stroke-opacity=".5" stroke-width="2" />
+        <circle cx="206" cy="128" r="4" fill="#F5F5F8" stroke="#7A6A2E" stroke-opacity=".5" stroke-width="1.5" />
+        <circle cx="146" cy="222" r="2.5" fill="#F5F5F8" stroke="#7A6A2E" stroke-opacity=".5" stroke-width="1.2" />
+        {/* nadtitulek, nadpis a řádky textu, které se ke kousnutí drolí */}
+        <rect x="86" y="46" width="48" height="5" fill="#DB1F2D" />
+        <rect x="86" y="58" width="122" height="12" rx="2" fill="#282661" />
+        <rect x="86" y="74" width="78" height="12" rx="2" fill="#282661" />
+        <g stroke="#8F8DC4" stroke-width="5" stroke-linecap="round" fill="none">
+          <path d="M88 102 H222" />
+          <path d="M88 114 H214" />
+          <path d="M88 126 H198" />
+          <path d="M88 138 H224" stroke-dasharray="70 9 30 9 14 10" />
+          <path d="M88 150 H220" stroke-dasharray="52 10 22 11 9 12 3 14" />
+          <path d="M88 162 H214" stroke-dasharray="40 11 16 12 6 14 2 16" />
+          <path d="M88 174 H196" stroke-dasharray="30 12 12 14 3 16" />
+          <path d="M88 186 H170" stroke-dasharray="18 22 8 16 2 20" />
+          <path d="M88 210 H134" stroke-dasharray="10 14 3 18" />
+        </g>
+        {/* razítko */}
+        <g transform="rotate(14 160 150)" opacity=".85">
+          <rect x="122" y="128" width="78" height="40" rx="4" fill="none" stroke="#DB1F2D" stroke-width="3" />
+          <text x="161" y="159" text-anchor="middle" fill="#DB1F2D" style="font: 700 28px var(--f-mono, monospace); letter-spacing: 2px">404</text>
+        </g>
+      </g>
+      {/* červ s brýlemi: viník */}
+      <g class="cerv">
+        <path d="M188 238 C190 220, 204 210, 220 214 C232 217, 238 208, 236 198" fill="none" stroke="#E4A3A8" stroke-width="11" stroke-linecap="round" />
+        <g stroke="#C9787F" stroke-width="1.6" stroke-linecap="round">
+          <path d="M187 230 l9 2" /><path d="M192 220 l7 6" /><path d="M201 213 l3 8" /><path d="M211 211 l0 8" /><path d="M222 211 l-2 8" /><path d="M231 207 l-6 6" />
+        </g>
+        <g fill="none" stroke="#16153A" stroke-width="1.4">
+          <circle cx="232" cy="195" r="3.6" /><circle cx="240" cy="196" r="3.6" /><path d="M235.6 195.3 h0.8" />
+        </g>
+        <circle cx="232.5" cy="195.5" r="1.1" fill="#16153A" /><circle cx="240.5" cy="196.5" r="1.1" fill="#16153A" />
+        <path d="M235 202 q3 2 6 0" fill="none" stroke="#16153A" stroke-width="1.2" stroke-linecap="round" />
+      </g>
+      {/* moucha a její dráha */}
+      <path d="M196 30 c18 -16 40 6 28 16 s-18 -12 2 -16 s30 4 40 18" fill="none" stroke="#16153A" stroke-width="1.3" stroke-dasharray="2 5" stroke-linecap="round" opacity=".45" />
+      <g transform="translate(272 58) scale(1.7) translate(-272 -58)"><g class="moucha">
+        <ellipse class="kridlo" cx="268" cy="54" rx="7" ry="4.5" transform="rotate(-30 268 54)" fill="#FFFFFF" stroke="#16153A" stroke-width="1" opacity=".85" />
+        <ellipse class="kridlo" cx="276" cy="55" rx="7" ry="4.5" transform="rotate(30 276 55)" fill="#FFFFFF" stroke="#16153A" stroke-width="1" opacity=".85" />
+        <ellipse cx="272" cy="62" rx="5.5" ry="4" fill="#16153A" />
+        <circle cx="277" cy="60" r="2.4" fill="#16153A" />
+      </g></g>
+    </svg>
+    <p class="chyba404-nad">Chyba 404</p>
+    {/* Slovo „vyhnila“ se drolí stejnými řezy Redaction jako věta v úvodu. */}
+    <h1>Tahle stránka <i class="drol d1">vy</i><i class="drol d2">hn</i><i class="drol d3">il</i><i class="drol d4">a</i></h1>
+    <p class="chyba404-text">Kauzy ale ne. Možná byla přejmenována, nebo je v odkazu překlep.</p>
+    <a class="chyba404-tlacitko" href="/">Zpět na kauzy</a>
+  </main>
 </Zaklad>

@@ -36,7 +36,7 @@ Web je úspěšný, když:
 
 Plné znění je na stránce Metodika (text v prototypu `design/03-detail/_metodika.py`). Shrnutí pravidel, která musí implementace vynucovat:
 
-- **Zařazení:** kauza se týká A. Babiše nebo jím ovládaných firem a splňuje aspoň jedno z kritérií: úřední řízení, úřední zjištění, nebo doložení dvěma nezávislými seriózními redakcemi.
+- **Zařazení:** kauza se týká A. Babiše nebo jím ovládaných firem a splňuje aspoň jedno z kritérií: úřední řízení, úřední zjištění, nebo doložení dvěma nezávislými seriózními redakcemi. Každá kauza uvádí, podle kterého kritéria je zařazena, a se zdrojem vysvětluje, proč je to kauza.
 - **Zdroje:** primární > seriózní média. Sociální sítě a názorové texty nejsou doklad faktu. Klíčová tvrzení mají primární zdroj nebo dva nezávislé mediální.
 - **Jazyk:** slovesa podle stavu řízení, bez hodnotících přívlastků. U neuzavřených věcí presumpce neviny.
 - **Druhá strana:** stanovisko dotčené strany je povinné a má vlastní zdroj.
@@ -63,7 +63,7 @@ zdroje:
     vydavatel: Městský soud v Praze
     titulek: …
     datum: 2023-01-09
-    druh: primarni              # primarni | media
+    druh: primarni              # primarni | media | stanovisko (vyjádření dotčené strany, nepodkládá kritérium)
     url: https://…
     archiv: https://web.archive.org/…   # smí chybět, doplní automatizace
 udalosti:
@@ -74,6 +74,10 @@ udalosti:
 stanovisko:
   text: …
   zdroje: [10]
+kriterium: uredni-rizeni        # výčet: uredni-rizeni | uredni-zjisteni | dve-redakce
+proc:                           # „Proč je to kauza“: 1–3 věty, v čem je věc sporná a proč ji řešil úřad nebo média
+  text: …
+  zdroje: [1, 4]
 opravy:                         # nepovinné
   - datum: 2026-12-01
     popis: Co a proč bylo opraveno.
@@ -84,8 +88,10 @@ Volitelný text „Souvislosti“. Každý odstavec končí aspoň jednou pozná
 **Výčet stavů:** `provereni`, `obvineni`, `obzaloba`, `nepravomocne-odsouzen`, `pravomocne-odsouzen`, `nepravomocne-zprosten`, `pravomocne-zprosten`, `odlozeno`, `zastaveno`, `promlceno`, `soudni-rizeni`, `uredni-zjisteni`, `jine` (u `jine` je `stavPoznamka` povinná). Lidské popisky stavů jsou v jednom slovníku sdíleném s webem a se slovníčkem v Metodice.
 
 **Build selže, když:**
-- chybí `overeno`, `stanovisko`, aspoň jedna událost nebo aspoň jeden zdroj,
-- událost nebo stanovisko nemá zdroj, nebo odkazuje na neexistující `id`,
+- chybí `overeno`, `stanovisko`, `kriterium`, `proc`, aspoň jedna událost nebo aspoň jeden zdroj,
+- kritérium nepodkládají zdroje u `proc`: `uredni-rizeni` a `uredni-zjisteni` vyžadují aspoň jeden primární zdroj, `dve-redakce` dva mediální zdroje od různých vydavatelů,
+- `nazev` má víc než 36 znaků (musí být na ose celý vidět),
+- událost, stanovisko nebo `proc` nemá zdroj, nebo odkazuje na neexistující `id`,
 - `stav` není z výčtu, `do < od`, nebo datum události leží mimo `od`–(`do` nebo dnes),
 - zdroj nemá `url`, `vydavatel` nebo `druh`,
 - odstavec „Souvislostí“ nemá poznámku se zdrojem, nebo poznámka odkazuje na neexistující zdroj,
@@ -105,17 +111,18 @@ Shora dolů (prototyp `design/03-detail/portret-p4.html`):
 4. **Osa (F):**
    - sloupec názvů vlevo (přilepený), osa roků 1980 až aktuální rok, sloupec „Detail →“ vpravo (přilepený),
    - každá kauza je řádek s pruhem v reálném měřítku, popiskem „od–do · N let“ a čárkami událostí. Neuzavřené kauzy mají světlý konec se šipkou,
-   - výběr kauzy zvýrazní pásmo přes celý graf a popisky od/do na ose roků. Ostatní řádky se ztlumí a výběr zůstane i po zavření detailu,
+   - výběr kauzy zvýrazní pásmo přes celý graf a popisky od/do na ose roků. Ostatní řádky se ztlumí. Zavření detailu výběr na ose zruší (v pohledu mapy, i po „Ukázat na mapě“, kauza zůstane zvýrazněná),
    - prázdný výsledek filtru ukáže hlášku s tlačítkem „Zrušit filtry“.
 5. **Řádek patičky:** legenda vlevo, kredit fotky, „Nezávislý archiv“, Nahlásit chybu, Historie změn a e-mail vpravo.
 
 ### Detail kauzy `/kauzy/<slug>/` (M2)
-Statická stránka pro každou kauzu se stejným rozvržením jako hlavní stránka a otevřeným modalem. Vlastní `<title>`, popis a Open Graph umožňují náhled při sdílení. Mezi kauzami se přechází bez načítání stránky, mění se jen adresa (History API). Zavření modalu vrátí adresu na `/` a výběr na ose zůstane.
+Statická stránka pro každou kauzu se stejným rozvržením jako hlavní stránka a otevřeným modalem. Vlastní `<title>`, popis a Open Graph umožňují náhled při sdílení. Mezi kauzami se přechází bez načítání stránky, mění se jen adresa (History API). Zavření modalu vrátí adresu na `/` a zruší výběr na ose.
 
 Obsah modalu:
 - nadtitulek (od–do · délka · stav), název a shrnutí (max. 3 řádky),
 - mini-osa kauzy s body událostí a popiskem vybrané události,
 - záložky:
+  - **Proč je to kauza** (otevřená jako první): text se zdroji a řádek „Zařazeno podle metodiky: …“ s odkazem na /metodika/#kriteria,
   - **Chronologie:** jedna událost, listování ← → i klávesnicí,
   - **Souvislosti:** text s poznámkami,
   - **Stav a stanovisko:** stav s datem ověření, presumpce neviny a stanovisko dotčené strany,
@@ -167,7 +174,7 @@ Obsah modalu:
 - **Vitest:** schéma a validace. Vzorová správná kauza projde a pro každé pravidlo z oddílu 5 existuje vzorová chybná kauza, která selže. K tomu testy `casova-osa.ts` a `hledani.ts`.
 - **Playwright:**
   - osa vykreslí všechny kauzy seřazené podle začátku, filtry (hledání bez diakritiky, čipy NEBO, jen neuzavřené, zrušení, prázdný stav),
-  - otevření detailu z řádku i přímou adresou, listování událostmi, přepnutí na zdroj, zavření a zachování výběru,
+  - otevření detailu z řádku i přímou adresou, listování událostmi, přepnutí na zdroj, zavření a zrušení výběru,
   - **žádné svislé posouvání:** `document.scrollingElement.scrollHeight <= innerHeight` na všech velikostech z oddílu 7, a celá osa je ve viewportu,
   - axe bez závažných chyb přístupnosti.
 - **lychee:** kontrola odkazů v CI.
@@ -178,6 +185,7 @@ Obsah modalu:
 - hotové stránky Metodika a O projektu,
 - všechny kontroly v CI zelené,
 - splněný kontrolní seznam anonymity z oddílu 3 a pečlivý ruční výřez portrétu.
+- před zveřejněním mapy souvislostí: každá osoba-aktér splňuje pravidlo z `2026-11-10-mapa-souvislosti-design.md`, oddíl 3 (veřejně činná, nebo už jmenovaná ve zveřejněných kauzách v souvislosti s řízením).
 
 ## 12. Výchozí rozhodnutí k potvrzení a známá rizika
 

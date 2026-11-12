@@ -7,6 +7,7 @@
   },
   "scripts": {
     "dev": "cross-env NV_OBSAH=tests/fixtures/obsah astro dev",
+    "koncepty": "cross-env NV_OBSAH=_koncepty/obsah NV_KONCEPTY=ano astro dev --port 4400",
     "over": "tsx scripts/over-obsah.ts",
     "build": "npm run over && astro build",
     "build:e2e": "cross-env NV_OBSAH=tests/fixtures/obsah NV_VYSTUP=dist-e2e astro build && cross-env NV_OBSAH=tests/fixtures/prazdny NV_VYSTUP=dist-prazdny astro build",

@@ -306,7 +306,6 @@ body > footer { display: none; }
 .brand { font-stretch: 100%; letter-spacing: -0.01em; }
 .brand::before { background: linear-gradient(180deg, #282661 50%, #DB1F2D 50%); }
 .top { border-bottom: 3px solid #DB1F2D; }
-.top nav a[aria-current="page"] { font-weight: 700; text-decoration: underline; text-decoration-color: #DB1F2D; text-underline-offset: 6px; text-decoration-thickness: 2px; }
 .met-hlava { display: flex; align-items: baseline; gap: 6px 28px; flex-wrap: wrap; padding: 16px 0 14px; border-bottom: 1px solid var(--linka); }
 .met-hlava .nad { width: 100%; font: 600 12px var(--f-mono); color: #DB1F2D; letter-spacing: .06em; text-transform: uppercase; margin: 0; }
 .met-hlava h1 { font-size: clamp(28px, 3.2vw, 42px); font-stretch: 100%; letter-spacing: -0.01em; margin: 0; }

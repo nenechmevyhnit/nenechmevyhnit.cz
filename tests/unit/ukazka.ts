@@ -19,5 +19,20 @@ export function platnaKauza(): Record<string, unknown> {
       { datum: '2012-01-09', nazev: 'Rozsudek', popis: 'Soud rozhodl.', zdroje: [1] },
     ],
     stanovisko: { text: 'Firma Alfa pochybení odmítá.', zdroje: [2] },
+    kriterium: 'uredni-rizeni',
+    proc: { text: 'Fiktivní soud řeší, zda fiktivní dotace neměla být vyplacena.', zdroje: [1] },
+  };
+}
+
+export function platnyAkter(): Record<string, unknown> {
+  return {
+    nazev: 'Fiktivní firma Alfa',
+    druh: 'firma',
+    overeno: '2026-11-09',
+    vztahy: [{
+      nadrazeny: 'babis', role: 'vlastni', od: 2005, do: null,
+      popis: 'Fiktivní osoba vlastní fiktivní firmu Alfa.',
+      zdroje: [{ vydavatel: 'Fiktivní rejstřík', titulek: 'Výpis', datum: '2005-02-01', druh: 'primarni', url: 'https://example.com/vypis' }],
+    }],
   };
 }

@@ -8,7 +8,7 @@ describe('souvislosti', () => {
   it('prázdné tělo nemá odstavce', () => expect(rozdelOdstavce('  \n ')).toEqual([]));
   it('najde čísla poznámek', () => expect(poznamkyVOdstavci('A.[^1] B.[^12][^3]')).toEqual([1, 12, 3]));
   it('převede poznámku na odkaz na zdroj', () => {
-    expect(odstavecNaHtml('Text.[^4]')).toBe('Text.<sup><a class="pozn" href="#zdroj-4" data-zdroj="4">[4]</a></sup>');
+    expect(odstavecNaHtml('Text.[^4]')).toBe('Text.<span class="chipy"><a class="pozn" href="#zdroj-4" data-zdroj="4" aria-label="Zdroj 4">4</a></span>');
   });
   it('escapuje HTML a zachová tučné a kurzívu', () => {
     expect(odstavecNaHtml('<b>x</b> **tučně** a *kurzíva* & "uvozovky"'))

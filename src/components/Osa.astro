@@ -3,41 +3,58 @@ import type { KauzaZaznam } from '../lib/validace';
 import { ROK_OD, rokDo, naProcenta, rozsahText, delkaText, znackyOsy, konecRok, polohaVKauze } from '../lib/casova-osa';
 import { popisekStavu } from '../lib/stavy';
 import { sklonuj } from '../lib/cestina';
+import { castkaText, castkaKratce, popisekDruhu, hlavniCastka } from '../lib/castky';
+import PrepinacPohledu from './PrepinacPohledu.astro';
 
-interface Props { zaznamy: KauzaZaznam[] }
-const { zaznamy } = Astro.props;
+interface Props { zaznamy: KauzaZaznam[]; mapa?: boolean }
+const { zaznamy, mapa = false } = Astro.props;
 const DO = rokDo();
 // osa končí koncem letošního roku, aby se vešly i letošní události
 const pct = (r: number) => naProcenta(r, ROK_OD, DO + 1);
 ---
-<div class="graf" id="graf">
+<div class="graf" id="graf" data-pohled="osa">
   <div class="graf-vnitrek">
-    <div class="osa-roku" aria-hidden="true">
-      <div class="nazev-sloupce">Kauza</div>
-      <div class="stitky">{znackyOsy(ROK_OD, DO).map(z => <span class={[z.hlavni ? '' : 'malo', z.rok !== DO && DO - z.rok < 8 ? 'blizko' : ''].filter(Boolean).join(' ') || undefined} style={`left:${pct(z.rok)}%`}>{z.rok}</span>)}</div>
+    <div class="osa-roku">
+      <!-- na počítači je tu počítadlo a Zrušit filtry (na mobilu jsou v řádku filtrů) -->
+      <div class="nazev-sloupce"><span class="pocet" aria-live="polite">{sklonuj(zaznamy.length, ['kauza', 'kauzy', 'kauz'])}</span><button class="f-zrusit" type="button" hidden>Zrušit filtry</button>{mapa && <PrepinacPohledu />}</div>
+      <div class="stitky" aria-hidden="true">{znackyOsy(ROK_OD, DO).map(z => <span class={[z.hlavni ? '' : 'malo', z.rok !== DO && DO - z.rok < 8 ? 'blizko' : ''].filter(Boolean).join(' ') || undefined} style={`left:${pct(z.rok)}%`}>{z.rok}</span>)}</div>
     </div>
     <div class="pasmo"></div><span class="pilulka od"></span><span class="pilulka do"></span>
     <div class="radky" role={zaznamy.length ? "list" : undefined}>
       {zaznamy.length === 0 && <div class="archiv-prazdny">Archiv se připravuje. První ověřené kauzy přibudou brzy.</div>}
       {zaznamy.map(({ slug, kauza: k }, i) => {
+        const castka = hlavniCastka(k.castky);
         const l = pct(k.od), r = pct(konecRok(k.do)), w = Math.max(r - l, 0.8);
         return (
           <div class="radek" role="listitem" data-slug={slug} data-od={l.toFixed(3)} data-do={r.toFixed(3)} data-od-rok={k.od} data-do-rok={k.do ?? 'dosud'} data-otevrena={k.do === null ? 'ano' : 'ne'} style={`--i:${i};view-transition-name:r-${slug}`}>
             <a class="radek-btn" href={`/kauzy/${slug}/`} aria-haspopup="dialog">
-              <span class="nazev"><strong title={k.nazev}>{k.nazev}</strong><small>{popisekStavu(k.stav)} · {sklonuj(k.zdroje.length, ['zdroj', 'zdroje', 'zdrojů'])}</small></span>
+              <span class="nazev">
+                <strong title={k.nazev}>{k.nazev}</strong>
+                <small>{popisekStavu(k.stav)}, {sklonuj(k.zdroje.length, ['zdroj', 'zdroje', 'zdrojů'])}{castka && <> · <span class="castka" title={`${castkaText(castka)}, ${popisekDruhu(castka.druh)}: ${castka.popis}`}>{castkaKratce(castka)}</span></>}</small>
+              </span>
               <span class="stopa">
                 <span class="mrizka-roku" style="inset:0"></span>
                 <span class={`pruh${k.do === null ? ' otevrena' : ''}${l > 45 ? ' konec' : ''}`} style={`left:${l}%;width:${w}%`}>
-                  <span class="popisek">{rozsahText(k.od, k.do)} <em>· {delkaText(k.od, k.do)}</em></span>
+                  <span class="popisek">{rozsahText(k.od, k.do)} <em>{delkaText(k.od, k.do)}</em></span>
                   {k.udalosti.map(u => <i style={`left:${Math.min(98, polohaVKauze(u.datum, k.od, k.do))}%`}></i>)}
                 </span>
               </span>
-              <span class="otevrit" aria-hidden="true">Detail&nbsp;<span class="sipka-d">→</span></span>
+              <span class="otevrit" aria-hidden="true">Detail</span>
             </a>
           </div>
         );
       })}
       <div class="prazdno" role="listitem" hidden>Žádná kauza neodpovídá filtru. <button type="button" data-zrusit>Zrušit filtry</button></div>
     </div>
+    <!-- stránkování zapíná skript, jen když se kauzy nevejdou na výšku osy (bez JS se seznam posouvá) -->
+    <nav class="strankovani" aria-label="Stránkování kauz" hidden>
+      <span class="s-rozsah" aria-live="polite"></span>
+      <span class="s-tlacitka">
+        <button type="button" class="s-pred" aria-label="Předchozí stránka">‹</button>
+        <span class="s-cisla"></span>
+        <button type="button" class="s-dalsi" aria-label="Další stránka">›</button>
+      </span>
+    </nav>
+    <slot name="mapa" />
   </div>
 </div>

@@ -1,26 +1,45 @@
 ---
 import type { KauzaZaznam } from '../lib/validace';
-import { vytvorPolozku } from '../lib/hledani';
+import { vytvorPolozku, odpovida, PRAZDNY_FILTR, TRVANI, OBDOBI, CASTKY, RAZENI } from '../lib/hledani';
+import { STAVY, popisekStavu } from '../lib/stavy';
 import { jsonDoSkriptu } from '../lib/html';
+import PrepinacPohledu from './PrepinacPohledu.astro';
 
-interface Props { zaznamy: KauzaZaznam[]; stitky: Map<string, string> }
-const { zaznamy, stitky } = Astro.props;
+interface Props { zaznamy: KauzaZaznam[]; stitky: Map<string, string>; mapa?: boolean }
+const { zaznamy, stitky, mapa = false } = Astro.props;
 const pouzite = [...new Set(zaznamy.flatMap(z => z.kauza.stitky))];
 const cipy = pouzite.map(id => ({ id, nazev: stitky.get(id) ?? id })).sort((a, b) => a.nazev.localeCompare(b.nazev, 'cs'));
-const data = jsonDoSkriptu(zaznamy.map(vytvorPolozku));
+const polozky = zaznamy.map(vytvorPolozku);
+const data = jsonDoSkriptu(polozky);
+// nabízíme jen volby, pod kterými je aspoň jedna kauza
+const stavy = STAVY.filter(s => polozky.some(p => p.stav === s));
+const neprazdne = (f: Partial<typeof PRAZDNY_FILTR>) => polozky.some(p => odpovida(p, { ...PRAZDNY_FILTR, ...f }));
+const trvani = TRVANI.filter(t => neprazdne({ trvani: t.id }));
+const obdobi = OBDOBI.filter(o => neprazdne({ obdobi: o.id }));
+const castky = CASTKY.filter(c => neprazdne({ castka: c.id }));
 ---
 {zaznamy.length > 0 && (
   <div class="filtry f4">
     <label class="f-hledat"><input type="search" placeholder="Hledat v kauzách…" aria-label="Hledat v kauzách"></label>
+    <!-- témata v jednom řádku; co se nevejde, ukáže tlačítko „+N další“ (vybraná témata jsou vidět vždy) -->
     <div class="f-cipy-obal">
-      <button class="sipka vlevo" type="button" aria-label="Předchozí témata" hidden>‹</button>
-      <div class="f-cipy" role="group" aria-label="Témata">
+      <div class="f-cipy" id="f-cipy" role="group" aria-label="Témata">
         {cipy.map(c => <button type="button" data-stitek={c.id} aria-pressed="false">{c.nazev}</button>)}
+        <button type="button" class="f-vice" aria-expanded="false" aria-controls="f-cipy" hidden></button>
       </div>
-      <button class="sipka vpravo" type="button" aria-label="Další témata" hidden>›</button>
     </div>
     <label class="f-prepinac"><input type="checkbox" data-jen-otevrene> jen neuzavřené</label>
-    <span class="vpravo"><span id="pocet" aria-live="polite"></span><button class="f-zrusit" type="button" hidden>Zrušit filtry</button></span>
+    <span class="vpravo"><span class="pocet" aria-live="polite"></span><button class="f-zrusit" type="button" hidden>Zrušit filtry</button>{mapa && <PrepinacPohledu />}</span>
+    <!-- další filtry a řazení se čtou jako věta; popisky pro čtečky nesou aria-label.
+         Každá volba drží se svou čárkou (.f-cast), věta se tak na úzkém displeji zalomí jen mezi volbami. -->
+    <div class="f-dalsi" role="group" aria-label="Další filtry a řazení">
+      <span class="f-cast">Ukázat kauzy</span>{' '}
+      <span class="f-cast"><select data-filtr="stav" aria-label="Stav"><option value="">v jakémkoli stavu</option>{stavy.map(s => <option value={s}>{s === 'jine' ? 's jiným stavem' : `ve stavu ${popisekStavu(s).toLowerCase()}`}</option>)}</select>,</span>{' '}
+      <span class="f-cast"><select data-filtr="trvani" aria-label="Trvání"><option value="">jakkoli dlouhé</option>{trvani.map(t => <option value={t.id}>trvající {t.nazev}</option>)}</select>,</span>{' '}
+      <span class="f-cast"><select data-filtr="obdobi" aria-label="Probíhala"><option value="">z kteréhokoli období</option>{obdobi.map(o => <option value={o.id}>probíhající {o.nazev}</option>)}</select>,</span>{' '}
+      {castky.length > 0 && <><span class="f-cast"><select data-filtr="castka" aria-label="Částka"><option value="">s částkou i bez ní</option>{castky.map(c => <option value={c.id}>{c.nazev}</option>)}</select>,</span>{' '}</>}
+      <span class="f-cast">řazené <select data-razeni aria-label="Řadit">{RAZENI.map(r => <option value={r.id}>{r.nazev}</option>)}</select></span>
+    </div>
   </div>
 )}
 <script type="application/json" id="nv-hledani" set:html={data}></script>

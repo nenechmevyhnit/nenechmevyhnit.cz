@@ -14,29 +14,21 @@ for (const v of VELIKOSTI) {
       await page.goto('/');
       const graf = await page.locator('#graf').boundingBox();
       expect(graf!.y + graf!.height).toBeLessThanOrEqual(v.height);
-      const posledni = await page.locator('.radek').last().boundingBox();
+      const posledni = await page.locator('.radek:not([hidden])').last().boundingBox();
       expect(posledni!.y + posledni!.height).toBeLessThanOrEqual(graf!.y + graf!.height + 1);
     });
   });
 }
 
-test('15 kauz: stránka se neposouvá, posouvá se jen seznam v ose', async ({ page }) => {
+test('mnoho kauz: stránka ani seznam v ose se neposouvají, kauzy jsou na stránkách', async ({ page }) => {
   await page.setViewportSize({ width: 1342, height: 565 });
   await page.goto('/');
-  await page.evaluate(() => {
-    const radky = document.querySelector('.radky')!;
-    const vzor = [...document.querySelectorAll('.radek')];
-    for (let i = 0; i < 9; i++) {
-      const kopie = vzor[i % vzor.length].cloneNode(true) as HTMLElement;
-      kopie.dataset.slug = `kopie-${i}`;
-      kopie.style.setProperty('view-transition-name', `r-kopie-${i}`);
-      radky.insertBefore(kopie, radky.querySelector('.prazdno'));
-    }
-  });
+  await page.addStyleTag({ content: '#graf { flex: none !important; height: 180px !important; }' });
+  await expect(page.locator('.strankovani')).toBeVisible();
   await overBezPosouvani(page);
   const { vnitrni, vyska } = await page.evaluate(() => {
     const r = document.querySelector('.radky') as HTMLElement;
     return { vnitrni: r.scrollHeight, vyska: r.clientHeight };
   });
-  expect(vnitrni).toBeGreaterThan(vyska);
+  expect(vnitrni).toBeLessThanOrEqual(vyska);
 });

@@ -17,6 +17,28 @@ describe('kauzaSchema', () => {
     expect(r.overeno).toBe('2026-11-09');
   });
 
+  it('přijme částku a doplní měnu CZK', () => {
+    const k = { ...platnaKauza(), castky: [{ castka: 50000000, druh: 'dotace', popis: 'fiktivní dotace', zdroje: [1] }] };
+    expect(chyby(k)).toEqual([]);
+    expect(kauzaSchema.parse(k).castky[0].mena).toBe('CZK');
+  });
+  it('bez částek je pole prázdné', () => expect(kauzaSchema.parse(platnaKauza()).castky).toEqual([]));
+  it('odmítne částku bez zdroje', () => {
+    const k = { ...platnaKauza(), castky: [{ castka: 1, druh: 'pokuta', popis: 'p', zdroje: [] }] };
+    expect(chyby(k).join(' ')).toMatch(/Částka musí mít aspoň jeden zdroj/);
+  });
+  it('odmítne částku s neexistujícím zdrojem', () => {
+    const k = { ...platnaKauza(), castky: [{ castka: 1, druh: 'pokuta', popis: 'pokuta úřadu', zdroje: [9] }] };
+    expect(chyby(k).join(' ')).toMatch(/Částka „pokuta úřadu“ odkazuje na neexistující zdroj 9/);
+  });
+  it('odmítne neznámý druh částky (např. obecnou „škodu“)', () => {
+    const k = { ...platnaKauza(), castky: [{ castka: 1, druh: 'skoda', popis: 'p', zdroje: [1] }] };
+    expect(chyby(k).length).toBeGreaterThan(0);
+  });
+  it('odmítne zápornou nebo necelou částku', () => {
+    for (const castka of [-5, 1.5, 0]) expect(chyby({ ...platnaKauza(), castky: [{ castka, druh: 'pokuta', popis: 'p', zdroje: [1] }] }).length).toBeGreaterThan(0);
+  });
+
   it('odmítne neznámý stav', () => expect(chyby({ ...platnaKauza(), stav: 'vinen' }).length).toBeGreaterThan(0));
   it('odmítne kauzu bez zdrojů', () => expect(chyby({ ...platnaKauza(), zdroje: [] }).length).toBeGreaterThan(0));
   it('odmítne událost bez zdroje', () => {
@@ -103,5 +125,61 @@ describe('kauzaSchema — integrita dat (závěrečná kontrola)', () => {
   });
   it('odmítne název ze samých mezer', () => {
     expect(chyby({ ...platnaKauza(), nazev: '   ' }).length).toBeGreaterThan(0);
+  });
+  it('název smí mít nejvýš 36 znaků, aby byl na ose celý vidět', () => {
+    expect(chyby({ ...platnaKauza(), nazev: 'x'.repeat(36) })).toEqual([]);
+    expect(chyby({ ...platnaKauza(), nazev: 'x'.repeat(37) }).join(' ')).toMatch(/36 znaků/);
+  });
+});
+
+describe('Proč je to kauza a kritérium zařazení', () => {
+  const media = [
+    { id: 1, vydavatel: 'Deník A', titulek: 'Článek A', datum: '2011-05', druh: 'media', url: 'https://example.com/a' },
+    { id: 2, vydavatel: 'Deník B', titulek: 'Článek B', datum: '2011-06', druh: 'media', url: 'https://example.com/b' },
+    { id: 3, vydavatel: 'Deník A', titulek: 'Článek A2', datum: '2011-07', druh: 'media', url: 'https://example.com/a2' },
+  ];
+  const sMedii = (proc: number[]) => ({
+    ...platnaKauza(), zdroje: media, kriterium: 'dve-redakce', proc: { text: 'Fiktivní důvod.', zdroje: proc },
+    udalosti: [{ datum: '2011-05', nazev: 'Událost', popis: 'Popis.', zdroje: [1] }], stanovisko: { text: 'Fiktivní stanovisko.', zdroje: [1] },
+  });
+  it('vyžaduje Proč je to kauza', () => {
+    const k = platnaKauza(); delete k.proc;
+    expect(chyby(k).length).toBeGreaterThan(0);
+  });
+  it('vyžaduje kritérium z výčtu', () => {
+    const k = platnaKauza(); delete k.kriterium;
+    expect(chyby(k).length).toBeGreaterThan(0);
+    expect(chyby({ ...platnaKauza(), kriterium: 'pocit' }).length).toBeGreaterThan(0);
+  });
+  it('Proč musí mít aspoň jeden existující zdroj', () => {
+    expect(chyby({ ...platnaKauza(), proc: { text: 'Důvod.', zdroje: [] } }).length).toBeGreaterThan(0);
+    expect(chyby({ ...platnaKauza(), proc: { text: 'Důvod.', zdroje: [9] } }).join(' ')).toMatch(/Proč je to kauza odkazuje na neexistující zdroj 9/);
+  });
+  it('úřední řízení i úřední zjištění potřebují mezi zdroji Proč primární zdroj', () => {
+    expect(chyby({ ...platnaKauza(), proc: { text: 'Důvod.', zdroje: [2] } }).join(' ')).toMatch(/primární zdroj/);
+    expect(chyby({ ...platnaKauza(), kriterium: 'uredni-zjisteni', proc: { text: 'Důvod.', zdroje: [2] } }).join(' ')).toMatch(/primární zdroj/);
+    expect(chyby({ ...platnaKauza(), kriterium: 'uredni-zjisteni', proc: { text: 'Důvod.', zdroje: [1, 2] } })).toEqual([]);
+  });
+  it('dvě redakce potřebují dva mediální zdroje od různých vydavatelů', () => {
+    expect(chyby(sMedii([1])).join(' ')).toMatch(/dva mediální zdroje od různých vydavatelů/);
+    expect(chyby(sMedii([1, 3])).join(' ')).toMatch(/dva mediální zdroje od různých vydavatelů/);
+    expect(chyby(sMedii([1, 2]))).toEqual([]);
+  });
+});
+
+describe('druh zdroje „stanovisko“ (vyjádření dotčené strany)', () => {
+  const sStanoviskem = (k: Record<string, unknown>) => ({
+    ...k,
+    zdroje: [...(k.zdroje as object[]), { id: 9, vydavatel: 'Fiktivní firma Alfa', titulek: 'Prohlášení', datum: '2012-02', druh: 'stanovisko', url: 'https://example.com/prohlaseni' }],
+  });
+  it('přijme zdroj druhu stanovisko', () => {
+    expect(chyby({ ...sStanoviskem(platnaKauza()), stanovisko: { text: 'Firma vše odmítá.', zdroje: [9] } })).toEqual([]);
+  });
+  it('stanovisko dotčené strany nepodloží kritérium úřední řízení', () => {
+    expect(chyby({ ...sStanoviskem(platnaKauza()), proc: { text: 'Důvod.', zdroje: [9] } }).join(' ')).toMatch(/primární zdroj/);
+  });
+  it('stanovisko dotčené strany se nepočítá mezi dvě redakce', () => {
+    const k = sStanoviskem({ ...platnaKauza(), kriterium: 'dve-redakce' });
+    expect(chyby({ ...k, proc: { text: 'Důvod.', zdroje: [2, 9] } }).join(' ')).toMatch(/dva mediální zdroje/);
   });
 });

@@ -1,11 +1,14 @@
 import { inicializujDetail } from './detail';
 import { vyberKauzu } from './osa';
+import { nastavPohled, aktualniPohled } from './mapa';
 
 const mezipamet = new Map<string, { html: string; trida: string; titulek: string }>();
-const TITULEK_HLAVNI = 'Nenechme vyhnít — kauzy Andreje Babiše';
+const TITULEK_HLAVNI = 'Archiv kauz Andreje Babiše — Nenechme vyhnít';
 let zaviramZHistorie = false;
 
 const dialog = () => document.getElementById('detail') as HTMLDialogElement;
+/** Detail otevřený z mapy si pohled pamatuje v adrese, aby se po zavření vrátil na mapu. */
+const dotazPohledu = () => (aktualniPohled() === 'mapa' ? '?pohled=mapa' : '');
 
 async function nactiDetail(slug: string) {
   if (!mezipamet.has(slug)) {
@@ -32,7 +35,7 @@ export async function otevriDetail(slug: string, { pridatDoHistorie = true } = {
     document.title = mezipamet.get(slug)?.titulek ?? document.title;
   }
   vyberKauzu(slug);
-  if (pridatDoHistorie) history.pushState({ slug }, '', `/kauzy/${slug}/`);
+  if (pridatDoHistorie) history.pushState({ slug }, '', `/kauzy/${slug}/${dotazPohledu()}`);
   if (!dlg.open) dlg.showModal();
 }
 
@@ -40,7 +43,7 @@ export function zavriDetail({ pridatDoHistorie = true } = {}): void {
   const dlg = dialog();
   zaviramZHistorie = !pridatDoHistorie;
   if (dlg.open) dlg.close();
-  else if (pridatDoHistorie && location.pathname !== '/') history.pushState({}, '', '/');
+  else if (pridatDoHistorie && location.pathname !== '/') history.pushState({}, '', `/${dotazPohledu()}`);
 }
 
 export function inicializujNavigaci(): void {
@@ -52,6 +55,9 @@ export function inicializujNavigaci(): void {
     inicializujDetail(dlg);
     vyberKauzu(otevrena);
     history.replaceState({ slug: otevrena }, '');
+    // v HTML je dialog otevřený (kvůli návštěvníkům bez JavaScriptu); modálně ho jde otevřít jen zavřený.
+    // Odebrání atributu neposílá událost close, takže se adresa nemění.
+    dlg.removeAttribute('open');
     dlg.showModal();
   } else {
     history.replaceState({}, '');
@@ -67,8 +73,17 @@ export function inicializujNavigaci(): void {
 
   dlg.addEventListener('close', () => {
     document.title = TITULEK_HLAVNI;
-    if (!zaviramZHistorie && location.pathname !== '/') history.pushState({}, '', '/');
+    // Detail otevřený rovnou z adresy nemá kam vrátit fokus (skončil by na <body>): vrátí se na řádek kauzy na ose.
+    const slug = dlg.dataset.slug;
+    delete document.body.dataset.otevrena;
+    if ((document.activeElement === document.body || !document.activeElement) && slug && aktualniPohled() !== 'mapa') {
+      document.querySelector<HTMLElement>(`#graf .radek[data-slug="${CSS.escape(slug)}"]:not([hidden]) a.radek-btn`)?.focus();
+    }
+    if (!zaviramZHistorie && location.pathname !== '/') history.pushState({}, '', `/${dotazPohledu()}`);
     zaviramZHistorie = false;
+    // po zavření detailu nemá na ose zůstat pásmo a popisky od/do zavřené kauzy.
+    // Na mapě (i po „Ukázat na mapě“, které přepne pohled ještě před zavřením) kauza zůstane zvýrazněná.
+    if (aktualniPohled() !== 'mapa') vyberKauzu(null);
   });
   dlg.addEventListener('click', e => {
     if (e.target === dlg || (e.target as HTMLElement).closest('.zavrit')) dlg.close();
@@ -78,5 +93,15 @@ export function inicializujNavigaci(): void {
     const slug = (e.state as { slug?: string } | null)?.slug;
     if (slug) otevriDetail(slug, { pridatDoHistorie: false });
     else zavriDetail({ pridatDoHistorie: false });
+  });
+
+  // mapa a odkazy mezi kauzami v detailu otevírají kauzu stejnou cestou jako osa
+  document.addEventListener('nv:otevri', e => { otevriDetail((e as CustomEvent<string>).detail); });
+  // „Ukázat na mapě“ z detailu: přepnout na mapu, zavřít detail (adresa /?pohled=mapa) a nechat kauzu vybranou
+  document.addEventListener('nv:na-mapu', e => {
+    const slug = (e as CustomEvent<string>).detail;
+    nastavPohled('mapa', { zapsat: false });
+    zavriDetail();
+    vyberKauzu(slug);
   });
 }
