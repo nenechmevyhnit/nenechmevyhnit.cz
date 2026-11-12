@@ -354,6 +354,38 @@ body .v4-dlg-panel .posun-napoveda[hidden] { display: none; }
   body .v4-dlg-panel .slovnicek dd { margin-bottom: 10px; }
 }
 
+/* Zdroje: hlavička kauzy zabere většinu výšky modalu, takže ve sloupcích do strany se vešel jeden zdroj na sloupec
+   a seznam se táhl desítky obrazovek doprava. Seznam je proto mřížka po řádcích (čísla jdou zleva doprava a shora
+   dolů) a posouvá se svisle uvnitř panelu, stránka sama se neposouvá. Patička detailu (historie, nahlásit chybu,
+   odkaz) stojí trvale pod seznamem. Spodní okraj se vytrácí, dokud seznam pokračuje; přepíná to skript. */
+html.js body .m2-panel[data-p="zdroje"]:not([hidden]) { display: flex; flex-direction: column; overflow: hidden; columns: auto; }
+html.js body .m2-panel[data-p="zdroje"] ol.zdroje {
+  flex: 1; min-height: 0; overflow-x: hidden; overflow-y: auto; scrollbar-width: thin; scrollbar-gutter: stable;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); align-content: start; gap: 0 36px;
+}
+html.js body .m2-panel[data-p="zdroje"] ol.zdroje.pokracuje { mask-image: linear-gradient(#000 calc(100% - 40px), transparent); }
+html.js body .m2-panel[data-p="zdroje"] .paticka-detailu { flex: none; margin-top: 4px; padding-top: 10px; border-top: 1px solid var(--linka); }
+@media (max-width: 760px) {
+  html.js body .m2-panel[data-p="zdroje"] ol.zdroje { grid-template-columns: 1fr; }
+}
+
+/* Filtr zdrojů (soudy, úřady, parlament, média, dotčená strana). Číslo zdroje se bere z jeho id, ne z pořadí,
+   aby skryté zdroje nepřečíslovaly ty viditelné a čísla dál odpovídala odkazům v textu. */
+body ol.zdroje li[data-cislo]::before { content: "[" attr(data-cislo) "]"; }
+body ol.zdroje li[hidden] { display: none; }
+body .zdroje-filtr { flex: none; display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
+body .zdroje-filtr button { border: 1px solid var(--linka); border-radius: 999px; background: var(--plocha); padding: 3px 11px; font: 500 13px var(--f-text); color: var(--inkoust); cursor: pointer; transition: background-color .18s ease, color .18s ease, border-color .18s ease; }
+body .zdroje-filtr button:hover { border-color: var(--inkoust); }
+body .zdroje-filtr button .zf-pocet { color: var(--meta); font-variant-numeric: tabular-nums; }
+body .zdroje-filtr button[aria-pressed="true"] { border-color: var(--modra); background: var(--modra); color: #fff; }
+body .zdroje-filtr button[aria-pressed="true"] .zf-pocet { color: inherit; opacity: .8; }
+@media (max-width: 760px) {
+  /* na mobilu jeden řádek posouvaný do strany, ať na samotné zdroje zbyde místo */
+  body .zdroje-filtr { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  body .zdroje-filtr button { flex: none; }
+}
+html:not(.js) body .zdroje-filtr { display: none; }
+
 /* ===== Bez JavaScriptu (html:not(.js)) =====
    Osa: řádky mají přirozenou výšku a seznam se posouvá (stránkování zapíná až skript).
    Stránka kauzy: detail je otevřený pod hlavičkou webu a všechny části jsou pod sebou s nadpisy. */

@@ -12,6 +12,8 @@ zdroje:
   - { id: 2, vydavatel: Fiktivní deník, titulek: Jak Alfa získala dotaci, datum: 2016-02-15, druh: media, url: "https://example.com/alfa/clanek" }
   - { id: 3, vydavatel: Fiktivní rozhlas, titulek: Alfa olaf vyšetřování, datum: 2017-12-21, druh: media, url: "https://example.com/alfa/olaf" }
   - { id: 4, vydavatel: Fiktivní firma Alfa, titulek: Prohlášení firmy Alfa k dotaci, datum: 2016-02-16, druh: stanovisko, url: "https://example.com/alfa/prohlaseni" }
+  - { id: 5, vydavatel: Fiktivní úřad pro dotace, titulek: Rozhodnutí o dotaci pro Alfu, datum: 2008-06-30, druh: primarni, url: "https://example.com/alfa/rozhodnuti" }
+  - { id: 6, vydavatel: Fiktivní poslanecká sněmovna (stenozáznam), titulek: Interpelace k dotaci pro Alfu, datum: 2016-03-10, druh: primarni, url: "https://example.com/alfa/interpelace" }
 udalosti:
   - { datum: 2007-12, nazev: Vyčlenění firmy, popis: Firma Alfa byla vyčleněna z holdingu., zdroje: [2] }
   - { datum: 2008-03, nazev: Žádost o dotaci, popis: Alfa žádá o dotaci pro malé podniky., zdroje: [2] }
