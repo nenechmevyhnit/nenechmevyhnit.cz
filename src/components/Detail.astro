@@ -4,6 +4,7 @@ import { rozdelOdstavce, odstavecNaHtml } from '../lib/souvislosti';
 import { datumText, rozsahText, delkaText, polohaVKauze, popiskyRoku } from '../lib/casova-osa';
 import { popisekStavu } from '../lib/stavy';
 import { popisekKriteria } from '../lib/kriteria';
+import { popisekDruhu } from '../lib/zdroje';
 import type { VazbyKauzy } from '../lib/mapa';
 
 interface Props { zaznam?: KauzaZaznam; vazby?: VazbyKauzy; naMapu?: boolean }
@@ -89,7 +90,7 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
         <ol class="zdroje">
           {k.zdroje.map(z => (
             <li id={`zdroj-${z.id}`}><div>
-              <span class="vyd">{z.vydavatel}</span><span class={`druh ${z.druh}`}>{z.druh === 'primarni' ? 'primární' : 'média'}</span><br>
+              <span class="vyd">{z.vydavatel}</span>{/* třída „stanovisko“ už patří boxu stanoviska, proto u zdroje „vyjadreni“ */}<span class={`druh ${z.druh === 'stanovisko' ? 'vyjadreni' : z.druh}`}>{popisekDruhu(z.druh)}</span><br>
               {z.titulek}
               <div class="odkazy">{datumText(z.datum)} · <a href={z.url} rel="noopener noreferrer" target="_blank">originál ↗</a>{z.archiv && <> · <a href={z.archiv} rel="noopener noreferrer" target="_blank">archivní kopie ↗</a></>}</div>
             </div></li>

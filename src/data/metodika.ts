@@ -28,6 +28,7 @@ export const metodika: { platiOd: string; sekce: SekceStranky[] } = {
       shrnuti: "Primární dokumenty a seriózní média. Sociální sítě a názorové texty nejsou doklad faktu.",
       html: `<ol class="stupne"><li><strong>Primární zdroje:</strong> soudní rozhodnutí, tiskové zprávy státních zastupitelství, zprávy OLAF, Evropské komise a NKÚ, sněmovní tisky a hlasování, veřejné rejstříky.</li>
 <li><strong>Seriózní média a investigativní redakce:</strong> například ČT, Český rozhlas, Seznam Zprávy, Deník N, Hospodářské noviny, Respekt, Investigace.cz, OCCRP.</li>
+<li><strong>Stanovisko dotčené strany:</strong> prohlášení Andreje Babiše, jeho firem nebo hnutí. Ve zdrojích je označené zvlášť, protože dokládá jen to, co dotčená strana tvrdí, ne fakta. Proto také nepodkládá kritérium zařazení kauzy.</li>
 <li><strong>Nepřípustné jako doklad faktu:</strong> sociální sítě, blogy, anonymní weby, komentáře a názorové texty.</li></ol>
 <p>Každé faktické tvrzení má aspoň jeden zdroj. Klíčová tvrzení, tedy obvinění, rozsudek nebo výsledek auditu, mají primární zdroj nebo dva nezávislé mediální zdroje.</p>`,
     },

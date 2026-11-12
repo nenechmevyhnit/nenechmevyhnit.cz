@@ -63,7 +63,7 @@ zdroje:
     vydavatel: Městský soud v Praze
     titulek: …
     datum: 2023-01-09
-    druh: primarni              # primarni | media
+    druh: primarni              # primarni | media | stanovisko (vyjádření dotčené strany, nepodkládá kritérium)
     url: https://…
     archiv: https://web.archive.org/…   # smí chybět, doplní automatizace
 udalosti:

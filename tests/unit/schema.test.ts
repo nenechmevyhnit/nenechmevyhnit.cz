@@ -144,3 +144,20 @@ describe('Proč je to kauza a kritérium zařazení', () => {
     expect(chyby(sMedii([1, 2]))).toEqual([]);
   });
 });
+
+describe('druh zdroje „stanovisko“ (vyjádření dotčené strany)', () => {
+  const sStanoviskem = (k: Record<string, unknown>) => ({
+    ...k,
+    zdroje: [...(k.zdroje as object[]), { id: 9, vydavatel: 'Fiktivní firma Alfa', titulek: 'Prohlášení', datum: '2012-02', druh: 'stanovisko', url: 'https://example.com/prohlaseni' }],
+  });
+  it('přijme zdroj druhu stanovisko', () => {
+    expect(chyby({ ...sStanoviskem(platnaKauza()), stanovisko: { text: 'Firma vše odmítá.', zdroje: [9] } })).toEqual([]);
+  });
+  it('stanovisko dotčené strany nepodloží kritérium úřední řízení', () => {
+    expect(chyby({ ...sStanoviskem(platnaKauza()), proc: { text: 'Důvod.', zdroje: [9] } }).join(' ')).toMatch(/primární zdroj/);
+  });
+  it('stanovisko dotčené strany se nepočítá mezi dvě redakce', () => {
+    const k = sStanoviskem({ ...platnaKauza(), kriterium: 'dve-redakce' });
+    expect(chyby({ ...k, proc: { text: 'Důvod.', zdroje: [2, 9] } }).join(' ')).toMatch(/dva mediální zdroje/);
+  });
+});

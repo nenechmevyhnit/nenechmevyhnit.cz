@@ -182,3 +182,6 @@ body .m2-panel[data-p="proc"] .proc-text { margin: 0; max-width: 46em; font-size
 body .m2-panel[data-p="proc"] .kriterium { margin: 14px 0 0; font: 13px var(--f-mono); color: var(--meta); }
 body .m2-panel[data-p="proc"] .kriterium a { color: var(--modra); }
 body .m2-panel[data-p="proc"]:not([hidden]) { overflow-y: auto; scrollbar-width: thin; }
+
+/* Zdroj druhu „stanovisko dotčené strany“: čárkovaný rámeček, aby se nepletl s primárním zdrojem */
+body ol.zdroje .druh.vyjadreni { border-style: dashed; }

@@ -22,3 +22,4 @@ dist-prazdny/
 test-results/
 playwright-report/
 .gstack/
+.worktrees/

@@ -1,6 +1,7 @@
 import { z } from 'astro/zod';
 import { STAVY } from './stavy';
 import { KRITERIA } from './kriteria';
+import { DRUHY_ZDROJU } from './zdroje';
 import { ROLE_VZTAHU, ROLE_V_KAUZE, ROLE_NAVAZNOSTI, DRUHY_AKTERU } from './role';
 
 const naText = (v: unknown) =>
@@ -40,7 +41,7 @@ export const zdrojSchema = z.object({
   vydavatel: z.string().trim().min(1, 'Zdroj musí mít vydavatele'),
   titulek: text(),
   datum,
-  druh: z.enum(['primarni', 'media']),
+  druh: z.enum(DRUHY_ZDROJU),
   url: odkazHttp('Odkaz zdroje'),
   archiv: odkazHttp('Archivní odkaz').optional(),
 }).strict();

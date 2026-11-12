@@ -73,3 +73,11 @@ test('neexistující kauza vrátí stránku 404', async ({ page }) => {
   expect(odpoved?.status()).toBe(404);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tahle stránka neexistuje');
 });
+
+test('vyjádření dotčené strany je ve zdrojích označené jako stanovisko, ne jako primární zdroj', async ({ page }) => {
+  await page.goto('/kauzy/alfa-dotace/');
+  await page.getByRole('tab', { name: /^Zdroje/ }).click();
+  await expect(page.locator('#zdroj-4 .druh')).toHaveText('stanovisko dotčené strany');
+  await expect(page.locator('#zdroj-1 .druh')).toHaveText('primární');
+  await expect(page.locator('#zdroj-2 .druh')).toHaveText('média');
+});
