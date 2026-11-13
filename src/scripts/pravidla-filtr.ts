@@ -18,7 +18,7 @@ export function inicializujFiltrPravidel(): void {
   const radkyOsy = new Map([...document.querySelectorAll<HTMLElement>('.op-radek')].map(r => [r.dataset.slug!, r]));
   const prazdnoOsy = document.querySelector<HTMLElement>('.op-prazdno');
 
-  const filtr = ():FiltrPravidel => ({
+  const filtr = (): FiltrPravidel => ({
     text: hledat.value,
     stitky: cipy.filter(c => c.getAttribute('aria-pressed') === 'true').map(c => c.dataset.stitek!),
     jenProjednavane: jen.checked,
