@@ -180,3 +180,23 @@ body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
   .ob-uvod-prehledu { display: none; }
   .ob-karty { grid-template-columns: 1fr; }
 }
+
+/* Detail oblasti (specifikace oblastí, oddíl 8.2): delší obsah pokračuje ve sloupcích do strany jako Zdroje. */
+.m2-hlava .ob-pocty-detail { margin: 6px 0 0; font: 12px/1.4 var(--f-mono); color: var(--meta); }
+.m2-panel[data-p="zmeny"], .m2-panel[data-p="hodnoceni"] { overflow-x: auto; overflow-y: hidden; column-width: 320px; column-gap: 36px; column-fill: auto; }
+.ob-zmeny, .ob-hodnoceni { list-style: none; margin: 0; padding: 0; }
+.ob-zmeny > li, .ob-hodnoceni > li, .ob-skupina h4 { break-inside: avoid; }
+.ob-zmeny > li { padding: 0 0 14px; margin: 0 0 14px; border-bottom: 1px solid var(--linka); }
+.ob-meta { margin: 0 0 2px; font: 12px/1.4 var(--f-mono); color: var(--meta); }
+.ob-zmeny h4 { margin: 0 0 6px; font: 700 16px/1.25 var(--f-nadpis); }
+.pro-vas { margin: 0 0 6px; padding: 8px 10px; background: color-mix(in srgb, var(--modra) 5%, var(--plocha)); border-left: 3px solid var(--modra); font-size: 15px; line-height: 1.45; }
+.pro-vas.chybi { border-left-color: var(--linka); color: var(--meta); }
+.ob-rozbor { font: 12px var(--f-mono); color: var(--modra); }
+.ob-skupina h4 { margin: 0 0 6px; font-size: 14px; }
+.ob-hodnoceni > li { margin: 0 0 12px; }
+.ob-hodnoceni blockquote { margin: 0 0 2px; font-style: italic; }
+.ob-kdo { margin: 0; font-size: 13px; color: var(--text2); }
+.m2-panel[data-p="hodnoceni"] .kriterium { break-inside: avoid; }
+
+/* Bez JavaScriptu přehled ukazuje jen Oblasti, bez přepínače a filtrů (specifikace oblastí, oddíl 8.1). */
+html:not(.js) body .pr-filtry { display: none; }

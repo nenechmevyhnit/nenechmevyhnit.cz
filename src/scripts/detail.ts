@@ -36,17 +36,18 @@ export function ukazUdalost(dlg: HTMLDialogElement, i: number): boolean {
 
 export function inicializujDetail(dlg: HTMLDialogElement): void {
   ukazovace.delete(dlg); // zastaralá funkce z předchozího obsahu, kdyby nový detail žádné události neměl
-  const polozky = [...dlg.querySelectorAll<HTMLElement>('.udalosti-seznam > li')];
-  if (!polozky.length) return;
+  const lista = dlg.querySelector<HTMLElement>('.zalozky');
+  if (!lista) return; // prázdný dialog: přehled bez otevřeného detailu
   jednouNaDialog(dlg);
-  const panelChrono = dlg.querySelector<HTMLElement>('.m2-panel[data-p="chrono"]')!;
+  // detail oblasti nemá události ani průběh: části pro průběh se přeskočí
+  const polozky = [...dlg.querySelectorAll<HTMLElement>('.udalosti-seznam > li')];
+  const panelChrono = dlg.querySelector<HTMLElement>('.m2-panel[data-p="chrono"]');
   const body = [...dlg.querySelectorAll<HTMLElement>('.mini-osa .bod')];
   const popis = dlg.querySelector<HTMLElement>('.vybrany-popis');
   const [zpet, dal] = dlg.querySelectorAll<HTMLButtonElement>('.listovani [data-krok]');
-  const lista = dlg.querySelector<HTMLElement>('.zalozky')!;
   const hlava = dlg.querySelector<HTMLElement>('.m2-hlava')!;
-  const perex = hlava.querySelector<HTMLElement>('.perex')!;
-  const vice = hlava.querySelector<HTMLButtonElement>('.perex-vice')!;
+  const perex = hlava.querySelector<HTMLElement>('.perex');
+  const vice = hlava.querySelector<HTMLButtonElement>('.perex-vice');
   let akt = polozky.length - 1;
 
   /** Záložky, které se nevejdou, se posouvají do strany; okraj, za kterým pokračují, se vytrácí. */
@@ -57,7 +58,7 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
   };
   /** Tlačítko „celé shrnutí“ jen tehdy, když je shrnutí zkrácené (na mobilu na tři řádky). */
   const zmerPerex = () => {
-    if (!hlava.classList.contains('rozbalene')) vice.hidden = perex.scrollHeight <= perex.clientHeight + 1;
+    if (perex && vice && !hlava.classList.contains('rozbalene')) vice.hidden = perex.scrollHeight <= perex.clientHeight + 1;
   };
   /** Body mini-osy mají cíl široký 24 px, ale nikdy se nepřekrývají se sousedy: u blízkých dat je cíl užší
    *  (nejméně jako viditelný bod), aby klik na bod nevzal sousední událost. */
@@ -90,10 +91,10 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
   });
   premerAktualni = () => { okrajeLisy(); zmerPerex(); sirkyBodu(); okrajeZdroju(); };
   lista.addEventListener('scroll', okrajeLisy, { passive: true });
-  vice.addEventListener('click', () => {
+  vice?.addEventListener('click', () => {
     const rozbaleno = hlava.classList.toggle('rozbalene');
-    vice.setAttribute('aria-expanded', String(rozbaleno));
-    vice.textContent = rozbaleno ? 'méně' : 'celé shrnutí';
+    vice!.setAttribute('aria-expanded', String(rozbaleno));
+    vice!.textContent = rozbaleno ? 'méně' : 'celé shrnutí';
   });
   // rozměry jdou změřit až po otevření dialogu (otevírá se hned po inicializaci)
   requestAnimationFrame(() => premerAktualni?.());
@@ -112,6 +113,7 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
   };
 
   const ukaz = (i: number, smer = true) => {
+    if (!polozky.length || !panelChrono || !zpet || !dal) return;
     const pred = akt;
     akt = Math.max(0, Math.min(polozky.length - 1, i));
     if (!smer || akt === pred) delete panelChrono.dataset.smer; else panelChrono.dataset.smer = akt > pred ? 'vpred' : 'zpet';
@@ -127,7 +129,7 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
     dal.querySelector('span')!.textContent = akt < polozky.length - 1 ? nazev(akt + 1) : '';
   };
 
-  dlg.querySelector('.zalozky')!.addEventListener('click', e => {
+  lista.addEventListener('click', e => {
     const b = (e.target as HTMLElement).closest<HTMLElement>('[role="tab"]');
     if (b) prepni(b.dataset.p!);
   });
@@ -140,10 +142,10 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
     const b = (e.target as HTMLElement).closest<HTMLElement>('[data-udalost]');
     if (b) { prepni('chrono'); ukaz(Number(b.dataset.udalost)); }
   });
-  zpet.addEventListener('click', () => ukaz(akt - 1));
-  dal.addEventListener('click', () => ukaz(akt + 1));
+  zpet?.addEventListener('click', () => ukaz(akt - 1));
+  dal?.addEventListener('click', () => ukaz(akt + 1));
   dlg.addEventListener('keydown', e => {
-    if (panelChrono.hidden) return;
+    if (!panelChrono || panelChrono.hidden) return;
     if (e.key === 'ArrowLeft') ukaz(akt - 1);
     if (e.key === 'ArrowRight') ukaz(akt + 1);
   });
@@ -167,7 +169,7 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
   });
   ukaz(akt, false);
   ukazovace.set(dlg, (i: number) => {
-    if (!Number.isInteger(i) || i < 0 || i >= polozky.length) return false;
+    if (!polozky.length || !Number.isInteger(i) || i < 0 || i >= polozky.length) return false;
     prepni('chrono');
     ukaz(i, false);
     return true;

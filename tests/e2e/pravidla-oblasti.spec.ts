@@ -74,6 +74,7 @@ test.describe('bez JavaScriptu', () => {
     await expect(page.locator('.ob-karta')).toHaveCount(4);
     await expect(page.locator('.pravidla-obal')).toBeHidden();
     await expect(page.locator('.pr-pohled')).toBeHidden();
+    await expect(page.locator('.pr-filtry')).toBeHidden();
   });
 });
 
