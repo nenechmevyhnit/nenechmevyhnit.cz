@@ -4,9 +4,9 @@ import { rozdelOdstavce, odstavecNaHtml } from '../lib/souvislosti';
 import { datumText, rozsahText, delkaText, polohaVKauze, popiskyRoku } from '../lib/casova-osa';
 import { popisekStavu } from '../lib/stavy';
 import { popisekKriteria } from '../lib/kriteria';
-import { popisekDruhu as popisekDruhuZdroje, skupinaZdroje, popisekSkupiny, SKUPINY_ZDROJU } from '../lib/zdroje';
 import { castkaText, popisekDruhu } from '../lib/castky';
 import type { VazbyKauzy } from '../lib/mapa';
+import SeznamZdroju from './SeznamZdroju.astro';
 
 interface Props { zaznam?: KauzaZaznam; vazby?: VazbyKauzy; naMapu?: boolean }
 const { zaznam, vazby, naMapu = false } = Astro.props;
@@ -16,9 +16,6 @@ const poloha = (d: string) => k ? polohaVKauze(d, k.od, k.do) : 0;
 const posledni = k ? k.udalosti.length - 1 : 0;
 const rokyOsy = k ? popiskyRoku(k.udalosti.map(u => ({ datum: u.datum, p: poloha(u.datum) }))) : [];
 const maVazby = !!vazby && (vazby.akteri.length + vazby.navazuje.length + vazby.navazujiNaNi.length) > 0;
-// Filtr zdrojů má smysl jen u delšího seznamu, v němž jsou aspoň dvě skupiny (soudy, média, dotčená strana…).
-const skupinyZdroju = k ? SKUPINY_ZDROJU.map(s => ({ s, pocet: k.zdroje.filter(z => skupinaZdroje(z) === s).length })).filter(x => x.pocet > 0) : [];
-const filtrZdroju = !!k && k.zdroje.length >= 6 && skupinyZdroju.length >= 2;
 const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="chip" data-zdroj="${c}" aria-label="Zdroj ${c}">${c}</a>`).join('');
 ---
 <!-- Stránka kauzy má dialog otevřený už v HTML, aby byl obsah vidět i bez JavaScriptu; skript ho přepne na modální. -->
@@ -103,21 +100,7 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
       </div>
       <div class="m2-panel" data-p="zdroje" role="tabpanel" hidden>
         <h3 class="panel-nadpis">{`Zdroje (${k.zdroje.length})`}</h3>{/* jen bez JavaScriptu, kdy jsou všechny části pod sebou */}
-        {filtrZdroju && (
-          <div class="zdroje-filtr" role="group" aria-label="Zobrazit zdroje">
-            <button type="button" aria-pressed="true" data-skupina="">Vše <span class="zf-pocet">{k.zdroje.length}</span></button>
-            {skupinyZdroju.map(x => <button type="button" aria-pressed="false" data-skupina={x.s}>{popisekSkupiny(x.s)} <span class="zf-pocet">{x.pocet}</span></button>)}
-          </div>
-        )}
-        <ol class="zdroje">
-          {k.zdroje.map(z => (
-            <li id={`zdroj-${z.id}`} data-cislo={z.id} data-skupina={skupinaZdroje(z)}><div>
-              <span class="vyd">{z.vydavatel}</span>{/* třída „stanovisko“ už patří boxu stanoviska, proto u zdroje „vyjadreni“ */}<span class={`druh ${z.druh === 'stanovisko' ? 'vyjadreni' : z.druh}`}>{popisekDruhuZdroje(z.druh)}</span><br>
-              {z.titulek}
-              <div class="odkazy">{datumText(z.datum)} · <a href={z.url} rel="noopener noreferrer" target="_blank">originál ↗</a>{z.archiv && <> · <a href={z.archiv} rel="noopener noreferrer" target="_blank">archivní kopie ↗</a></>}</div>
-            </div></li>
-          ))}
-        </ol>
+        <SeznamZdroju zdroje={k.zdroje} />
         <div class="paticka-detailu">
           <a href={`${REPO}/commits/main/obsah/kauzy/${zaznam.slug}.md`}>Historie změn této kauzy</a>
           <a href={`${REPO}/issues/new?template=oprava.yml&title=${encodeURIComponent('Oprava: ' + k.nazev)}`}>Nahlásit chybu</a>

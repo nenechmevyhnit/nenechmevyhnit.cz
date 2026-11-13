@@ -1,0 +1,26 @@
+---
+import type { Zdroj } from '../lib/schema';
+import { datumText } from '../lib/casova-osa';
+import { popisekDruhu, skupinaZdroje, popisekSkupiny, SKUPINY_ZDROJU } from '../lib/zdroje';
+
+/** Seznam zdrojů v detailu kauzy i pravidla. Filtr má smysl jen u delšího seznamu, v němž jsou aspoň dvě skupiny. */
+interface Props { zdroje: Zdroj[] }
+const { zdroje } = Astro.props;
+const skupiny = SKUPINY_ZDROJU.map(s => ({ s, pocet: zdroje.filter(z => skupinaZdroje(z) === s).length })).filter(x => x.pocet > 0);
+const filtr = zdroje.length >= 6 && skupiny.length >= 2;
+---
+{filtr && (
+  <div class="zdroje-filtr" role="group" aria-label="Zobrazit zdroje">
+    <button type="button" aria-pressed="true" data-skupina="">Vše <span class="zf-pocet">{zdroje.length}</span></button>
+    {skupiny.map(x => <button type="button" aria-pressed="false" data-skupina={x.s}>{popisekSkupiny(x.s)} <span class="zf-pocet">{x.pocet}</span></button>)}
+  </div>
+)}
+<ol class="zdroje">
+  {zdroje.map(z => (
+    <li id={`zdroj-${z.id}`} data-cislo={z.id} data-skupina={skupinaZdroje(z)}><div>
+      <span class="vyd">{z.vydavatel}</span>{/* třída „stanovisko“ už patří boxu stanoviska, proto u zdroje „vyjadreni“ */}<span class={`druh ${z.druh === 'stanovisko' ? 'vyjadreni' : z.druh}`}>{popisekDruhu(z.druh)}</span><br>
+      {z.titulek}
+      <div class="odkazy">{datumText(z.datum)} · <a href={z.url} rel="noopener noreferrer" target="_blank">originál ↗</a>{z.archiv && <> · <a href={z.archiv} rel="noopener noreferrer" target="_blank">archivní kopie ↗</a></>}</div>
+    </div></li>
+  ))}
+</ol>

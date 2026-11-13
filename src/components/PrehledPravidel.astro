@@ -72,5 +72,7 @@ const popis = otevrene
 <script type="application/json" id="nv-pravidla" set:html={jsonDoSkriptu(zaznamy.map(vytvorPolozkuPravidla))}></script>
 <script>
   import { inicializujFiltrPravidel } from '../scripts/pravidla-filtr';
+  import { inicializujNavigaciPravidel } from '../scripts/navigace-pravidel';
   inicializujFiltrPravidel();
+  inicializujNavigaciPravidel();
 </script>
