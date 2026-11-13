@@ -3,10 +3,11 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 // Projekt se 13. 11. 2026 přejmenoval z „Nenechme vyhnít“ (nenechmevyhnit.cz) na „Posuďte sami“ (posudtesami.cz).
-// Stará doména ani starý název repozitáře (nenechmevyhnit/nenechmevyhnit.cz, dnes posudtesami.cz) se nesmí vrátit.
-// GitHub účet a kontaktní e-mail zatím nesou starý název, proto je test nehlídá.
+// Nesmí se vrátit stará doména, starý repozitář (nenechmevyhnit/nenechmevyhnit.cz) ani adresy starého
+// GitHub účtu nenechmevyhnit (dnes posudtesami/posudtesami.cz). Kontaktní e-mail zatím nese starý název
+// a starou noreply adresu potřebuje kontrola identity commitů, proto je test nehlídá.
 const STARY_NAZEV = /nenechme\s+vyhn/i;
-const STARA_DOMENA = /nenechmevyhnit\.cz/;
+const STARA_DOMENA = /nenechmevyhnit\.cz|github\.com\/nenechmevyhnit|nenechmevyhnit\.github\.io/;
 const BINARNI = /\.(png|webp|jpe?g|gif|ico|woff2?|ttf|otf|pdf)$/i;
 
 const soubory = (cesta: string): string[] => statSync(cesta).isFile()

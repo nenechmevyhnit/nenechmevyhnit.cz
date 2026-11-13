@@ -1,7 +1,7 @@
 ---
 interface Props { legenda?: boolean }
 const { legenda = false } = Astro.props;
-const REPO = 'https://github.com/nenechmevyhnit/posudtesami.cz';
+const REPO = 'https://github.com/posudtesami/posudtesami.cz';
 ---
 <div class="legenda" role="contentinfo">
   {legenda && <><span><i></i>uzavřeno</span><span><i class="ok"></i>dosud neuzavřeno</span><span><i class="ud"></i>událost v kauze</span></>}
