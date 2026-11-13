@@ -144,7 +144,7 @@ body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
 .op-legenda .op-bod { position: static; display: inline-block; vertical-align: middle; transform: none; }
 .op-legenda .op-bod.ucinnost { transform: rotate(45deg); }
 .op-prazdno { margin: 12px; }
-.op-popisek { position: fixed; z-index: 20; max-width: min(360px, calc(100vw - 8px)); padding: 4px 8px; font-size: 12px; background: var(--inkoust); color: #fff; pointer-events: none; }
+.op-popisek { position: fixed; z-index: 20; max-width: min(360px, calc(100vw - 8px)); padding: 4px 8px; font-size: 12px; background: var(--inkoust); color: #fff; }
 @media (max-width: 760px) {
   .op-plocha { --nazvy: 120px; }
   .op-radky, .op-hlava { min-width: 760px; }

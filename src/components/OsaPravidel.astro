@@ -6,7 +6,7 @@ const styl = (x: number, posun = 0) => `left:${x}%;--posun:${posun}`;
 ---
 <!-- Bez JavaScriptu zůstává skrytá: seznam nese stejné informace (spec osy, oddíl 2). -->
 <section class="osa-pravidel" data-osa-pravidel aria-label="Časová osa změn pravidel" hidden>
-  <div class="op-plocha" tabindex="0" aria-label="Časová osa, posouvá se do strany">
+  <div class="op-plocha" role="region" tabindex="0" aria-label="Časová osa, posouvá se do strany">
     <div class="op-hlava" aria-hidden="true">
       <span class="op-roh"></span>
       <div class="op-mesice">

@@ -47,10 +47,23 @@ export function inicializujOsuPravidel(): void {
     popisek.style.left = `${left}px`;
     popisek.style.top = `${top}px`;
   };
-  const skryjPopisek = () => { popisek.hidden = true; };
+  let casovac = 0;
+  const zrusCasovac = () => { clearTimeout(casovac); casovac = 0; };
+  const skryjPopisek = () => { zrusCasovac(); popisek.hidden = true; };
+  // hoverable (WCAG 1.4.13): po opuštění bodu zůstane popisek krátce, aby na něj šlo najet
+  const skryjPozdeji = () => { zrusCasovac(); casovac = window.setTimeout(skryjPopisek, 150); };
   const bod = (t: EventTarget | null) => (t as HTMLElement | null)?.closest<HTMLElement>('.op-bod[data-popisek]') ?? null;
-  osa.addEventListener('pointerover', e => { const b = bod(e.target); if (b) ukazPopisek(b); });
-  osa.addEventListener('pointerout', e => { if (bod(e.target)) skryjPopisek(); });
+  osa.addEventListener('pointerover', e => {
+    const b = bod(e.target);
+    if (b) { zrusCasovac(); ukazPopisek(b); } else if ((e.target as HTMLElement).closest('.op-popisek')) zrusCasovac();
+  });
+  osa.addEventListener('pointerout', e => {
+    const t = e.target as HTMLElement;
+    if (!bod(t) && !t.closest('.op-popisek')) return;
+    const kam = e.relatedTarget as HTMLElement | null;
+    if (kam && (kam.closest('.op-popisek') || bod(kam))) return;
+    skryjPozdeji();
+  });
   osa.addEventListener('focusin', e => { const b = bod(e.target); if (b) ukazPopisek(b); else skryjPopisek(); });
   osa.addEventListener('focusout', skryjPopisek);
   osa.addEventListener('keydown', e => { if (e.key === 'Escape') skryjPopisek(); });

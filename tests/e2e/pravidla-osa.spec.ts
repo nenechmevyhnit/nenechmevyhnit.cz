@@ -57,6 +57,20 @@ test('fokus na bod ukáže popisek, který je celý v okně', async ({ page }) =
   await expect(page.locator('.op-popisek')).toBeHidden();
 });
 
+test('popisek jde najet myší a zůstane, po odjetí zmizí', async ({ page }) => {
+  await page.goto('/pravidla/?pohled=osa');
+  const bod = page.locator('.op-radek a.op-bod').first();
+  await bod.hover();
+  const popisek = page.locator('.op-popisek');
+  await expect(popisek).toBeVisible();
+  const box = (await popisek.boundingBox())!;
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 8 });
+  await page.waitForTimeout(400);
+  await expect(popisek).toBeVisible();
+  await page.mouse.move(box.x + box.width / 2, 400, { steps: 5 });
+  await expect(popisek).toBeHidden();
+});
+
 test('body mají přístupný název s názvem pravidla a datem', async ({ page }) => {
   await page.goto('/pravidla/?pohled=osa');
   const bod = page.locator('.op-radek[data-slug="zakon-omega"] a.op-bod').first();
