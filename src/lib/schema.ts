@@ -5,7 +5,7 @@ import { DRUHY_ZDROJU } from './zdroje';
 import { ROLE_VZTAHU, ROLE_V_KAUZE, ROLE_NAVAZNOSTI, DRUHY_AKTERU } from './role';
 import { DRUHY_CASTEK, MENY, PRESNOSTI } from './castky';
 
-const naText = (v: unknown) =>
+export const naText = (v: unknown) =>
   v instanceof Date ? v.toISOString().slice(0, 10) : typeof v === 'number' ? String(v) : v;
 
 /** Existuje takové kalendářní datum? (RRRR, RRRR-MM nebo RRRR-MM-DD) */
@@ -31,11 +31,11 @@ const kontrolaData = (tvar: RegExp, hlaska: string) =>
       if (!existujeDatum(d)) ctx.addIssue({ code: 'custom', message: `${d} je neexistující datum` });
       else if (jeVBudoucnosti(d)) ctx.addIssue({ code: 'custom', message: `Datum ${d} leží v budoucnosti` });
     }));
-const datum = kontrolaData(/^\d{4}(-\d{2}(-\d{2})?)?$/, 'Datum musí být ve tvaru RRRR, RRRR-MM nebo RRRR-MM-DD');
-const datumPresne = kontrolaData(/^\d{4}-\d{2}-\d{2}$/, 'Datum musí být ve tvaru RRRR-MM-DD');
-const text = () => z.string().trim().min(1, 'Text nesmí být prázdný');
-const odkazHttp = (co: string) => z.string().url().regex(/^https?:\/\//, `${co} musí začínat http:// nebo https://`);
-const odkazy = (co: string) => z.array(z.number().int().positive()).min(1, `${co} musí mít aspoň jeden zdroj`);
+export const datum = kontrolaData(/^\d{4}(-\d{2}(-\d{2})?)?$/, 'Datum musí být ve tvaru RRRR, RRRR-MM nebo RRRR-MM-DD');
+export const datumPresne = kontrolaData(/^\d{4}-\d{2}-\d{2}$/, 'Datum musí být ve tvaru RRRR-MM-DD');
+export const text = () => z.string().trim().min(1, 'Text nesmí být prázdný');
+export const odkazHttp = (co: string) => z.string().url().regex(/^https?:\/\//, `${co} musí začínat http:// nebo https://`);
+export const odkazy = (co: string) => z.array(z.number().int().positive()).min(1, `${co} musí mít aspoň jeden zdroj`);
 
 export const zdrojSchema = z.object({
   id: z.number().int().positive(),
@@ -54,8 +54,8 @@ export const udalostSchema = z.object({
   zdroje: odkazy('Událost'),
 }).strict();
 
-const idTvar = z.string().regex(/^[a-z0-9-]+$/, 'Id smí obsahovat jen malá písmena bez diakritiky, číslice a pomlčky');
-const popisVazby = text().max(200, 'Popis vazby smí mít nejvýš 200 znaků (jedna věta)');
+export const idTvar = z.string().regex(/^[a-z0-9-]+$/, 'Id smí obsahovat jen malá písmena bez diakritiky, číslice a pomlčky');
+export const popisVazby = text().max(200, 'Popis vazby smí mít nejvýš 200 znaků (jedna věta)');
 const rok = z.number().int().min(1950).max(2100);
 
 export const vazbaAkteraSchema = z.object({

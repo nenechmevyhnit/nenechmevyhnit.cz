@@ -36,3 +36,30 @@ export function platnyAkter(): Record<string, unknown> {
     }],
   };
 }
+
+export function platnePravidlo(): Record<string, unknown> {
+  return {
+    nazev: 'Testovací novela Omega',
+    shrnuti: 'Fiktivní novela by zkrátila fiktivní lhůtu k vymáhání fiktivních dotací.',
+    druh: 'zakon',
+    cesta: 'poslanecky-navrh',
+    predkladatel: 'fiktivní poslanci A a B',
+    stitky: ['dotace'],
+    overeno: '2026-11-09',
+    zdroje: [
+      { id: 1, vydavatel: 'Fiktivní sněmovna', titulek: 'Fiktivní tisk 1', datum: '2026-06-10', druh: 'primarni', url: 'https://example.com/tisk' },
+      { id: 2, vydavatel: 'Fiktivní deník', titulek: 'Fond vymáhá dotace', datum: '2026-06-12', druh: 'media', url: 'https://example.com/clanek' },
+      { id: 3, vydavatel: 'Fiktivní poslanec A', titulek: 'Prohlášení', datum: '2026-06-15', druh: 'stanovisko', url: 'https://example.com/prohlaseni' },
+    ],
+    udalosti: [{ datum: '2026-06-10', krok: 'predlozeno', nazev: 'Návrh podán', popis: 'Fiktivní poslanci podali návrh.', zdroje: [1] }],
+    prospech: {
+      komu: ['agrofert'],
+      zaver: 'dolozen',
+      retezec: [
+        { text: 'Novela by zkrátila fiktivní lhůtu z deseti na čtyři roky.', zdroje: [1] },
+        { text: 'Fiktivní fond vymáhá po fiktivní firmě dotace.', zdroje: [2] },
+      ],
+    },
+    stanovisko: { text: 'Předkladatel souvislost s firmou odmítá.', zdroje: [3] },
+  };
+}
