@@ -2,11 +2,11 @@
 # Jednorázově nastaví ochranu větve main a související nastavení repozitáře přes GitHub API.
 # Spouštět ve vlastním terminálu:  Git Bash: bash nastroje/nastav-github.sh
 # PowerShell (tam je „bash“ z WSL):  & "C:\Program Files\Git\bin\bash.exe" nastroje/nastav-github.sh
-# Token se zadává skrytě a nikam se neukládá. Potřebuje fine-grained token účtu nenechmevyhnit,
-# omezený jen na repozitář nenechmevyhnit/nenechmevyhnit.cz, s oprávněním Administration: Read and write.
+# Token se zadává skrytě a nikam se neukládá. Potřebuje fine-grained token účtu posudtesami,
+# omezený jen na repozitář posudtesami/posudtesami.cz, s oprávněním Administration: Read and write.
 set -euo pipefail
 
-REPO="nenechmevyhnit/nenechmevyhnit.cz"
+REPO="posudtesami/posudtesami.cz"
 API="https://api.github.com"
 
 read -rsp "Vložte token (nezobrazí se): " TOKEN; echo
@@ -24,10 +24,10 @@ gh_api() { # metoda cesta [json]
 
 # 1) Pojistka anonymity: token musí patřit projektovému účtu, ne osobnímu.
 login=$(gh_api GET /user | sed -n 's/.*"login": *"\([^"]*\)".*/\1/p' | head -1)
-if [ "$login" != "nenechmevyhnit" ]; then
-  echo "Token patří účtu „$login“, ne „nenechmevyhnit“. Končím, nic jsem nezměnil."; exit 1
+if [ "$login" != "posudtesami" ]; then
+  echo "Token patří účtu „$login“, ne „posudtesami“. Končím, nic jsem nezměnil."; exit 1
 fi
-echo "Token patří účtu nenechmevyhnit."
+echo "Token patří účtu posudtesami."
 
 # 2) Slučování jen merge commitem (kontrola identity sleduje hlavní linii), mazání větví po sloučení.
 gh_api PATCH "/repos/$REPO" '{"allow_merge_commit":true,"allow_squash_merge":false,"allow_rebase_merge":false,"delete_branch_on_merge":true}' > /dev/null
