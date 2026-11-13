@@ -1,5 +1,5 @@
 import { inicializujDetail, ukazUdalost } from './detail';
-import { aktualniPohled, nastavPohledPravidel, pohledZAdresy } from './osa-pravidel';
+import { aktualniPohled, nastavPohledPravidel, pohledZAdresy, vychoziPohled, adresaPohledu } from './osa-pravidel';
 
 /** Otevírání detailu pravidla bez načítání stránky (obdoba navigace.ts pro kauzy, bez osy a mapy). */
 const TITULEK = 'Změny pravidel — Nenechme vyhnít';
@@ -45,7 +45,8 @@ export async function otevriPravidlo(slug: string, { pridatDoHistorie = true, ud
   // adresa nese i pohled na pozadí (jako ?pohled=mapa na hlavní stránce), aby se po zavření vrátila osa
   const dotaz = new URLSearchParams();
   if (naUdalosti) dotaz.set('udalost', String(udalost));
-  if (aktualniPohled() === 'osa') dotaz.set('pohled', 'osa');
+  const pohled = aktualniPohled();
+  if (pohled !== vychoziPohled()) dotaz.set('pohled', pohled);
   const retezec = dotaz.toString();
   if (pridatDoHistorie) history.pushState({ slug, ...(naUdalosti ? { udalost } : {}) }, '', `/pravidla/${slug}/${retezec ? `?${retezec}` : ''}`);
   if (!dlg.open) dlg.showModal();
@@ -89,7 +90,7 @@ export function inicializujNavigaciPravidel(): void {
         : `.pr-radek[data-slug="${CSS.escape(slug)}"]:not([hidden]) a.pr-btn`;
       document.querySelector<HTMLElement>(cil)?.focus();
     }
-    const zpet = naOse ? '/pravidla/?pohled=osa' : '/pravidla/';
+    const zpet = adresaPohledu(aktualniPohled());
     if (!zaviramZHistorie && location.pathname + location.search !== zpet) history.pushState({}, '', zpet);
     zaviramZHistorie = false;
     vyber(null);

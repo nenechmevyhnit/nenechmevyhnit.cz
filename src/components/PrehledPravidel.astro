@@ -4,7 +4,8 @@ import PatickaRadek from './PatickaRadek.astro';
 import PrubehPravidla from './PrubehPravidla.astro';
 import OsaPravidel from './OsaPravidel.astro';
 import { osaPravidel } from '../lib/osa-pravidel';
-import { nactiPravidla, nactiStitky } from '../lib/kauzy';
+import { nactiPravidla, nactiStitky, nactiOblasti } from '../lib/kauzy';
+import { bezPripominek, textPoctu } from '../lib/oblasti';
 import { popisekCesty, popisekKomu, popisekZaveru, popisekZnaku, popisekDuvodu, DUVODY } from '../lib/pravidla-slovnik';
 import { duvodyPravidla } from '../lib/pravidla';
 import { stavPravidla, popisekKroku } from '../lib/pravidla-stavy';
@@ -19,6 +20,10 @@ const { otevrene } = Astro.props;
 const zaznamy = nactiPravidla();
 const stitky = nactiStitky();
 const osa = osaPravidel(zaznamy, new Date());
+const oblasti = nactiOblasti();
+const sOblastmi = oblasti.length > 0;
+// čip má smysl, jen když nějaká změna připomínkové řízení vynechala
+const sBezPripominek = zaznamy.some(z => bezPripominek(z.pravidlo.cesta));
 const cipy = [...new Set(zaznamy.flatMap(z => z.pravidlo.stitky))]
   .map(id => ({ id, nazev: stitky.get(id) ?? id }))
   .sort((a, b) => a.nazev.localeCompare(b.nazev, 'cs'));
@@ -46,20 +51,41 @@ const popis = otevrene
             <div class="f-cipy" role="group" aria-label={sDuvody ? 'Důvod zařazení a témata' : 'Témata'}>
               {sDuvody && duvody.map(d => <button type="button" data-duvod={d} aria-pressed="false">{popisekDuvodu(d)}</button>)}
               {sDuvody && <span class="f-oddelovac" aria-hidden="true"></span>}
+              {sBezPripominek && <button type="button" data-bez-pripominek aria-pressed="false">bez připomínkového řízení</button>}
+              {sBezPripominek && <span class="f-oddelovac" aria-hidden="true"></span>}
               {cipy.map(c => <button type="button" data-stitek={c.id} aria-pressed="false">{c.nazev}</button>)}
             </div>
           </div>
           <label class="f-prepinac"><input type="checkbox" data-jen-projednavane> jen v projednávání</label>
           <div class="pr-pohled" role="group" aria-label="Zobrazení změn pravidel" hidden>
-            <button type="button" data-pohled="seznam" aria-pressed="true">Seznam</button>
+            {sOblastmi && <button type="button" data-pohled="oblasti" aria-pressed="true">Oblasti</button>}
+            <button type="button" data-pohled="seznam" aria-pressed={String(!sOblastmi)}>Seznam</button>
             <button type="button" data-pohled="osa" aria-pressed="false">Časová osa</button>
           </div>
           <span class="vpravo"><span class="pocet" aria-live="polite"></span><button class="f-zrusit" type="button" hidden>Zrušit filtry</button></span>
         </div>
       </>
     )}
+    {sOblastmi && (
+      <section class="oblasti-pohled" data-oblasti-pohled aria-labelledby="oblasti-nadpis">
+        <h2 class="jen-ctecka" id="oblasti-nadpis">Oblasti</h2>
+        <p class="ob-uvod-prehledu">Změny pravidel podle oblastí státu. U každé oblasti vysvětlujeme, k čemu slouží, a u každé změny, co by znamenala pro vás.</p>
+        <ul class="ob-karty">
+          {oblasti.map(o => (
+            <li class="ob-karta" data-oblast={o.id}>
+              <a class="ob-btn" href={`/pravidla/oblasti/${o.id}/`} aria-haspopup="dialog">
+                <strong>{o.nazev}</strong>
+                <span class="ob-popisek">{o.popisek}</span>
+                <span class="ob-pocty">{textPoctu(o.pocty)}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p class="ob-prazdno" hidden>Žádná změna pravidel neodpovídá filtru. <button type="button" data-zrusit>Zrušit filtry</button></p>
+      </section>
+    )}
     <h2 class="jen-ctecka">Změny pravidel</h2>
-    <div class="pravidla-obal">
+    <div class="pravidla-obal" hidden={sOblastmi}>
       <ul class="pravidla-seznam">
         {zaznamy.length === 0 && <li class="archiv-prazdny">Zatím tu nejsou žádné ověřené záznamy.</li>}
         {zaznamy.map(({ slug, pravidlo: p }) => (
@@ -67,7 +93,7 @@ const popis = otevrene
             <a class="pr-btn" href={`/pravidla/${slug}/`} aria-haspopup="dialog">
               <span class="pr-nazev">
                 <strong title={p.nazev}>{p.nazev}</strong>
-                <small><span class="pr-cesta">{popisekCesty(p.cesta)} · </span>{popisekKroku(stavPravidla(p.udalosti))}{p.prospech && ` · ${popisekKomu(p.prospech.komu)} · ${popisekZaveru(p.prospech.zaver)}`}{p.kontrolaMoci && ` · Kontrola moci: ${p.kontrolaMoci.znaky.map(popisekZnaku).join(', ')}`}</small>
+                <small><span class="pr-cesta">{popisekCesty(p.cesta)} · </span>{popisekKroku(stavPravidla(p.udalosti))}{p.prospech && ` · ${popisekKomu(p.prospech.komu)} · ${popisekZaveru(p.prospech.zaver)}`}{p.kontrolaMoci && ` · Kontrola moci: ${p.kontrolaMoci.znaky.map(popisekZnaku).join(', ')}`}{bezPripominek(p.cesta) && <> · <span class="stitek-bp">bez připomínkového řízení</span></>}</small>
                 {p.prospech && <span class="pr-proc-radek">{p.prospech.proc.text}</span>}
               </span>
               {/* stav je v textu výše, ukazatel je pro čtečku nadbytečný */}

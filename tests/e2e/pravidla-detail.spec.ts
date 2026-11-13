@@ -116,19 +116,19 @@ test('záložka Souvislosti jen u pravidla s textem', async ({ page }) => {
 });
 
 test('z přehledu se detail otevře bez načtení stránky a zavřením se adresa vrátí', async ({ page }) => {
-  await page.goto('/pravidla/');
+  await page.goto('/pravidla/?pohled=seznam');
   await page.evaluate(() => { (window as any).bezNacteni = true; });
   await page.locator('.pr-radek[data-slug="narizeni-tau"] a.pr-btn').click();
-  await expect(page).toHaveURL(/\/pravidla\/narizeni-tau\/$/);
+  await expect(page).toHaveURL(/\/pravidla\/narizeni-tau\/\?pohled=seznam$/);
   await expect(page.locator('dialog#detail')).toBeVisible();
   await expect(page.locator('dialog#detail h2')).toHaveText('Testovací nařízení Tau');
   expect(await page.evaluate(() => (window as any).bezNacteni)).toBe(true);
   await page.getByRole('button', { name: 'Zavřít detail' }).click();
-  await expect(page).toHaveURL(/\/pravidla\/$/);
+  await expect(page).toHaveURL(/\/pravidla\/\?pohled=seznam$/);
   await expect(page).toHaveTitle('Změny pravidel — Nenechme vyhnít');
   await expect(page.locator('.pr-radek.vybrany')).toHaveCount(0);
   await page.goBack();
-  await expect(page).toHaveURL(/\/pravidla\/narizeni-tau\/$/);
+  await expect(page).toHaveURL(/\/pravidla\/narizeni-tau\/\?pohled=seznam$/);
   await expect(page.locator('dialog#detail')).toBeVisible();
 });
 
@@ -212,10 +212,10 @@ test('pravidlo jen s prospěchem záložku Kontrola moci nemá', async ({ page }
 });
 
 test('přechod bez načtení z pravidla s prospěchem na pravidlo jen s kontrolou moci otevře Kontrolu moci', async ({ page }) => {
-  await page.goto('/pravidla/zakon-omega/');
+  await page.goto('/pravidla/zakon-omega/?pohled=seznam');
   await page.getByRole('button', { name: 'Zavřít detail' }).click();
   await page.locator('.pr-radek[data-slug="usneseni-kappa"] a.pr-btn').click();
-  await expect(page).toHaveURL(/\/pravidla\/usneseni-kappa\/$/);
+  await expect(page).toHaveURL(/\/pravidla\/usneseni-kappa\/\?pohled=seznam$/);
   await expect(page.getByRole('tab', { name: 'Kontrola moci' })).toHaveAttribute('aria-selected', 'true');
   await expect(page.locator('.m2-panel[data-p="kontrola"]')).toBeVisible();
 });

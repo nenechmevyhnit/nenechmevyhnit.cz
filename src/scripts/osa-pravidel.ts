@@ -1,19 +1,30 @@
 import { otevriPravidlo } from './navigace-pravidel';
 
-/** Přepínání Seznam · Časová osa, popisky bodů a posun osy na „dnes“ (spec osy pravidel, oddíl 2, 5 a 6). */
-export type Pohled = 'seznam' | 'osa';
+/** Přepínání Oblasti · Seznam · Časová osa, popisky bodů a posun osy na „dnes“ (spec osy, oddíl 2, 5 a 6;
+ *  specifikace oblastí, oddíl 8.1). Výchozí pohled jsou Oblasti, pokud přehled nějakou kartu má, jinak Seznam. */
+export type Pohled = 'oblasti' | 'seznam' | 'osa';
 
-export const aktualniPohled = (): Pohled => (document.body.dataset.pohledPravidel === 'osa' ? 'osa' : 'seznam');
+const maOblasti = (): boolean => document.querySelector('[data-oblasti-pohled]') !== null;
+export const vychoziPohled = (): Pohled => (maOblasti() ? 'oblasti' : 'seznam');
+export const aktualniPohled = (): Pohled => (document.body.dataset.pohledPravidel as Pohled | undefined) ?? vychoziPohled();
+export function pohledZAdresy(): Pohled {
+  const p = new URLSearchParams(location.search).get('pohled');
+  if (p === 'osa' || p === 'seznam') return p;
+  if (p === 'oblasti' && maOblasti()) return 'oblasti';
+  return vychoziPohled();
+}
+/** Adresa přehledu v daném pohledu; výchozí pohled je /pravidla/ bez parametru. */
+export const adresaPohledu = (p: Pohled): string => (p === vychoziPohled() ? '/pravidla/' : `/pravidla/?pohled=${p}`);
 
 let nastavPohled: ((p: Pohled, zapsat: boolean) => void) | null = null;
-export const pohledZAdresy = (): Pohled => (new URLSearchParams(location.search).get('pohled') === 'osa' ? 'osa' : 'seznam');
-/** Zobrazí seznam nebo osu (Zpět a Vpřed v prohlížeči: pohled se řídí adresou, nezapisuje se do ní). */
+/** Zobrazí pohled (Zpět a Vpřed v prohlížeči: pohled se řídí adresou, nezapisuje se do ní). */
 export function nastavPohledPravidel(p: Pohled, { zapsat = false }: { zapsat?: boolean } = {}): void { nastavPohled?.(p, zapsat); }
 
 export function inicializujOsuPravidel(): void {
   const osa = document.querySelector<HTMLElement>('[data-osa-pravidel]');
   const prepinac = document.querySelector<HTMLElement>('.pr-pohled');
   const seznam = document.querySelector<HTMLElement>('.pravidla-obal');
+  const oblasti = document.querySelector<HTMLElement>('[data-oblasti-pohled]');
   if (!osa || !prepinac || !seznam) return;
   const plocha = osa.querySelector<HTMLElement>('.op-plocha')!;
   const popisek = osa.querySelector<HTMLElement>('.op-popisek')!;
@@ -22,9 +33,10 @@ export function inicializujOsuPravidel(): void {
   const nastav = (p: Pohled, zapsat: boolean) => {
     document.body.dataset.pohledPravidel = p;
     osa.hidden = p !== 'osa';
-    seznam.hidden = p === 'osa';
+    seznam.hidden = p !== 'seznam';
+    if (oblasti) oblasti.hidden = p !== 'oblasti';
     prepinac.querySelectorAll<HTMLButtonElement>('[data-pohled]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.pohled === p)));
-    if (zapsat && location.pathname === '/pravidla/') history.replaceState(history.state, '', p === 'osa' ? '/pravidla/?pohled=osa' : '/pravidla/');
+    if (zapsat && location.pathname === '/pravidla/') history.replaceState(history.state, '', adresaPohledu(p));
     if (p === 'osa') requestAnimationFrame(posunNaDnes);
     document.dispatchEvent(new CustomEvent('nv:pohled-pravidel', { detail: p }));
   };
