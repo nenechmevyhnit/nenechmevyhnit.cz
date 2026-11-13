@@ -84,6 +84,9 @@ body .filtry.pr-filtry .f-zrusit[hidden] { display: none; }
   .pravidlo .m2-hlava h2 { font-size: 28px; margin: 4px 0 6px; }
   .pravidlo .prubeh-detail { margin: 8px 0 0; }
   .pravidlo .m2-panel { padding-top: 14px; padding-bottom: 14px; }
+  .pravidlo .m2-panel[data-p="chrono"]:not([hidden]) { grid-template-columns: minmax(260px, 380px) 1fr; }
+  .pravidlo .m2-panel[data-p="chrono"] .cesta-box { padding: 4px 14px; font-size: 15px; line-height: 1.3; }
+  .pravidlo .m2-panel[data-p="chrono"] .vynechano { font-size: 13px; }
   .pravidlo .m2-panel[data-p="chrono"] .listovani { margin-top: 6px; padding-top: 8px; }
   .pravidlo .m2-panel[data-p="chrono"] .listovani button { padding: 4px 14px; }
 }

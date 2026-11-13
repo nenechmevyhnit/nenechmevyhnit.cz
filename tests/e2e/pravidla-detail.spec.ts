@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { VELIKOSTI, overBezPosouvani } from './pomocne';
+import { VELIKOSTI, overBezPosouvani, presahPanelu } from './pomocne';
 
 test.use({ viewport: { width: 1366, height: 768 } });
 const OMEGA = 'Testovací novela zákona Omega s dlouhým názvem pro mobil';
@@ -114,5 +114,25 @@ for (const v of VELIKOSTI) {
     await page.setViewportSize(v);
     await page.goto('/pravidla/zakon-omega/');
     await overBezPosouvani(page);
+  });
+}
+
+// Delší texty v detailu pravidla nesmí být oříznuté: buď se vejdou, nebo pokračují ve sloupcích do strany.
+const ZALOZKY = ['Komu prospívá', 'Průběh', 'Výhrady a stanovisko', /^Zdroje/];
+for (const v of VELIKOSTI) {
+  test(`${v.width}×${v.height}: v žádné záložce detailu pravidla není oříznutý obsah`, async ({ page }) => {
+    await page.setViewportSize(v);
+    for (const [adresa, zalozky] of [
+      ['/pravidla/zakon-omega/', ZALOZKY],
+      ['/pravidla/pozmenovaci-sigma/', ZALOZKY],
+      ['/pravidla/narizeni-tau/', [...ZALOZKY, 'Souvislosti']],
+    ] as const) {
+      await page.goto(adresa);
+      for (const zalozka of zalozky) {
+        await page.getByRole('tab', { name: zalozka }).click();
+        const presah = await presahPanelu(page, true);
+        expect(presah, `${adresa}, záložka ${zalozka}: obsah je oříznutý o ${presah} px`).toBeLessThanOrEqual(1);
+      }
+    }
   });
 }
