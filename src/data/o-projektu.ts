@@ -8,7 +8,7 @@ export const oProjektu = (sPravidly: boolean): { sekce: SekceStranky[] } => ({
       id: "proc",
       nadpis: "Proč archiv vznikl",
       shrnuti: "Kauzy zapadají. Za půl roku si nikdo nepamatuje, co se stalo, a právě na to se spoléhá.",
-      html: `<p>Každý týden přijde nová kauza, novela nebo rozhodnutí a ta předchozí zapadne. Za půl roku si ji pamatuje málokdo, za tři roky skoro nikdo.${sPravidly ? ' Proto archiv vedle kauz zapisuje i změny pravidel, u kterých rozbor archivu ukazuje prospěch pro Andreje Babiše nebo Agrofert.' : ''}</p>
+      html: `<p>Každý týden přijde nová kauza, novela nebo rozhodnutí a ta předchozí zapadne. Za půl roku si ji pamatuje málokdo, za tři roky skoro nikdo.${sPravidly ? ' Proto archiv vedle kauz zapisuje i změny pravidel, u kterých rozbor archivu ukazuje prospěch pro Andreje Babiše nebo Agrofert, a změny, které mění kontrolu moci a na které upozornily instituce.' : ''}</p>
 <p>Myšlenka vzešla z rozhovoru v podcastu <em>Kecy a politika</em>: někdo by měl tyhle věci soustavně zapisovat a archivovat, jinak zmizí. Tento web se o to pokouší, přehledně, v čase a se zdrojem u každého tvrzení.</p>
 <p>Název odkazuje na rčení „nechat věc vyhnít“, tedy nechat ji ležet, dokud sama nevyšumí. Archiv drží kauzy na očích i potom, co zmizí ze zpráv.</p>`,
     },

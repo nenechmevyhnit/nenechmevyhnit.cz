@@ -1,3 +1,10 @@
+import { KONTROLNI_INSTITUCE, popisekInstituce, DRUHY_ZNAKU, popisekDruhuZnaku, UPOZORNOVATELE, upozornovatel } from '../lib/pravidla-slovnik';
+
+// Seznamy pro pododdíl Dopad na kontrolu moci se generují ze slovníků, aby nemohly zastarat.
+const seznamInstituci = KONTROLNI_INSTITUCE.map(i => popisekInstituce(i, 'plne')).join(', ');
+const seznamProcedur = DRUHY_ZNAKU.filter(d => d !== 'instituce').map(popisekDruhuZnaku).join(', ');
+const upozornovateleTypu = (typ: 'instituce' | 'profesni-organizace') => UPOZORNOVATELE.filter(u => upozornovatel(u).typ === typ).map(u => upozornovatel(u).nazev).join(', ');
+
 // Texty převzaté doslova ze schválených prototypů (design/03-detail/_metodika.py).
 export type SekceStranky = { id: string; nadpis: string; shrnuti: string; html: string };
 
@@ -98,9 +105,9 @@ ${sPravidly ? '<p>Změny pravidel, které předkládá nebo vydává vláda či 
     ...(sPravidly ? [{
       id: "pravidla",
       nadpis: "Změny pravidel",
-      shrnuti: "Zákony, nařízení a dotační pravidla současné vlády, u kterých rozbor archivu ukazuje prospěch pro Andreje Babiše nebo Agrofert. Prospěch dokládá rozbor krok za krokem.",
-      html: `<p>Vedle kauz archiv zaznamenává <strong>změny pravidel</strong>: zákony a jejich novely, pozměňovací návrhy, nařízení vlády, vyhlášky ministerstev a pravidla dotačních programů. Zapisujeme je od chvíle, kdy jsou oficiálně předložené nebo zveřejněné, a průběžně doplňujeme, jak projednávání pokračuje. Záznamy nemažeme: zamítnutý nebo stažený návrh zůstává v archivu s tímto stavem.</p>
-<p>Změna pravidla do archivu patří, když splní <strong>všechny</strong> tyto podmínky:</p>
+      shrnuti: "Zákony, nařízení a další pravidla současné vlády, u kterých rozbor archivu ukazuje prospěch pro Andreje Babiše nebo Agrofert, nebo která mění kontrolu moci a instituce na to upozornily.",
+      html: `<p>Vedle kauz archiv zaznamenává <strong>změny pravidel</strong>: zákony a jejich novely, pozměňovací návrhy, nařízení vlády, vyhlášky ministerstev, pravidla dotačních programů, usnesení vlády a pokyny ministerstev s obecnou působností. Zapisujeme je od chvíle, kdy jsou oficiálně předložené nebo zveřejněné, a průběžně doplňujeme, jak projednávání pokračuje. Záznamy nemažeme: zamítnutý nebo stažený návrh zůstává v archivu s tímto stavem.</p>
+<p>Změna pravidla do archivu patří ze dvou důvodů: když rozbor ukáže prospěch pro Andreje Babiše nebo Agrofert, nebo když mění kontrolu moci a instituce nebo profesní organizace na to upozornila (viz níže). Kvůli prospěchu patří do archivu, když splní <strong>všechny</strong> tyto podmínky:</p>
 <ul><li>má oficiální text (sněmovní tisk, připomínkové řízení, Sbírka zákonů nebo zveřejněná výzva),</li>
 <li>předložila nebo vydala ji vláda jmenovaná 9. 12. 2025, její ministerstva, státní fondy, nebo poslanci a senátoři vládní koalice,</li>
 <li>rozbor ukáže prospěch pro Andreje Babiše osobně nebo pro Agrofert,</li>
@@ -119,6 +126,12 @@ ${sPravidly ? '<p>Změny pravidel, které předkládá nebo vydává vláda či 
 <ul><li><strong>poslanecký a senátní návrh:</strong> bez meziresortního připomínkového řízení a bez hodnocení dopadů regulace,</li>
 <li><strong>pozměňovací návrh:</strong> navíc bez stanoviska vlády a bez prvního čtení, protože se podává až ve druhém čtení jako změna projednávaného návrhu.</li></ul>
 <p>Jde o popis legislativního procesu, ne o hodnocení.</p>
+<h3 id="kontrola-moci">Dopad na kontrolu moci</h3>
+<p>Druhým důvodem zařazení je změna, která se týká kontroly moci. Do archivu patří, když splní <strong>všechny</strong> tyto podmínky:</p>
+<ul><li>má oficiální text a předložila nebo vydala ji vládní většina, stejně jako u prospěchu,</li>
+<li>mění pravomoci, nezávislost, způsob jmenování nebo odvolání, nebo financování některé z těchto oblastí: ${seznamInstituci}, nebo nese procedurální znak: ${seznamProcedur},</li>
+<li>na tento znak upozornila aspoň jedna instituce (${upozornovateleTypu('instituce')}) nebo profesní organizace (${upozornovateleTypu('profesni-organizace')}).</li></ul>
+<p>Kritika jen od opozice, watchdogů nebo médií k zařazení nestačí. Hodnotící slova ve vlastním textu nepoužíváme. Zapisujeme, co pravidlo mění, s odkazem na ustanovení, a kdo na to upozornil. <strong>Záznam dopadu na kontrolu moci je záznam upozornění institucí, ne hodnocení archivu.</strong> Personální a jiná jednotlivá rozhodnutí sem nepatří.</p>
 <h3 id="vyhrady">Výhrady a jazyk</h3>
 <p>Uvádíme výhrady institucí, jako je Legislativní rada vlády, ÚOHS, NKÚ, Evropská komise nebo veřejný ochránce práv. Výhrady opozice patří do souvislostí a označujeme je jako politické. Dokud změna neplatí, píšeme podmiňovacím způsobem: novela <em>by zkrátila</em>, <em>umožnila by</em>.</p>`,
     }] : []),

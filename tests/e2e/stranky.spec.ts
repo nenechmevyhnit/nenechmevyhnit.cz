@@ -29,6 +29,27 @@ test('/metodika/#pravidla otevře oddíl Změny pravidel', async ({ page }) => {
   await expect(panel.locator('.slovnicek dt')).toHaveText(['prospěch doložen', 'prospěch pravděpodobný']);
 });
 
+test('/metodika/#kontrola-moci otevře oddíl Změny pravidel na pododdílu Dopad na kontrolu moci', async ({ page }) => {
+  await page.goto('/metodika/#kontrola-moci');
+  const panel = page.locator('.v4-dlg-panel[data-sekce="pravidla"]');
+  await expect(panel).toBeVisible();
+  const nadpis = panel.locator('#kontrola-moci');
+  await expect(nadpis).toHaveText('Dopad na kontrolu moci');
+  await expect(nadpis).toBeInViewport();
+  await expect(panel).toContainText('Záznam dopadu na kontrolu moci je záznam upozornění institucí, ne hodnocení archivu.');
+  await expect(panel).toContainText('Soudcovská unie ČR');
+  await expect(panel).toContainText('Úřad pro dohled nad hospodařením politických stran a politických hnutí');
+  await expect(panel).toContainText('zpětná účinnost');
+  await expect(panel).toContainText('usnesení vlády');
+  await overBezPosouvani(page);
+});
+
+test('O projektu zmíní oba důvody zařazení změn pravidel', async ({ page }) => {
+  await page.goto('/o-projektu/');
+  await page.locator('.v4-karta button[data-sekce="proc"]').click();
+  await expect(page.locator('.v4-dlg-panel[data-sekce="proc"]')).toContainText('mění kontrolu moci');
+});
+
 test('Metodika a O projektu mluví o prospěchu neutrálně, jako o výsledku rozboru', async ({ page }) => {
   await page.goto('/metodika/');
   await expect(page.locator('.v4-karta:has(button[data-sekce="pravidla"])')).toContainText('u kterých rozbor archivu ukazuje prospěch pro Andreje Babiše nebo Agrofert');
