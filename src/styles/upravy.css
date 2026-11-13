@@ -25,6 +25,15 @@ body .mini-osa .bod:focus-visible { outline-offset: 0; }
   body .top nav a { margin-left: 12px; font-size: 13px; }
   body .top .brand { font-size: 16px; }
 }
+/* Úzké telefony: čtyři odkazy se značkou se na 390 px a méně nevejdou, proto těsnější mezery a menší písmo. */
+@media (max-width: 420px) {
+  body .top nav a { margin-left: 8px; font-size: 12px; }
+  body .top .brand { font-size: 14px; }
+}
+@media (max-width: 380px) {
+  body .top nav a { margin-left: 6px; font-size: 11.5px; }
+  body .top .brand { font-size: 13px; }
+}
 @media (max-width: 760px) {
   body .top .brand, body .top nav a { white-space: nowrap; }
   /* Karty Metodiky a O projektu: na mobilu se text nevejde, celá karta proto otevírá plné znění. */

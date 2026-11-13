@@ -91,6 +91,22 @@ test.describe('mobil 390×700', () => {
     }
   });
 
+  test('hlavička nepřetéká do šířky na 390 ani 360 px', async ({ page }) => {
+    for (const sirka of [390, 360]) {
+      await page.setViewportSize({ width: sirka, height: 700 });
+      for (const cesta of ['/', '/pravidla/', '/metodika/']) {
+        await page.goto(cesta);
+        const { sw, iw, prave } = await page.evaluate(() => ({
+          sw: document.documentElement.scrollWidth,
+          iw: window.innerWidth,
+          prave: [...document.querySelectorAll('nav[aria-label="Hlavní"] a')].map(a => a.getBoundingClientRect().right),
+        }));
+        expect(sw, `${cesta} ${sirka}: stránka se posouvá do strany`).toBeLessThanOrEqual(iw);
+        expect(Math.max(...prave), `${cesta} ${sirka}: odkaz menu přesahuje okno`).toBeLessThanOrEqual(iw);
+      }
+    }
+  });
+
   test('každou kartu Metodiky jde otevřít', async ({ page }) => {
     await page.goto('/metodika/');
     const karty = page.locator('.v4-karta:not(.v4-cta)');
