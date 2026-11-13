@@ -3,7 +3,7 @@ import AxeBuilder from '@axe-core/playwright';
 
 test.use({ viewport: { width: 1366, height: 768 } });
 
-for (const cesta of ['/', '/?pohled=mapa', '/?pohled=mapa&vyber=alfa-dotace', '/kauzy/alfa-dotace/', '/metodika/', '/o-projektu/', 'http://localhost:4322/']) {
+for (const cesta of ['/', '/?pohled=mapa', '/?pohled=mapa&vyber=alfa-dotace', '/kauzy/alfa-dotace/', '/metodika/', '/o-projektu/', '/pravidla/', '/pravidla/zakon-omega/', '/pravidla/pozmenovaci-sigma/', 'http://localhost:4322/']) {
   test(`${cesta} bez závažných chyb přístupnosti`, async ({ page }) => {
     await page.goto(cesta);
     // kontrast měříme až po doběhnutí úvodních animací (prvky během nich prolínají z průhlednosti)

@@ -4,7 +4,7 @@ import { VELIKOSTI, overBezPosouvani } from './pomocne';
 for (const v of VELIKOSTI) {
   test.describe(`${v.width}×${v.height}`, () => {
     test.use({ viewport: v });
-    for (const cesta of ['/', '/kauzy/alfa-dotace/', '/metodika/', '/o-projektu/']) {
+    for (const cesta of ['/', '/kauzy/alfa-dotace/', '/metodika/', '/o-projektu/', '/pravidla/', '/pravidla/zakon-omega/']) {
       test(`${cesta} se neposouvá dolů`, async ({ page }) => {
         await page.goto(cesta);
         await overBezPosouvani(page);

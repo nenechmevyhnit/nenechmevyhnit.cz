@@ -13,10 +13,10 @@ jobs:
       - uses: actions/checkout@v4
       - id: lychee
         # bez kauz (před spuštěním) není co kontrolovat; jinak by lychee hlásil chybu „žádné vstupy“ a založil zbytečné issue
-        if: hashFiles('obsah/kauzy/*.md') != ''
+        if: hashFiles('obsah/kauzy/*.md', 'obsah/pravidla/*.md') != ''
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --config lychee.toml 'obsah/kauzy/*.md'
+          args: --config lychee.toml 'obsah/kauzy/*.md' 'obsah/pravidla/*.md'
           fail: false
           output: lychee/vysledek.md
       - name: Nahlásit nefunkční odkazy

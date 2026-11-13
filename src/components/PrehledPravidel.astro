@@ -75,4 +75,6 @@ const popis = otevrene
   import { inicializujNavigaciPravidel } from '../scripts/navigace-pravidel';
   inicializujFiltrPravidel();
   inicializujNavigaciPravidel();
+  // úvodní animace .hero a .filtry doběhnou; po nich se třída nacteno chová stejně jako na ostatních stránkách
+  setTimeout(() => document.body.classList.add('nacteno'), matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1600);
 </script>
