@@ -29,9 +29,9 @@ describe('osaPravidel', () => {
     expect(ucinnost.x).toBeGreaterThan(95);
     expect(ucinnost.x).toBeLessThanOrEqual(100);
   });
-  it('značky po měsících: první s rokem, leden jako letopočet', () => {
+  it('značky po měsících: první s letopočtem (kratší než „pro 2025“, aby se vešel na 20 měsíců), leden jako letopočet', () => {
     const o = osaPravidel([z('a', 'A', [{ datum: '2026-03-01', krok: 'predlozeno', nazev: 'Podáno' }])], DNES);
-    expect(o.znacky[0]).toEqual({ x: 0, text: 'pro 2025', rok: true });
+    expect(o.znacky[0]).toEqual({ x: 0, text: '2025', rok: true });
     expect(o.znacky[1]).toMatchObject({ text: '2026', rok: true });
     expect(o.znacky[2]).toMatchObject({ text: 'úno', rok: false });
     expect(o.znacky).toHaveLength(12);
@@ -93,6 +93,32 @@ describe('osaPravidel', () => {
     expect([b0.posun, b1.posun]).toEqual([0, 1]);
     expect(b0.popisekSkupiny).toBe('26. 10. 2026 · Vláda schválila; 26. 10. 2026 · Předloženo');
     expect(b1.popisekSkupiny).toBe(b0.popisekSkupiny);
+  });
+  it('body několik dní od sebe se také posunou a sdílejí popisek, vzdálené ne', () => {
+    const o = osaPravidel([z('a', 'A', [
+      { datum: '2026-10-26', nazev: 'První' },
+      { datum: '2026-10-28', krok: 'predlozeno', nazev: 'Podáno' },
+      { datum: '2026-03-01', nazev: 'Daleko' },
+    ])], DNES);
+    const [b0, b1, b2] = o.radky[0].body;
+    expect(b1.x - b0.x).toBeLessThan(1);
+    expect([b0.posun, b1.posun]).toEqual([0, 1]);
+    expect(b0.popisekSkupiny).toBe('26. 10. 2026 · První; 28. 10. 2026 · Předloženo');
+    expect(b1.popisekSkupiny).toBe(b0.popisekSkupiny);
+    expect(b2).toMatchObject({ posun: 0, popisekSkupiny: null });
+  });
+  it('účinnost přesně dnes se nekreslí jako budoucí (místní datum, ne UTC)', () => {
+    const pulnoc = new Date(2026, 10, 13, 0, 30); // místní půlnoc: v UTC je to kolem půlnoci ještě 12. 11.
+    const o = osaPravidel([z('a', 'A', [{ datum: '2026-03-01', krok: 'predlozeno', nazev: 'P' }], '2026-11-13')], pulnoc);
+    expect(o.do).toBe('2026-11-13');
+    expect(o.radky[0].body.map(b => b.druh)).toEqual(['krok']);
+    expect(o.radky[0].caraBudouci).toBeNull();
+  });
+  it('dlouhý rozsah (do 2028) má značky všech měsíců i letopočty 2027 a 2028', () => {
+    const o = osaPravidel([z('a', 'A', [{ datum: '2026-03-01', krok: 'predlozeno', nazev: 'P' }], '2028-03-01')], DNES);
+    const texty = o.znacky.map(m => m.text);
+    expect(texty.filter(t => /^\d{4}$/.test(t))).toEqual(['2025', '2026', '2027', '2028']);
+    expect(o.znacky.length).toBe(28);
   });
   it('řádky podle první události od 1. 12. 2025, při shodě podle názvu', () => {
     const o = osaPravidel([

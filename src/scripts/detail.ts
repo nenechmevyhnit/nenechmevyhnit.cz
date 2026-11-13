@@ -35,6 +35,7 @@ export function ukazUdalost(dlg: HTMLDialogElement, i: number): boolean {
 }
 
 export function inicializujDetail(dlg: HTMLDialogElement): void {
+  ukazovace.delete(dlg); // zastaralá funkce z předchozího obsahu, kdyby nový detail žádné události neměl
   const polozky = [...dlg.querySelectorAll<HTMLElement>('.udalosti-seznam > li')];
   if (!polozky.length) return;
   jednouNaDialog(dlg);

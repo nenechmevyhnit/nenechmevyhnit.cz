@@ -1,5 +1,5 @@
 import { inicializujDetail, ukazUdalost } from './detail';
-import { aktualniPohled } from './osa-pravidel';
+import { aktualniPohled, nastavPohledPravidel, pohledZAdresy } from './osa-pravidel';
 
 /** Otevírání detailu pravidla bez načítání stránky (obdoba navigace.ts pro kauzy, bez osy a mapy). */
 const TITULEK = 'Změny pravidel — Nenechme vyhnít';
@@ -42,7 +42,12 @@ export async function otevriPravidlo(slug: string, { pridatDoHistorie = true, ud
   }
   vyber(slug);
   const naUdalosti = udalost !== undefined && ukazUdalost(dlg, udalost);
-  if (pridatDoHistorie) history.pushState({ slug, ...(naUdalosti ? { udalost } : {}) }, '', `/pravidla/${slug}/${naUdalosti ? `?udalost=${udalost}` : ''}`);
+  // adresa nese i pohled na pozadí (jako ?pohled=mapa na hlavní stránce), aby se po zavření vrátila osa
+  const dotaz = new URLSearchParams();
+  if (naUdalosti) dotaz.set('udalost', String(udalost));
+  if (aktualniPohled() === 'osa') dotaz.set('pohled', 'osa');
+  const retezec = dotaz.toString();
+  if (pridatDoHistorie) history.pushState({ slug, ...(naUdalosti ? { udalost } : {}) }, '', `/pravidla/${slug}/${retezec ? `?${retezec}` : ''}`);
   if (!dlg.open) dlg.showModal();
 }
 
@@ -54,9 +59,9 @@ export function inicializujNavigaciPravidel(): void {
     mezipamet.set(otevrena, { html: dlg.innerHTML, trida: dlg.className, titulek: document.title });
     inicializujDetail(dlg);
     const u = udalostZAdresy();
-    if (u !== undefined) ukazUdalost(dlg, u);
+    const naUdalosti = u !== undefined && ukazUdalost(dlg, u);
     vyber(otevrena);
-    history.replaceState({ slug: otevrena }, '');
+    history.replaceState({ slug: otevrena, ...(naUdalosti ? { udalost: u } : {}) }, '');
     // v HTML je dialog otevřený (kvůli návštěvníkům bez JavaScriptu); modálně ho jde otevřít jen zavřený
     dlg.removeAttribute('open');
     dlg.showModal();
@@ -95,6 +100,7 @@ export function inicializujNavigaciPravidel(): void {
 
   addEventListener('popstate', e => {
     const stav = e.state as { slug?: string; udalost?: number } | null;
+    nastavPohledPravidel(pohledZAdresy());
     if (stav?.slug) { otevriPravidlo(stav.slug, { pridatDoHistorie: false, udalost: stav.udalost }); return; }
     if (dlg.open) { zaviramZHistorie = true; dlg.close(); }
   });

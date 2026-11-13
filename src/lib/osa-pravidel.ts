@@ -5,6 +5,7 @@ import { popisekCesty, type Cesta } from './pravidla-slovnik';
 /** Časová osa změn pravidel (spec 2026-11-13-osa-pravidel). Jen výpočet; vykreslení je v OsaPravidel.astro. */
 export const OSA_OD = '2025-12-01';
 const OKRAJ = 0.5 / 12; // půl měsíce za koncem osy
+const BLIZKO = 1.0; // body bližší než tolik procent osy se překrývají: skupina s posunem
 const MESICE = ['led', 'úno', 'bře', 'dub', 'kvě', 'čvn', 'čvc', 'srp', 'zář', 'říj', 'lis', 'pro'];
 
 export type DruhBodu = 'krok' | 'konec' | 'udalost' | 'ucinnost';
@@ -24,7 +25,8 @@ export type ZaznamOsy = {
 const kulate = (n: number) => Math.round(n * 100) / 100;
 
 export function osaPravidel(zaznamy: readonly ZaznamOsy[], dnes: Date): Osa {
-  const dnesIso = dnes.toISOString().slice(0, 10);
+  // místní datum, stejně jako jeVBudoucnosti v schema.ts (UTC by kolem půlnoci posunulo „dnes“ o den)
+  const dnesIso = `${dnes.getFullYear()}-${String(dnes.getMonth() + 1).padStart(2, '0')}-${String(dnes.getDate()).padStart(2, '0')}`;
   const budouci = zaznamy.map(z => z.pravidlo.ucinnostOd).filter((d): d is string => !!d && d > dnesIso);
   const konec = [dnesIso, ...budouci].sort().at(-1)!;
   const od = rokCislo(OSA_OD), doCislo = rokCislo(konec) + OKRAJ;
@@ -34,7 +36,7 @@ export function osaPravidel(zaznamy: readonly ZaznamOsy[], dnes: Date): Osa {
   for (let r = 2025, m = 12; rokCislo(`${r}-${String(m).padStart(2, '0')}-01`) <= doCislo; m === 12 ? (r++, m = 1) : m++) {
     const d = `${r}-${String(m).padStart(2, '0')}-01`;
     const prvni = znacky.length === 0;
-    znacky.push({ x: x(d), text: prvni ? `${MESICE[m - 1]} ${r}` : m === 1 ? String(r) : MESICE[m - 1], rok: prvni || m === 1 });
+    znacky.push({ x: x(d), text: prvni || m === 1 ? String(r) : MESICE[m - 1], rok: prvni || m === 1 });
   }
 
   const radky = zaznamy.map(({ slug, pravidlo: p }) => {
@@ -47,13 +49,17 @@ export function osaPravidel(zaznamy: readonly ZaznamOsy[], dnes: Date): Osa {
     });
     if (p.ucinnostOd && p.ucinnostOd > dnesIso)
       body.push({ x: x(p.ucinnostOd), druh: 'ucinnost', datum: p.ucinnostOd, popisek: `Účinnost od ${datumText(p.ucinnostOd)}`, popisekSkupiny: null, udalost: null, posun: 0 });
-    // body ve stejný den: posun vedle sebe a společný popisek
-    const podleDne = new Map<string, BodOsy[]>();
-    for (const b of body) podleDne.set(b.datum, [...(podleDne.get(b.datum) ?? []), b]);
-    for (const skupina of podleDne.values()) {
-      if (skupina.length < 2) continue;
-      const spolecny = skupina.map(b => b.popisek).join('; ');
-      skupina.forEach((b, k) => { b.posun = k; b.popisekSkupiny = spolecny; });
+    // body blízko sebe (rozdíl poloh menší než BLIZKO procenta osy): posun vedle sebe a společný popisek
+    const serazene = [...body].sort((a, b) => a.x - b.x);
+    for (let i = 0; i < serazene.length;) {
+      let j = i + 1;
+      while (j < serazene.length && serazene[j].x - serazene[i].x < BLIZKO) j++;
+      const skupina = serazene.slice(i, j);
+      if (skupina.length > 1) {
+        const spolecny = skupina.map(b => b.popisek).join('; ');
+        skupina.forEach((b, k) => { b.posun = k; b.popisekSkupiny = spolecny; });
+      }
+      i = j;
     }
     const kroky = body.filter(b => b.druh === 'krok' || b.druh === 'konec');
     const ucinnost = body.find(b => b.druh === 'ucinnost');

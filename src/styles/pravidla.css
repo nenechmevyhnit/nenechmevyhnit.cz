@@ -116,14 +116,16 @@ body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
 /* Časová osa: zabírá stejné místo jako seznam, posouvá se jen uvnitř */
 .osa-pravidel { flex: 1; min-height: 0; display: flex; flex-direction: column; margin-top: 12px; background: var(--plocha); border: 1px solid var(--linka); }
 .osa-pravidel[hidden] { display: none; }
-.op-plocha { flex: 1; min-height: 0; overflow: auto; --nazvy: 240px; }
+.op-plocha { flex: 1; min-height: 0; overflow: auto; --nazvy: 240px; --odstup: 84px; --mesic: 39px; }
+/* šířka podle počtu měsíců: do ~20 měsíců se osa vejde, delší rozsah se posouvá do strany místo stlačení popisků */
+.op-radky, .op-hlava { min-width: calc(var(--nazvy) + 28px + var(--odstup) + var(--mesicu, 12) * var(--mesic)); }
 .op-hlava, .op-radek { display: grid; grid-template-columns: var(--nazvy) 1fr; }
-.op-hlava { position: sticky; top: 0; z-index: 2; background: var(--plocha); border-bottom: 1px solid var(--linka); height: 22px; }
+.op-hlava { position: sticky; top: 0; z-index: 2; background: var(--plocha); border-bottom: 1px solid var(--linka); height: 38px; }
 .op-roh { position: sticky; left: 0; background: var(--plocha); z-index: 1; }
-.op-mesice, .op-cas { position: relative; margin: 0 14px; }
+.op-mesice, .op-cas { position: relative; margin: 0 14px 0 calc(14px + var(--odstup)); } /* vlevo místo pro „◀ dříve“ */
 .op-znacka { position: absolute; top: 3px; transform: translateX(-1px); font: 11px var(--f-mono); color: var(--meta); white-space: nowrap; border-left: 1px solid var(--linka); padding-left: 3px; }
 .op-znacka.rok { color: var(--inkoust); border-left-color: var(--inkoust); }
-.op-dnes-popisek { position: absolute; top: 3px; transform: translateX(-50%); font: 600 11px var(--f-mono); color: var(--modra); background: var(--plocha); padding: 0 3px; }
+.op-dnes-popisek { position: absolute; top: 20px; transform: translateX(-50%); font: 600 11px var(--f-mono); color: var(--modra); background: var(--plocha); padding: 0 3px; }
 .op-radky { list-style: none; margin: 0; padding: 0; }
 .op-radek { min-height: 40px; border-bottom: 1px solid var(--linka); }
 .op-radek[hidden] { display: none; }
@@ -138,15 +140,17 @@ body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
 .op-bod.konec { background: var(--inkoust); }
 .op-bod.udalost { width: 9px; height: 9px; border-radius: 50%; border: 2px solid var(--meta); background: var(--plocha); }
 .op-bod.ucinnost { border: 2px dashed var(--inkoust); background: var(--plocha); transform: translate(-50%, -50%) rotate(45deg); }
-.op-bod:focus-visible { outline: 3px solid var(--modra); outline-offset: 2px; }
-.op-drive { position: absolute; left: 0; top: 50%; transform: translateY(-50%); font: 11px var(--f-mono); color: var(--meta); white-space: nowrap; }
+.op-bod:focus-visible, .op-drive:focus-visible { outline: 3px solid var(--modra); outline-offset: 2px; }
+.op-nazev:focus-visible { outline: 3px solid var(--modra); outline-offset: -3px; }
+.op-drive { position: absolute; left: calc(-1 * var(--odstup)); top: 50%; transform: translateY(-50%); font: 11px var(--f-mono); color: var(--meta); white-space: nowrap; }
 .op-legenda { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 0; padding: 6px 10px; font-size: 12px; color: var(--meta); border-top: 1px solid var(--linka); }
-.op-legenda .op-bod { position: static; display: inline-block; vertical-align: middle; transform: none; }
-.op-legenda .op-bod.ucinnost { transform: rotate(45deg); }
+.op-legenda .op-bod { position: static; display: inline-block; vertical-align: middle; transform: none; margin-right: 4px; }
+.op-legenda .op-bod.ucinnost { transform: rotate(45deg); margin-right: 8px; }
 .op-prazdno { margin: 12px; }
+/* nic neodpovídá filtru: hláška je nahoře, prázdná osa a legenda se skryjí */
+.osa-pravidel:has(.op-prazdno:not([hidden])) :is(.op-plocha, .op-legenda) { display: none; }
 .op-popisek { position: fixed; z-index: 20; max-width: min(360px, calc(100vw - 8px)); padding: 4px 8px; font-size: 12px; background: var(--inkoust); color: #fff; }
 @media (max-width: 760px) {
-  .op-plocha { --nazvy: 120px; }
-  .op-radky, .op-hlava { min-width: 760px; }
+  .op-plocha { --nazvy: 120px; --mesic: 44px; }
   .op-nazev small { display: none; }
 }

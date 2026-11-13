@@ -5,6 +5,11 @@ export type Pohled = 'seznam' | 'osa';
 
 export const aktualniPohled = (): Pohled => (document.body.dataset.pohledPravidel === 'osa' ? 'osa' : 'seznam');
 
+let nastavPohled: ((p: Pohled, zapsat: boolean) => void) | null = null;
+export const pohledZAdresy = (): Pohled => (new URLSearchParams(location.search).get('pohled') === 'osa' ? 'osa' : 'seznam');
+/** Zobrazí seznam nebo osu (Zpět a Vpřed v prohlížeči: pohled se řídí adresou, nezapisuje se do ní). */
+export function nastavPohledPravidel(p: Pohled, { zapsat = false }: { zapsat?: boolean } = {}): void { nastavPohled?.(p, zapsat); }
+
 export function inicializujOsuPravidel(): void {
   const osa = document.querySelector<HTMLElement>('[data-osa-pravidel]');
   const prepinac = document.querySelector<HTMLElement>('.pr-pohled');
@@ -31,11 +36,12 @@ export function inicializujOsuPravidel(): void {
     plocha.scrollLeft += r.left - p.left - plocha.clientWidth / 2;
   };
 
+  nastavPohled = nastav;
   prepinac.addEventListener('click', e => {
     const b = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-pohled]');
     if (b) nastav(b.dataset.pohled as Pohled, true);
   });
-  nastav(new URLSearchParams(location.search).get('pohled') === 'osa' ? 'osa' : 'seznam', false);
+  nastav(pohledZAdresy(), false);
 
   // popisek bodu: jeden prvek s position: fixed, aby ho neořízla posouvaná plocha
   const ukazPopisek = (el: HTMLElement) => {
