@@ -79,19 +79,24 @@ body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
 .pravidlo .retezec { max-width: none; }
 .pravidlo .znaky, .pravidlo .upozorneni { max-width: none; }
 .pravidlo .m2-panel[data-p="chrono"]:not([hidden]) { display: grid; grid-template-columns: minmax(220px, 300px) 1fr; grid-template-rows: minmax(0, 1fr) auto; gap: 0 28px; }
-.pravidlo .m2-panel[data-p="chrono"] .cesta-box { grid-column: 1; grid-row: 1; margin: 0; overflow: hidden; }
+/* delší cesta předložení (vynechané kontroly, připojení) se posouvá ve vlastním boxu, neořízne se */
+.pravidlo .m2-panel[data-p="chrono"] .cesta-box { grid-column: 1; grid-row: 1; margin: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.pravidlo .m2-panel[data-p="chrono"] .cesta-box:focus-visible { outline-offset: -3px; }
 .pravidlo .m2-panel[data-p="chrono"] .udalosti-seznam { grid-column: 2; grid-row: 1; min-height: 0; overflow: hidden; }
 .pravidlo .m2-panel[data-p="chrono"] .udalost-velka { grid-template-columns: 150px 1fr; gap: 20px; }
 .pravidlo .m2-panel[data-p="chrono"] .listovani { grid-column: 1 / -1; grid-row: 2; }
 @media (max-width: 760px) {
   .pravidlo .m2-panel[data-p="prospech"], .pravidlo .m2-panel[data-p="kontrola"], .pravidlo .m2-panel[data-p="vyhrady"] { column-width: 260px; }
   .pravidlo .m2-panel[data-p="chrono"]:not([hidden]) { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; gap: 8px 0; }
-  .pravidlo .m2-panel[data-p="chrono"] .cesta-box { grid-row: 1; padding: 4px 10px; font-size: 14px; }
+  /* na mobilu má cesta předložení nejvýš asi pět řádků, zbytek místa patří události */
+  .pravidlo .m2-panel[data-p="chrono"] .cesta-box { grid-row: 1; padding: 4px 10px; font-size: 14px; max-height: 7.5em; }
   .pravidlo .m2-panel[data-p="chrono"] .cesta-box p { margin: 0 0 2px; }
   .pravidlo .m2-panel[data-p="chrono"] .vynechano { font-size: 13px; }
   .pravidlo .m2-panel[data-p="chrono"] .udalosti-seznam { grid-column: 1; grid-row: 2; }
   .pravidlo .m2-panel[data-p="chrono"] .udalost-velka { grid-template-columns: 1fr; gap: 6px; }
-  .pravidlo .m2-panel[data-p="chrono"] .listovani { grid-row: 3; margin-top: 0; }
+  .pravidlo .m2-panel[data-p="chrono"] .listovani { grid-row: 3; margin-top: 0; padding-top: 8px; }
+  .pravidlo .m2-panel[data-p="chrono"] .listovani button { padding: 6px 10px; }
+  .pravidlo .m2-panel[data-p="chrono"] .listovani button span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }
 
 /* nízké a široké okno: hlavička a listování zabírají méně místa, aby se do Průběhu vešla cesta předložení i událost */

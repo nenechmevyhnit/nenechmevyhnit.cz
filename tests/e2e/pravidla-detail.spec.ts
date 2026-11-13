@@ -178,6 +178,25 @@ for (const v of VELIKOSTI) {
   });
 }
 
+// Delší cesta předložení (vynechané kontroly, připojení) nesmí ubrat místo události ani se oříznout.
+// Na Linuxu v CI se písmo láme jinak než ve Windows, proto test vyžaduje rezervu, ne jen hranici.
+for (const v of [{ width: 390, height: 700 }, { width: 1256, height: 528 }]) {
+  test(`${v.width}×${v.height}: dlouhá cesta předložení se posouvá ve vlastním boxu a událost má místo`, async ({ page }) => {
+    await page.setViewportSize(v);
+    await page.goto('/pravidla/pozmenovaci-sigma/');
+    await page.getByRole('tab', { name: 'Průběh' }).click();
+    const box = page.locator('.m2-panel[data-p="chrono"] .cesta-box');
+    await box.evaluate(el => { for (let i = 1; i <= 12; i++) el.insertAdjacentHTML('beforeend', `<p>Doplněný řádek ${i} s delším textem o cestě předložení.</p>`); });
+    expect(await box.evaluate(el => el.scrollHeight > el.clientHeight + 1)).toBe(true);
+    await expect(box).toHaveAttribute('tabindex', '0');
+    await expect(box).toHaveAccessibleName('Cesta předložení');
+    expect(await presahPanelu(page, true)).toBeLessThanOrEqual(1);
+    const volno = await page.locator('.udalosti-seznam > li:not([hidden]) .udalost-velka > div')
+      .evaluate(d => d.getBoundingClientRect().height - d.querySelector('h3')!.getBoundingClientRect().height);
+    expect(volno, 'pod nadpisem události zbývá místo aspoň na dva řádky textu').toBeGreaterThanOrEqual(40);
+  });
+}
+
 test('pravidlo jen s kontrolou moci otevře záložku Kontrola moci: znaky, upozornění a odkaz na Metodiku', async ({ page }) => {
   await page.goto('/pravidla/usneseni-kappa/');
   await expect(page.getByRole('tab')).toHaveText(['Kontrola moci', 'Průběh', 'Výhrady a stanovisko', 'Zdroje (6)']);
