@@ -61,6 +61,7 @@ const popis = otevrene
               <span class="pr-nazev">
                 <strong title={p.nazev}>{p.nazev}</strong>
                 <small><span class="pr-cesta">{popisekCesty(p.cesta)} · </span>{popisekKroku(stavPravidla(p.udalosti))}{p.prospech && ` · ${popisekKomu(p.prospech.komu)} · ${popisekZaveru(p.prospech.zaver)}`}{p.kontrolaMoci && ` · Kontrola moci: ${p.kontrolaMoci.znaky.map(popisekZnaku).join(', ')}`}</small>
+                {p.prospech && <span class="pr-proc-radek">{p.prospech.proc.text}</span>}
               </span>
               {/* stav je v textu výše, ukazatel je pro čtečku nadbytečný */}
               <span class="pr-prubeh" aria-hidden="true"><PrubehPravidla druh={p.druh} udalosti={p.udalosti} /></span>

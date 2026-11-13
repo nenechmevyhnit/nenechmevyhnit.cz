@@ -19,6 +19,7 @@ udalosti:
 prospech:
   komu: [agrofert]
   zaver: dolozen
+  proc: { text: "Zrušený strop by fiktivní firmě umožnil čerpat víc fiktivní dotace.", zdroje: [2] }
   retezec:
     - { text: Návrh by zrušil fiktivní strop dotace pro velké podniky., zdroje: [1] }
     - { text: Fiktivní firma je největším příjemcem fiktivní dotace., zdroje: [2] }

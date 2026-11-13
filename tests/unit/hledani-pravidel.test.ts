@@ -27,6 +27,7 @@ describe('hledání pravidel', () => {
     expect(najdi({ text: 'ZAHAJENA RIZENI' })).toEqual(['zakon-omega']);
     expect(najdi({ text: 'lhutu k vymahani' })).toEqual(['zakon-omega']);
   });
+  it('hledá v shrnutí „proč“ bez diakritiky', () => expect(najdi({ text: 'dluznikem' })).toEqual(['zakon-omega']));
   it('hledá každé slovo zvlášť, na pořadí nezáleží', () => {
     expect(najdi({ text: 'omega novela' })).toEqual(['zakon-omega']);
     expect(najdi({ text: 'novela omega' })).toEqual(['zakon-omega']);

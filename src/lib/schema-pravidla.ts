@@ -40,6 +40,8 @@ const vytvorPravidloSchema = (koncepty: boolean) => z
     prospech: z.object({
       komu: z.array(z.enum(KOMU)).min(1, 'Řetězec musí vést aspoň k jednomu z: babis, agrofert'),
       zaver: z.enum(ZAVERY),
+      /** Krátké shrnutí, proč by změna prospěla (1–2 věty se zdrojem), obdoba „Proč je to kauza“ u kauz. */
+      proc: z.object({ text: text().max(280, 'Shrnutí „proč“ smí mít nejvýš 280 znaků'), zdroje: odkazy('Shrnutí „proč“') }).strict(),
       retezec: z.array(krokRetezceSchema).min(2, 'Řetězec prospěchu musí mít aspoň 2 kroky'),
       dalsiDotceni: sZdroji('Další dotčení').optional(),
     }).strict().optional(),
@@ -74,6 +76,7 @@ const vytvorPravidloSchema = (koncepty: boolean) => z
 
     // Prospěch: odkazy a závěr řetězce (spec pravidel, oddíl 4)
     if (p.prospech) {
+      over(p.prospech.proc.zdroje, 'Shrnutí „proč“');
       p.prospech.retezec.forEach((k, i) => over(k.zdroje, `Krok řetězce ${i + 1}`));
       if (p.prospech.dalsiDotceni) over(p.prospech.dalsiDotceni.zdroje, 'Další dotčení');
       const odhadu = p.prospech.retezec.filter(k => k.odhad).length;

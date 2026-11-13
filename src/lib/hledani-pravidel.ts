@@ -13,6 +13,7 @@ export function vytvorPolozkuPravidla(z: PravidloZaznam, nazvyStitku: ReadonlyMa
   const p = z.pravidlo;
   const text = [
     p.nazev, p.shrnuti, p.predkladatel, p.stitky.join(' '), ...p.stitky.map(s => nazvyStitku.get(s) ?? ''),
+    p.prospech?.proc.text ?? '',
     ...(p.prospech?.retezec.map(k => k.text) ?? []),
     ...(p.kontrolaMoci?.znaky.flatMap(zn => [zn.text, popisekZnaku(zn), popisekDruhuZnaku(zn.druh)]) ?? []),
     ...(p.kontrolaMoci?.upozorneni.flatMap(u => [u.text, upozornovatel(u.kdo).nazev]) ?? []),

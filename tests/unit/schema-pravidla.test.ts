@@ -53,6 +53,17 @@ describe('pravidloSchema', () => {
     });
   });
 
+  describe('shrnutí „proč“', () => {
+    it('chybějící proc u pravidla s prospěchem je chyba', () => expect(cesty(s(p => { delete p.prospech.proc; }))).toEqual(['prospech.proc']));
+    it('text o 281 znacích je chyba, o 280 projde', () => {
+      expect(chyby(s(p => { p.prospech.proc.text = 'x'.repeat(281); })).join(' ')).toMatch(/Shrnutí „proč“ smí mít nejvýš 280 znaků/);
+      expect(chyby(s(p => { p.prospech.proc.text = 'x'.repeat(280); }))).toEqual([]);
+    });
+    it('neexistující zdroj', () => expect(chyby(s(p => { p.prospech.proc.zdroje = [9]; })).join(' ')).toMatch(/Shrnutí „proč“ odkazuje na neexistující zdroj 9/));
+    it('platí i v režimu konceptů', () => expect(cesty(s(p => { delete p.prospech.proc; }), pravidloSchemaKoncepty)).toEqual(['prospech.proc']));
+    it('pravidlo jen s kontrolou moci proc nepotřebuje', () => expect(chyby(platnePravidloKontrolaMoci())).toEqual([]));
+  });
+
   describe('cesta a kroky', () => {
     it('pozměňovací návrh vyžaduje pripojenoK', () => expect(chyby(s(p => { p.cesta = 'pozmenovaci-navrh'; })).join(' ')).toMatch(/ke kterému zákonu/));
     it('pozměňovací návrh s pripojenoK projde', () => expect(chyby(s(p => { p.cesta = 'pozmenovaci-navrh'; p.pripojenoK = { nazev: 'Fiktivní zákon', zdroje: [1] }; }))).toEqual([]));

@@ -18,6 +18,7 @@ body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
 .pr-nazev { min-width: 0; }
 .pr-nazev strong { display: block; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pr-nazev small { display: block; font: 12px/1.4 var(--f-mono); color: var(--meta); }
+.pr-nazev .pr-proc-radek { display: block; margin-top: 2px; font-size: 13px; line-height: 1.4; color: var(--meta); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pr-btn .otevrit { font: 12px var(--f-mono); color: var(--modra); }
 .archiv-prazdny, .pravidla-seznam .prazdno { padding: 18px; color: var(--meta); }
 
@@ -35,6 +36,7 @@ body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
 .prubeh-detail button:focus-visible { outline: 2px solid var(--modra); outline-offset: 2px; }
 .planovano { margin: 6px 0 0; max-width: 720px; font-size: 13px; color: var(--meta); }
 .pr-zaver { margin: 0 0 8px; }
+.pr-proc { margin: 0 0 8px; max-width: 46em; }
 .retezec { margin: 0 0 12px; padding-left: 1.4em; max-width: 46em; }
 .retezec li { margin: 6px 0; }
 .odhad { font: 11px var(--f-mono); border: 1px solid var(--inkoust); padding: 0 5px; margin-right: 4px; white-space: nowrap; }
@@ -61,6 +63,7 @@ body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
   /* druhý řádek: stav, komu a závěr; cesta předložení se na mobilu vynechává */
   .pr-nazev small { font-size: 12px; line-height: 1.35; }
   .pr-nazev .pr-cesta { display: none; }
+  .pr-nazev .pr-proc-radek { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; white-space: normal; }
   /* názvy fází se zalamují, nezkracují; ukončení (zamítnuto, staženo) má vlastní řádek */
   .prubeh { flex-wrap: wrap; font-size: 11px; }
   .prubeh .f-nazev { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }

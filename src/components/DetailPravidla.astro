@@ -49,6 +49,7 @@ const prvni = zalozky[0]?.id;
           <h3 class="panel-nadpis">Komu prospívá</h3>{/* jen bez JavaScriptu, kdy jsou všechny části pod sebou */}
           <p class="pr-zaver"><strong>{popisekZaveru(p.prospech.zaver)}</strong>: {popisekKomu(p.prospech.komu)}</p>
           <p class="kriterium">Závěr je rozbor archivu podle metodiky, ne úřední zjištění. <a href="/metodika/#pravidla">Jak rozbor děláme</a></p>
+          <p class="pr-proc"><strong>Proč by to prospělo:</strong> {p.prospech.proc.text}<span class="chipy" set:html={chipy(p.prospech.proc.zdroje)}></span></p>
           <ol class="retezec">
             {p.prospech.retezec.map(k => <li>{k.odhad && <span class="odhad">odhad</span>}{k.odhad && ' '}{k.text}<span class="chipy" set:html={chipy(k.zdroje)}></span></li>)}
           </ol>

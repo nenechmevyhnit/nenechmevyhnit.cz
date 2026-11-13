@@ -34,7 +34,17 @@ test('upozornění „Závěr je rozbor archivu“ stojí hned pod závěrem, p�
   await page.goto('/pravidla/zakon-omega/');
   const panel = page.locator('.m2-panel[data-p="prospech"]');
   await expect(panel.locator('.pr-zaver + .kriterium')).toContainText('Závěr je rozbor archivu podle metodiky, ne úřední zjištění.');
-  await expect(panel.locator('.kriterium + .retezec')).toHaveCount(1);
+  await expect(panel.locator('.kriterium + .pr-proc')).toHaveCount(1);
+  await expect(panel.locator('.pr-proc + .retezec')).toHaveCount(1);
+  await expect(panel.locator('.kriterium + .retezec')).toHaveCount(0);
+});
+
+test('shrnutí „Proč by to prospělo“ má popisek a zdroj', async ({ page }) => {
+  await page.goto('/pravidla/zakon-omega/');
+  const proc = page.locator('.m2-panel[data-p="prospech"] .pr-proc');
+  await expect(proc).toContainText('Proč by to prospělo:');
+  await expect(proc).toContainText('dlužníkem');
+  await expect(proc.locator('.chip')).toHaveText(['2']);
 });
 
 test.describe('mobil 390×700', () => {

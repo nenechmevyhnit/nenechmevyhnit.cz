@@ -55,6 +55,7 @@ export function platnePravidlo(): Record<string, unknown> {
     prospech: {
       komu: ['agrofert'],
       zaver: 'dolozen',
+      proc: { text: 'Kratší lhůta by fiktivní firmě usnadnila obranu proti vymáhání dotací.', zdroje: [2] },
       retezec: [
         { text: 'Novela by zkrátila fiktivní lhůtu z deseti na čtyři roky.', zdroje: [1] },
         { text: 'Fiktivní fond vymáhá po fiktivní firmě dotace.', zdroje: [2] },

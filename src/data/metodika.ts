@@ -115,7 +115,7 @@ ${sPravidly ? '<p>Změny pravidel, které předkládá nebo vydává vláda či 
 <p>Plošné změny, třeba sazbu DPH pro všechny, sem nezařazujeme. Rozhodnutí v jednotlivém případě patří ke kauze, které se týká.</p>
 <p>Zatím nezařazujeme ani záměry bez oficiálního textu, změny, u kterých rozbor vede jen k jiným podnikům než k Agrofertu, a kroky z let 2014–2021, kdy byl Andrej Babiš ministrem financí a premiérem.</p>
 <h3 id="retezec">Rozbor krok za krokem</h3>
-<p>U každé změny sestavíme z textu předpisu <strong>řetězec</strong>: co pravidlo mění, jakého faktu o Babišovi nebo Agrofertu se to týká a jaký z toho plyne důsledek. Každý krok má vlastní zdroj a první krok vždy cituje text předpisu. Krok, který stojí na odhadu, je viditelně označený.</p>
+<p>U každé změny sestavíme z textu předpisu <strong>řetězec</strong>: co pravidlo mění, jakého faktu o Babišovi nebo Agrofertu se to týká a jaký z toho plyne důsledek. Každý krok má vlastní zdroj a první krok vždy cituje text předpisu. Krok, který stojí na odhadu, je viditelně označený. Každá změna má navíc krátké shrnutí, proč by prospěla. Je to jedna až dvě věty se zdrojem, podrobnosti jsou v řetězci.</p>
 <dl class="slovnicek">
 <dt>prospěch doložen</dt><dd>Žádný krok řetězce nestojí na odhadu.</dd>
 <dt>prospěch pravděpodobný</dt><dd>Aspoň jeden krok stojí na odhadu, například jak se nová lhůta uplatní na už zahájená řízení.</dd>

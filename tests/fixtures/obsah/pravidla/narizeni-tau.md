@@ -18,6 +18,7 @@ udalosti:
 prospech:
   komu: [agrofert]
   zaver: dolozen
+  proc: { text: "Vyšší sazba by zvýšila výplaty fiktivním chovatelům drůbeže, mezi které patří fiktivní firma.", zdroje: [2] }
   retezec:
     - { text: Nařízení by navýšilo fiktivní sazbu pro chov drůbeže., zdroje: [1] }
     - { text: Fiktivní firma provozuje největší fiktivní drůbežárny., zdroje: [2] }

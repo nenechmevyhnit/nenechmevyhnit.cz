@@ -65,6 +65,21 @@ test('řádek označí důvody zařazení textem, bez prázdných oddělovačů'
   await expect(page.locator('.pr-radek[data-slug="narizeni-tau"] .pr-nazev small')).not.toContainText('Kontrola moci');
 });
 
+test('řádek s prospěchem ukazuje shrnutí „proč“, řádek jen s kontrolou moci ne', async ({ page }) => {
+  await page.goto('/pravidla/');
+  await expect(page.locator('.pr-radek[data-slug="zakon-omega"] .pr-proc-radek')).toHaveText(/dlužníkem/);
+  await expect(page.locator('.pr-radek[data-slug="usneseni-kappa"] .pr-proc-radek')).toHaveCount(0);
+});
+
+test('na počítači je shrnutí v jednom řádku zakončeném třemi tečkami', async ({ page }) => {
+  await page.goto('/pravidla/');
+  const proc = page.locator('.pr-radek[data-slug="zakon-omega"] .pr-proc-radek');
+  expect(await proc.evaluate(e => getComputedStyle(e).textOverflow)).toBe('ellipsis');
+  const { vyska, radek } = await proc.evaluate(e => ({ vyska: e.getBoundingClientRect().height, radek: parseFloat(getComputedStyle(e).lineHeight) }));
+  expect(vyska).toBeLessThanOrEqual(radek + 1);
+  await overBezPosouvani(page);
+});
+
 test('filtr důvodu: každý čip zvlášť, oba, kombinace se štítkem a zrušení', async ({ page }) => {
   await page.goto('/pravidla/');
   const viditelne = page.locator('.pr-radek:not([hidden])');
@@ -117,6 +132,17 @@ test.describe('mobil 390×700', () => {
     expect(text).toContain('prospěch pravděpodobný');
     expect(text).toContain('Schváleno Sněmovnou');
     expect(text).toContain('Andrej Babiš, Agrofert');
+    await overBezPosouvani(page);
+  });
+
+  test('shrnutí „proč“ zabere nejvýš dva řádky a stránka se neposouvá', async ({ page }) => {
+    await page.goto('/pravidla/');
+    for (const slug of ['zakon-omega', 'pozmenovaci-sigma', 'narizeni-tau']) {
+      const proc = page.locator(`.pr-radek[data-slug="${slug}"] .pr-proc-radek`);
+      await expect(proc).toBeVisible();
+      const { vyska, radek } = await proc.evaluate(e => ({ vyska: e.getBoundingClientRect().height, radek: parseFloat(getComputedStyle(e).lineHeight) }));
+      expect(vyska, slug).toBeLessThanOrEqual(2 * radek + 1);
+    }
     await overBezPosouvani(page);
   });
 
