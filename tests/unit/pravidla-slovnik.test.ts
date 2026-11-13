@@ -17,10 +17,10 @@ describe('slovník pravidel', () => {
   it('vynechané kontroly podle cesty', () => {
     expect(vynechaneKontroly('vladni-navrh')).toEqual([]);
     expect(vynechaneKontroly('narizeni-vlady')).toEqual([]);
-    expect(vynechaneKontroly('poslanecky-navrh')).toEqual(['neprošel meziresortním připomínkovým řízením', 'bez hodnocení dopadů regulace (RIA)']);
+    expect(vynechaneKontroly('poslanecky-navrh')).toEqual(['bez meziresortního připomínkového řízení', 'bez hodnocení dopadů regulace (RIA)']);
     expect(vynechaneKontroly('senatni-navrh')).toEqual(vynechaneKontroly('poslanecky-navrh'));
     expect(vynechaneKontroly('pozmenovaci-navrh')).toEqual([
-      'neprošel meziresortním připomínkovým řízením', 'bez hodnocení dopadů regulace (RIA)', 'bez stanoviska vlády', 'bez prvního čtení',
+      'bez meziresortního připomínkového řízení', 'bez hodnocení dopadů regulace (RIA)', 'bez stanoviska vlády', 'bez prvního čtení',
     ]);
   });
   it('komu a závěr', () => {

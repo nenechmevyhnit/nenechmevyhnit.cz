@@ -188,7 +188,7 @@ Statická stránka se stejným rozvržením jako přehled a otevřeným modalem,
 
 - **Hlavička:** druh · cesta · stav, název, shrnutí a ukazatel průběhu. Klik na krok přepne na záložku Průběh s danou událostí.
 - **Záložky:**
-  1. **Komu prospívá** (otevřená jako první): závěr a komu, řetězec jako číslované kroky se zdroji (krok s odhadem s označením „odhad“), další dotčení, „Související kauzy“ s popisem vazby a odkazem na detail kauzy, řádek „Závěr je rozbor archivu podle metodiky“ s odkazem na `/metodika/#pravidla`.
+  1. **Komu prospívá** (otevřená jako první): závěr a komu, hned pod nimi řádek „Závěr je rozbor archivu podle metodiky, ne úřední zjištění“ s odkazem na `/metodika/#pravidla` (na mobilu je tak vidět jako první), pak řetězec jako číslované kroky se zdroji (krok s odhadem s označením „odhad“), další dotčení a „Související kauzy“ s popisem vazby a odkazem na detail kauzy.
   2. **Průběh:** cesta předložení a vynechané kontroly (například „Poslanecký návrh: neprošel připomínkovým řízením ani hodnocením dopadů regulace“), u pozměňovacího návrhu zákon, ke kterému byl připojen, a účinnost, pokud je známa. Pod tím události s listováním ← → i klávesnicí.
   3. **Výhrady a stanovisko:** výhrady institucí, pak stanovisko předkladatele.
   4. **Souvislosti:** jen pokud je text.
@@ -199,8 +199,10 @@ Statická stránka se stejným rozvržením jako přehled a otevřeným modalem,
 V záložce Souvislosti přibude seznam **„Související změny pravidel“** (název pravidla, popis vazby, stav, odkaz). Kauza bez textu Souvislostí tuto záložku zobrazí, pokud má aspoň jedno související pravidlo.
 
 ### Metodika a O projektu
-- Metodika dostane oddíl **„Změny pravidel“** (kotva `#pravidla`). Popisuje rozsah (oddíl 2), řetězec a oba stupně závěru (oddíl 4), vynechané kontroly podle cesty předložení, pravidla jazyka (oddíl 3) a upozornění, že závěr je rozbor archivu, ne úřední zjištění.
+- Metodika dostane oddíl **„Změny pravidel“** (kotva `#pravidla`). Popisuje rozsah (oddíl 2), řetězec a oba stupně závěru (oddíl 4), vynechané kontroly podle cesty předložení, pravidla jazyka (oddíl 3) a upozornění, že závěr je rozbor archivu, ne úřední zjištění. Za rozsahem uvádí, co zatím nezařazujeme (záměry bez oficiálního textu, změny vedoucí jen k jiným podnikům než k Agrofertu, kroky z let 2014–2021).
 - O projektu dostane jednu větu o nové části.
+- Oddíl Metodiky, věta o změnách pravidel v kritériích a věta v O projektu se zobrazují jen tehdy, když stránka pravidel existuje (`maPravidla()`). Bez pravidel jsou obě stránky stejné jako před touto částí, kritéria končí větou „Kroky vlády jako celku zatím nezařazujeme.“
+- Veřejné texty říkají, že rozbor archivu prospěch ukazuje, ne že prospěch je (např. „u kterých rozbor archivu ukazuje prospěch pro Andreje Babiše nebo Agrofert“).
 
 ## 8. Postup obsahu
 

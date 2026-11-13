@@ -29,6 +29,29 @@ test('/metodika/#pravidla otevře oddíl Změny pravidel', async ({ page }) => {
   await expect(panel.locator('.slovnicek dt')).toHaveText(['prospěch doložen', 'prospěch pravděpodobný']);
 });
 
+test('Metodika a O projektu mluví o prospěchu neutrálně, jako o výsledku rozboru', async ({ page }) => {
+  await page.goto('/metodika/');
+  await expect(page.locator('.v4-karta:has(button[data-sekce="pravidla"])')).toContainText('u kterých rozbor archivu ukazuje prospěch pro Andreje Babiše nebo Agrofert');
+  await expect(page.locator('body')).not.toContainText('ze kterých mají prospěch');
+  await page.goto('/o-projektu/');
+  await page.locator('.v4-karta button[data-sekce="proc"]').click();
+  await expect(page.locator('.v4-dlg-panel[data-sekce="proc"]')).toContainText('u kterých rozbor archivu ukazuje prospěch pro Andreje Babiše nebo Agrofert');
+});
+
+test('bez pravidel Metodika ani O projektu o oddílu Změny pravidel nemluví', async ({ page }) => {
+  await page.goto('http://localhost:4322/metodika/');
+  await expect(page.locator('.v4-karta:not(.v4-cta)')).toHaveCount(7);
+  await expect(page.locator('[data-sekce="pravidla"]')).toHaveCount(0);
+  await page.locator('.v4-karta button[data-sekce="kriteria"]').click();
+  const panel = page.locator('.v4-dlg-panel[data-sekce="kriteria"]');
+  await expect(panel).toContainText('Kroky vlády jako celku zatím nezařazujeme.');
+  await expect(panel).not.toContainText('vlastní část archivu');
+  await page.goto('http://localhost:4322/o-projektu/');
+  await expect(page.locator('.v4-karta:not(.v4-cta)')).toHaveCount(7);
+  await page.locator('.v4-karta button[data-sekce="proc"]').click();
+  await expect(page.locator('.v4-dlg-panel[data-sekce="proc"]')).not.toContainText('změny pravidel');
+});
+
 test('Metodika obsahuje slovníček stavů', async ({ page }) => {
   await page.goto('/metodika/');
   await page.locator('.v4-karta button[data-sekce="stavy"]').click();
@@ -100,26 +123,44 @@ test.describe('mobil 390×700', () => {
     }
   });
 
-  test('hlavička nepřetéká do šířky na 390 ani 360 px', async ({ page }) => {
-    for (const sirka of [390, 360]) {
+  test('hlavička se čtyřmi odkazy nepřetéká na žádné šířce telefonu ani malého okna', async ({ page }) => {
+    for (const sirka of [320, 360, 390, 428, 430, 760]) {
       await page.setViewportSize({ width: sirka, height: 700 });
       for (const cesta of ['/', '/pravidla/', '/metodika/']) {
         await page.goto(cesta);
-        const { sw, iw, prave } = await page.evaluate(() => ({
+        const { sw, iw, odkazy } = await page.evaluate(() => ({
           sw: document.documentElement.scrollWidth,
           iw: window.innerWidth,
-          prave: [...document.querySelectorAll('nav[aria-label="Hlavní"] a')].map(a => a.getBoundingClientRect().right),
+          odkazy: [...document.querySelectorAll('nav[aria-label="Hlavní"] a')].map(a => {
+            const r = a.getBoundingClientRect();
+            return { levy: r.left, prave: r.right, vyska: r.height, pismo: parseFloat(getComputedStyle(a).fontSize) };
+          }),
         }));
         expect(sw, `${cesta} ${sirka}: stránka se posouvá do strany`).toBeLessThanOrEqual(iw);
-        expect(Math.max(...prave), `${cesta} ${sirka}: odkaz menu přesahuje okno`).toBeLessThanOrEqual(iw);
+        expect(odkazy, `${cesta} ${sirka}: menu nemá čtyři odkazy`).toHaveLength(4);
+        for (const o of odkazy) {
+          expect(o.levy, `${cesta} ${sirka}: odkaz menu začíná mimo okno`).toBeGreaterThanOrEqual(0);
+          expect(o.prave, `${cesta} ${sirka}: odkaz menu přesahuje okno`).toBeLessThanOrEqual(iw);
+          expect(o.vyska, `${cesta} ${sirka}: odkaz se zalomil`).toBeLessThan(30);
+          expect(o.pismo, `${cesta} ${sirka}: písmo odkazu je příliš malé`).toBeGreaterThanOrEqual(12);
+        }
       }
     }
+  });
+
+  test('tříodkazová hlavička (bez pravidel) má na 390 px značku 16 px', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 700 });
+    await page.goto('http://localhost:4322/');
+    await expect(page.getByRole('navigation', { name: 'Hlavní' }).getByRole('link')).toHaveCount(3);
+    expect(await page.locator('.top .brand').evaluate(b => getComputedStyle(b).fontSize)).toBe('16px');
   });
 
   test('každou kartu Metodiky jde otevřít', async ({ page }) => {
     await page.goto('/metodika/');
     const karty = page.locator('.v4-karta:not(.v4-cta)');
-    for (let i = 0; i < 7; i++) {
+    const pocet = await karty.count();
+    expect(pocet).toBe(8);
+    for (let i = 0; i < pocet; i++) {
       await karty.nth(i).click({ position: { x: 20, y: 20 } });
       await expect(page.locator('dialog.v4-dlg')).toBeVisible();
       await page.keyboard.press('Escape');

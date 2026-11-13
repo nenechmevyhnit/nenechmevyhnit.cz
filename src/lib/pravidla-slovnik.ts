@@ -29,7 +29,7 @@ export const popisekCesty = (c: Cesta): string => POPISKY_CEST[c];
 
 /** Kontroly legislativního procesu, které cesta předložení vynechává (jednací řád Sněmovny,
  *  Legislativní pravidla vlády). Je to popis procesu, ne hodnocení. */
-const BEZ_PRIPOMINEK = ['neprošel meziresortním připomínkovým řízením', 'bez hodnocení dopadů regulace (RIA)'];
+const BEZ_PRIPOMINEK = ['bez meziresortního připomínkového řízení', 'bez hodnocení dopadů regulace (RIA)'];
 export function vynechaneKontroly(c: Cesta): string[] {
   if (c === 'poslanecky-navrh' || c === 'senatni-navrh') return [...BEZ_PRIPOMINEK];
   if (c === 'pozmenovaci-navrh') return [...BEZ_PRIPOMINEK, 'bez stanoviska vlády', 'bez prvního čtení'];
