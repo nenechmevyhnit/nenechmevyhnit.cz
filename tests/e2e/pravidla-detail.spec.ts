@@ -50,14 +50,41 @@ test('shrnutí „Proč by to prospělo“ má popisek a zdroj', async ({ page }
 test.describe('mobil 390×700', () => {
   test.use({ viewport: { width: 390, height: 700 } });
 
-  test('upozornění je vidět hned po otevření a názvy fází v hlavičce nejsou zkrácené', async ({ page }) => {
+  test('upozornění je vidět hned po otevření, hlavička je úsporná: pruhy fází a pod nimi poslední krok', async ({ page }) => {
     for (const slug of ['zakon-omega', 'pozmenovaci-sigma']) {
       await page.goto(`/pravidla/${slug}/`);
       await expect(page.locator('.m2-panel[data-p="prospech"] .kriterium')).toBeInViewport();
-      const oriznute = await page.locator('.prubeh-detail .f-nazev').evaluateAll(a => a.filter(e => e.scrollWidth > e.clientWidth + 1).map(e => e.textContent));
-      expect(oriznute, slug).toEqual([]);
+      // popisky fází by se na šířce telefonu lámaly uprostřed slova, proto jsou jen pruhy (čtečka má celý text)
+      await expect(page.locator('.prubeh-detail li:not(.konec) .f-nazev').first()).toBeHidden();
+      await expect(page.locator('.prubeh-detail li:not(.konec) .jen-ctecka').first()).toHaveText(/^: hotovo, /);
+      expect(await page.locator('#detail-nadpis').evaluate(e => parseFloat(getComputedStyle(e).fontSize))).toBeLessThanOrEqual(22);
+      await expect(page.locator('.m2-hlava .planovano')).toBeHidden();
       await overBezPosouvani(page);
     }
+    // schválený zákon: souhrn s posledním krokem a fází; zamítnutý návrh má místo souhrnu políčko ukončení
+    await page.goto('/pravidla/zakon-omega/');
+    const souhrn = page.locator('.m2-hlava .prubeh-souhrn');
+    await expect(souhrn).toBeVisible();
+    expect((await souhrn.textContent())!.replace(/\s+/g, ' ')).toBe('Schváleno Sněmovnou 20. 9. 2026 · fáze 2 z 5');
+    await page.locator('.prubeh-detail [data-udalost="0"]').click();
+    await expect(page.locator('.udalosti-seznam > li:not([hidden]) h3')).toHaveText('Návrh podán');
+    await page.goto('/pravidla/pozmenovaci-sigma/');
+    await expect(page.locator('.m2-hlava .prubeh-souhrn')).toHaveCount(0);
+    await expect(page.locator('.prubeh-detail li.konec')).toBeVisible();
+    await expect(page.locator('.prubeh-detail li.konec')).toContainText('Zamítnuto');
+  });
+
+  test('„Stav k“ je na mobilu v záložce Průběh nad cestou předložení', async ({ page }) => {
+    await page.goto('/pravidla/zakon-omega/');
+    await page.getByRole('tab', { name: 'Průběh' }).click();
+    const stav = page.locator('.m2-panel[data-p="chrono"] .planovano-prubeh');
+    await expect(stav).toBeVisible();
+    expect((await stav.textContent())!.replace(/\s+/g, ' ')).toBe('Stav k 1. 11. 2026: Fiktivní senát návrh projedná na schůzi od 2. 12. 2099.1');
+    const [s, c] = await Promise.all([stav.boundingBox(), page.locator('.m2-panel[data-p="chrono"] .cesta-box').boundingBox()]);
+    expect(s!.y + s!.height).toBeLessThanOrEqual(c!.y);
+    expect(await presahPanelu(page, true)).toBeLessThanOrEqual(1);
+    await stav.locator('.chip').click();
+    await expect(page.locator('.m2-panel[data-p="zdroje"]')).toBeVisible();
   });
 });
 

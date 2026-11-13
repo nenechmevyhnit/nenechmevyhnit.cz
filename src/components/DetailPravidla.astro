@@ -79,6 +79,8 @@ const prvni = zalozky[0]?.id;
       )}
       <div class="m2-panel" data-p="chrono" role="tabpanel" hidden={prvni !== 'chrono'}>
         <h3 class="panel-nadpis">Průběh</h3>
+        {/* na mobilu je „Stav k“ tady místo v hlavičce (hlavička má být nízká); na počítači je skrytý */}
+        {p.planovano && <p class="planovano-prubeh">Stav k {datumText(p.planovano.stavK)}: {p.planovano.text}<span class="chipy" set:html={chipy(p.planovano.zdroje)}></span></p>}
         <div class="cesta-box" role="region" tabindex="0" aria-label="Cesta předložení">
           <p><strong>{popisekCesty(p.cesta)}</strong>{p.oznaceni && <>, {p.oznaceni}</>}. Předkládá: {p.predkladatel}.</p>
           {p.pripojenoK && <p>Připojeno k: {p.pripojenoK.nazev}<span class="chipy" set:html={chipy(p.pripojenoK.zdroje)}></span></p>}
