@@ -138,10 +138,10 @@ Ukončující kroky jsou `zamitnuto`, `stazeno`, `zruseno` a `zruseno-us`.
 - **„V projednávání“** znamená, že stav není `vyhlaseno` ani ukončující krok.
 - **Vynechané kontroly** podle cesty předložení:
   - `poslanecky-navrh`, `senatni-navrh`: bez meziresortního připomínkového řízení a bez hodnocení dopadů regulace (RIA),
-  - `pozmenovaci-navrh`: navíc bez prvního čtení a bez vlastní důvodové zprávy,
+  - `pozmenovaci-navrh`: navíc bez stanoviska vlády a bez prvního čtení,
   - ostatní cesty: žádné.
 
-  Texty jsou ve slovníku `src/lib/pravidla-cesty.ts`, Metodika je vysvětluje.
+  Texty jsou ve slovníku `src/lib/pravidla-slovnik.ts`, Metodika je vysvětluje.
 - **Související změny pravidel u kauzy** se sestaví zpětně z polí `kauzy` všech pravidel.
 
 **Build selže, když:**
@@ -163,7 +163,7 @@ Ukončující kroky jsou `zamitnuto`, `stazeno`, `zruseno` a `zruseno-us`.
 - `src/lib/schema.ts`: `pravidloSchema` a `pravidloSchemaKoncepty` znovu použijí `zdrojSchema`, `udalostSchema` (rozšířené o `krok`), `datum`, `odkazy` a tvar stanoviska. Kontroly z oddílu 5 jsou v `superRefine`.
 - `src/lib/validace.ts`: `overPravidlo` a načtení adresáře `pravidla/` do výsledku `overAdresar`, včetně kontroly vazeb na kauzy a shody slugů. `scripts/over-obsah.ts` tak pravidla kontroluje automaticky.
 - `src/lib/kauzy.ts`: `nactiPravidla()`, `pravidlaKauzy(slug)` a `maPravidla()` (stránka a odkaz v menu existují, jen když je aspoň jedno pravidlo).
-- Nové moduly: `src/lib/pravidla-stavy.ts` (kroky, popisky, odvození stavu), `src/lib/pravidla-cesty.ts` (cesty, popisky, vynechané kontroly).
+- Nové moduly: `src/lib/pravidla-stavy.ts` (kroky, popisky, odvození stavu), `src/lib/pravidla-slovnik.ts` (druhy, cesty, komu, závěry, popisky, vynechané kontroly).
 - Stránky `src/pages/pravidla/index.astro` a `src/pages/pravidla/[slug].astro`, komponenty `PrehledPravidel.astro`, `DetailPravidla.astro`, `PrubehPravidla.astro` (ukazatel průběhu). Klientský skript `src/scripts/pravidla.ts` řeší filtr, otevírání detailu a History API stejně jako u kauz. Normalizace hledání se bere z `hledani.ts`.
 - CI: kontrola odkazů (lychee) v `kontrola.yml` a `tydenni.yml` zahrne i `obsah/pravidla/*.md`.
 
@@ -178,7 +178,7 @@ Kauzy · **Změny pravidel** · Metodika · O projektu. Položka a stránky exis
 - **Seznam řádků**, nejnovější poslední událost nahoře. Řádek obsahuje:
   - název, druh s cestou (například „Poslanecký návrh zákona“),
   - komu (Babiš / Agrofert) a závěr textem („prospěch doložen“ / „prospěch pravděpodobný“). Barva závěr ani stav nehodnotí, červená se nepoužije,
-  - **ukazatel průběhu**: řada kroků podle druhu (u zákona podáno → Sněmovna → Senát → podpis → vyhlášeno), hotové kroky vyplněné a s datem. Ukončující krok uzavře řadu textovým štítkem. Vrácení Senátem nebo veto se ukáže jako vrácení na krok Sněmovny s popiskem,
+  - **ukazatel průběhu**: řada kroků podle druhu (u zákona podáno → Sněmovna → Senát → podpis → vyhlášeno), hotové kroky vyplněné a s datem. Ukončující krok uzavře řadu textovým štítkem. Vrácení Senátem nebo veto označí fázi Senát nebo Podpis poznámkou („Vráceno Senátem“, „Vráceno prezidentem“) a nové hlasování Sněmovny posune datum fáze Sněmovna,
   - „Detail →“.
 - Seznam se posouvá uvnitř, stránka ne. Na mobilu (390×700) se řádek skládá pod sebe.
 - Prázdný výsledek filtru ukáže hlášku s tlačítkem „Zrušit filtry“.
