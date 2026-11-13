@@ -201,13 +201,14 @@ body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
 /* Bez JavaScriptu přehled ukazuje jen Oblasti, bez přepínače a filtrů (specifikace oblastí, oddíl 8.1). */
 html:not(.js) body .pr-filtry { display: none; }
 
-/* Detail pravidla: text pro čtenáře a oblasti pod shrnutím. Na nízkých oknech se text zkrátí na dva řádky
-   (celý je v title a čtečka ho přečte celý), aby panel pod hlavičkou neztratil místo. */
+/* Detail pravidla: text pro čtenáře a oblasti pod shrnutím. Na nízkých oknech má text
+   výšku nejvýš dva řádky a zbytek se posouvá uvnitř (box jde zaostřit klávesnicí, myš i dotyk posouvají),
+   aby panel pod hlavičkou neztratil místo. Celý text je i v atributu title. */
 .m2-hlava .pro-vas { max-width: 720px; margin: 8px 0 0; font-size: 14px; }
 .m2-hlava .pr-oblasti { margin: 4px 0 0; font-size: 13px; color: var(--meta); }
 .m2-hlava .pr-oblasti a { color: var(--modra); }
 @media (max-height: 700px) {
-  .m2-hlava .pro-vas { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden; margin-top: 4px; font-size: 13px; }
+  .m2-hlava .pro-vas { line-height: 1.4; max-height: 2.8em; overflow-y: auto; margin-top: 4px; font-size: 13px; }
   .m2-hlava .pr-oblasti { margin-top: 2px; font-size: 12px; }
   /* hlavička je o dva řádky vyšší, cesta předložení v Průběhu se na nízkém okně posouvá uvnitř svého boxu */
   .pravidlo .m2-panel[data-p="chrono"] .cesta-box { overflow-y: auto; }

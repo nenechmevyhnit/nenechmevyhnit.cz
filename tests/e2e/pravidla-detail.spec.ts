@@ -257,3 +257,15 @@ test('detail pravidla ukazuje „Co by to znamenalo pro vás“ a odkazy na obla
   await page.goBack();
   await expect(page).toHaveURL(/\/pravidla\/zakon-omega\/$/);
 });
+
+test('na nízkém okně 1256×528 je celý text „pro vás“ dostupný posouváním z klávesnice', async ({ page }) => {
+  await page.setViewportSize({ width: 1256, height: 528 });
+  await page.goto('/pravidla/zakon-omega/');
+  const box = page.locator('dialog#detail .m2-hlava .pro-vas');
+  await box.focus();
+  await expect(box).toBeFocused();
+  await box.evaluate(e => { e.scrollTop = e.scrollHeight; });
+  expect(await box.evaluate(e => e.scrollTop)).toBeGreaterThan(0);
+  expect(await box.evaluate(e => e.scrollTop + e.clientHeight >= e.scrollHeight - 1)).toBe(true);
+  await expect(box).toContainText('sporů o vrácení peněz');
+});

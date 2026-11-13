@@ -29,6 +29,13 @@ test('/metodika/#pravidla otevře oddíl Změny pravidel', async ({ page }) => {
   await expect(panel.locator('.slovnicek dt')).toHaveText(['prospěch doložen', 'prospěch pravděpodobný']);
 });
 
+test('/metodika/#oblasti otevře oddíl Oblasti', async ({ page }) => {
+  await page.goto('/metodika/#oblasti');
+  const panel = page.locator('.v4-dlg-panel[data-sekce="oblasti"]');
+  await expect(panel).toBeVisible();
+  await expect(panel.getByRole('heading', { level: 2 })).toHaveText('Oblasti');
+});
+
 test('/metodika/#kontrola-moci otevře oddíl Změny pravidel na pododdílu Dopad na kontrolu moci', async ({ page }) => {
   await page.goto('/metodika/#kontrola-moci');
   const panel = page.locator('.v4-dlg-panel[data-sekce="pravidla"]');
