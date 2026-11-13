@@ -21,7 +21,7 @@ const cipy = [...new Set(zaznamy.flatMap(z => z.pravidlo.stitky))]
 const titulek = otevrene ? `${otevrene.pravidlo.nazev} — Nenechme vyhnít` : 'Změny pravidel — Nenechme vyhnít';
 const popis = otevrene
   ? otevrene.pravidlo.shrnuti
-  : 'Zákony, nařízení a dotační pravidla od prosince 2025, ze kterých mají prospěch Andrej Babiš nebo Agrofert. U každé změny rozbor krok za krokem se zdroji a stanovisko předkladatele.';
+  : 'Zákony, nařízení a dotační pravidla od prosince 2025, u kterých rozbor archivu ukazuje prospěch pro Andreje Babiše nebo Agrofert. U každé změny rozbor krok za krokem se zdroji a stanovisko předkladatele.';
 ---
 <Zaklad titulek={titulek} popis={popis} cesta={otevrene ? `/pravidla/${otevrene.slug}/` : '/pravidla/'} styly="hlavni" aktivni="pravidla" otevrena={otevrene?.slug}>
   <main class="hlavni-obsah">
@@ -54,11 +54,11 @@ const popis = otevrene
             <a class="pr-btn" href={`/pravidla/${slug}/`} aria-haspopup="dialog">
               <span class="pr-nazev">
                 <strong title={p.nazev}>{p.nazev}</strong>
-                <small>{popisekCesty(p.cesta)} · {popisekKroku(stavPravidla(p.udalosti))} · {popisekKomu(p.prospech.komu)} · {popisekZaveru(p.prospech.zaver)}</small>
+                <small><span class="pr-cesta">{popisekCesty(p.cesta)} · </span>{popisekKroku(stavPravidla(p.udalosti))} · {popisekKomu(p.prospech.komu)} · {popisekZaveru(p.prospech.zaver)}</small>
               </span>
               {/* stav je v textu výše, ukazatel je pro čtečku nadbytečný */}
               <span class="pr-prubeh" aria-hidden="true"><PrubehPravidla druh={p.druh} udalosti={p.udalosti} /></span>
-              <span class="otevrit" aria-hidden="true">Detail</span>
+              <span class="otevrit" aria-hidden="true">Detail →</span>
             </a>
           </li>
         ))}

@@ -54,6 +54,45 @@ test('filtry: hledání bez diakritiky, štítek, jen v projednávání, zrušen
   await expect(page.locator('.pravidla-seznam .prazdno')).toBeHidden();
 });
 
+test('Zrušit filtry má rezervované místo, dokud filtr nic neomezuje, a do té doby není ani v tabulátoru', async ({ page }) => {
+  await page.goto('/pravidla/');
+  const zrusit = page.locator('.pr-filtry .f-zrusit');
+  const hledat = page.locator('.pr-filtry .f-hledat');
+  const pred = await hledat.boundingBox();
+  await expect(zrusit).toBeHidden();
+  expect(await zrusit.evaluate(e => getComputedStyle(e).visibility)).toBe('hidden');
+  expect((await zrusit.boundingBox())!.width).toBeGreaterThan(0);
+  await page.locator('.pr-filtry [data-stitek="dotace"]').click();
+  await expect(zrusit).toBeVisible();
+  expect(await hledat.boundingBox()).toEqual(pred);
+});
+
+test('řádek na počítači nabízí „Detail →“', async ({ page }) => {
+  await page.goto('/pravidla/');
+  await expect(page.locator('.pr-radek').first().locator('.otevrit')).toHaveText('Detail →');
+});
+
+test.describe('mobil 390×700', () => {
+  test.use({ viewport: { width: 390, height: 700 } });
+
+  test('řádek ukazuje stav, komu a závěr jako text a bez posouvání stránky', async ({ page }) => {
+    await page.goto('/pravidla/');
+    const prvni = page.locator('.pr-radek').first();
+    const text = await prvni.evaluate(e => (e as HTMLElement).innerText);
+    expect(text).toContain('prospěch pravděpodobný');
+    expect(text).toContain('Schváleno Sněmovnou');
+    expect(text).toContain('Andrej Babiš, Agrofert');
+    await overBezPosouvani(page);
+  });
+
+  test('názvy fází průběhu se v řádku nezkracují třemi tečkami', async ({ page }) => {
+    await page.goto('/pravidla/');
+    const oriznute = await page.locator('.pr-radek .prubeh .f-nazev').evaluateAll(a => a.filter(e => e.scrollWidth > e.clientWidth + 1).map(e => e.textContent));
+    expect(oriznute).toEqual([]);
+    expect(await page.locator('.pr-radek .prubeh .f-nazev').first().evaluate(e => getComputedStyle(e).textOverflow)).not.toBe('ellipsis');
+  });
+});
+
 test('prázdný archiv nemá položku menu ani stránku pravidel', async ({ page }) => {
   await page.goto('http://localhost:4322/');
   await expect(page.getByRole('navigation', { name: 'Hlavní' }).getByRole('link', { name: /pravidel|Pravidla/ })).toHaveCount(0);

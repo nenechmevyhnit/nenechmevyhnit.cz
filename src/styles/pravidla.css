@@ -6,7 +6,7 @@
    při nedostatku místa posouvají do strany (skript „+N další“ z hlavní stránky tu neběží). */
 body .filtry.pr-filtry > .vpravo { display: flex; align-items: center; gap: 10px; margin-left: auto; }
 body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
-body .filtry.pr-filtry .f-zrusit[hidden] { display: none; }
+/* Zrušit filtry nechává i neaktivní své místo (visibility z hlavni.css), řádek filtrů se tak neposouvá. */
 
 .pravidla-obal { flex: 1; min-height: 0; display: flex; flex-direction: column; margin-top: 12px; background: var(--plocha); border: 1px solid var(--linka); }
 .pravidla-seznam { flex: 1; min-height: 0; overflow-y: auto; list-style: none; margin: 0; padding: 0; }
@@ -53,7 +53,13 @@ body .filtry.pr-filtry .f-zrusit[hidden] { display: none; }
   .pr-btn { grid-template-columns: minmax(0, 1fr); padding: 10px 14px; }
   .pr-btn .otevrit { display: none; }
   .pr-nazev strong { white-space: normal; }
-  .pr-nazev small { display: none; }
+  /* druhý řádek: stav, komu a závěr; cesta předložení se na mobilu vynechává */
+  .pr-nazev small { font-size: 12px; line-height: 1.35; }
+  .pr-nazev .pr-cesta { display: none; }
+  /* názvy fází se zalamují, nezkracují; ukončení (zamítnuto, staženo) má vlastní řádek */
+  .prubeh { flex-wrap: wrap; font-size: 11px; }
+  .prubeh .f-nazev { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
+  .prubeh li.konec { flex: 1 1 100%; align-self: auto; }
 }
 
 /* detail pravidla: bez svislého posouvání, delší obsah pokračuje ve sloupcích do strany (jako Souvislosti a Zdroje kauzy) */

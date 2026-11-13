@@ -30,12 +30,33 @@ test('první záložka Komu prospívá: závěr, řetězec s odhadem, souvisejí
   await expect(panel.getByRole('link', { name: 'Jak rozbor děláme' })).toHaveAttribute('href', '/metodika/#pravidla');
 });
 
+test('upozornění „Závěr je rozbor archivu“ stojí hned pod závěrem, před řetězcem', async ({ page }) => {
+  await page.goto('/pravidla/zakon-omega/');
+  const panel = page.locator('.m2-panel[data-p="prospech"]');
+  await expect(panel.locator('.pr-zaver + .kriterium')).toContainText('Závěr je rozbor archivu podle metodiky, ne úřední zjištění.');
+  await expect(panel.locator('.kriterium + .retezec')).toHaveCount(1);
+});
+
+test.describe('mobil 390×700', () => {
+  test.use({ viewport: { width: 390, height: 700 } });
+
+  test('upozornění je vidět hned po otevření a názvy fází v hlavičce nejsou zkrácené', async ({ page }) => {
+    for (const slug of ['zakon-omega', 'pozmenovaci-sigma']) {
+      await page.goto(`/pravidla/${slug}/`);
+      await expect(page.locator('.m2-panel[data-p="prospech"] .kriterium')).toBeInViewport();
+      const oriznute = await page.locator('.prubeh-detail .f-nazev').evaluateAll(a => a.filter(e => e.scrollWidth > e.clientWidth + 1).map(e => e.textContent));
+      expect(oriznute, slug).toEqual([]);
+      await overBezPosouvani(page);
+    }
+  });
+});
+
 test('záložka Průběh: cesta předložení, vynechané kontroly a listování', async ({ page }) => {
   await page.goto('/pravidla/zakon-omega/');
   await page.getByRole('tab', { name: 'Průběh' }).click();
   const panel = page.locator('.m2-panel[data-p="chrono"]');
   await expect(panel.locator('.cesta-box')).toContainText('Předkládá: fiktivní poslanci A, B a C.');
-  await expect(panel.locator('.vynechano li')).toHaveText(['neprošel meziresortním připomínkovým řízením', 'bez hodnocení dopadů regulace (RIA)']);
+  await expect(panel.locator('.vynechano li')).toHaveText(['bez meziresortního připomínkového řízení', 'bez hodnocení dopadů regulace (RIA)']);
   const aktualni = panel.locator('.udalosti-seznam > li:not([hidden]) h3');
   await expect(aktualni).toHaveText('Schváleno Sněmovnou');
   await page.keyboard.press('ArrowLeft');

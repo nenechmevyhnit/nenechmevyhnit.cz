@@ -39,6 +39,7 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
       <div class="m2-panel" data-p="prospech" role="tabpanel">
         <h3 class="panel-nadpis">Komu prospívá</h3>{/* jen bez JavaScriptu, kdy jsou všechny části pod sebou */}
         <p class="pr-zaver"><strong>{popisekZaveru(p.prospech.zaver)}</strong>: {popisekKomu(p.prospech.komu)}</p>
+        <p class="kriterium">Závěr je rozbor archivu podle metodiky, ne úřední zjištění. <a href="/metodika/#pravidla">Jak rozbor děláme</a></p>
         <ol class="retezec">
           {p.prospech.retezec.map(k => <li>{k.odhad && <span class="odhad">odhad</span>}{k.odhad && ' '}{k.text}<span class="chipy" set:html={chipy(k.zdroje)}></span></li>)}
         </ol>
@@ -49,7 +50,6 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
             <ul>{p.kauzy.map(k => <li><a href={`/kauzy/${k.kauza}/`}>{nazvyKauz.get(k.kauza) ?? k.kauza}</a>: {k.popis}<span class="chipy" set:html={chipy(k.zdroje)}></span></li>)}</ul>
           </section>
         )}
-        <p class="kriterium">Závěr je rozbor archivu podle metodiky, ne úřední zjištění. <a href="/metodika/#pravidla">Jak rozbor děláme</a></p>
       </div>
       <div class="m2-panel" data-p="chrono" role="tabpanel" hidden>
         <h3 class="panel-nadpis">Průběh</h3>
