@@ -9,8 +9,8 @@ test('přímá adresa otevře detail pravidla s vlastním náhledem', async ({ p
   const dlg = page.locator('dialog#detail');
   await expect(dlg).toBeVisible();
   await expect(dlg.getByRole('heading', { level: 2 })).toHaveText(OMEGA);
-  await expect(page).toHaveTitle(`${OMEGA} — Nenechme vyhnít`);
-  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://nenechmevyhnit.cz/pravidla/zakon-omega/');
+  await expect(page).toHaveTitle(`${OMEGA} — Posuďte sami`);
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://posudtesami.cz/pravidla/zakon-omega/');
   await expect(dlg.locator('.m2-hlava .roky')).toHaveText('Poslanecký návrh zákona · Schváleno Sněmovnou');
   await expect(page.locator('.pr-radek[data-slug="zakon-omega"]')).toHaveClass(/vybrany/);
   await overBezPosouvani(page);
@@ -125,7 +125,7 @@ test('z přehledu se detail otevře bez načtení stránky a zavřením se adres
   expect(await page.evaluate(() => (window as any).bezNacteni)).toBe(true);
   await page.getByRole('button', { name: 'Zavřít detail' }).click();
   await expect(page).toHaveURL(/\/pravidla\/$/);
-  await expect(page).toHaveTitle('Změny pravidel — Nenechme vyhnít');
+  await expect(page).toHaveTitle('Změny pravidel — Posuďte sami');
   await expect(page.locator('.pr-radek.vybrany')).toHaveCount(0);
   await page.goBack();
   await expect(page).toHaveURL(/\/pravidla\/narizeni-tau\/$/);

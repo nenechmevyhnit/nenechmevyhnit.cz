@@ -1,4 +1,4 @@
-# Nenechme vyhnít — specifikace v1
+# Posuďte sami — specifikace v1
 
 *Archiv kauz Andreje Babiše přehledně, s daty a zdroji.*
 Stav: schválený design (brainstorming 10. 11. 2026). Prototypy všech obrazovek jsou v `design/03-detail/`.
@@ -22,12 +22,12 @@ Web je úspěšný, když:
 
 ## 3. Identita a anonymita (pevná pravidla)
 
-- Projekt vystupuje pod názvem *Nenechme vyhnít*. Na webu ani v repozitáři nesmí být osobní údaje provozovatele.
-- Web běží na vlastní doméně **`https://nenechmevyhnit.cz`** (GitHub Pages s vlastní doménou; `www.nenechmevyhnit.cz` přesměrovává na hlavní adresu). Doména musí být v GitHubu ověřená (Settings → Pages → Verified domains), aby ji nikdo nemohl převzít, a HTTPS je vynucené. Do buildu patří soubor `CNAME` s doménou.
-- GitHub účet `nenechmevyhnit`. Název repozitáře nemá s vlastní doménou na adresu vliv. Výchozí název je `nenechmevyhnit.cz`.
+- Projekt vystupuje pod názvem *Posuďte sami* (do 13. 11. 2026 *Nenechme vyhnít*). Na webu ani v repozitáři nesmí být osobní údaje provozovatele.
+- Web běží na vlastní doméně **`https://posudtesami.cz`** (GitHub Pages s vlastní doménou; `www.posudtesami.cz` přesměrovává na hlavní adresu). Doména musí být v GitHubu ověřená (Settings → Pages → Verified domains), aby ji nikdo nemohl převzít, a HTTPS je vynucené. Do buildu patří soubor `CNAME` s doménou.
+- GitHub účet `posudtesami` (do 13. 11. 2026 `nenechmevyhnit`). Název repozitáře nemá s vlastní doménou na adresu vliv. Repozitář se jmenuje `posudtesami.cz` (do 13. 11. 2026 `nenechmevyhnit.cz`).
 - Doménu si provozovatel registruje sám. Při registraci zvolí skrytí osobních údajů ve veřejném WHOIS. Registrátor a CZ.NIC jeho identitu znají, takže anonymita vůči úřadům ani soudům není absolutní.
 - Kontakt `nenechmevyhnit@gmail.com`.
-- Lokální git identita jen pro tento repozitář: jméno „Nenechme vyhnít“ a noreply e-mail GitHubu. Nastaví se před prvním commitem.
+- Lokální git identita jen pro tento repozitář: jméno „Posuďte sami“ a noreply e-mail GitHubu. Nastaví se před prvním commitem.
 - Push přes samostatný SSH klíč s aliasem hostitele `github-nenechme`, nikdy přes uložené přihlášení osobního účtu.
 - Repozitář je samostatný, mimo nadřazený osobní repozitář `Projects`.
 - Neověřené koncepty kauz nejsou nikdy veřejné. Leží v `_koncepty/`, které je v `.gitignore`.

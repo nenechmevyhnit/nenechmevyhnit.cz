@@ -4,7 +4,7 @@ title: "Nová kauza: "
 labels: [nova-kauza]
 body:
   - type: markdown
-    attributes: { value: "Každá kauza musí splňovat [metodiku](https://nenechmevyhnit.cz/metodika/). Bez zdrojů návrh nemůžeme přijmout." }
+    attributes: { value: "Každá kauza musí splňovat [metodiku](https://posudtesami.cz/metodika/). Bez zdrojů návrh nemůžeme přijmout." }
   - type: input
     id: nazev
     attributes: { label: Název kauzy }

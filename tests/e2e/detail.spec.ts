@@ -8,8 +8,8 @@ test('přímá adresa otevře detail s vlastním náhledem', async ({ page }) =>
   const dlg = page.locator('dialog#detail');
   await expect(dlg).toBeVisible();
   await expect(dlg.getByRole('heading', { level: 2 })).toHaveText('Testovací kauza Alfa');
-  await expect(page).toHaveTitle('Testovací kauza Alfa — Nenechme vyhnít');
-  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://nenechmevyhnit.cz/kauzy/alfa-dotace/');
+  await expect(page).toHaveTitle('Testovací kauza Alfa — Posuďte sami');
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://posudtesami.cz/kauzy/alfa-dotace/');
   await expect(page.locator('#graf')).toHaveAttribute('data-vybrano', 'alfa-dotace');
   await overBezPosouvani(page);
 });
@@ -105,7 +105,7 @@ test('stav a stanovisko', async ({ page }) => {
 test('neexistující kauza vrátí stránku 404', async ({ page }) => {
   const odpoved = await page.goto('/kauzy/neexistuje/');
   expect(odpoved?.status()).toBe(404);
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tahle stránka vyhnila');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Tahle stránka zapadla');
 });
 
 test('vyjádření dotčené strany je ve zdrojích označené jako stanovisko, ne jako primární zdroj', async ({ page }) => {

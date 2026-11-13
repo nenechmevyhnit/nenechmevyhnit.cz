@@ -2,7 +2,7 @@ import { inicializujDetail, ukazUdalost } from './detail';
 import { aktualniPohled, nastavPohledPravidel, pohledZAdresy } from './osa-pravidel';
 
 /** Otevírání detailu pravidla bez načítání stránky (obdoba navigace.ts pro kauzy, bez osy a mapy). */
-const TITULEK = 'Změny pravidel — Nenechme vyhnít';
+const TITULEK = 'Změny pravidel — Posuďte sami';
 const mezipamet = new Map<string, { html: string; trida: string; titulek: string }>();
 let zaviramZHistorie = false;
 

@@ -11,7 +11,7 @@ import { nactiKauzy } from '../lib/kauzy';
 
 interface Props { zaznam?: PravidloZaznam }
 const { zaznam } = Astro.props;
-const REPO = 'https://github.com/nenechmevyhnit/nenechmevyhnit.cz';
+const REPO = 'https://github.com/posudtesami/posudtesami.cz';
 const p = zaznam?.pravidlo;
 const nazvyKauz = new Map(nactiKauzy().map(z => [z.slug, z.kauza.nazev]));
 const odstavce = zaznam ? rozdelOdstavce(zaznam.telo) : [];
