@@ -2,10 +2,13 @@
 import Zaklad from '../layouts/Zaklad.astro';
 import KartyStranky from '../components/KartyStranky.astro';
 import { metodika } from '../data/metodika';
+import { maPravidla } from '../lib/kauzy';
 import '../styles/stranky.css';
+const sPravidly = maPravidla();
+const obsah = metodika(sPravidly);
 ---
 <Zaklad titulek="Metodika — Posuďte sami" popis="Pravidla, podle kterých kauzy vybíráme, ověřujeme a opravujeme." cesta="/metodika/" styly="stranky" aktivni="metodika">
   <KartyStranky nadtitulek="Metodika" nadpis="Jak archiv vedeme" perex="Pravidla, podle kterých kauzy vybíráme, ověřujeme a opravujeme."
-    sekce={metodika.sekce} paticka={`Pravidla platí od ${metodika.platiOd}`}
+    sekce={obsah.sekce} paticka={`Pravidla platí od ${obsah.platiOd}`}
     cta={{ nadpis: 'Chcete vědět víc?', text: 'Každá změna metodiky i kauz je veřejně dohledatelná.', odkaz: 'https://github.com/posudtesami/posudtesami.cz/commits/main', popisek: 'Historie změn' }} />
 </Zaklad>

@@ -1,0 +1,13 @@
+---
+import type { Pravidlo } from '../lib/schema-pravidla';
+
+interface Props { kauzy: Pravidlo['kauzy']; nazvyKauz: ReadonlyMap<string, string>; idNadpisu: string }
+const { kauzy, nazvyKauz, idNadpisu } = Astro.props;
+const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="chip" data-zdroj="${c}" aria-label="Zdroj ${c}">${c}</a>`).join('');
+---
+{kauzy.length > 0 && (
+  <section class="vazby" aria-labelledby={idNadpisu}>
+    <h3 id={idNadpisu}>Související kauzy</h3>
+    <ul>{kauzy.map(k => <li><a href={`/kauzy/${k.kauza}/`}>{nazvyKauz.get(k.kauza) ?? k.kauza}</a>: {k.popis}<span class="chipy" set:html={chipy(k.zdroje)}></span></li>)}</ul>
+  </section>
+)}

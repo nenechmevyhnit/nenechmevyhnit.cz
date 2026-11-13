@@ -26,10 +26,10 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: E2E testy
         run: npm run e2e
-      - name: Změněné kauzy
+      - name: Změněné kauzy a pravidla
         id: zmeny
-        run: echo "soubory=$(git diff --name-only --diff-filter=AM origin/main...HEAD -- 'obsah/kauzy/*.md' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
-      - name: Kontrola odkazů ve změněných kauzách
+        run: echo "soubory=$(git diff --name-only --diff-filter=AM origin/main...HEAD -- 'obsah/kauzy/*.md' 'obsah/pravidla/*.md' | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
+      - name: Kontrola odkazů ve změněných kauzách a pravidlech
         if: steps.zmeny.outputs.soubory != ''
         uses: lycheeverse/lychee-action@v2
         with:

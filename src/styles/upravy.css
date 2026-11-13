@@ -25,6 +25,17 @@ body .mini-osa .bod:focus-visible { outline-offset: 0; }
   body .top nav a { margin-left: 12px; font-size: 13px; }
   body .top .brand { font-size: 16px; }
 }
+/* Menu se čtyřmi odkazy (jen když existuje stránka pravidel, třída top-4): značka a písmo se plynule zmenšují s šířkou okna,
+   odkazy zůstávají nejméně na 12 px. Kdyby se ani tak nevešlo vedle značky, menu spadne pod ni. Tříodkazová hlavička
+   (veřejný web bez pravidel) tyto úpravy nemá. */
+@media (max-width: 760px) {
+  body .top.top-4 { flex-wrap: wrap; column-gap: 4px; }
+  body .top.top-4 nav a:first-child { margin-left: 0; }
+  body .top.top-4 .brand { font-size: clamp(12px, 3.4vw, 16px); }
+  body .top.top-4 .brand::before { width: 8px; margin-right: clamp(4px, 1.4vw, 8px); }
+  body .top.top-4 nav { margin-left: auto; }
+  body .top.top-4 nav a { margin-left: clamp(4px, 1.5vw, 12px); font-size: clamp(12px, 3.1vw, 13px); }
+}
 @media (max-width: 760px) {
   body .top .brand, body .top nav a { white-space: nowrap; }
   /* Karty Metodiky a O projektu: na mobilu se text nevejde, celá karta proto otevírá plné znění. */
@@ -422,4 +433,10 @@ body .radek[data-shoda-v-textu] .nazev small::after { content: " · shoda v text
 /* Štítek náhledu konceptů na mobilu dole, ne přes logo a menu (jen lokální náhled, veřejný web ho nemá). */
 @media (max-width: 760px) {
   body .koncepty-stitek { top: auto; bottom: 4px; padding: 3px 8px; font-size: 10px; opacity: .85; }
+}
+/* položka menu Změny pravidel: na mobilu krátký tvar, aby se menu vešlo na jeden řádek */
+.menu-kratky { display: none; }
+@media (max-width: 760px) {
+  .menu-dlouhy { display: none; }
+  .menu-kratky { display: inline; }
 }

@@ -3,13 +3,17 @@ import { join, basename } from 'node:path';
 import matter from 'gray-matter';
 import { parse as parseYaml } from 'yaml';
 import { kauzaSchema, kauzaSchemaKoncepty, akterSchema, akterSchemaKoncepty, type Kauza, type Akter } from './schema';
+import { pravidloSchema, pravidloSchemaKoncepty, type Pravidlo } from './schema-pravidla';
+import { seraditPravidla } from './pravidla';
 import { STRED } from './role';
 import { rozdelOdstavce, poznamkyVOdstavci } from './souvislosti';
 
 export type Chyba = { soubor: string; zprava: string };
 export type KauzaZaznam = { slug: string; kauza: Kauza; telo: string };
-/** koncepty: lokální náhled neověřených konceptů (smí chybět overeno). Nikdy pro veřejný web. */
-export type Rezim = { koncepty?: boolean };
+export type PravidloZaznam = { slug: string; pravidlo: Pravidlo; telo: string };
+/** koncepty: lokální náhled neověřených konceptů (smí chybět overeno). Nikdy pro veřejný web.
+ *  znameKauzy: slugy kauz mimo načítaný adresář (náhled konceptů nevidí zveřejněné kauzy, pravidla na ně ale odkazují). */
+export type Rezim = { koncepty?: boolean; znameKauzy?: Iterable<string> };
 
 export function overKauzu(soubor: string, data: unknown, telo: string, stitky: Set<string>, rezim: Rezim = {}): { kauza?: Kauza; chyby: Chyba[] } {
   const chyby: Chyba[] = [];
@@ -20,13 +24,52 @@ export function overKauzu(soubor: string, data: unknown, telo: string, stitky: S
   }
   const k = r.data;
   for (const s of k.stitky) if (!stitky.has(s)) chyby.push({ soubor, zprava: `Neznámý štítek „${s}“ (doplňte ho do stitky.yml)` });
-  const ids = new Set(k.zdroje.map(z => z.id));
+  chyby.push(...overSouvislosti(soubor, telo, new Set(k.zdroje.map(z => z.id))));
+  return chyby.length ? { chyby } : { kauza: k, chyby };
+}
+
+function overSouvislosti(soubor: string, telo: string, ids: Set<number>): Chyba[] {
+  const chyby: Chyba[] = [];
   rozdelOdstavce(telo).forEach((o, i) => {
     const p = poznamkyVOdstavci(o);
     if (p.length === 0) chyby.push({ soubor, zprava: `Odstavec ${i + 1} souvislostí nemá poznámku se zdrojem [^n]` });
     for (const n of p) if (!ids.has(n)) chyby.push({ soubor, zprava: `Poznámka [^${n}] odkazuje na neexistující zdroj` });
   });
-  return chyby.length ? { chyby } : { kauza: k, chyby };
+  return chyby;
+}
+
+export function overPravidlo(soubor: string, data: unknown, telo: string, stitky: Set<string>, rezim: Rezim = {}): { pravidlo?: Pravidlo; chyby: Chyba[] } {
+  const chyby: Chyba[] = [];
+  const r = (rezim.koncepty ? pravidloSchemaKoncepty : pravidloSchema).safeParse(data);
+  if (!r.success) {
+    for (const i of r.error.issues) chyby.push({ soubor, zprava: `${i.path.join('.') || 'pravidlo'}: ${i.message}` });
+    return { chyby };
+  }
+  const p = r.data;
+  for (const s of p.stitky) if (!stitky.has(s)) chyby.push({ soubor, zprava: `Neznámý štítek „${s}“ (doplňte ho do stitky.yml)` });
+  chyby.push(...overSouvislosti(soubor, telo, new Set(p.zdroje.map(z => z.id))));
+  return chyby.length ? { chyby } : { pravidlo: p, chyby };
+}
+
+/** Vazby pravidel na kauzy. Stejně jako overVazby: veřejný build neexistující kauzu vynechá s varováním,
+ *  v režimu konceptů je to chyba. Slug pravidla se nesmí shodovat se slugem kauzy. */
+export function overVazbyPravidel(adresar: string, pravidla: PravidloZaznam[], slugyKauz: Set<string>, rezim: Rezim = {}): { pravidla: PravidloZaznam[]; chyby: Chyba[]; varovani: Chyba[] } {
+  const chyby: Chyba[] = [];
+  const varovani: Chyba[] = [];
+  const zname = new Set([...slugyKauz, ...(rezim.znameKauzy ?? [])]);
+  const vysledek = pravidla.map(z => {
+    const soubor = join(adresar, 'pravidla', `${z.slug}.md`);
+    if (zname.has(z.slug)) chyby.push({ soubor, zprava: `Slug „${z.slug}“ už používá kauza; pravidlo musí mít jiný název souboru` });
+    const kauzy = z.pravidlo.kauzy.filter(k => {
+      if (zname.has(k.kauza)) return true;
+      const zprava = `Vazba na neexistující kauzu „${k.kauza}“`;
+      if (rezim.koncepty) chyby.push({ soubor, zprava });
+      else varovani.push({ soubor, zprava: `${zprava} (vazba se nezobrazí)` });
+      return false;
+    });
+    return { ...z, pravidlo: { ...z.pravidlo, kauzy } };
+  });
+  return { pravidla: vysledek, chyby, varovani };
 }
 
 export function nactiSlovnikStitku(adresar: string): Map<string, string> {
@@ -99,20 +142,31 @@ export function overVazby(adresar: string, zaznamy: KauzaZaznam[], akteri: Map<s
   return { zaznamy: vysledek, chyby, varovani };
 }
 
-export function overAdresar(adresar: string, rezim: Rezim = {}): { zaznamy: KauzaZaznam[]; stitky: Map<string, string>; akteri: Map<string, Akter>; chyby: Chyba[]; varovani: Chyba[] } {
-  const stitky = nactiSlovnikStitku(adresar);
-  const slozka = join(adresar, 'kauzy');
+type SouborObsahu = { slug: string; soubor: string; data: unknown; content: string };
+
+function nactiSlozku(adresar: string, nazev: string, chyby: Chyba[]): SouborObsahu[] {
+  const slozka = join(adresar, nazev);
   const soubory = existsSync(slozka) ? readdirSync(slozka).filter(f => f.endsWith('.md')).sort() : [];
-  const nactene: KauzaZaznam[] = [];
-  const chyby: Chyba[] = [];
+  const vysledek: SouborObsahu[] = [];
   for (const f of soubory) {
     const soubor = join(slozka, f);
     const slug = basename(f, '.md');
     if (!/^[a-z0-9-]+$/.test(slug)) { chyby.push({ soubor, zprava: 'Název souboru smí obsahovat jen malá písmena bez diakritiky, číslice a pomlčky' }); continue; }
     const { data, content } = matter(readFileSync(soubor, 'utf8'));
-    const r = overKauzu(soubor, data, content, new Set(stitky.keys()), rezim);
+    vysledek.push({ slug, soubor, data, content });
+  }
+  return vysledek;
+}
+
+export function overAdresar(adresar: string, rezim: Rezim = {}): { zaznamy: KauzaZaznam[]; pravidla: PravidloZaznam[]; stitky: Map<string, string>; akteri: Map<string, Akter>; chyby: Chyba[]; varovani: Chyba[] } {
+  const stitky = nactiSlovnikStitku(adresar);
+  const sadaStitku = new Set(stitky.keys());
+  const chyby: Chyba[] = [];
+  const nactene: KauzaZaznam[] = [];
+  for (const s of nactiSlozku(adresar, 'kauzy', chyby)) {
+    const r = overKauzu(s.soubor, s.data, s.content, sadaStitku, rezim);
     chyby.push(...r.chyby);
-    if (r.kauza) nactene.push({ slug, kauza: r.kauza, telo: content });
+    if (r.kauza) nactene.push({ slug: s.slug, kauza: r.kauza, telo: s.content });
   }
   const slovnik = nactiSlovnikAkteru(adresar, rezim);
   chyby.push(...slovnik.chyby);
@@ -120,5 +174,22 @@ export function overAdresar(adresar: string, rezim: Rezim = {}): { zaznamy: Kauz
   chyby.push(...vazby.chyby);
   const zaznamy = vazby.zaznamy;
   zaznamy.sort((a, b) => a.kauza.od - b.kauza.od || a.kauza.nazev.localeCompare(b.kauza.nazev, 'cs'));
-  return { zaznamy, stitky, akteri: slovnik.akteri, chyby, varovani: vazby.varovani };
+
+  const nactenaPravidla: PravidloZaznam[] = [];
+  for (const s of nactiSlozku(adresar, 'pravidla', chyby)) {
+    const r = overPravidlo(s.soubor, s.data, s.content, sadaStitku, rezim);
+    chyby.push(...r.chyby);
+    if (r.pravidlo) nactenaPravidla.push({ slug: s.slug, pravidlo: r.pravidlo, telo: s.content });
+  }
+  const vazbyPravidel = overVazbyPravidel(adresar, nactenaPravidla, new Set(zaznamy.map(z => z.slug)), rezim);
+  chyby.push(...vazbyPravidel.chyby);
+
+  return {
+    zaznamy,
+    pravidla: seraditPravidla(vazbyPravidel.pravidla),
+    stitky,
+    akteri: slovnik.akteri,
+    chyby,
+    varovani: [...vazby.varovani, ...vazbyPravidel.varovani],
+  };
 }

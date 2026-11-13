@@ -28,13 +28,20 @@ function jednouNaDialog(dlg: HTMLDialogElement): void {
   }, { passive: false });
 }
 
+/** Zobrazení události zvenku (osa pravidel, adresa ?udalost=): inicializujDetail sem uloží funkci pro aktuální obsah. */
+const ukazovace = new WeakMap<HTMLDialogElement, (i: number) => boolean>();
+export function ukazUdalost(dlg: HTMLDialogElement, i: number): boolean {
+  return ukazovace.get(dlg)?.(i) ?? false;
+}
+
 export function inicializujDetail(dlg: HTMLDialogElement): void {
+  ukazovace.delete(dlg); // zastaralá funkce z předchozího obsahu, kdyby nový detail žádné události neměl
   const polozky = [...dlg.querySelectorAll<HTMLElement>('.udalosti-seznam > li')];
   if (!polozky.length) return;
   jednouNaDialog(dlg);
   const panelChrono = dlg.querySelector<HTMLElement>('.m2-panel[data-p="chrono"]')!;
   const body = [...dlg.querySelectorAll<HTMLElement>('.mini-osa .bod')];
-  const popis = dlg.querySelector<HTMLElement>('.vybrany-popis')!;
+  const popis = dlg.querySelector<HTMLElement>('.vybrany-popis');
   const [zpet, dal] = dlg.querySelectorAll<HTMLButtonElement>('.listovani [data-krok]');
   const lista = dlg.querySelector<HTMLElement>('.zalozky')!;
   const hlava = dlg.querySelector<HTMLElement>('.m2-hlava')!;
@@ -110,8 +117,10 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
     if (!smer || akt === pred) delete panelChrono.dataset.smer; else panelChrono.dataset.smer = akt > pred ? 'vpred' : 'zpet';
     polozky.forEach((li, j) => { li.hidden = j !== akt; });
     body.forEach((b, j) => b.setAttribute('aria-current', String(j === akt)));
-    popis.style.left = body[akt].style.left;
-    popis.textContent = polozky[akt].querySelector('time')?.firstChild?.textContent ?? '';
+    if (popis && body[akt]) {
+      popis.style.left = body[akt].style.left;
+      popis.textContent = polozky[akt].querySelector('time')?.firstChild?.textContent ?? '';
+    }
     const nazev = (j: number) => polozky[j]?.querySelector('h3')?.textContent ?? '';
     zpet.disabled = akt === 0; dal.disabled = akt === polozky.length - 1;
     zpet.querySelector('span')!.textContent = akt > 0 ? nazev(akt - 1) : '';
@@ -122,9 +131,14 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
     const b = (e.target as HTMLElement).closest<HTMLElement>('[role="tab"]');
     if (b) prepni(b.dataset.p!);
   });
-  dlg.querySelector('.mini-osa')!.addEventListener('click', e => {
+  dlg.querySelector('.mini-osa')?.addEventListener('click', e => {
     const b = (e.target as HTMLElement).closest<HTMLElement>('.bod');
     if (b) { prepni('chrono'); ukaz(Number(b.dataset.i)); }
+  });
+  // detail pravidla: krok v ukazateli průběhu otevře svou událost (prvek je uvnitř dialogu, s obsahem se vyměňuje)
+  dlg.querySelector('.prubeh-detail')?.addEventListener('click', e => {
+    const b = (e.target as HTMLElement).closest<HTMLElement>('[data-udalost]');
+    if (b) { prepni('chrono'); ukaz(Number(b.dataset.udalost)); }
   });
   zpet.addEventListener('click', () => ukaz(akt - 1));
   dal.addEventListener('click', () => ukaz(akt + 1));
@@ -152,4 +166,10 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
     if (s) { e.preventDefault(); navigator.clipboard?.writeText(location.href); s.textContent = 'Odkaz zkopírován ✓'; }
   });
   ukaz(akt, false);
+  ukazovace.set(dlg, (i: number) => {
+    if (!Number.isInteger(i) || i < 0 || i >= polozky.length) return false;
+    prepni('chrono');
+    ukaz(i, false);
+    return true;
+  });
 }

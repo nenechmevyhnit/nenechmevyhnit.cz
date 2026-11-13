@@ -68,7 +68,7 @@ export function delkaLet(od: number, doRok: number | null, dnes: Date = new Date
   return Math.max(0, (doRok ?? rokDo(dnes)) - od);
 }
 
-const slova = (t: string) => normalizuj(t).split(/\s+/).filter(Boolean);
+export const slova = (t: string) => normalizuj(t).split(/\s+/).filter(Boolean);
 
 export function odpovida(p: PolozkaHledani, f: Filtr, dnes: Date = new Date()): boolean {
   if (f.jenOtevrene && !p.otevrena) return false;

@@ -1,8 +1,16 @@
+import { KONTROLNI_INSTITUCE, popisekInstituce, DRUHY_ZNAKU, popisekDruhuZnaku, UPOZORNOVATELE, upozornovatel } from '../lib/pravidla-slovnik';
+
+// Seznamy pro pododdíl Dopad na kontrolu moci se generují ze slovníků, aby nemohly zastarat.
+const seznamInstituci = KONTROLNI_INSTITUCE.map(i => popisekInstituce(i, 'plne')).join(', ');
+const seznamProcedur = DRUHY_ZNAKU.filter(d => d !== 'instituce').map(popisekDruhuZnaku).join(', ');
+const upozornovateleTypu = (typ: 'instituce' | 'profesni-organizace') => UPOZORNOVATELE.filter(u => upozornovatel(u).typ === typ).map(u => upozornovatel(u).nazev).join(', ');
+
 // Texty převzaté doslova ze schválených prototypů (design/03-detail/_metodika.py).
 export type SekceStranky = { id: string; nadpis: string; shrnuti: string; html: string };
 
-export const metodika: { platiOd: string; sekce: SekceStranky[] } = {
-  platiOd: '12. 11. 2026',
+/** Sekce Změny pravidel a věta o ní v kritériích se zobrazí jen tehdy, když archiv nějaká pravidla má (jinak stránka ani menu neexistují). */
+export const metodika = (sPravidly: boolean): { platiOd: string; sekce: SekceStranky[] } => ({
+  platiOd: '13. 11. 2026',
   sekce: [
     {
       id: "kriteria",
@@ -13,7 +21,7 @@ export const metodika: { platiOd: string; sekce: SekceStranky[] } = {
 <li>existuje úřední zjištění, například rozsudek, audit nebo rozhodnutí úřadu,</li>
 <li>věc nezávisle na sobě doložily aspoň dvě seriózní redakce.</li></ul>
 <p>U každé kauzy je hned na začátku vysvětleno, <strong>proč je to kauza</strong>: v čem je věc sporná a proč ji řešil úřad nebo média, se zdrojem. Uvádíme také, podle kterého kritéria je zařazena. Kontrola při sestavení webu ho ověřuje: úřední řízení a úřední zjištění musí doložit primární zdroj, dvě redakce musí doložit dva mediální zdroje od různých vydavatelů.</p>
-<p>Kroky vlády jako celku zatím nezařazujeme.</p>
+${sPravidly ? '<p>Změny pravidel, které předkládá nebo vydává vláda či vládní koalice, mají vlastní část archivu s vlastními pravidly (oddíl Změny pravidel).</p>' : '<p>Kroky vlády jako celku zatím nezařazujeme.</p>'}
 <h3 id="vazby">Vazby mezi kauzami</h3>
 <p>Kauzy lze kromě časové osy zobrazit jako <strong>mapu souvislostí</strong>. Ukazuje, přes které firmy, osoby a nástroje (například svěřenské fondy) jsou kauzy spojené s Andrejem Babišem a které kauzy na sebe přímo navazují.</p>
 <ul><li>Každá vazba má <strong>roli</strong> z pevného seznamu (například <em>vlastní</em>, <em>příjemce dotace</em>, <em>vychází z</em>), krátké vysvětlení a <strong>zdroj</strong>. Bez zdroje se web nesestaví. Vztahy firem, osob a nástrojů mají navíc období, kdy platily.</li>
@@ -94,5 +102,39 @@ export const metodika: { platiOd: string; sekce: SekceStranky[] } = {
 <dt>Úřední zjištění</dt><dd>Závěr úřadu mimo trestní řízení, například audit Evropské komise nebo NKÚ.</dd>
 </dl>`,
     },
+    ...(sPravidly ? [{
+      id: "pravidla",
+      nadpis: "Změny pravidel",
+      shrnuti: "Zákony, nařízení a další pravidla současné vlády, u kterých rozbor archivu ukazuje prospěch pro Andreje Babiše nebo Agrofert, nebo která mění kontrolu moci a instituce na to upozornily.",
+      html: `<p>Vedle kauz archiv zaznamenává <strong>změny pravidel</strong>: zákony a jejich novely, pozměňovací návrhy, nařízení vlády, vyhlášky ministerstev, pravidla dotačních programů, usnesení vlády a pokyny ministerstev s obecnou působností. Zapisujeme je od chvíle, kdy jsou oficiálně předložené nebo zveřejněné, a průběžně doplňujeme, jak projednávání pokračuje. Záznamy nemažeme: zamítnutý nebo stažený návrh zůstává v archivu s tímto stavem.</p>
+<p>Změna pravidla do archivu patří ze dvou důvodů: když rozbor ukáže prospěch pro Andreje Babiše nebo Agrofert, nebo když mění kontrolu moci a instituce nebo profesní organizace na to upozornila (viz níže). Kvůli prospěchu patří do archivu, když splní <strong>všechny</strong> tyto podmínky:</p>
+<ul><li>má oficiální text (sněmovní tisk, připomínkové řízení, Sbírka zákonů nebo zveřejněná výzva),</li>
+<li>předložila nebo vydala ji vláda jmenovaná 9. 12. 2025, její ministerstva, státní fondy, nebo poslanci a senátoři vládní koalice,</li>
+<li>rozbor ukáže prospěch pro Andreje Babiše osobně nebo pro Agrofert,</li>
+<li>dopadá na ně zvlášť, ne plošně na všechny: na úzký obor, příjemce konkrétní dotace, členy vlády nebo na řízení, které Babiš či Agrofert vedou.</li></ul>
+<p>Plošné změny, třeba sazbu DPH pro všechny, sem nezařazujeme. Rozhodnutí v jednotlivém případě patří ke kauze, které se týká.</p>
+<p>Zatím nezařazujeme ani záměry bez oficiálního textu, změny, u kterých rozbor vede jen k jiným podnikům než k Agrofertu, a kroky z let 2014–2021, kdy byl Andrej Babiš ministrem financí a premiérem.</p>
+<h3 id="retezec">Rozbor krok za krokem</h3>
+<p>U každé změny sestavíme z textu předpisu <strong>řetězec</strong>: co pravidlo mění, jakého faktu o Babišovi nebo Agrofertu se to týká a jaký z toho plyne důsledek. Každý krok má vlastní zdroj a první krok vždy cituje text předpisu. Krok, který stojí na odhadu, je viditelně označený. Každá změna má navíc krátké shrnutí, proč by prospěla. Je to jedna až dvě věty se zdrojem, podrobnosti jsou v řetězci.</p>
+<dl class="slovnicek">
+<dt>prospěch doložen</dt><dd>Žádný krok řetězce nestojí na odhadu.</dd>
+<dt>prospěch pravděpodobný</dt><dd>Aspoň jeden krok stojí na odhadu, například jak se nová lhůta uplatní na už zahájená řízení.</dd>
+</dl>
+<p>Kde z rozboru nic jasného nevyjde, změnu nezveřejníme. <strong>Závěr je rozbor archivu, ne úřední zjištění.</strong> U každé změny uvádíme stanovisko předkladatele. Když chybí, uvedeme aspoň účel, který předkladatel napsal do důvodové zprávy nebo odůvodnění.</p>
+<h3 id="cesta">Cesta předložení</h3>
+<p>Vládní návrh zákona projde meziresortním připomínkovým řízením, hodnocením dopadů regulace (RIA) a Legislativní radou vlády. U jiných cest tyto kontroly odpadají a u záznamu to uvádíme:</p>
+<ul><li><strong>poslanecký a senátní návrh:</strong> bez meziresortního připomínkového řízení a bez hodnocení dopadů regulace,</li>
+<li><strong>pozměňovací návrh:</strong> navíc bez stanoviska vlády a bez prvního čtení, protože se podává až ve druhém čtení jako změna projednávaného návrhu.</li></ul>
+<p>Jde o popis legislativního procesu, ne o hodnocení.</p>
+<h3 id="kontrola-moci">Dopad na kontrolu moci</h3>
+<p>Druhým důvodem zařazení je změna, která se týká kontroly moci. Do archivu patří, když splní <strong>všechny</strong> tyto podmínky:</p>
+<ul><li>má oficiální text a předložila nebo vydala ji vládní většina, stejně jako u prospěchu,</li>
+<li><strong>institucionální znak:</strong> mění pravomoci, nezávislost, způsob jmenování nebo odvolání, nebo financování některé z těchto oblastí: ${seznamInstituci},</li>
+<li><strong>procedurální znak:</strong> ${seznamProcedur}. Přílepek je pozměňovací návrh mimo předmět projednávaného zákona, legislativní nouze je projednání ve stavu legislativní nouze,</li>
+<li>na tento znak upozornila aspoň jedna instituce (${upozornovateleTypu('instituce')}) nebo profesní organizace (${upozornovateleTypu('profesni-organizace')}). Upozornění se musí týkat právě tohoto pravidla a tohoto znaku, ne obecného tématu.</li></ul>
+<p>Kritika jen od opozice, watchdogů nebo médií k zařazení nestačí. Hodnotící slova ve vlastním textu nepoužíváme. Zapisujeme, co pravidlo mění, s odkazem na ustanovení, a kdo na to upozornil. <strong>Záznam dopadu na kontrolu moci je záznam upozornění institucí, ne hodnocení archivu.</strong> Personální a jiná jednotlivá rozhodnutí sem nepatří.</p>
+<h3 id="vyhrady">Výhrady a jazyk</h3>
+<p>Uvádíme výhrady institucí, jako je Legislativní rada vlády, ÚOHS, NKÚ, Evropská komise nebo veřejný ochránce práv. Výhrady opozice patří do souvislostí a označujeme je jako politické. Dokud změna neplatí, píšeme podmiňovacím způsobem: novela <em>by zkrátila</em>, <em>umožnila by</em>. Upozornění ke znaku kontroly moci neřadíme mezi výhrady, uvádíme je v záložce Kontrola moci (oddíl Dopad na kontrolu moci).</p>`,
+    }] : []),
   ],
-};
+});

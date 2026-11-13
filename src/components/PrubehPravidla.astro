@@ -1,0 +1,29 @@
+---
+import { prubeh, popisekKroku, type Krok } from '../lib/pravidla-stavy';
+import type { DruhPravidla } from '../lib/pravidla-slovnik';
+import { datumText } from '../lib/casova-osa';
+
+/** Ukazatel průběhu projednávání. V řádku přehledu je jen k pohledu (leží v odkazu, nesmí obsahovat tlačítka),
+ *  v hlavičce detailu (interaktivni) kroky otevírají své události. */
+interface Props { druh: DruhPravidla; udalosti: { datum: string; krok?: Krok }[]; interaktivni?: boolean }
+const { druh, udalosti, interaktivni = false } = Astro.props;
+const { faze, konec } = prubeh(druh, udalosti);
+const stavFaze = (f: (typeof faze)[number]) => (f.hotovo ? 'hotovo' : f.poznamka ? f.poznamka.toLowerCase() : 'zatím ne');
+---
+<ol class={`prubeh${interaktivni ? ' prubeh-detail' : ''}`} aria-label="Průběh projednávání">
+  {faze.map(f => {
+    const obsah = <><span class="f-nazev">{f.nazev}</span><time>{f.poznamka ?? (f.datum ? datumText(f.datum) : ' ')}</time><span class="jen-ctecka">{`: ${stavFaze(f)}${f.datum ? `, ${datumText(f.datum)}` : ''}`}</span></>;
+    return (
+      <li class={[f.hotovo && 'hotovo', f.poznamka && 'vraceno'].filter(Boolean).join(' ') || undefined}>
+        {interaktivni && f.udalost !== null ? <button type="button" data-udalost={f.udalost}>{obsah}</button> : obsah}
+      </li>
+    );
+  })}
+  {konec && (
+    <li class="konec">
+      {interaktivni
+        ? <button type="button" data-udalost={konec.udalost}>{popisekKroku(konec.krok)} <time>{datumText(konec.datum)}</time></button>
+        : <>{popisekKroku(konec.krok)} <time>{datumText(konec.datum)}</time></>}
+    </li>
+  )}
+</ol>

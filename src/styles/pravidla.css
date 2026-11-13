@@ -1,0 +1,167 @@
+/* Změny pravidel: přehled a detail. Barvy a písma z hlavni.css, žádná červená, barva nehodnotí. */
+.pr-hero { padding: 28px 0 18px; }
+.pr-hero h1 { font-size: clamp(26px, 3.2vw, 44px); line-height: 1.05; }
+
+/* Filtry přehledu: počítadlo zůstává v řádku filtrů (na hlavní stránce ho přebírá záhlaví osy) a témata se
+   při nedostatku místa posouvají do strany (skript „+N další“ z hlavní stránky tu neběží). */
+body .filtry.pr-filtry > .vpravo { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
+/* Zrušit filtry nechává i neaktivní své místo (visibility z hlavni.css), řádek filtrů se tak neposouvá. */
+
+.pravidla-obal { flex: 1; min-height: 0; display: flex; flex-direction: column; margin-top: 12px; background: var(--plocha); border: 1px solid var(--linka); }
+.pravidla-obal[hidden] { display: none; }
+/* kotví .jen-ctecka uvnitř posouvaného seznamu */
+.pravidla-seznam { position: relative; flex: 1; min-height: 0; overflow-y: auto; list-style: none; margin: 0; padding: 0; }
+.pr-radek + .pr-radek { border-top: 1px solid var(--linka); }
+.pr-btn { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 1fr) auto; gap: 6px 24px; align-items: center; padding: 10px 18px; color: inherit; text-decoration: none; }
+.pr-btn:hover, .pr-radek.vybrany .pr-btn { background: color-mix(in srgb, var(--modra) 6%, var(--plocha)); }
+.pr-btn:focus-visible { outline: 2px solid var(--modra); outline-offset: -2px; }
+.pr-nazev { min-width: 0; }
+.pr-nazev strong { display: block; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pr-nazev small { display: block; font: 12px/1.4 var(--f-mono); color: var(--meta); }
+.pr-nazev .pr-proc-radek { display: block; margin-top: 2px; font-size: 13px; line-height: 1.4; color: var(--meta); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pr-btn .otevrit { font: 12px var(--f-mono); color: var(--modra); }
+.archiv-prazdny, .pravidla-seznam .prazdno { padding: 18px; color: var(--meta); }
+
+.prubeh { display: flex; gap: 4px; list-style: none; margin: 0; padding: 0; font: 11px/1.3 var(--f-mono); }
+.prubeh li { flex: 1 1 0; min-width: 0; border-top: 3px solid var(--linka); padding-top: 4px; color: var(--meta); }
+.prubeh li.hotovo { border-top-color: var(--modra); color: var(--inkoust); }
+.prubeh li.vraceno { border-top-style: dashed; border-top-color: var(--inkoust); }
+.prubeh li.konec { flex: none; align-self: flex-end; border: 1px solid var(--inkoust); padding: 1px 6px; color: var(--inkoust); }
+.prubeh .f-nazev { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.prubeh time { display: block; white-space: nowrap; }
+
+/* detail */
+.prubeh-detail { margin: 16px 0 4px; max-width: 720px; font-size: 12px; }
+.prubeh-detail button { all: unset; display: block; width: 100%; cursor: pointer; }
+.prubeh-detail button:focus-visible { outline: 2px solid var(--modra); outline-offset: 2px; }
+.planovano { margin: 6px 0 0; max-width: 720px; font-size: 13px; color: var(--meta); }
+.pr-zaver { margin: 0 0 8px; }
+.pr-proc { margin: 0 0 8px; max-width: 46em; }
+.retezec { margin: 0 0 12px; padding-left: 1.4em; max-width: 46em; }
+.retezec li { margin: 6px 0; }
+.odhad { font: 11px var(--f-mono); border: 1px solid var(--inkoust); padding: 0 5px; margin-right: 4px; white-space: nowrap; }
+.dalsi-dotceni { max-width: 46em; }
+.znaky, .upozorneni { margin: 0 0 12px; padding-left: 1.2em; max-width: 46em; }
+.znaky li, .upozorneni li { margin: 6px 0; }
+.m2-panel[data-p="kontrola"] h4 { margin: 12px 0 4px; font-size: 14px; }
+.cesta-box { margin: 0 0 14px; padding: 8px 14px; border-left: 3px solid var(--linka); }
+.cesta-box p { margin: 0 0 4px; }
+.vynechano { margin: 4px 0 0; padding-left: 1.2em; font-size: 14px; color: var(--text2); }
+.vyhrady ul { padding-left: 1.2em; }
+
+@media (max-width: 760px) {
+  body .filtry.f4.pr-filtry { flex-wrap: wrap; overflow-x: visible; }
+  body .filtry.pr-filtry .f-hledat { flex: 1 1 100%; }
+  body .filtry.pr-filtry .f-cipy-obal { order: 2; flex: 1 1 100%; }
+  body .filtry.pr-filtry .f-prepinac { order: 3; }
+  body .filtry.pr-filtry > .vpravo { order: 4; }
+  .pr-hero { padding: 14px 0 10px; }
+  .pr-hero .u2-pod { display: none; }
+  .pr-btn { grid-template-columns: minmax(0, 1fr); padding: 10px 14px; }
+  .pr-btn .otevrit { display: none; }
+  .pr-nazev strong { white-space: normal; }
+  /* druhý řádek: stav, komu a závěr; cesta předložení se na mobilu vynechává */
+  .pr-nazev small { font-size: 12px; line-height: 1.35; }
+  .pr-nazev .pr-cesta { display: none; }
+  .pr-nazev .pr-proc-radek { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; white-space: normal; }
+  /* názvy fází se zalamují, nezkracují; ukončení (zamítnuto, staženo) má vlastní řádek */
+  .prubeh { flex-wrap: wrap; font-size: 11px; }
+  .prubeh .f-nazev { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
+  .prubeh li.konec { flex: 1 1 100%; align-self: auto; }
+}
+
+/* detail pravidla: bez svislého posouvání, delší obsah pokračuje ve sloupcích do strany (jako Souvislosti a Zdroje kauzy) */
+.pravidlo .m2-panel[data-p="prospech"], .pravidlo .m2-panel[data-p="kontrola"], .pravidlo .m2-panel[data-p="vyhrady"] { overflow-x: auto; overflow-y: hidden; column-width: 320px; column-gap: 36px; column-fill: auto; }
+.pravidlo .m2-panel[data-p="prospech"] :is(p, li, .stanovisko, .overeno, .opravy), .pravidlo .m2-panel[data-p="kontrola"] :is(p, li), .pravidlo .m2-panel[data-p="vyhrady"] :is(p, li, .stanovisko, .overeno, .opravy) { break-inside: avoid; }
+.pravidlo .m2-panel :is(h3, h4) { break-after: avoid; }
+.pravidlo .m2-panel[data-p="prospech"] > .panel-nadpis, .pravidlo .m2-panel[data-p="kontrola"] > .panel-nadpis, .pravidlo .m2-panel[data-p="vyhrady"] > .panel-nadpis { margin-top: 0; }
+.pravidlo .retezec { max-width: none; }
+.pravidlo .znaky, .pravidlo .upozorneni { max-width: none; }
+.pravidlo .m2-panel[data-p="chrono"]:not([hidden]) { display: grid; grid-template-columns: minmax(220px, 300px) 1fr; grid-template-rows: minmax(0, 1fr) auto; gap: 0 28px; }
+/* delší cesta předložení (vynechané kontroly, připojení) se posouvá ve vlastním boxu, neořízne se */
+.pravidlo .m2-panel[data-p="chrono"] .cesta-box { grid-column: 1; grid-row: 1; margin: 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
+.pravidlo .m2-panel[data-p="chrono"] .cesta-box:focus-visible { outline-offset: -3px; }
+.pravidlo .m2-panel[data-p="chrono"] .udalosti-seznam { grid-column: 2; grid-row: 1; min-height: 0; overflow: hidden; }
+.pravidlo .m2-panel[data-p="chrono"] .udalost-velka { grid-template-columns: 150px 1fr; gap: 20px; }
+.pravidlo .m2-panel[data-p="chrono"] .listovani { grid-column: 1 / -1; grid-row: 2; }
+@media (max-width: 760px) {
+  .pravidlo .m2-panel[data-p="prospech"], .pravidlo .m2-panel[data-p="kontrola"], .pravidlo .m2-panel[data-p="vyhrady"] { column-width: 260px; }
+  .pravidlo .m2-panel[data-p="chrono"]:not([hidden]) { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; gap: 8px 0; }
+  /* na mobilu má cesta předložení nejvýš asi pět řádků, zbytek místa patří události */
+  .pravidlo .m2-panel[data-p="chrono"] .cesta-box { grid-row: 1; padding: 4px 10px; font-size: 14px; max-height: 7.5em; }
+  .pravidlo .m2-panel[data-p="chrono"] .cesta-box p { margin: 0 0 2px; }
+  .pravidlo .m2-panel[data-p="chrono"] .vynechano { font-size: 13px; }
+  .pravidlo .m2-panel[data-p="chrono"] .udalosti-seznam { grid-column: 1; grid-row: 2; }
+  .pravidlo .m2-panel[data-p="chrono"] .udalost-velka { grid-template-columns: 1fr; gap: 6px; }
+  .pravidlo .m2-panel[data-p="chrono"] .listovani { grid-row: 3; margin-top: 0; padding-top: 8px; }
+  .pravidlo .m2-panel[data-p="chrono"] .listovani button { padding: 6px 10px; }
+  .pravidlo .m2-panel[data-p="chrono"] .listovani button span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+}
+
+/* nízké a široké okno: hlavička a listování zabírají méně místa, aby se do Průběhu vešla cesta předložení i událost */
+@media (max-height: 640px) and (min-width: 761px) {
+  .pravidlo .m2-hlava { padding-top: 16px; }
+  .pravidlo .m2-hlava h2 { font-size: 28px; margin: 4px 0 6px; }
+  .pravidlo .prubeh-detail { margin: 8px 0 0; }
+  .pravidlo .m2-panel { padding-top: 14px; padding-bottom: 14px; }
+  .pravidlo .m2-panel[data-p="chrono"]:not([hidden]) { grid-template-columns: minmax(260px, 380px) 1fr; }
+  .pravidlo .m2-panel[data-p="chrono"] .cesta-box { padding: 4px 14px; font-size: 15px; line-height: 1.3; }
+  .pravidlo .m2-panel[data-p="chrono"] .vynechano { font-size: 13px; }
+  .pravidlo .m2-panel[data-p="chrono"] .listovani { margin-top: 6px; padding-top: 8px; }
+  .pravidlo .m2-panel[data-p="chrono"] .listovani button { padding: 4px 14px; }
+}
+
+/* Přepínač Seznam · Časová osa (stejný vzhled jako přepínač Osa · Mapa na hlavní stránce) */
+.pr-pohled { display: inline-flex; border: 1px solid var(--linka); flex: none; }
+.pr-pohled[hidden] { display: none; }
+.pr-pohled button { font: 500 12px var(--f-text); border: 0; background: var(--plocha); color: var(--inkoust); padding: 2px 9px; cursor: pointer; }
+.pr-pohled button[aria-pressed="true"] { background: var(--modra); color: #fff; }
+
+/* Časová osa: zabírá stejné místo jako seznam, posouvá se jen uvnitř */
+.osa-pravidel { flex: 1; min-height: 0; display: flex; flex-direction: column; margin-top: 12px; background: var(--plocha); border: 1px solid var(--linka); }
+.osa-pravidel[hidden] { display: none; }
+.op-plocha { flex: 1; min-height: 0; overflow: auto; --nazvy: 240px; --odstup: 84px; --mesic: 39px; }
+/* šířka podle počtu měsíců: do ~20 měsíců se osa vejde, delší rozsah se posouvá do strany místo stlačení popisků */
+.op-radky, .op-hlava { min-width: calc(var(--nazvy) + 28px + var(--odstup) + var(--mesicu, 12) * var(--mesic)); }
+.op-hlava, .op-radek { display: grid; grid-template-columns: var(--nazvy) 1fr; }
+.op-hlava { position: sticky; top: 0; z-index: 2; background: var(--plocha); border-bottom: 1px solid var(--linka); height: 38px; }
+.op-roh { position: sticky; left: 0; background: var(--plocha); z-index: 1; }
+.op-mesice, .op-cas { position: relative; margin: 0 14px 0 calc(14px + var(--odstup)); } /* vlevo místo pro „◀ dříve“ */
+.op-znacka { position: absolute; top: 3px; transform: translateX(-1px); font: 11px var(--f-mono); color: var(--meta); white-space: nowrap; border-left: 1px solid var(--linka); padding-left: 3px; }
+.op-znacka.rok { color: var(--inkoust); border-left-color: var(--inkoust); }
+.op-dnes-popisek { position: absolute; top: 20px; transform: translateX(-50%); font: 600 11px var(--f-mono); color: var(--modra); background: var(--plocha); padding: 0 3px; }
+.op-radky { list-style: none; margin: 0; padding: 0; }
+.op-radek { min-height: 40px; border-bottom: 1px solid var(--linka); }
+.op-radek[hidden] { display: none; }
+.op-nazev { position: sticky; left: 0; z-index: 1; background: var(--plocha); display: flex; flex-direction: column; justify-content: center; padding: 4px 10px; min-width: 0; color: inherit; text-decoration: none; border-right: 1px solid var(--linka); }
+.op-nazev strong { font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.op-nazev small { font: 11px var(--f-mono); color: var(--meta); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.op-dnes { position: absolute; top: 0; bottom: 0; width: 0; border-left: 1px dashed var(--modra); }
+.op-cara { position: absolute; top: 50%; height: 2px; background: var(--inkoust); transform: translateY(-1px); }
+.op-cara.budouci { background: none; border-top: 2px dashed var(--meta); height: 0; }
+.op-bod { position: absolute; top: 50%; width: 12px; height: 12px; transform: translate(calc(-50% + var(--posun, 0) * 9px), -50%); box-sizing: border-box; }
+.op-bod.krok { border-radius: 50%; background: var(--inkoust); }
+.op-bod.konec { background: var(--inkoust); }
+.op-bod.udalost { width: 9px; height: 9px; border-radius: 50%; border: 2px solid var(--meta); background: var(--plocha); }
+.op-bod.ucinnost { border: 2px dashed var(--inkoust); background: var(--plocha); transform: translate(-50%, -50%) rotate(45deg); }
+.op-bod:focus-visible, .op-drive:focus-visible { outline: 3px solid var(--modra); outline-offset: 2px; }
+.op-nazev:focus-visible { outline: 3px solid var(--modra); outline-offset: -3px; }
+.op-drive { position: absolute; left: calc(-1 * var(--odstup)); top: 50%; transform: translateY(-50%); font: 11px var(--f-mono); color: var(--meta); white-space: nowrap; }
+.op-legenda { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: 0; padding: 6px 10px; font-size: 12px; color: var(--meta); border-top: 1px solid var(--linka); }
+.op-legenda .op-bod { position: static; display: inline-block; vertical-align: middle; transform: none; margin-right: 4px; }
+.op-legenda .op-bod.ucinnost { transform: rotate(45deg); margin-right: 8px; }
+.op-vzor { display: inline-block; vertical-align: middle; width: 22px; height: 2px; margin-right: 4px; background: var(--inkoust); }
+.op-vzor.budouci { height: 0; background: none; border-top: 2px dashed var(--meta); margin-right: 2px; }
+.op-uvod { margin: 0; padding: 6px 10px; font-size: 13px; line-height: 1.35; border-bottom: 1px solid var(--linka); }
+.op-prazdno { margin: 12px; }
+/* nic neodpovídá filtru: hláška je nahoře, prázdná osa a legenda se skryjí */
+.osa-pravidel:has(.op-prazdno:not([hidden])) :is(.op-uvod, .op-plocha, .op-legenda) { display: none; }
+.op-popisek { position: fixed; z-index: 20; max-width: min(360px, calc(100vw - 8px)); padding: 4px 8px; font-size: 12px; background: var(--inkoust); color: #fff; }
+@media (max-width: 760px) {
+  .op-plocha { --nazvy: 120px; --mesic: 44px; }
+  /* na mobilu bez příkladů v legendě a s menším písmem, aby zbylo místo pro řádky osy */
+  .op-uvod { font-size: 12px; padding: 4px 8px; }
+  .op-legenda { font-size: 11px; gap: 2px 10px; padding: 4px 8px; }
+  .op-priklad { display: none; }
+}

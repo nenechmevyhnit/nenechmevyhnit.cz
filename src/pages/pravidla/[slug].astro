@@ -1,0 +1,13 @@
+---
+import PrehledPravidel from '../../components/PrehledPravidel.astro';
+import DetailPravidla from '../../components/DetailPravidla.astro';
+import { nactiPravidla } from '../../lib/kauzy';
+
+export function getStaticPaths() {
+  return nactiPravidla().map(z => ({ params: { slug: z.slug }, props: { zaznam: z } }));
+}
+const { zaznam } = Astro.props;
+---
+<PrehledPravidel otevrene={zaznam}>
+  <DetailPravidla slot="detail" zaznam={zaznam} />
+</PrehledPravidel>

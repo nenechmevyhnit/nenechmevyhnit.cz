@@ -2,10 +2,13 @@
 import Zaklad from '../layouts/Zaklad.astro';
 import KartyStranky from '../components/KartyStranky.astro';
 import { oProjektu } from '../data/o-projektu';
+import { maPravidla } from '../lib/kauzy';
 import '../styles/stranky.css';
+const sPravidly = maPravidla();
+const obsah = oProjektu(sPravidly);
 ---
 <Zaklad titulek="O projektu — Posuďte sami" popis="Nezávislý archiv bez vazby na politickou stranu, bez reklam a bez sledování." cesta="/o-projektu/" styly="stranky" aktivni="o-projektu">
   <KartyStranky nadtitulek="O projektu" nadpis="Kdo, proč a jak" perex="Nezávislý archiv bez vazby na politickou stranu, bez reklam a bez sledování."
-    sekce={oProjektu.sekce} paticka="Texty pod licencí CC BY 4.0"
+    sekce={obsah.sekce} paticka="Texty pod licencí CC BY 4.0"
     cta={{ nadpis: 'Podle čeho kauzy vybíráme?', text: 'Kritéria, zdroje a postup ověřování popisuje metodika.', odkaz: '/metodika/', popisek: 'Metodika' }} />
 </Zaklad>

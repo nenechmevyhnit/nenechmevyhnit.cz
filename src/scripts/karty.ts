@@ -1,3 +1,4 @@
+import { oznacNacteno } from './nacteno';
 export function inicializujKarty(): void {
   const dlg = document.querySelector<HTMLDialogElement>('.v4-dlg');
   if (!dlg) return;
@@ -50,9 +51,18 @@ export function inicializujKarty(): void {
   document.querySelectorAll<HTMLElement>('.v4-karta button[data-sekce]').forEach(b => b.addEventListener('click', () => { ukaz(b.dataset.sekce!); dlg.showModal(); }));
   dlg.querySelectorAll<HTMLElement>('.v4-dlg-menu button').forEach(b => b.addEventListener('click', () => ukaz(b.dataset.sekce!)));
   dlg.querySelector('.zavrit')!.addEventListener('click', () => dlg.close());
-  // přímý odkaz na část stránky, např. /metodika/#kriteria
+  // přímý odkaz na část stránky, např. /metodika/#kriteria, nebo na pododdíl, např. /metodika/#kontrola-moci
   const cil = decodeURIComponent(location.hash.slice(1));
-  if (cil && dlg.querySelector(`.v4-dlg-panel[data-sekce="${CSS.escape(cil)}"]`)) { ukaz(cil); dlg.showModal(); }
+  const panelCile = cil
+    ? dlg.querySelector<HTMLElement>(`.v4-dlg-panel[data-sekce="${CSS.escape(cil)}"]`)
+      ?? dlg.querySelector<HTMLElement>(`#${CSS.escape(cil)}`)?.closest<HTMLElement>('.v4-dlg-panel')
+      ?? null
+    : null;
+  if (panelCile) {
+    ukaz(panelCile.dataset.sekce!);
+    dlg.showModal();
+    if (panelCile.dataset.sekce !== cil) requestAnimationFrame(() => dlg.querySelector<HTMLElement>(`#${CSS.escape(cil)}`)?.scrollIntoView({ block: 'nearest', inline: 'start' }));
+  }
   dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
-  setTimeout(() => document.body.classList.add('nacteno'), matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1600);
+  oznacNacteno(1600);
 }

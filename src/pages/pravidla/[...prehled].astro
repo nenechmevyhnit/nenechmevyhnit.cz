@@ -1,0 +1,13 @@
+---
+import PrehledPravidel from '../../components/PrehledPravidel.astro';
+import DetailPravidla from '../../components/DetailPravidla.astro';
+import { maPravidla } from '../../lib/kauzy';
+
+// Volitelný parametr: stránka /pravidla/ vznikne jen tehdy, když jsou pravidla (jinak 404 a žádná položka menu).
+export function getStaticPaths() {
+  return maPravidla() ? [{ params: { prehled: undefined } }] : [];
+}
+---
+<PrehledPravidel>
+  <DetailPravidla slot="detail" />
+</PrehledPravidel>

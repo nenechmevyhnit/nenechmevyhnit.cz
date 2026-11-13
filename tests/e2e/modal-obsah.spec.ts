@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { VELIKOSTI } from './pomocne';
+import { VELIKOSTI, presahPanelu } from './pomocne';
 
 // Delší texty v modalu nesmí být oříznuté: buď se vejdou, nebo pokračují ve sloupcích do strany.
 for (const v of VELIKOSTI) {
@@ -8,24 +8,7 @@ for (const v of VELIKOSTI) {
     await page.goto('/kauzy/zeta-stret/');
     for (const zalozka of ['Proč je to kauza', 'Chronologie', 'Souvislosti', 'Stav a stanovisko', /^Zdroje/]) {
       await page.getByRole('tab', { name: zalozka }).click();
-      const presah = await page.evaluate(() => {
-        const panel = document.querySelector<HTMLElement>('#detail .m2-panel:not([hidden])')!;
-        const spodek = panel.getBoundingClientRect().bottom;
-        let max = 0;
-        // obsah uvnitř boxu s vlastním svislým posuvníkem není oříznutý, jen se posouvá
-        const vPosuvniku = (el: HTMLElement) => {
-          for (let p = el.parentElement; p && p !== panel; p = p.parentElement) {
-            const oy = getComputedStyle(p).overflowY;
-            if ((oy === 'auto' || oy === 'scroll') && p.getBoundingClientRect().bottom <= spodek + 1) return true;
-          }
-          return false;
-        };
-        for (const el of panel.querySelectorAll<HTMLElement>('*')) {
-          if (!el.getClientRects().length || el.closest('[hidden]') || vPosuvniku(el)) continue;
-          for (const r of el.getClientRects()) max = Math.max(max, r.bottom - spodek);
-        }
-        return Math.round(max);
-      });
+      const presah = await presahPanelu(page);
       expect(presah, `záložka ${zalozka}: obsah přesahuje spodek panelu o ${presah} px`).toBeLessThanOrEqual(1);
     }
     await page.getByRole('tab', { name: 'Stav a stanovisko' }).click();
