@@ -18,7 +18,7 @@ Web je úspěšný, když:
 
 **V1 obsahuje:** historické kauzy Andreje Babiše (rozsah „A“), hlavní stránku s osou, detail kauzy, stránky Metodika a O projektu, automatické kontroly a nasazení.
 
-**Mimo v1:** průběžný záznam kroků vlády (legislativa, exekutiva; rozsah „B“). Datový model je na něj připravený přes pole `typ`. Dále mimo v1: fulltext přes celý web mimo hledání na hlavní stránce, anglická verze, redakční systém (CMS) a generované náhledové obrázky pro jednotlivé kauzy.
+**Mimo v1:** průběžný záznam kroků vlády (legislativa, exekutiva; rozsah „B“). Řeší ho samostatná sbírka podle `2026-11-13-zmeny-pravidel-design.md`, ne pole `typ`. Dále mimo v1: fulltext přes celý web mimo hledání na hlavní stránce, anglická verze, redakční systém (CMS) a generované náhledové obrázky pro jednotlivé kauzy.
 
 ## 3. Identita a anonymita (pevná pravidla)
 
