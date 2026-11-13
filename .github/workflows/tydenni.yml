@@ -39,6 +39,6 @@ jobs:
           branch: automat/archivace-zdroju
           title: Doplnění archivních kopií zdrojů
           commit-message: Doplnění archivních kopií zdrojů
-          author: Posuďte sami <354814288+nenechmevyhnit@users.noreply.github.com>
-          committer: Posuďte sami <354814288+nenechmevyhnit@users.noreply.github.com>
+          author: Posuďte sami <354814288+posudtesami@users.noreply.github.com>
+          committer: Posuďte sami <354814288+posudtesami@users.noreply.github.com>
           body: Automaticky doplněné odkazy na Wayback Machine u zdrojů, které archivní kopii neměly.

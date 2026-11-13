@@ -11,7 +11,7 @@ import type { SouvisejiciPravidlo } from '../lib/pravidla';
 
 interface Props { zaznam?: KauzaZaznam; vazby?: VazbyKauzy; naMapu?: boolean; pravidla?: SouvisejiciPravidlo[] }
 const { zaznam, vazby, naMapu = false, pravidla = [] } = Astro.props;
-const REPO = 'https://github.com/nenechmevyhnit/nenechmevyhnit.cz';
+const REPO = 'https://github.com/posudtesami/posudtesami.cz';
 const k = zaznam?.kauza;
 const poloha = (d: string) => k ? polohaVKauze(d, k.od, k.do) : 0;
 const posledni = k ? k.udalosti.length - 1 : 0;
