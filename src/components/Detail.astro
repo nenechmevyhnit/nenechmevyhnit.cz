@@ -7,9 +7,10 @@ import { popisekKriteria } from '../lib/kriteria';
 import { castkaText, popisekDruhu } from '../lib/castky';
 import type { VazbyKauzy } from '../lib/mapa';
 import SeznamZdroju from './SeznamZdroju.astro';
+import type { SouvisejiciPravidlo } from '../lib/pravidla';
 
-interface Props { zaznam?: KauzaZaznam; vazby?: VazbyKauzy; naMapu?: boolean }
-const { zaznam, vazby, naMapu = false } = Astro.props;
+interface Props { zaznam?: KauzaZaznam; vazby?: VazbyKauzy; naMapu?: boolean; pravidla?: SouvisejiciPravidlo[] }
+const { zaznam, vazby, naMapu = false, pravidla = [] } = Astro.props;
 const REPO = 'https://github.com/nenechmevyhnit/nenechmevyhnit.cz';
 const k = zaznam?.kauza;
 const poloha = (d: string) => k ? polohaVKauze(d, k.od, k.do) : 0;
@@ -82,6 +83,14 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
               {vazby.navazujiNaNi.length > 0 && <li><em>Navazují na ni:</em> {vazby.navazujiNaNi.map((n, i) => <>{i > 0 && ', '}<a href={`/kauzy/${n.slug}/`} data-kauza={n.slug}>{n.nazev}</a></>)}</li>}
             </ul>
             {naMapu && <a class="na-mapu" href={`/?pohled=mapa&vyber=${zaznam.slug}`} data-na-mapu={zaznam.slug}>Ukázat na mapě →</a>}
+          </section>
+        )}
+        {pravidla.length > 0 && (
+          <section class="souvisejici-pravidla" aria-labelledby="pravidla-kauzy-nadpis">
+            <h3 id="pravidla-kauzy-nadpis">Související změny pravidel</h3>
+            <ul>
+              {pravidla.map(p => <li><a href={`/pravidla/${p.slug}/`}>{p.nazev}</a> ({p.stav}): {p.popis}</li>)}
+            </ul>
           </section>
         )}
       </div>

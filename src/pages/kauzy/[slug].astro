@@ -1,7 +1,7 @@
 ---
 import HlavniStranka from '../../components/HlavniStranka.astro';
 import Detail from '../../components/Detail.astro';
-import { nactiKauzy, nactiAktery, maMapu } from '../../lib/kauzy';
+import { nactiKauzy, nactiAktery, maMapu, souvisejiciPravidla } from '../../lib/kauzy';
 import { vazbyKauzy } from '../../lib/mapa';
 
 export function getStaticPaths() {
@@ -11,5 +11,5 @@ const { zaznam } = Astro.props;
 const vazby = vazbyKauzy(nactiKauzy(), nactiAktery(), zaznam.slug);
 ---
 <HlavniStranka otevrena={zaznam}>
-  <Detail slot="detail" zaznam={zaznam} vazby={vazby} naMapu={maMapu()} />
+  <Detail slot="detail" zaznam={zaznam} vazby={vazby} naMapu={maMapu()} pravidla={souvisejiciPravidla(zaznam.slug)} />
 </HlavniStranka>
