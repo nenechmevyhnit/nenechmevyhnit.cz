@@ -69,7 +69,7 @@ const popis = otevrene
   <PatickaRadek />
   <Fragment slot="mimo"><slot name="detail" /></Fragment>
 </Zaklad>
-<script type="application/json" id="nv-pravidla" set:html={jsonDoSkriptu(zaznamy.map(vytvorPolozkuPravidla))}></script>
+<script type="application/json" id="nv-pravidla" set:html={jsonDoSkriptu(zaznamy.map(z => vytvorPolozkuPravidla(z, stitky)))}></script>
 <script>
   import { inicializujFiltrPravidel } from '../scripts/pravidla-filtr';
   import { inicializujNavigaciPravidel } from '../scripts/navigace-pravidel';
