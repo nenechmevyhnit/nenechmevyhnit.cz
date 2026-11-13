@@ -128,25 +128,35 @@ test.describe('bez JavaScriptu', () => {
     await page.goto('/pravidla/zakon-omega/');
     for (const p of ['prospech', 'chrono', 'vyhrady', 'zdroje']) await expect(page.locator(`.m2-panel[data-p="${p}"]`)).toBeVisible();
   });
+
+  test('detail jen s kontrolou moci ukáže všechny své části pod sebou', async ({ page }) => {
+    await page.goto('/pravidla/usneseni-kappa/');
+    for (const p of ['kontrola', 'chrono', 'vyhrady', 'zdroje']) await expect(page.locator(`.m2-panel[data-p="${p}"]`)).toBeVisible();
+    await expect(page.locator('.m2-panel[data-p="prospech"]')).toHaveCount(0);
+  });
 });
 
 for (const v of VELIKOSTI) {
   test(`${v.width}×${v.height}: detail pravidla se neposouvá dolů`, async ({ page }) => {
     await page.setViewportSize(v);
-    await page.goto('/pravidla/zakon-omega/');
-    await overBezPosouvani(page);
+    for (const adresa of ['/pravidla/zakon-omega/', '/pravidla/usneseni-kappa/']) {
+      await page.goto(adresa);
+      await overBezPosouvani(page);
+    }
   });
 }
 
 // Delší texty v detailu pravidla nesmí být oříznuté: buď se vejdou, nebo pokračují ve sloupcích do strany.
 const ZALOZKY = ['Komu prospívá', 'Průběh', 'Výhrady a stanovisko', /^Zdroje/];
+const ZALOZKY_KAPPA = ['Kontrola moci', 'Průběh', 'Výhrady a stanovisko', /^Zdroje/];
 for (const v of VELIKOSTI) {
   test(`${v.width}×${v.height}: v žádné záložce detailu pravidla není oříznutý obsah`, async ({ page }) => {
     await page.setViewportSize(v);
     for (const [adresa, zalozky] of [
-      ['/pravidla/zakon-omega/', ZALOZKY],
+      ['/pravidla/zakon-omega/', [...ZALOZKY, 'Kontrola moci']],
       ['/pravidla/pozmenovaci-sigma/', ZALOZKY],
       ['/pravidla/narizeni-tau/', [...ZALOZKY, 'Souvislosti']],
+      ['/pravidla/usneseni-kappa/', ZALOZKY_KAPPA],
     ] as const) {
       await page.goto(adresa);
       for (const zalozka of zalozky) {
@@ -157,3 +167,52 @@ for (const v of VELIKOSTI) {
     }
   });
 }
+
+test('pravidlo jen s kontrolou moci otevře záložku Kontrola moci: znaky, upozornění a odkaz na Metodiku', async ({ page }) => {
+  await page.goto('/pravidla/usneseni-kappa/');
+  await expect(page.getByRole('tab')).toHaveText(['Kontrola moci', 'Průběh', 'Výhrady a stanovisko', 'Zdroje (3)']);
+  await expect(page.getByRole('tab', { name: 'Kontrola moci' })).toHaveAttribute('aria-selected', 'true');
+  const panel = page.locator('.m2-panel[data-p="kontrola"]');
+  await expect(panel).toBeVisible();
+  await expect(panel.locator('.kriterium')).toContainText('Záznam upozornění institucí, ne hodnocení archivu.');
+  await expect(panel.locator('.kriterium').getByRole('link')).toHaveAttribute('href', '/metodika/#kontrola-moci');
+  await expect(panel.locator('.znaky > li')).toHaveCount(1);
+  await expect(panel.locator('.znaky > li')).toContainText('soudy');
+  await expect(panel.locator('.znaky > li')).toContainText('Usnesení by svěřilo výběr fiktivních soudců');
+  await expect(panel.locator('.upozorneni > li')).toContainText('Soudcovská unie ČR');
+  await expect(panel.locator('.upozorneni > li')).toContainText('profesní organizace');
+  await panel.locator('.upozorneni a[data-zdroj="2"]').click();
+  await expect(page.locator('.m2-panel[data-p="zdroje"]')).toBeVisible();
+  await expect(page.locator('#zdroj-2')).toBeInViewport();
+});
+
+test('pravidlo s oběma důvody má obě záložky v pořadí Komu prospívá, Kontrola moci', async ({ page }) => {
+  await page.goto('/pravidla/zakon-omega/');
+  await expect(page.getByRole('tab')).toHaveText(['Komu prospívá', 'Kontrola moci', 'Průběh', 'Výhrady a stanovisko', 'Zdroje (4)']);
+  await expect(page.getByRole('tab', { name: 'Komu prospívá' })).toHaveAttribute('aria-selected', 'true');
+  await page.getByRole('tab', { name: 'Kontrola moci' }).click();
+  await expect(page.locator('.m2-panel[data-p="kontrola"] .znaky > li')).toContainText('zpětná účinnost');
+  await expect(page.locator('.m2-panel[data-p="kontrola"] .upozorneni > li')).toContainText('Legislativní rada vlády');
+});
+
+test('pravidlo jen s prospěchem záložku Kontrola moci nemá', async ({ page }) => {
+  await page.goto('/pravidla/narizeni-tau/');
+  await expect(page.getByRole('tab', { name: 'Kontrola moci' })).toHaveCount(0);
+});
+
+test('přechod bez načtení z pravidla s prospěchem na pravidlo jen s kontrolou moci otevře Kontrolu moci', async ({ page }) => {
+  await page.goto('/pravidla/zakon-omega/');
+  await page.getByRole('button', { name: 'Zavřít detail' }).click();
+  await page.locator('.pr-radek[data-slug="usneseni-kappa"] a.pr-btn').click();
+  await expect(page).toHaveURL(/\/pravidla\/usneseni-kappa\/$/);
+  await expect(page.getByRole('tab', { name: 'Kontrola moci' })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('.m2-panel[data-p="kontrola"]')).toBeVisible();
+});
+
+test('Průběh usnesení vlády: cesta bez vynechaných kontrol', async ({ page }) => {
+  await page.goto('/pravidla/usneseni-kappa/');
+  await page.getByRole('tab', { name: 'Průběh' }).click();
+  const panel = page.locator('.m2-panel[data-p="chrono"]');
+  await expect(panel.locator('.cesta-box')).toContainText('Usnesení vlády');
+  await expect(panel.locator('.vynechano')).toHaveCount(0);
+});

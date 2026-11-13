@@ -4,7 +4,7 @@ import PrubehPravidla from './PrubehPravidla.astro';
 import SeznamZdroju from './SeznamZdroju.astro';
 import { rozdelOdstavce, odstavecNaHtml } from '../lib/souvislosti';
 import { datumText } from '../lib/casova-osa';
-import { popisekCesty, popisekKomu, popisekZaveru, vynechaneKontroly } from '../lib/pravidla-slovnik';
+import { popisekCesty, popisekKomu, popisekZaveru, vynechaneKontroly, popisekZnaku, popisekDruhuZnaku, upozornovatel, popisekTypuUpozornovatele } from '../lib/pravidla-slovnik';
 import { stavPravidla, popisekKroku } from '../lib/pravidla-stavy';
 import { nactiKauzy } from '../lib/kauzy';
 
@@ -16,6 +16,16 @@ const nazvyKauz = new Map(nactiKauzy().map(z => [z.slug, z.kauza.nazev]));
 const odstavce = zaznam ? rozdelOdstavce(zaznam.telo) : [];
 const kontroly = p ? vynechaneKontroly(p.cesta) : [];
 const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="chip" data-zdroj="${c}" aria-label="Zdroj ${c}">${c}</a>`).join('');
+// Záložky podle toho, co záznam má. Otevřená je první zobrazená (spec kontroly moci, oddíl 7).
+const zalozky = p ? [
+  ...(p.prospech ? [{ id: 'prospech', nazev: 'Komu prospívá' }] : []),
+  ...(p.kontrolaMoci ? [{ id: 'kontrola', nazev: 'Kontrola moci' }] : []),
+  { id: 'chrono', nazev: 'Průběh' },
+  { id: 'vyhrady', nazev: 'Výhrady a stanovisko' },
+  ...(odstavce.length > 0 ? [{ id: 'souv', nazev: 'Souvislosti' }] : []),
+  { id: 'zdroje', nazev: `Zdroje (${p.zdroje.length})` },
+] : [];
+const prvni = zalozky[0]?.id;
 ---
 <!-- Stránka pravidla má dialog otevřený už v HTML, aby byl obsah vidět i bez JavaScriptu; skript ho přepne na modální. -->
 <dialog class="detail m2 pravidlo" id="detail" aria-labelledby="detail-nadpis" data-slug={zaznam?.slug} open={p ? true : undefined}>
@@ -30,28 +40,44 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
         <PrubehPravidla druh={p.druh} udalosti={p.udalosti} interaktivni />
       </header>
       <div class="zalozky" role="tablist">
-        <button role="tab" type="button" data-p="prospech" aria-selected="true">Komu prospívá</button>
-        <button role="tab" type="button" data-p="chrono" aria-selected="false">Průběh</button>
-        <button role="tab" type="button" data-p="vyhrady" aria-selected="false">Výhrady a stanovisko</button>
-        {odstavce.length > 0 && <button role="tab" type="button" data-p="souv" aria-selected="false">Souvislosti</button>}
-        <button role="tab" type="button" data-p="zdroje" aria-selected="false">Zdroje ({p.zdroje.length})</button>
+        {zalozky.map(z => <button role="tab" type="button" data-p={z.id} aria-selected={String(z.id === prvni)}>{z.nazev}</button>)}
       </div>
-      <div class="m2-panel" data-p="prospech" role="tabpanel">
-        <h3 class="panel-nadpis">Komu prospívá</h3>{/* jen bez JavaScriptu, kdy jsou všechny části pod sebou */}
-        <p class="pr-zaver"><strong>{popisekZaveru(p.prospech.zaver)}</strong>: {popisekKomu(p.prospech.komu)}</p>
-        <p class="kriterium">Závěr je rozbor archivu podle metodiky, ne úřední zjištění. <a href="/metodika/#pravidla">Jak rozbor děláme</a></p>
-        <ol class="retezec">
-          {p.prospech.retezec.map(k => <li>{k.odhad && <span class="odhad">odhad</span>}{k.odhad && ' '}{k.text}<span class="chipy" set:html={chipy(k.zdroje)}></span></li>)}
-        </ol>
-        {p.prospech.dalsiDotceni && <p class="dalsi-dotceni"><strong>Koho dalšího se změna týká:</strong> {p.prospech.dalsiDotceni.text}<span class="chipy" set:html={chipy(p.prospech.dalsiDotceni.zdroje)}></span></p>}
-        {p.kauzy.length > 0 && (
-          <section class="vazby" aria-labelledby="kauzy-pravidla-nadpis">
-            <h3 id="kauzy-pravidla-nadpis">Související kauzy</h3>
-            <ul>{p.kauzy.map(k => <li><a href={`/kauzy/${k.kauza}/`}>{nazvyKauz.get(k.kauza) ?? k.kauza}</a>: {k.popis}<span class="chipy" set:html={chipy(k.zdroje)}></span></li>)}</ul>
-          </section>
-        )}
-      </div>
-      <div class="m2-panel" data-p="chrono" role="tabpanel" hidden>
+      {p.prospech && (
+        <div class="m2-panel" data-p="prospech" role="tabpanel" hidden={prvni !== 'prospech'}>
+          <h3 class="panel-nadpis">Komu prospívá</h3>{/* jen bez JavaScriptu, kdy jsou všechny části pod sebou */}
+          <p class="pr-zaver"><strong>{popisekZaveru(p.prospech.zaver)}</strong>: {popisekKomu(p.prospech.komu)}</p>
+          <p class="kriterium">Závěr je rozbor archivu podle metodiky, ne úřední zjištění. <a href="/metodika/#pravidla">Jak rozbor děláme</a></p>
+          <ol class="retezec">
+            {p.prospech.retezec.map(k => <li>{k.odhad && <span class="odhad">odhad</span>}{k.odhad && ' '}{k.text}<span class="chipy" set:html={chipy(k.zdroje)}></span></li>)}
+          </ol>
+          {p.prospech.dalsiDotceni && <p class="dalsi-dotceni"><strong>Koho dalšího se změna týká:</strong> {p.prospech.dalsiDotceni.text}<span class="chipy" set:html={chipy(p.prospech.dalsiDotceni.zdroje)}></span></p>}
+          {p.kauzy.length > 0 && (
+            <section class="vazby" aria-labelledby="kauzy-pravidla-nadpis">
+              <h3 id="kauzy-pravidla-nadpis">Související kauzy</h3>
+              <ul>{p.kauzy.map(k => <li><a href={`/kauzy/${k.kauza}/`}>{nazvyKauz.get(k.kauza) ?? k.kauza}</a>: {k.popis}<span class="chipy" set:html={chipy(k.zdroje)}></span></li>)}</ul>
+            </section>
+          )}
+        </div>
+      )}
+      {p.kontrolaMoci && (
+        <div class="m2-panel" data-p="kontrola" role="tabpanel" hidden={prvni !== 'kontrola'}>
+          <h3 class="panel-nadpis">Kontrola moci</h3>
+          <p class="kriterium">Záznam upozornění institucí, ne hodnocení archivu. <a href="/metodika/#kontrola-moci">Jak záznam děláme</a></p>
+          <h4>Co pravidlo mění</h4>
+          <ul class="znaky">
+            {p.kontrolaMoci.znaky.map(zn => (
+              <li><strong>{popisekZnaku(zn)}</strong>{zn.druh === 'instituce' && <> ({popisekDruhuZnaku(zn.druh)})</>}: {zn.text}<span class="chipy" set:html={chipy(zn.zdroje)}></span></li>
+            ))}
+          </ul>
+          <h4>Kdo upozornil a na co</h4>
+          <ul class="upozorneni">
+            {p.kontrolaMoci.upozorneni.map(u => (
+              <li><strong>{upozornovatel(u.kdo).nazev}</strong> ({popisekTypuUpozornovatele(upozornovatel(u.kdo).typ)}): {u.text}<span class="chipy" set:html={chipy(u.zdroje)}></span></li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <div class="m2-panel" data-p="chrono" role="tabpanel" hidden={prvni !== 'chrono'}>
         <h3 class="panel-nadpis">Průběh</h3>
         <div class="cesta-box">
           <p><strong>{popisekCesty(p.cesta)}</strong>{p.oznaceni && <>, {p.oznaceni}</>}. Předkládá: {p.predkladatel}.</p>
@@ -74,7 +100,7 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
           <button type="button" data-krok="1" style="text-align:right"><small>další →</small><span></span></button>
         </div>
       </div>
-      <div class="m2-panel" data-p="vyhrady" role="tabpanel" hidden>
+      <div class="m2-panel" data-p="vyhrady" role="tabpanel" hidden={prvni !== 'vyhrady'}>
         <h3 class="panel-nadpis">Výhrady a stanovisko</h3>
         <div class="vyhrady">
           <h4>Výhrady institucí</h4>
@@ -87,12 +113,12 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
         {p.opravy.length > 0 && <div class="opravy"><h4>Opravy</h4><ul>{p.opravy.map(o => <li>{datumText(o.datum)}: {o.popis}</li>)}</ul></div>}
       </div>
       {odstavce.length > 0 && (
-        <div class="m2-panel" data-p="souv" role="tabpanel" hidden>
+        <div class="m2-panel" data-p="souv" role="tabpanel" hidden={prvni !== 'souv'}>
           <h3 class="panel-nadpis">Souvislosti</h3>
           {odstavce.map(o => <p set:html={odstavecNaHtml(o)}></p>)}
         </div>
       )}
-      <div class="m2-panel" data-p="zdroje" role="tabpanel" hidden>
+      <div class="m2-panel" data-p="zdroje" role="tabpanel" hidden={prvni !== 'zdroje'}>
         <h3 class="panel-nadpis">{`Zdroje (${p.zdroje.length})`}</h3>
         <SeznamZdroju zdroje={p.zdroje} />
         <div class="paticka-detailu">
