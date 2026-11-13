@@ -129,11 +129,12 @@ ${sPravidly ? '<p>Změny pravidel, které předkládá nebo vydává vláda či 
 <h3 id="kontrola-moci">Dopad na kontrolu moci</h3>
 <p>Druhým důvodem zařazení je změna, která se týká kontroly moci. Do archivu patří, když splní <strong>všechny</strong> tyto podmínky:</p>
 <ul><li>má oficiální text a předložila nebo vydala ji vládní většina, stejně jako u prospěchu,</li>
-<li>mění pravomoci, nezávislost, způsob jmenování nebo odvolání, nebo financování některé z těchto oblastí: ${seznamInstituci}, nebo nese procedurální znak: ${seznamProcedur},</li>
-<li>na tento znak upozornila aspoň jedna instituce (${upozornovateleTypu('instituce')}) nebo profesní organizace (${upozornovateleTypu('profesni-organizace')}).</li></ul>
+<li><strong>institucionální znak:</strong> mění pravomoci, nezávislost, způsob jmenování nebo odvolání, nebo financování některé z těchto oblastí: ${seznamInstituci},</li>
+<li><strong>procedurální znak:</strong> ${seznamProcedur}. Přílepek je pozměňovací návrh mimo předmět projednávaného zákona, legislativní nouze je projednání ve stavu legislativní nouze,</li>
+<li>na tento znak upozornila aspoň jedna instituce (${upozornovateleTypu('instituce')}) nebo profesní organizace (${upozornovateleTypu('profesni-organizace')}). Upozornění se musí týkat právě tohoto pravidla a tohoto znaku, ne obecného tématu.</li></ul>
 <p>Kritika jen od opozice, watchdogů nebo médií k zařazení nestačí. Hodnotící slova ve vlastním textu nepoužíváme. Zapisujeme, co pravidlo mění, s odkazem na ustanovení, a kdo na to upozornil. <strong>Záznam dopadu na kontrolu moci je záznam upozornění institucí, ne hodnocení archivu.</strong> Personální a jiná jednotlivá rozhodnutí sem nepatří.</p>
 <h3 id="vyhrady">Výhrady a jazyk</h3>
-<p>Uvádíme výhrady institucí, jako je Legislativní rada vlády, ÚOHS, NKÚ, Evropská komise nebo veřejný ochránce práv. Výhrady opozice patří do souvislostí a označujeme je jako politické. Dokud změna neplatí, píšeme podmiňovacím způsobem: novela <em>by zkrátila</em>, <em>umožnila by</em>.</p>`,
+<p>Uvádíme výhrady institucí, jako je Legislativní rada vlády, ÚOHS, NKÚ, Evropská komise nebo veřejný ochránce práv. Výhrady opozice patří do souvislostí a označujeme je jako politické. Dokud změna neplatí, píšeme podmiňovacím způsobem: novela <em>by zkrátila</em>, <em>umožnila by</em>. Upozornění ke znaku kontroly moci neřadíme mezi výhrady, uvádíme je v záložce Kontrola moci (oddíl Dopad na kontrolu moci).</p>`,
     }] : []),
   ],
 });

@@ -170,7 +170,7 @@ for (const v of VELIKOSTI) {
 
 test('pravidlo jen s kontrolou moci otevře záložku Kontrola moci: znaky, upozornění a odkaz na Metodiku', async ({ page }) => {
   await page.goto('/pravidla/usneseni-kappa/');
-  await expect(page.getByRole('tab')).toHaveText(['Kontrola moci', 'Průběh', 'Výhrady a stanovisko', 'Zdroje (3)']);
+  await expect(page.getByRole('tab')).toHaveText(['Kontrola moci', 'Průběh', 'Výhrady a stanovisko', 'Zdroje (6)']);
   await expect(page.getByRole('tab', { name: 'Kontrola moci' })).toHaveAttribute('aria-selected', 'true');
   const panel = page.locator('.m2-panel[data-p="kontrola"]');
   await expect(panel).toBeVisible();
@@ -216,4 +216,21 @@ test('Průběh usnesení vlády: cesta bez vynechaných kontrol', async ({ page 
   const panel = page.locator('.m2-panel[data-p="chrono"]');
   await expect(panel.locator('.cesta-box')).toContainText('Usnesení vlády');
   await expect(panel.locator('.vynechano')).toHaveCount(0);
+});
+
+test('Kontrola moci bez prospěchu ukáže související kauzy a Výhrady odkážou na Kontrolu moci', async ({ page }) => {
+  await page.goto('/pravidla/usneseni-kappa/');
+  const vazby = page.locator('.m2-panel[data-p="kontrola"] .vazby');
+  await expect(vazby.getByRole('heading')).toHaveText('Související kauzy');
+  await expect(vazby.getByRole('link', { name: 'Testovací kauza Žeta' })).toHaveAttribute('href', '/kauzy/zeta-stret/');
+  await page.getByRole('tab', { name: 'Výhrady a stanovisko' }).click();
+  await expect(page.locator('.m2-panel[data-p="vyhrady"]')).toContainText('Další výhrady institucí zatím nejsou zapsané. Upozornění ke kontrole moci jsou v záložce Kontrola moci.');
+});
+
+test('každé upozornění odkazuje na zdroj svého upozorňovatele', async ({ page }) => {
+  await page.goto('/pravidla/usneseni-kappa/');
+  const li = page.locator('.m2-panel[data-p="kontrola"] .upozorneni > li');
+  await expect(li.nth(1).locator('a[data-zdroj]')).toHaveText(['4']);
+  await expect(li.nth(2).locator('a[data-zdroj]')).toHaveText(['6']);
+  await expect(li.nth(3).locator('a[data-zdroj]')).toHaveText(['5']);
 });

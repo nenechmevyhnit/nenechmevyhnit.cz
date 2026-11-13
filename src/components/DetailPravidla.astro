@@ -1,6 +1,7 @@
 ---
 import type { PravidloZaznam } from '../lib/validace';
 import PrubehPravidla from './PrubehPravidla.astro';
+import VazbyPravidla from './VazbyPravidla.astro';
 import SeznamZdroju from './SeznamZdroju.astro';
 import { rozdelOdstavce, odstavecNaHtml } from '../lib/souvislosti';
 import { datumText } from '../lib/casova-osa';
@@ -51,12 +52,7 @@ const prvni = zalozky[0]?.id;
             {p.prospech.retezec.map(k => <li>{k.odhad && <span class="odhad">odhad</span>}{k.odhad && ' '}{k.text}<span class="chipy" set:html={chipy(k.zdroje)}></span></li>)}
           </ol>
           {p.prospech.dalsiDotceni && <p class="dalsi-dotceni"><strong>Koho dalšího se změna týká:</strong> {p.prospech.dalsiDotceni.text}<span class="chipy" set:html={chipy(p.prospech.dalsiDotceni.zdroje)}></span></p>}
-          {p.kauzy.length > 0 && (
-            <section class="vazby" aria-labelledby="kauzy-pravidla-nadpis">
-              <h3 id="kauzy-pravidla-nadpis">Související kauzy</h3>
-              <ul>{p.kauzy.map(k => <li><a href={`/kauzy/${k.kauza}/`}>{nazvyKauz.get(k.kauza) ?? k.kauza}</a>: {k.popis}<span class="chipy" set:html={chipy(k.zdroje)}></span></li>)}</ul>
-            </section>
-          )}
+          <VazbyPravidla kauzy={p.kauzy} nazvyKauz={nazvyKauz} idNadpisu="kauzy-pravidla-nadpis" />
         </div>
       )}
       {p.kontrolaMoci && (
@@ -71,10 +67,12 @@ const prvni = zalozky[0]?.id;
           </ul>
           <h4>Kdo upozornil a na co</h4>
           <ul class="upozorneni">
-            {p.kontrolaMoci.upozorneni.map(u => (
-              <li><strong>{upozornovatel(u.kdo).nazev}</strong> ({popisekTypuUpozornovatele(upozornovatel(u.kdo).typ)}): {u.text}<span class="chipy" set:html={chipy(u.zdroje)}></span></li>
-            ))}
+            {p.kontrolaMoci.upozorneni.map(u => {
+              const kdo = upozornovatel(u.kdo);
+              return <li><strong>{kdo.nazev}</strong> ({popisekTypuUpozornovatele(kdo.typ)}): {u.text}<span class="chipy" set:html={chipy(u.zdroje)}></span></li>;
+            })}
           </ul>
+          {!p.prospech && <VazbyPravidla kauzy={p.kauzy} nazvyKauz={nazvyKauz} idNadpisu="kauzy-pravidla-kontrola-nadpis" />}
         </div>
       )}
       <div class="m2-panel" data-p="chrono" role="tabpanel" hidden={prvni !== 'chrono'}>
@@ -106,7 +104,7 @@ const prvni = zalozky[0]?.id;
           <h4>Výhrady institucí</h4>
           {p.vyhrady.length > 0
             ? <ul>{p.vyhrady.map(v => <li><strong>{v.kdo}:</strong> {v.text}<span class="chipy" set:html={chipy(v.zdroje)}></span></li>)}</ul>
-            : <p>Výhrady institucí zatím nejsou zapsané.</p>}
+            : <p>{p.kontrolaMoci ? 'Další výhrady institucí zatím nejsou zapsané. Upozornění ke kontrole moci jsou v záložce Kontrola moci.' : 'Výhrady institucí zatím nejsou zapsané.'}</p>}
         </div>
         <div class="stanovisko"><h4>Stanovisko předkladatele</h4><p>{p.stanovisko.text}<span class="chipy" set:html={chipy(p.stanovisko.zdroje)}></span></p></div>
         <div class="overeno">{p.overeno ? <>Naposledy ověřeno {datumText(p.overeno)}</> : <strong>Koncept, zatím neověřeno</strong>}</div>

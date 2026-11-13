@@ -91,6 +91,11 @@ describe('řazení a zpětné vazby', () => {
       nazev: 'Testovací novela zákona Omega s dlouhým názvem pro mobil',
       popis: 'Zkrácení lhůty by se dotklo fiktivního řízení Žeta.',
       stav: 'Schváleno Sněmovnou',
+    }, {
+      slug: 'usneseni-kappa',
+      nazev: 'Testovací usnesení vlády Kappa',
+      popis: 'Fiktivní výběr soudců by se dotkl fiktivního řízení Žeta.',
+      stav: 'Vyhlášeno',
     }]);
     expect(pravidlaKauzy(r.pravidla, 'alfa-dotace')).toEqual([]);
   });

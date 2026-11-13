@@ -68,7 +68,7 @@ const vytvorPravidloSchema = (koncepty: boolean) => z
 
     if (!p.prospech && !p.kontrolaMoci) chyba('Záznam musí mít aspoň jeden důvod zařazení: prospech nebo kontrolaMoci');
 
-    // Závěr řetězce (spec pravidel, oddíl 4)
+    // Prospěch: odkazy a závěr řetězce (spec pravidel, oddíl 4)
     if (p.prospech) {
       p.prospech.retezec.forEach((k, i) => over(k.zdroje, `Krok řetězce ${i + 1}`));
       if (p.prospech.dalsiDotceni) over(p.prospech.dalsiDotceni.zdroje, 'Další dotčení');
