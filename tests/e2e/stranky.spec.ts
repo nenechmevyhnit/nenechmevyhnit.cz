@@ -80,11 +80,11 @@ test('kolečko myši posouvá delší oddíl modalu do strany', async ({ page })
 test.describe('mobil 390×700', () => {
   test.use({ viewport: { width: 390, height: 700 } });
 
-  test('menu ukazuje všechny tři odkazy na jednom řádku', async ({ page }) => {
+  test('menu ukazuje všechny odkazy na jednom řádku', async ({ page }) => {
     for (const cesta of ['/', '/metodika/']) {
       await page.goto(cesta);
       const odkazy = page.getByRole('navigation', { name: 'Hlavní' }).getByRole('link');
-      await expect(odkazy).toHaveCount(3);
+      await expect(odkazy).toHaveCount(4);
       for (const o of await odkazy.all()) await expect(o).toBeVisible();
       const vysky = await odkazy.evaluateAll(a => a.map(x => x.getBoundingClientRect().height));
       expect(Math.max(...vysky), 'odkaz se nesmí zalomit').toBeLessThan(30);

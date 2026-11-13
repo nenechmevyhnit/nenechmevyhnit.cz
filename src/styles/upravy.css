@@ -423,3 +423,9 @@ body .radek[data-shoda-v-textu] .nazev small::after { content: " · shoda v text
 @media (max-width: 760px) {
   body .koncepty-stitek { top: auto; bottom: 4px; padding: 3px 8px; font-size: 10px; opacity: .85; }
 }
+/* položka menu Změny pravidel: na mobilu krátký tvar, aby se menu vešlo na jeden řádek */
+.menu-kratky { display: none; }
+@media (max-width: 760px) {
+  .menu-dlouhy { display: none; }
+  .menu-kratky { display: inline; }
+}

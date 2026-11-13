@@ -2,14 +2,14 @@
 import '../styles/fonty.css';
 import '../styles/upravy.css';
 import Hlavicka from '../components/Hlavicka.astro';
-import { rezimKonceptu } from '../lib/kauzy';
+import { rezimKonceptu, maPravidla } from '../lib/kauzy';
 
 interface Props {
   titulek: string;
   popis: string;
   cesta: string;
   styly: 'hlavni' | 'stranky';
-  aktivni?: 'kauzy' | 'metodika' | 'o-projektu';
+  aktivni?: 'kauzy' | 'pravidla' | 'metodika' | 'o-projektu';
   otevrena?: string;
 }
 const { titulek, popis, cesta, styly, aktivni, otevrena } = Astro.props;
@@ -38,7 +38,7 @@ const nahled = new URL('/obrazky/nahled.png', Astro.site).toString();
 </head>
 <body data-otevrena={otevrena}>
   <div class="wrap" id="obsah">
-    <Hlavicka aktivni={aktivni} />
+    <Hlavicka aktivni={aktivni} pravidla={maPravidla()} />
     <slot />
   </div>
   <slot name="mimo" />

@@ -1,11 +1,7 @@
 ---
-interface Props { aktivni?: 'kauzy' | 'metodika' | 'o-projektu' }
-const { aktivni } = Astro.props;
-const polozky = [
-  { id: 'kauzy', nazev: 'Kauzy', href: '/' },
-  { id: 'metodika', nazev: 'Metodika', href: '/metodika/' },
-  { id: 'o-projektu', nazev: 'O projektu', href: '/o-projektu/' },
-] as const;
+interface Props { aktivni?: 'kauzy' | 'pravidla' | 'metodika' | 'o-projektu'; pravidla?: boolean }
+const { aktivni, pravidla = false } = Astro.props;
+const aktualni = (id: string) => (id === aktivni ? 'page' : undefined);
 ---
 <header class="top">
   <div class="hlavicka-znacka">
@@ -13,6 +9,10 @@ const polozky = [
     <span class="hlavicka-pod">nezávislý archiv se zdroji</span>
   </div>
   <nav aria-label="Hlavní">
-    {polozky.map(p => <a href={p.href} aria-current={p.id === aktivni ? 'page' : undefined}>{p.nazev}</a>)}
+    <a href="/" aria-current={aktualni('kauzy')}>Kauzy</a>
+    {/* na mobilu se plný název nevejde na řádek se značkou; skrytý tvar (display: none) se nečte ani čtečkou */}
+    {pravidla && <a href="/pravidla/" aria-current={aktualni('pravidla')}><span class="menu-dlouhy">Změny pravidel</span><span class="menu-kratky">Pravidla</span></a>}
+    <a href="/metodika/" aria-current={aktualni('metodika')}>Metodika</a>
+    <a href="/o-projektu/" aria-current={aktualni('o-projektu')}>O projektu</a>
   </nav>
 </header>
