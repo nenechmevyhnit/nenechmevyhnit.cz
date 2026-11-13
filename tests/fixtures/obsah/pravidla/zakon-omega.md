@@ -15,6 +15,7 @@ zdroje:
 udalosti:
   - { datum: 2026-06-10, krok: predlozeno, nazev: Návrh podán, popis: Fiktivní poslanci podali návrh., zdroje: [1] }
   - { datum: 2026-09-20, krok: schvaleno-snemovnou, nazev: Schváleno Sněmovnou, popis: Fiktivní sněmovna návrh schválila., zdroje: [1] }
+planovano: { stavK: 2026-11-01, text: Fiktivní senát návrh projedná na schůzi od 2. 12. 2099., zdroje: [1] }
 prospech:
   komu: [babis, agrofert]
   zaver: pravdepodobny
