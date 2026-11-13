@@ -15,7 +15,7 @@ const obnovPriZmeneObsahu = {
 };
 
 export default defineConfig({
-  site: 'https://nenechmevyhnit.cz',
+  site: 'https://posudtesami.cz',
   trailingSlash: 'always',
   outDir: process.env.NV_VYSTUP ?? 'dist',
   build: { format: 'directory' },

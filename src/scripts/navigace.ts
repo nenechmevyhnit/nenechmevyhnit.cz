@@ -3,7 +3,7 @@ import { vyberKauzu } from './osa';
 import { nastavPohled, aktualniPohled } from './mapa';
 
 const mezipamet = new Map<string, { html: string; trida: string; titulek: string }>();
-const TITULEK_HLAVNI = 'Archiv kauz Andreje Babiše — Nenechme vyhnít';
+const TITULEK_HLAVNI = 'Archiv kauz Andreje Babiše — Posuďte sami';
 let zaviramZHistorie = false;
 
 const dialog = () => document.getElementById('detail') as HTMLDialogElement;
