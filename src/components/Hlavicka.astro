@@ -3,7 +3,7 @@ interface Props { aktivni?: 'kauzy' | 'pravidla' | 'metodika' | 'o-projektu'; pr
 const { aktivni, pravidla = false } = Astro.props;
 const aktualni = (id: string) => (id === aktivni ? 'page' : undefined);
 ---
-<header class="top">
+<header class={pravidla ? 'top top-4' : 'top'}>
   <div class="hlavicka-znacka">
     <a class="brand" href="/">Nenechme vyhnít</a>
     <span class="hlavicka-pod">nezávislý archiv se zdroji</span>
