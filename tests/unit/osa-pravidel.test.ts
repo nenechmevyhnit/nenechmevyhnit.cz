@@ -29,9 +29,9 @@ describe('osaPravidel', () => {
     expect(ucinnost.x).toBeGreaterThan(95);
     expect(ucinnost.x).toBeLessThanOrEqual(100);
   });
-  it('značky po měsících: první s letopočtem (kratší než „pro 2025“, aby se vešel na 20 měsíců), leden jako letopočet', () => {
+  it('značky po měsících: první je běžný prosinec, letopočet nese jen leden', () => {
     const o = osaPravidel([z('a', 'A', [{ datum: '2026-03-01', krok: 'predlozeno', nazev: 'Podáno' }])], DNES);
-    expect(o.znacky[0]).toEqual({ x: 0, text: '2025', rok: true });
+    expect(o.znacky[0]).toEqual({ x: 0, text: 'pro', rok: false });
     expect(o.znacky[1]).toMatchObject({ text: '2026', rok: true });
     expect(o.znacky[2]).toMatchObject({ text: 'úno', rok: false });
     expect(o.znacky).toHaveLength(12);
@@ -117,7 +117,7 @@ describe('osaPravidel', () => {
   it('dlouhý rozsah (do 2028) má značky všech měsíců i letopočty 2027 a 2028', () => {
     const o = osaPravidel([z('a', 'A', [{ datum: '2026-03-01', krok: 'predlozeno', nazev: 'P' }], '2028-03-01')], DNES);
     const texty = o.znacky.map(m => m.text);
-    expect(texty.filter(t => /^\d{4}$/.test(t))).toEqual(['2025', '2026', '2027', '2028']);
+    expect(texty.filter(t => /^\d{4}$/.test(t))).toEqual(['2026', '2027', '2028']);
     expect(o.znacky.length).toBe(28);
   });
   it('řádky podle první události od 1. 12. 2025, při shodě podle názvu', () => {

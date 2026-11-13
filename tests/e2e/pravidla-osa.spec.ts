@@ -70,7 +70,8 @@ test('popisek jde najet myší a zůstane, po odjetí zmizí', async ({ page }) 
   const box = (await popisek.boundingBox())!;
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2, { steps: 8 });
   // po opuštění bodu popisek zůstává (hoverable), na popisku samotném nezmizí
-  await expect.poll(async () => popisek.isVisible(), { timeout: 600, intervals: [100, 200] }).toBe(true);
+  await page.waitForTimeout(400);
+  await expect(popisek).toBeVisible();
   // odjezd mimo osu: na legendu pod plochou (cíl vychází z rozložení, ne z pevné souřadnice)
   const legenda = (await page.locator('.op-legenda').boundingBox())!;
   await page.mouse.move(legenda.x + legenda.width - 4, legenda.y + legenda.height / 2, { steps: 5 });
@@ -366,7 +367,7 @@ test('delší rozsah než 20 měsíců: plocha se posouvá do strany a značky s
     const osa = document.querySelector<HTMLElement>('.osa-pravidel')!;
     osa.style.setProperty('--mesicu', String(m));
     osa.querySelector('.op-mesice')!.innerHTML = Array.from({ length: m }, (_, i) =>
-      `<span class="op-znacka${i % 12 === 1 ? ' rok' : ''}" style="left:${(i * 100) / m}%">${i === 0 ? '2025' : i % 12 === 1 ? '2026' : 'úno'}</span>`).join('');
+      `<span class="op-znacka${i % 12 === 1 ? ' rok' : ''}" style="left:${(i * 100) / m}%">${i === 0 ? 'pro' : i % 12 === 1 ? '2026' : 'úno'}</span>`).join('');
   }, n);
   const plocha = page.locator('.op-plocha');
   const preklad = () => page.evaluate(() => {

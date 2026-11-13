@@ -35,8 +35,7 @@ export function osaPravidel(zaznamy: readonly ZaznamOsy[], dnes: Date): Osa {
   const znacky: ZnackaOsy[] = [];
   for (let r = 2025, m = 12; rokCislo(`${r}-${String(m).padStart(2, '0')}-01`) <= doCislo; m === 12 ? (r++, m = 1) : m++) {
     const d = `${r}-${String(m).padStart(2, '0')}-01`;
-    const prvni = znacky.length === 0;
-    znacky.push({ x: x(d), text: prvni || m === 1 ? String(r) : MESICE[m - 1], rok: prvni || m === 1 });
+    znacky.push({ x: x(d), text: m === 1 ? String(r) : MESICE[m - 1], rok: m === 1 });
   }
 
   const radky = zaznamy.map(({ slug, pravidlo: p }) => {
