@@ -15,9 +15,12 @@ udalosti:
   - { datum: 2026-01-20, krok: vyhlaseno, nazev: Usnesení zveřejněno, popis: Fiktivní úřad vlády usnesení zveřejnil., zdroje: [1] }
 kontrolaMoci:
   znaky:
-    - { druh: instituce, instituce: soudy, text: Usnesení by svěřilo výběr fiktivních soudců fiktivnímu ministrovi., zdroje: [1] }
+    - { druh: instituce, instituce: soudy, text: Usnesení by svěřilo výběr fiktivních soudců fiktivnímu ministrovi. Výběr by probíhal bez fiktivní výběrové komise a bez veřejného zdůvodnění pořadí uchazečů. Proti pořadí by se nemohli odvolat ani sami uchazeči ani fiktivní soudcovské rady jednotlivých soudů., zdroje: [1] }
   upozorneni:
-    - { kdo: soudcovska-unie, text: Unie upozornila na fiktivní zásah do výběru soudců., zdroje: [2] }
+    - { kdo: soudcovska-unie, text: Unie upozornila na fiktivní zásah do výběru soudců. Podle jejího fiktivního stanoviska by o obsazení míst rozhodoval jediný fiktivní úředník bez kontroly ze strany soudcovské samosprávy., zdroje: [2] }
+    - { kdo: ombudsman, text: Fiktivní ochránce upozornil na chybějící fiktivní záruky nestrannosti. Uchazeči by neměli k dispozici srozumitelný postup pro podání námitek proti pořadí., zdroje: [3] }
+    - { kdo: ceska-advokatni-komora, text: Fiktivní komora upozornila na riziko přesunu rozhodování o fiktivních soudcích na orgán závislý na výkonné moci. Navrhla ponechat konečné slovo fiktivní nezávislé komisi., zdroje: [2, 3] }
+    - { kdo: ustavni-soud, text: Fiktivní ústavní soud ve svém stanovisku připomněl zásadu. Způsob jmenování soudců má zaručovat jejich nezávislost. Vyzval vládu k opětovnému posouzení fiktivního usnesení před vyhlášením., zdroje: [1] }
 stanovisko:
   text: Ministerstvo uvádí, že usnesení zrychlí obsazování fiktivních míst.
   zdroje: [3]

@@ -179,9 +179,10 @@ test('pravidlo jen s kontrolou moci otevře záložku Kontrola moci: znaky, upoz
   await expect(panel.locator('.znaky > li')).toHaveCount(1);
   await expect(panel.locator('.znaky > li')).toContainText('soudy');
   await expect(panel.locator('.znaky > li')).toContainText('Usnesení by svěřilo výběr fiktivních soudců');
-  await expect(panel.locator('.upozorneni > li')).toContainText('Soudcovská unie ČR');
-  await expect(panel.locator('.upozorneni > li')).toContainText('profesní organizace');
-  await panel.locator('.upozorneni a[data-zdroj="2"]').click();
+  await expect(panel.locator('.upozorneni > li')).toHaveCount(4);
+  await expect(panel.locator('.upozorneni > li').first()).toContainText('Soudcovská unie ČR');
+  await expect(panel.locator('.upozorneni > li').first()).toContainText('profesní organizace');
+  await panel.locator('.upozorneni a[data-zdroj="2"]').first().click();
   await expect(page.locator('.m2-panel[data-p="zdroje"]')).toBeVisible();
   await expect(page.locator('#zdroj-2')).toBeInViewport();
 });

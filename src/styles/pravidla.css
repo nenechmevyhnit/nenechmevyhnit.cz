@@ -66,10 +66,10 @@ body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
 }
 
 /* detail pravidla: bez svislého posouvání, delší obsah pokračuje ve sloupcích do strany (jako Souvislosti a Zdroje kauzy) */
-.pravidlo .m2-panel[data-p="prospech"], .pravidlo .m2-panel[data-p="vyhrady"] { overflow-x: auto; overflow-y: hidden; column-width: 320px; column-gap: 36px; column-fill: auto; }
-.pravidlo .m2-panel[data-p="prospech"] :is(p, li, .stanovisko, .overeno, .opravy), .pravidlo .m2-panel[data-p="vyhrady"] :is(p, li, .stanovisko, .overeno, .opravy) { break-inside: avoid; }
+.pravidlo .m2-panel[data-p="prospech"], .pravidlo .m2-panel[data-p="kontrola"], .pravidlo .m2-panel[data-p="vyhrady"] { overflow-x: auto; overflow-y: hidden; column-width: 320px; column-gap: 36px; column-fill: auto; }
+.pravidlo .m2-panel[data-p="prospech"] :is(p, li, .stanovisko, .overeno, .opravy), .pravidlo .m2-panel[data-p="kontrola"] :is(p, li), .pravidlo .m2-panel[data-p="vyhrady"] :is(p, li, .stanovisko, .overeno, .opravy) { break-inside: avoid; }
 .pravidlo .m2-panel :is(h3, h4) { break-after: avoid; }
-.pravidlo .m2-panel[data-p="prospech"] > .panel-nadpis, .pravidlo .m2-panel[data-p="vyhrady"] > .panel-nadpis { margin-top: 0; }
+.pravidlo .m2-panel[data-p="prospech"] > .panel-nadpis, .pravidlo .m2-panel[data-p="kontrola"] > .panel-nadpis, .pravidlo .m2-panel[data-p="vyhrady"] > .panel-nadpis { margin-top: 0; }
 .pravidlo .retezec { max-width: none; }
 .pravidlo .znaky, .pravidlo .upozorneni { max-width: none; }
 .pravidlo .m2-panel[data-p="chrono"]:not([hidden]) { display: grid; grid-template-columns: minmax(220px, 300px) 1fr; grid-template-rows: minmax(0, 1fr) auto; gap: 0 28px; }
@@ -78,7 +78,7 @@ body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
 .pravidlo .m2-panel[data-p="chrono"] .udalost-velka { grid-template-columns: 150px 1fr; gap: 20px; }
 .pravidlo .m2-panel[data-p="chrono"] .listovani { grid-column: 1 / -1; grid-row: 2; }
 @media (max-width: 760px) {
-  .pravidlo .m2-panel[data-p="prospech"], .pravidlo .m2-panel[data-p="vyhrady"] { column-width: 260px; }
+  .pravidlo .m2-panel[data-p="prospech"], .pravidlo .m2-panel[data-p="kontrola"], .pravidlo .m2-panel[data-p="vyhrady"] { column-width: 260px; }
   .pravidlo .m2-panel[data-p="chrono"]:not([hidden]) { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; gap: 8px 0; }
   .pravidlo .m2-panel[data-p="chrono"] .cesta-box { grid-row: 1; padding: 4px 10px; font-size: 14px; }
   .pravidlo .m2-panel[data-p="chrono"] .cesta-box p { margin: 0 0 2px; }
