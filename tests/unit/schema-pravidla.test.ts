@@ -6,6 +6,10 @@ const chyby = (data: unknown, schema = pravidloSchema) => {
   const r = schema.safeParse(data);
   return r.success ? [] : r.error.issues.map(i => i.message);
 };
+const cesty = (data: unknown, schema = pravidloSchema) => {
+  const r = schema.safeParse(data);
+  return r.success ? [] : r.error.issues.map(i => i.path.join('.'));
+};
 const s = (upravy: (p: any) => void) => { const p: any = platnePravidlo(); upravy(p); return p; };
 
 describe('pravidloSchema', () => {
@@ -25,7 +29,10 @@ describe('pravidloSchema', () => {
   it('odmítne neexistující datum účinnosti', () => expect(chyby({ ...platnePravidlo(), ucinnostOd: '2027-02-30' }).join(' ')).toMatch(/Datum účinnosti neexistuje/));
   it('odmítne událost v budoucnosti', () => expect(chyby(s(p => { p.udalosti[0].datum = '2099-01-01'; })).join(' ')).toMatch(/leží v budoucnosti/));
   it('odmítne název delší než 60 znaků', () => expect(chyby({ ...platnePravidlo(), nazev: 'x'.repeat(61) }).join(' ')).toMatch(/nejvýš 60 znaků/));
-  it('odmítne chybějící stanovisko', () => expect(chyby(s(p => { delete p.stanovisko; })).length).toBeGreaterThan(0));
+  it('odmítne chybějící stanovisko', () => expect(cesty(s(p => { delete p.stanovisko; }))).toEqual(['stanovisko']));
+  it('odmítne prázdné zdroje', () => expect(chyby(s(p => { p.zdroje = []; })).join(' ')).toMatch(/aspoň jeden zdroj/));
+  it('odmítne prázdné události', () => expect(chyby(s(p => { p.udalosti = []; })).join(' ')).toMatch(/aspoň jednu událost/));
+  it('odmítne chybějící prospěch', () => expect(cesty(s(p => { delete p.prospech; }))).toEqual(['prospech']));
   it('odmítne chybějící ověření mimo režim konceptů, v konceptech smí být null', () => {
     expect(chyby(s(p => { delete p.overeno; })).length).toBeGreaterThan(0);
     expect(chyby(s(p => { p.overeno = null; }), pravidloSchemaKoncepty)).toEqual([]);
@@ -39,9 +46,9 @@ describe('pravidloSchema', () => {
     it('pravděpodobný prospěch s odhadem projde', () => expect(chyby(s(p => { p.prospech.zaver = 'pravdepodobny'; p.prospech.retezec[1].odhad = true; }))).toEqual([]));
     it('první krok musí mít primární zdroj', () => expect(chyby(s(p => { p.prospech.retezec[0].zdroje = [2]; })).join(' ')).toMatch(/První krok řetězce .* primární zdroj/));
     it('komu musí být neprázdné a bez opakování', () => {
-      expect(chyby(s(p => { p.prospech.komu = []; })).length).toBeGreaterThan(0);
+      expect(chyby(s(p => { p.prospech.komu = []; })).join(' ')).toMatch(/aspoň k jednomu z: babis, agrofert/);
       expect(chyby(s(p => { p.prospech.komu = ['babis', 'babis']; })).join(' ')).toMatch(/dvakrát/);
-      expect(chyby(s(p => { p.prospech.komu = ['zemedelci']; })).length).toBeGreaterThan(0);
+      expect(cesty(s(p => { p.prospech.komu = ['zemedelci']; }))).toEqual(['prospech.komu.0']);
     });
   });
 
@@ -52,13 +59,14 @@ describe('pravidloSchema', () => {
     it('cesta musí patřit k druhu', () => expect(chyby(s(p => { p.druh = 'narizeni-vlady'; })).join(' ')).toMatch(/nepatří k druhu/));
     it('aspoň jedna událost musí mít krok', () => expect(chyby(s(p => { delete p.udalosti[0].krok; })).join(' ')).toMatch(/krok projednávání/));
     it('krok musí patřit k druhu', () => expect(chyby(s(p => { p.udalosti[0].krok = 'schvaleno'; })).join(' ')).toMatch(/Krok „schvaleno“ .* nepatří k druhu „zakon“/));
-    it('neznámý krok je chyba', () => expect(chyby(s(p => { p.udalosti[0].krok = 'odhlasovano'; })).length).toBeGreaterThan(0));
+    it('neznámý krok je chyba', () => expect(cesty(s(p => { p.udalosti[0].krok = 'odhlasovano'; }))).toEqual(['udalosti.0.krok']));
   });
 
   describe('odkazy a pořadí', () => {
     it('duplicitní id zdroje', () => expect(chyby(s(p => { p.zdroje[1].id = 1; })).join(' ')).toMatch(/Duplicitní id zdroje 1/));
     it.each([
       ['událost', (p: any) => { p.udalosti[0].zdroje = [9]; }, /Událost 1 \(„Návrh podán“\) odkazuje na neexistující zdroj 9/],
+      ['připojení k zákonu', (p: any) => { p.cesta = 'pozmenovaci-navrh'; p.pripojenoK = { nazev: 'Fiktivní zákon', zdroje: [9] }; }, /Připojení k zákonu odkazuje na neexistující zdroj 9/],
       ['stanovisko', (p: any) => { p.stanovisko.zdroje = [9]; }, /Stanovisko odkazuje na neexistující zdroj 9/],
       ['krok řetězce', (p: any) => { p.prospech.retezec[1].zdroje = [9]; }, /Krok řetězce 2 odkazuje na neexistující zdroj 9/],
       ['další dotčení', (p: any) => { p.prospech.dalsiDotceni = { text: 'Velké podniky.', zdroje: [9] }; }, /Další dotčení odkazuje na neexistující zdroj 9/],
