@@ -141,6 +141,15 @@ test('neplatné ?udalost= otevře detail normálně a bez chyby', async ({ page 
     await expect(page.locator('dialog#detail')).toBeVisible();
     await expect(page.getByRole('tab').first()).toHaveAttribute('aria-selected', 'true');
   }
+  // 99: Průběh ukazuje výchozí událost, stejnou jako bez ?udalost=
+  await page.goto('/pravidla/zakon-omega/');
+  await page.getByRole('tab', { name: 'Průběh' }).click();
+  const vychozi = await page.locator('.udalosti-seznam > li[data-i]:visible').evaluateAll(l => l.map(e => (e as HTMLElement).dataset.i));
+  await page.goto('/pravidla/zakon-omega/?udalost=99');
+  await page.getByRole('tab', { name: 'Průběh' }).click();
+  const neplatne = await page.locator('.udalosti-seznam > li[data-i]:visible').evaluateAll(l => l.map(e => (e as HTMLElement).dataset.i));
+  expect(vychozi.length).toBeGreaterThan(0);
+  expect(neplatne).toEqual(vychozi);
   expect(chyby).toEqual([]);
 });
 
@@ -153,17 +162,77 @@ test('značka „dříve“ otevře první starší událost', async ({ page }) 
 
 test('klik na název řádku osy otevře detail', async ({ page }) => {
   await page.goto('/pravidla/?pohled=osa');
+  await page.evaluate(() => { (window as any).bezNacteni = true; });
   await page.locator('.op-radek[data-slug="narizeni-tau"] .op-nazev').click();
   await expect(page).toHaveURL(/\/pravidla\/narizeni-tau\/$/);
   await expect(page.locator('dialog#detail h2')).toHaveText('Testovací nařízení Tau');
+  expect(await page.evaluate(() => (window as any).bezNacteni)).toBe(true);
 });
 
 test('zpět v prohlížeči po otevření z osy vrátí osu', async ({ page }) => {
   await page.goto('/pravidla/?pohled=osa');
+  await page.evaluate(() => { (window as any).bezNacteni = true; });
   await page.locator('.op-radek[data-slug="zakon-omega"] a.op-bod').first().click();
   await expect(page.locator('dialog#detail')).toBeVisible();
   await page.goBack();
   await expect(page.locator('dialog#detail')).toBeHidden();
   await expect(page).toHaveURL(/\/pravidla\/\?pohled=osa$/);
   await expect(page.locator('.osa-pravidel')).toBeVisible();
+  expect(await page.evaluate(() => (window as any).bezNacteni)).toBe(true);
+});
+
+test('Zpět a Vpřed po otevření bodu z osy obnoví událost', async ({ page }) => {
+  await page.goto('/pravidla/?pohled=osa');
+  await page.evaluate(() => { (window as any).bezNacteni = true; });
+  const bod = page.locator('.op-radek[data-slug="zakon-omega"] a.op-bod.krok').nth(1);
+  const index = await bod.getAttribute('data-udalost');
+  await bod.click();
+  await expect(page.locator('dialog#detail')).toBeVisible();
+  await page.goBack();
+  await expect(page.locator('dialog#detail')).toBeHidden();
+  await page.goForward();
+  await expect(page).toHaveURL(new RegExp(`/pravidla/zakon-omega/\\?udalost=${index}$`));
+  await expect(page.locator('dialog#detail')).toBeVisible();
+  await expect(page.locator(`.udalosti-seznam > li[data-i="${index}"]`)).toBeVisible();
+  expect(await page.evaluate(() => (window as any).bezNacteni)).toBe(true);
+});
+
+test('klávesnice: Enter na bodu osy otevře Průběh na události bez načtení stránky', async ({ page }) => {
+  await page.goto('/pravidla/?pohled=osa');
+  await page.evaluate(() => { (window as any).bezNacteni = true; });
+  const bod = page.locator('.op-radek[data-slug="zakon-omega"] a.op-bod.krok').nth(1);
+  const index = await bod.getAttribute('data-udalost');
+  await bod.focus();
+  await page.keyboard.press('Enter');
+  await expect(page).toHaveURL(new RegExp(`/pravidla/zakon-omega/\\?udalost=${index}$`));
+  await expect(page.locator('dialog#detail')).toBeVisible();
+  await expect(page.getByRole('tab', { name: 'Průběh' })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator(`.udalosti-seznam > li[data-i="${index}"]`)).toBeVisible();
+  expect(await page.evaluate(() => (window as any).bezNacteni)).toBe(true);
+});
+
+test('filtry skrývají řádky osy, počítadlo a prázdný stav platí i pro osu', async ({ page }) => {
+  await page.goto('/pravidla/?pohled=osa');
+  const radky = page.locator('.op-radek:not([hidden])');
+  await expect(radky).toHaveCount(4);
+  await page.getByRole('searchbox', { name: 'Hledat ve změnách pravidel' }).fill('lhutu k vymahani');
+  await expect(radky).toHaveCount(1);
+  await expect(radky.first()).toHaveAttribute('data-slug', 'zakon-omega');
+  await expect(page.locator('.pr-filtry .pocet')).toHaveText('Zobrazeno 1 z 4');
+  await page.getByRole('searchbox', { name: 'Hledat ve změnách pravidel' }).fill('nic takoveho neexistuje');
+  await expect(page.locator('.op-prazdno')).toBeVisible();
+  await page.locator('.op-prazdno [data-zrusit]').click();
+  await expect(radky).toHaveCount(4);
+  await expect(page.locator('.op-prazdno')).toBeHidden();
+});
+
+test('Seznam → Osa → Seznam zachová filtr i počítadlo', async ({ page }) => {
+  await page.goto('/pravidla/');
+  await page.locator('.pr-filtry [data-stitek="soudy"]').click();
+  await expect(page.locator('.pr-filtry .pocet')).toHaveText('Zobrazeno 1 z 4');
+  await page.getByRole('button', { name: 'Časová osa' }).click();
+  await expect(page.locator('.op-radek:not([hidden])')).toHaveCount(1);
+  await page.getByRole('button', { name: 'Seznam' }).click();
+  await expect(page.locator('.pr-radek:not([hidden])')).toHaveCount(1);
+  await expect(page.locator('.pr-filtry .pocet')).toHaveText('Zobrazeno 1 z 4');
 });
