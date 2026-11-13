@@ -2,6 +2,8 @@
 import Zaklad from '../layouts/Zaklad.astro';
 import PatickaRadek from './PatickaRadek.astro';
 import PrubehPravidla from './PrubehPravidla.astro';
+import OsaPravidel from './OsaPravidel.astro';
+import { osaPravidel } from '../lib/osa-pravidel';
 import { nactiPravidla, nactiStitky } from '../lib/kauzy';
 import { popisekCesty, popisekKomu, popisekZaveru, popisekZnaku, popisekDuvodu, DUVODY } from '../lib/pravidla-slovnik';
 import { duvodyPravidla } from '../lib/pravidla';
@@ -16,6 +18,7 @@ interface Props { otevrene?: PravidloZaznam }
 const { otevrene } = Astro.props;
 const zaznamy = nactiPravidla();
 const stitky = nactiStitky();
+const osa = osaPravidel(zaznamy, new Date());
 const cipy = [...new Set(zaznamy.flatMap(z => z.pravidlo.stitky))]
   .map(id => ({ id, nazev: stitky.get(id) ?? id }))
   .sort((a, b) => a.nazev.localeCompare(b.nazev, 'cs'));
@@ -47,6 +50,10 @@ const popis = otevrene
             </div>
           </div>
           <label class="f-prepinac"><input type="checkbox" data-jen-projednavane> jen v projednávání</label>
+          <div class="pr-pohled" role="group" aria-label="Zobrazení změn pravidel" hidden>
+            <button type="button" data-pohled="seznam" aria-pressed="true">Seznam</button>
+            <button type="button" data-pohled="osa" aria-pressed="false">Časová osa</button>
+          </div>
           <span class="vpravo"><span class="pocet" aria-live="polite"></span><button class="f-zrusit" type="button" hidden>Zrušit filtry</button></span>
         </div>
       </>
@@ -72,6 +79,7 @@ const popis = otevrene
         <li class="prazdno" hidden>Žádná změna pravidel neodpovídá filtru. <button type="button" data-zrusit>Zrušit filtry</button></li>
       </ul>
     </div>
+    {zaznamy.length > 0 && <OsaPravidel osa={osa} />}
   </main>
   <PatickaRadek />
   <Fragment slot="mimo"><slot name="detail" /></Fragment>
@@ -83,5 +91,7 @@ const popis = otevrene
   import { oznacNacteno } from '../scripts/nacteno';
   inicializujFiltrPravidel();
   inicializujNavigaciPravidel();
+  import { inicializujOsuPravidel } from '../scripts/osa-pravidel';
+  inicializujOsuPravidel();
   oznacNacteno(1600);
 </script>

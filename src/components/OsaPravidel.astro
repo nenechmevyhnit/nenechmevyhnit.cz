@@ -1,0 +1,42 @@
+---
+import type { Osa } from '../lib/osa-pravidel';
+interface Props { osa: Osa }
+const { osa } = Astro.props;
+const styl = (x: number, posun = 0) => `left:${x}%;--posun:${posun}`;
+---
+<!-- Bez JavaScriptu zůstává skrytá: seznam nese stejné informace (spec osy, oddíl 2). -->
+<section class="osa-pravidel" data-osa-pravidel aria-label="Časová osa změn pravidel" hidden>
+  <div class="op-plocha" tabindex="0" aria-label="Časová osa, posouvá se do strany">
+    <div class="op-hlava" aria-hidden="true">
+      <span class="op-roh"></span>
+      <div class="op-mesice">
+        {osa.znacky.map(z => <span class:list={['op-znacka', { rok: z.rok }]} style={`left:${z.x}%`}>{z.text}</span>)}
+        <span class="op-dnes-popisek" style={`left:${osa.dnes}%`}>dnes</span>
+      </div>
+    </div>
+    <ol class="op-radky">
+      {osa.radky.map(r => (
+        <li class="op-radek" data-slug={r.slug}>
+          <a class="op-nazev" href={`/pravidla/${r.slug}/`} title={r.nazev} aria-haspopup="dialog"><strong>{r.nazev}</strong><small>{r.cesta}</small></a>
+          <div class="op-cas">
+            <span class="op-dnes" style={`left:${osa.dnes}%`} aria-hidden="true"></span>
+            {r.cara && <span class="op-cara" style={`left:${r.cara.od}%;width:${r.cara.do - r.cara.od}%`} aria-hidden="true"></span>}
+            {r.caraBudouci && <span class="op-cara budouci" style={`left:${r.caraBudouci.od}%;width:${r.caraBudouci.do - r.caraBudouci.od}%`} aria-hidden="true"></span>}
+            {r.drive && <a class="op-drive" href={`/pravidla/${r.slug}/?udalost=${r.drive.udalost}`} data-udalost={r.drive.udalost} aria-label={`dříve (${r.drive.pocet}): ${r.nazev}, starší události před prosincem 2025`}>◀ dříve ({r.drive.pocet})</a>}
+            {r.body.map(b => b.udalost === null
+              ? <span class:list={['op-bod', b.druh]} style={styl(b.x, b.posun)} tabindex="0" role="img" aria-label={`${r.nazev}: ${b.popisek}`} data-popisek={b.popisekSkupiny ?? b.popisek}></span>
+              : <a class:list={['op-bod', b.druh]} style={styl(b.x, b.posun)} href={`/pravidla/${r.slug}/?udalost=${b.udalost}`} data-udalost={b.udalost} aria-label={`${r.nazev}: ${b.popisek}`} data-popisek={b.popisekSkupiny ?? b.popisek}></a>)}
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+  <p class="op-prazdno" hidden>Žádná změna pravidel neodpovídá filtru. <button type="button" data-zrusit>Zrušit filtry</button></p>
+  <p class="op-legenda">
+    <span><i class="op-bod krok" aria-hidden="true"></i> krok projednávání</span>
+    <span><i class="op-bod konec" aria-hidden="true"></i> ukončující krok</span>
+    <span><i class="op-bod udalost" aria-hidden="true"></i> ostatní událost</span>
+    <span><i class="op-bod ucinnost" aria-hidden="true"></i> budoucí účinnost</span>
+  </p>
+  <div class="op-popisek" role="tooltip" hidden></div>
+</section>
