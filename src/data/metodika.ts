@@ -1,9 +1,10 @@
-import { KONTROLNI_INSTITUCE, popisekInstituce, DRUHY_ZNAKU, popisekDruhuZnaku, UPOZORNOVATELE, upozornovatel } from '../lib/pravidla-slovnik';
+import { KONTROLNI_INSTITUCE, popisekInstituce, DRUHY_ZNAKU, popisekDruhuZnaku, UPOZORNOVATELE, upozornovatel, OBLASTI, oblast } from '../lib/pravidla-slovnik';
 
 // Seznamy pro pododdíl Dopad na kontrolu moci se generují ze slovníků, aby nemohly zastarat.
 const seznamInstituci = KONTROLNI_INSTITUCE.map(i => popisekInstituce(i, 'plne')).join(', ');
 const seznamProcedur = DRUHY_ZNAKU.filter(d => d !== 'instituce').map(popisekDruhuZnaku).join(', ');
 const upozornovateleTypu = (typ: 'instituce' | 'profesni-organizace') => UPOZORNOVATELE.filter(u => upozornovatel(u).typ === typ).map(u => upozornovatel(u).nazev).join(', ');
+const seznamOblasti = OBLASTI.map(o => oblast(o).nazev).join(', ');
 
 // Texty převzaté doslova ze schválených prototypů (design/03-detail/_metodika.py).
 export type SekceStranky = { id: string; nadpis: string; shrnuti: string; html: string };
@@ -127,14 +128,29 @@ ${sPravidly ? '<p>Změny pravidel, které předkládá nebo vydává vláda či 
 <li><strong>pozměňovací návrh:</strong> navíc bez stanoviska vlády a bez prvního čtení, protože se podává až ve druhém čtení jako změna projednávaného návrhu.</li></ul>
 <p>Jde o popis legislativního procesu, ne o hodnocení.</p>
 <h3 id="kontrola-moci">Dopad na kontrolu moci</h3>
-<p>Druhým důvodem zařazení je změna, která se týká kontroly moci. Do archivu patří, když splní <strong>všechny</strong> tyto podmínky:</p>
+<p>Druhým důvodem zařazení je změna, která se týká kontroly moci nebo dalších institucí a pravidel státu, třeba státní služby, rozpočtových pravidel nebo neziskových organizací. Do archivu patří, když splní <strong>všechny</strong> tyto podmínky:</p>
 <ul><li>má oficiální text a předložila nebo vydala ji vládní většina, stejně jako u prospěchu,</li>
-<li><strong>institucionální znak:</strong> mění pravomoci, nezávislost, způsob jmenování nebo odvolání, nebo financování některé z těchto oblastí: ${seznamInstituci},</li>
+<li><strong>institucionální znak:</strong> mění pravomoci, nezávislost, způsob jmenování nebo odvolání, nebo financování některé z těchto institucí a pravidel: ${seznamInstituci},</li>
 <li><strong>procedurální znak:</strong> ${seznamProcedur}. Přílepek je pozměňovací návrh mimo předmět projednávaného zákona, legislativní nouze je projednání ve stavu legislativní nouze,</li>
 <li>na tento znak upozornila aspoň jedna instituce (${upozornovateleTypu('instituce')}) nebo profesní organizace (${upozornovateleTypu('profesni-organizace')}). Upozornění se musí týkat právě tohoto pravidla a tohoto znaku, ne obecného tématu.</li></ul>
 <p>Kritika jen od opozice, watchdogů nebo médií k zařazení nestačí. Hodnotící slova ve vlastním textu nepoužíváme. Zapisujeme, co pravidlo mění, s odkazem na ustanovení, a kdo na to upozornil. <strong>Záznam dopadu na kontrolu moci je záznam upozornění institucí, ne hodnocení archivu.</strong> Personální a jiná jednotlivá rozhodnutí sem nepatří.</p>
 <h3 id="vyhrady">Výhrady a jazyk</h3>
 <p>Uvádíme výhrady institucí, jako je Legislativní rada vlády, ÚOHS, NKÚ, Evropská komise nebo veřejný ochránce práv. Výhrady opozice patří do souvislostí a označujeme je jako politické. Dokud změna neplatí, píšeme podmiňovacím způsobem: novela <em>by zkrátila</em>, <em>umožnila by</em>. Upozornění ke znaku kontroly moci neřadíme mezi výhrady, uvádíme je v záložce Kontrola moci (oddíl Dopad na kontrolu moci).</p>`,
+    }, {
+      id: "oblasti",
+      nadpis: "Oblasti",
+      shrnuti: "Změny pravidel seskupené podle oblastí státu, u každé změny co by znamenala pro vás a u oblasti citace institucí, odborníků a vlády.",
+      html: `<p>Výchozí pohled změn pravidel je rozdělený do <strong>oblastí státu</strong>: ${seznamOblasti}. Jedna změna může patřit do víc oblastí. Oblasti ukazují, co se v jedné části státu mění za sebou. <strong>Kam to celé vede, archiv sám neříká.</strong> Skládá vedle sebe doložené změny a citace a závěr nechává na vás.</p>
+<h3 id="pro-vas">Co by to znamenalo pro vás</h3>
+<p>U každé změny je jedna až tři věty obyčejnou řečí: koho se změna týká a co se pro něj změní. Píšeme bez čísel paragrafů a bez nevysvětlených zkratek. Uvádíme jen důsledky, které plynou z textu předpisu, z důvodové zprávy, z hodnocení dopadů regulace nebo z upozornění instituce, a každá věta má zdroj. Další vývoj nedomýšlíme. Když se změna běžného člověka přímo netýká, napíšeme to. Dokud změna neplatí, píšeme podmiňovacím způsobem.</p>
+<h3 id="k-cemu">K čemu to je</h3>
+<p>Úvod oblasti vysvětluje, co daná instituce nebo oblast dělá pro běžného člověka. Opírá se o Ústavu, zákon nebo oficiální stránky instituce. O současné vládě ani o změnách úvod nic neříká.</p>
+<h3 id="hodnoceni">Jak to hodnotí</h3>
+<p>U oblasti uvádíme doslovné citace s mluvčím, funkcí, datem a zdrojem. Citujeme jen:</p>
+<ul><li><strong>vládu:</strong> člena vlády, předkladatele nebo úřad vlády. Stanovisko vlády má každá oblast, u které citace jsou. Když vláda veřejně nereagovala, citujeme účel z důvodové zprávy,</li>
+<li><strong>instituce:</strong> veřejné instituce, mezinárodní organizace a profesní organizace, které smějí upozornit na dopad na kontrolu moci,</li>
+<li><strong>odborníky:</strong> pojmenované osoby s ověřitelnou odbornou rolí v oboru, například vyučující vysoké školy, výzkumníky Akademie věd nebo bývalé soudce Ústavního či Nejvyššího soudu.</li></ul>
+<p>Necitujeme politiky mimo vládu, novináře, komentátory ani watchdogy. Mohou být zdrojem faktů, ne hodnocení. Odborníky, kteří postup vlády hájí, uvádíme za stejných podmínek jako kritiky. <strong>Výběr citací podle metodiky, ne hodnocení archivu.</strong></p>`,
     }] : []),
   ],
 });
