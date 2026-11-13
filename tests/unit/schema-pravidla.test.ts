@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { pravidloSchema, pravidloSchemaKoncepty } from '../../src/lib/schema-pravidla';
-import { platnePravidlo } from './ukazka';
+import { platnePravidlo, platnePravidloKontrolaMoci } from './ukazka';
+import { duvodyPravidla } from '../../src/lib/pravidla';
 
 const chyby = (data: unknown, schema = pravidloSchema) => {
   const r = schema.safeParse(data);
@@ -19,7 +20,7 @@ describe('pravidloSchema', () => {
     expect(p.vyhrady).toEqual([]);
     expect(p.kauzy).toEqual([]);
     expect(p.opravy).toEqual([]);
-    expect(p.prospech.retezec[0].odhad).toBe(false);
+    expect(p.prospech!.retezec[0].odhad).toBe(false);
   });
   it('převede data z YAML (Date) na text, i účinnost v budoucnosti', () => {
     const p = pravidloSchema.parse({ ...platnePravidlo(), overeno: new Date('2026-11-09T00:00:00Z'), ucinnostOd: new Date('2099-01-01T00:00:00Z') });
@@ -32,7 +33,7 @@ describe('pravidloSchema', () => {
   it('odmítne chybějící stanovisko', () => expect(cesty(s(p => { delete p.stanovisko; }))).toEqual(['stanovisko']));
   it('odmítne prázdné zdroje', () => expect(chyby(s(p => { p.zdroje = []; })).join(' ')).toMatch(/aspoň jeden zdroj/));
   it('odmítne prázdné události', () => expect(chyby(s(p => { p.udalosti = []; })).join(' ')).toMatch(/aspoň jednu událost/));
-  it('odmítne chybějící prospěch', () => expect(cesty(s(p => { delete p.prospech; }))).toEqual(['prospech']));
+  it('odmítne záznam bez důvodu zařazení', () => expect(chyby(s(p => { delete p.prospech; })).join(' ')).toMatch(/aspoň jeden důvod zařazení/));
   it('odmítne chybějící ověření mimo režim konceptů, v konceptech smí být null', () => {
     expect(chyby(s(p => { delete p.overeno; })).length).toBeGreaterThan(0);
     expect(chyby(s(p => { p.overeno = null; }), pravidloSchemaKoncepty)).toEqual([]);
@@ -78,5 +79,46 @@ describe('pravidloSchema', () => {
       const p = s(p => { p.udalosti.push({ datum: '2026-05-01', nazev: 'Dřívější', popis: 'x', zdroje: [1] }); });
       expect(chyby(p).join(' ')).toMatch(/nejsou v časovém pořadí/);
     });
+  });
+});
+
+const k = (upravy: (p: any) => void) => { const p: any = platnePravidloKontrolaMoci(); upravy(p); return p; };
+
+describe('kontrola moci', () => {
+  it('pravidlo jen s kontrolou moci projde', () => expect(chyby(platnePravidloKontrolaMoci())).toEqual([]));
+  it('pravidlo s oběma důvody projde', () => expect(chyby(s(p => { p.kontrolaMoci = (platnePravidloKontrolaMoci() as any).kontrolaMoci; }))).toEqual([]));
+  it('musí mít aspoň jeden znak', () => expect(chyby(k(p => { p.kontrolaMoci.znaky = []; })).join(' ')).toMatch(/aspoň jeden znak/));
+  it('musí mít aspoň jedno upozornění', () => expect(chyby(k(p => { p.kontrolaMoci.upozorneni = []; })).join(' ')).toMatch(/aspoň jedno upozornění/));
+  it('znak musí mít primární zdroj', () => expect(chyby(k(p => { p.kontrolaMoci.znaky[0].zdroje = [2]; })).join(' ')).toMatch(/Znak 1 musí mít primární zdroj/));
+  it('znak „instituce“ musí instituci uvést', () => expect(chyby(k(p => { delete p.kontrolaMoci.znaky[0].instituce; })).join(' ')).toMatch(/Znak 1 mění kontrolní instituci, musí ji uvést/));
+  it('instituce patří jen ke znaku „instituce“', () => expect(chyby(k(p => { p.kontrolaMoci.znaky[0].druh = 'prilepek'; })).join(' ')).toMatch(/instituce patří jen ke znaku druhu „instituce“/));
+  it('neznámá instituce, upozorňovatel a druh znaku jsou chyba', () => {
+    expect(cesty(k(p => { p.kontrolaMoci.znaky[0].instituce = 'armada'; }))).toEqual(['kontrolaMoci.znaky.0.instituce']);
+    expect(cesty(k(p => { p.kontrolaMoci.upozorneni[0].kdo = 'opozice'; }))).toEqual(['kontrolaMoci.upozorneni.0.kdo']);
+    expect(cesty(k(p => { p.kontrolaMoci.znaky[0].druh = 'nevim'; }))).toContain('kontrolaMoci.znaky.0.druh');
+  });
+  it('stejný znak dvakrát je chyba', () => expect(chyby(k(p => { p.kontrolaMoci.znaky.push({ ...p.kontrolaMoci.znaky[0] }); })).join(' ')).toMatch(/Znak „instituce\/soudy“ je uveden dvakrát/));
+  it('procedurální znaky stejného druhu se počítají jako duplicita, různé ne', () => {
+    expect(chyby(k(p => { p.kontrolaMoci.znaky = [{ druh: 'prilepek', text: 'A.', zdroje: [1] }, { druh: 'prilepek', text: 'B.', zdroje: [1] }]; })).join(' ')).toMatch(/Znak „prilepek“ je uveden dvakrát/);
+    expect(chyby(k(p => { p.kontrolaMoci.znaky.push({ druh: 'prilepek', text: 'A.', zdroje: [1] }); }))).toEqual([]);
+  });
+  it.each([
+    ['znak', (p: any) => { p.kontrolaMoci.znaky[0].zdroje = [9]; }, /Znak 1 odkazuje na neexistující zdroj 9/],
+    ['upozornění', (p: any) => { p.kontrolaMoci.upozorneni[0].zdroje = [9]; }, /Upozornění \(„soudcovska-unie“\) odkazuje na neexistující zdroj 9/],
+  ])('neexistující zdroj: %s', (_, uprava, hlaska) => expect(chyby(k(uprava)).join(' ')).toMatch(hlaska));
+  it('nové druhy: cesta musí patřit k druhu a kroky jsou jako u ostatních nezákonných druhů', () => {
+    expect(chyby(k(p => { p.cesta = 'pokyn-ministerstva'; })).join(' ')).toMatch(/Cesta „pokyn-ministerstva“ nepatří k druhu „usneseni-vlady“/);
+    expect(chyby(k(p => { p.udalosti[0].krok = 'predlozeno'; })).join(' ')).toMatch(/Krok „predlozeno“ .* nepatří k druhu „usneseni-vlady“/);
+    expect(chyby(k(p => { p.druh = 'pokyn-ministerstva'; p.cesta = 'pokyn-ministerstva'; p.udalosti[0].krok = 'vyhlaseno'; }))).toEqual([]);
+  });
+  it('neznámá vlastnost v bloku je chyba', () => expect(chyby(k(p => { p.kontrolaMoci.hodnoceni = 'oslabení'; })).length).toBeGreaterThan(0));
+});
+
+describe('důvody zařazení', () => {
+  it('odvodí se z bloků, vždy v pořadí prospěch, kontrola moci', () => {
+    const oba = pravidloSchema.parse(s(p => { p.kontrolaMoci = (platnePravidloKontrolaMoci() as any).kontrolaMoci; }));
+    expect(duvodyPravidla(oba)).toEqual(['prospech', 'kontrola-moci']);
+    expect(duvodyPravidla(pravidloSchema.parse(platnePravidlo()))).toEqual(['prospech']);
+    expect(duvodyPravidla(pravidloSchema.parse(platnePravidloKontrolaMoci()))).toEqual(['kontrola-moci']);
   });
 });

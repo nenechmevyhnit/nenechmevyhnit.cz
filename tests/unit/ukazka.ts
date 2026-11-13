@@ -63,3 +63,21 @@ export function platnePravidlo(): Record<string, unknown> {
     stanovisko: { text: 'Předkladatel souvislost s firmou odmítá.', zdroje: [3] },
   };
 }
+
+/** Platné pravidlo jen s důvodem „kontrola moci“ (usnesení vlády, bez prospěchu). */
+export function platnePravidloKontrolaMoci(): Record<string, unknown> {
+  const p = platnePravidlo();
+  delete p.prospech;
+  return {
+    ...p,
+    nazev: 'Testovací usnesení Kappa',
+    druh: 'usneseni-vlady',
+    cesta: 'usneseni-vlady',
+    predkladatel: 'Fiktivní ministr spravedlnosti',
+    udalosti: [{ datum: '2026-01-12', krok: 'schvaleno', nazev: 'Vláda schválila usnesení', popis: 'Fiktivní vláda usnesení přijala.', zdroje: [1] }],
+    kontrolaMoci: {
+      znaky: [{ druh: 'instituce', instituce: 'soudy', text: 'Usnesení by svěřilo výběr fiktivních soudců ministrovi.', zdroje: [1] }],
+      upozorneni: [{ kdo: 'soudcovska-unie', text: 'Unie upozornila na zásah do výběru soudců.', zdroje: [2] }],
+    },
+  };
+}

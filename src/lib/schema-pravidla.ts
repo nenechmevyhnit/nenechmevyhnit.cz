@@ -1,7 +1,7 @@
 import { z } from 'astro/zod';
 import { naText, existujeDatum, datum, datumPresne, text, odkazy, idTvar, popisVazby, zdrojSchema, udalostSchema } from './schema';
 import { KROKY, krokyProDruh } from './pravidla-stavy';
-import { DRUHY_PRAVIDEL, CESTY, KOMU, ZAVERY, cestyProDruh } from './pravidla-slovnik';
+import { DRUHY_PRAVIDEL, CESTY, KOMU, ZAVERY, DRUHY_ZNAKU, KONTROLNI_INSTITUCE, UPOZORNOVATELE, cestyProDruh } from './pravidla-slovnik';
 
 /** Účinnost je jediné datum pravidla, které smí ležet v budoucnosti. */
 const ucinnost = z.preprocess(naText, z.string()
@@ -11,6 +11,13 @@ const sZdroji = (co: string) => z.object({ text: text(), zdroje: odkazy(co) }).s
 
 export const udalostPravidlaSchema = udalostSchema.extend({ krok: z.enum(KROKY).optional() }).strict();
 const krokRetezceSchema = z.object({ text: text(), odhad: z.boolean().default(false), zdroje: odkazy('Krok řetězce') }).strict();
+const znakSchema = z.object({
+  druh: z.enum(DRUHY_ZNAKU),
+  instituce: z.enum(KONTROLNI_INSTITUCE).optional(),
+  text: text(),
+  zdroje: odkazy('Znak'),
+}).strict();
+const upozorneniSchema = z.object({ kdo: z.enum(UPOZORNOVATELE), text: text(), zdroje: odkazy('Upozornění') }).strict();
 
 /** koncepty = true: lokální náhled neověřených konceptů, smí chybět datum ověření (overeno: null). */
 const vytvorPravidloSchema = (koncepty: boolean) => z
@@ -32,7 +39,11 @@ const vytvorPravidloSchema = (koncepty: boolean) => z
       zaver: z.enum(ZAVERY),
       retezec: z.array(krokRetezceSchema).min(2, 'Řetězec prospěchu musí mít aspoň 2 kroky'),
       dalsiDotceni: sZdroji('Další dotčení').optional(),
-    }).strict(),
+    }).strict().optional(),
+    kontrolaMoci: z.object({
+      znaky: z.array(znakSchema).min(1, 'Kontrola moci musí mít aspoň jeden znak'),
+      upozorneni: z.array(upozorneniSchema).min(1, 'Kontrola moci musí mít aspoň jedno upozornění instituce nebo profesní organizace'),
+    }).strict().optional(),
     vyhrady: z.array(z.object({ kdo: text(), text: text(), zdroje: odkazy('Výhrada') }).strict()).default([]),
     stanovisko: sZdroji('Stanovisko'),
     kauzy: z.array(z.object({ kauza: idTvar, popis: popisVazby, zdroje: odkazy('Vazba na kauzu') }).strict()).default([]),
@@ -52,19 +63,37 @@ const vytvorPravidloSchema = (koncepty: boolean) => z
     p.udalosti.forEach((u, i) => over(u.zdroje, `Událost ${i + 1} („${u.nazev}“)`));
     over(p.stanovisko.zdroje, 'Stanovisko');
     if (p.pripojenoK) over(p.pripojenoK.zdroje, 'Připojení k zákonu');
-    p.prospech.retezec.forEach((k, i) => over(k.zdroje, `Krok řetězce ${i + 1}`));
-    if (p.prospech.dalsiDotceni) over(p.prospech.dalsiDotceni.zdroje, 'Další dotčení');
     p.vyhrady.forEach(v => over(v.zdroje, `Výhrada („${v.kdo}“)`));
     p.kauzy.forEach(k => over(k.zdroje, `Vazba na kauzu „${k.kauza}“`));
 
-    // Závěr řetězce (spec, oddíl 4)
-    const odhadu = p.prospech.retezec.filter(k => k.odhad).length;
-    if (p.prospech.zaver === 'dolozen' && odhadu > 0) chyba('Závěr „prospěch doložen“ nesmí mít krok s odhadem (použijte zaver: pravdepodobny)');
-    if (p.prospech.zaver === 'pravdepodobny' && odhadu === 0) chyba('Závěr „prospěch pravděpodobný“ vyžaduje aspoň jeden krok s odhadem (jinak zaver: dolozen)');
-    const prvni = p.prospech.retezec[0];
-    if (prvni && !p.zdroje.some(zd => zd.druh === 'primarni' && prvni.zdroje.includes(zd.id)))
-      chyba('První krok řetězce (co pravidlo mění) musí mít primární zdroj, tedy text předpisu');
-    if (new Set(p.prospech.komu).size !== p.prospech.komu.length) chyba('Pole komu obsahuje stejnou hodnotu dvakrát');
+    if (!p.prospech && !p.kontrolaMoci) chyba('Záznam musí mít aspoň jeden důvod zařazení: prospech nebo kontrolaMoci');
+
+    // Závěr řetězce (spec pravidel, oddíl 4)
+    if (p.prospech) {
+      p.prospech.retezec.forEach((k, i) => over(k.zdroje, `Krok řetězce ${i + 1}`));
+      if (p.prospech.dalsiDotceni) over(p.prospech.dalsiDotceni.zdroje, 'Další dotčení');
+      const odhadu = p.prospech.retezec.filter(k => k.odhad).length;
+      if (p.prospech.zaver === 'dolozen' && odhadu > 0) chyba('Závěr „prospěch doložen“ nesmí mít krok s odhadem (použijte zaver: pravdepodobny)');
+      if (p.prospech.zaver === 'pravdepodobny' && odhadu === 0) chyba('Závěr „prospěch pravděpodobný“ vyžaduje aspoň jeden krok s odhadem (jinak zaver: dolozen)');
+      const prvni = p.prospech.retezec[0];
+      if (prvni && !p.zdroje.some(zd => zd.druh === 'primarni' && prvni.zdroje.includes(zd.id)))
+        chyba('První krok řetězce (co pravidlo mění) musí mít primární zdroj, tedy text předpisu');
+      if (new Set(p.prospech.komu).size !== p.prospech.komu.length) chyba('Pole komu obsahuje stejnou hodnotu dvakrát');
+    }
+
+    // Dopad na kontrolu moci (spec kontroly moci, oddíl 6)
+    if (p.kontrolaMoci) {
+      p.kontrolaMoci.znaky.forEach((zn, i) => {
+        over(zn.zdroje, `Znak ${i + 1}`);
+        if (!p.zdroje.some(zd => zd.druh === 'primarni' && zn.zdroje.includes(zd.id))) chyba(`Znak ${i + 1} musí mít primární zdroj, tedy text předpisu`);
+        if (zn.druh === 'instituce' && !zn.instituce) chyba(`Znak ${i + 1} mění kontrolní instituci, musí ji uvést (instituce)`);
+        if (zn.druh !== 'instituce' && zn.instituce) chyba(`Znak ${i + 1}: instituce patří jen ke znaku druhu „instituce“`);
+      });
+      p.kontrolaMoci.znaky.map(zn => (zn.instituce ? `${zn.druh}/${zn.instituce}` : zn.druh))
+        .filter((x, i, a) => a.indexOf(x) !== i)
+        .forEach(x => chyba(`Znak „${x}“ je uveden dvakrát`));
+      p.kontrolaMoci.upozorneni.forEach(u => over(u.zdroje, `Upozornění („${u.kdo}“)`));
+    }
 
     // Cesta předložení a kroky projednávání
     if (!cestyProDruh(p.druh).includes(p.cesta)) chyba(`Cesta „${p.cesta}“ nepatří k druhu „${p.druh}“`);
