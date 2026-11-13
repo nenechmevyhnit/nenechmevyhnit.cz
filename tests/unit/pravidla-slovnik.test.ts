@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { cestyProDruh, popisekCesty, vynechaneKontroly, popisekKomu, popisekZaveru } from '../../src/lib/pravidla-slovnik';
+import {
+  DRUHY_PRAVIDEL, DUVODY, popisekDuvodu, DRUHY_ZNAKU, popisekDruhuZnaku, KONTROLNI_INSTITUCE, popisekInstituce,
+  popisekZnaku, UPOZORNOVATELE, upozornovatel, popisekTypuUpozornovatele,
+  cestyProDruh, popisekCesty, vynechaneKontroly, popisekKomu, popisekZaveru,
+} from '../../src/lib/pravidla-slovnik';
 import { krokyProDruh, popisekKroku, stavPravidla, vProjednavani, prubeh, KROKY, UKONCUJICI } from '../../src/lib/pravidla-stavy';
 
 describe('slovník pravidel', () => {
@@ -92,5 +96,52 @@ describe('průběh', () => {
   it('nařízení má vlastní fáze', () => {
     const { faze } = prubeh('narizeni-vlady', [{ datum: '2026-02-01', krok: 'pripominkove-rizeni' }, { datum: '2026-03-01', krok: 'schvaleno' }]);
     expect(faze.map(f => [f.nazev, f.hotovo])).toEqual([['Připomínky', true], ['Schváleno', true], ['Vyhlášeno', false]]);
+  });
+});
+
+describe('slovník kontroly moci', () => {
+  it('nové druhy mají vlastní cestu bez vynechaných kontrol a kroky jako ostatní nezákonné druhy', () => {
+    expect(DRUHY_PRAVIDEL).toContain('usneseni-vlady');
+    expect(DRUHY_PRAVIDEL).toContain('pokyn-ministerstva');
+    expect(cestyProDruh('usneseni-vlady')).toEqual(['usneseni-vlady']);
+    expect(cestyProDruh('pokyn-ministerstva')).toEqual(['pokyn-ministerstva']);
+    expect(popisekCesty('usneseni-vlady')).toBe('Usnesení vlády');
+    expect(popisekCesty('pokyn-ministerstva')).toBe('Pokyn ministerstva');
+    expect(vynechaneKontroly('usneseni-vlady')).toEqual([]);
+    expect(vynechaneKontroly('pokyn-ministerstva')).toEqual([]);
+    expect(krokyProDruh('usneseni-vlady')).toEqual(krokyProDruh('narizeni-vlady'));
+    expect(prubeh('pokyn-ministerstva', [{ datum: '2026-01-01', krok: 'vyhlaseno' }]).faze.map(f => f.nazev)).toEqual(['Připomínky', 'Schváleno', 'Vyhlášeno']);
+  });
+  it('důvody zařazení', () => {
+    expect(DUVODY).toEqual(['prospech', 'kontrola-moci']);
+    expect(popisekDuvodu('prospech')).toBe('Prospěch');
+    expect(popisekDuvodu('kontrola-moci')).toBe('Kontrola moci');
+  });
+  it('každý druh znaku, instituce a upozorňovatel má neprázdný popisek', () => {
+    for (const d of DRUHY_ZNAKU) expect(popisekDruhuZnaku(d).length).toBeGreaterThan(0);
+    for (const i of KONTROLNI_INSTITUCE) {
+      expect(popisekInstituce(i).length).toBeGreaterThan(0);
+      expect(popisekInstituce(i, 'plne').length).toBeGreaterThanOrEqual(popisekInstituce(i).length);
+    }
+    for (const u of UPOZORNOVATELE) {
+      expect(upozornovatel(u).nazev.length).toBeGreaterThan(0);
+      expect(['instituce', 'profesni-organizace']).toContain(upozornovatel(u).typ);
+    }
+  });
+  it('uzavřené seznamy odpovídají specifikaci', () => {
+    expect(DRUHY_ZNAKU).toEqual(['instituce', 'prilepek', 'legislativni-nouze', 'prvni-cteni', 'zpetna-ucinnost']);
+    expect(KONTROLNI_INSTITUCE).toEqual(['soudy', 'statni-zastupitelstvi', 'nku', 'uohs', 'ombudsman', 'policie', 'media-verejne-sluzby', 'dohled-strany', 'cnb', 'pristup-k-informacim', 'registr-smluv']);
+    expect(UPOZORNOVATELE.filter(u => upozornovatel(u).typ === 'instituce')).toEqual(['ustavni-soud', 'legislativni-rada-vlady', 'ombudsman', 'nku', 'evropska-komise', 'benatska-komise', 'nejvyssi-soud', 'nejvyssi-statni-zastupitelstvi', 'legislativni-odbor-snemovny']);
+    expect(UPOZORNOVATELE.filter(u => upozornovatel(u).typ === 'profesni-organizace')).toEqual(['soudcovska-unie', 'unie-statnich-zastupcu', 'ceska-advokatni-komora', 'syndikat-novinaru']);
+  });
+  it('popisky znaků a typů', () => {
+    expect(popisekZnaku({ druh: 'instituce', instituce: 'soudy' })).toBe('soudy');
+    expect(popisekZnaku({ druh: 'zpetna-ucinnost' })).toBe('zpětná účinnost');
+    expect(popisekZnaku({ druh: 'prilepek' })).toBe('přílepek');
+    expect(popisekInstituce('dohled-strany')).toBe('dohled nad financováním stran');
+    expect(popisekInstituce('dohled-strany', 'plne')).toBe('Úřad pro dohled nad hospodařením politických stran a politických hnutí');
+    expect(upozornovatel('soudcovska-unie')).toEqual({ nazev: 'Soudcovská unie ČR', typ: 'profesni-organizace' });
+    expect(popisekTypuUpozornovatele('profesni-organizace')).toBe('profesní organizace');
+    expect(popisekTypuUpozornovatele('instituce')).toBe('instituce');
   });
 });
