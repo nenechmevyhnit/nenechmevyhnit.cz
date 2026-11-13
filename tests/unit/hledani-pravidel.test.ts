@@ -6,8 +6,9 @@ import { platnePravidloKontrolaMoci } from './ukazka';
 
 const vysledek = overAdresar('tests/fixtures/obsah');
 const polozky = vysledek.pravidla.map(z => vytvorPolozkuPravidla(z, vysledek.stitky));
-const najdi = (f: Partial<{ text: string; stitky: string[]; jenProjednavane: boolean; duvody: ('prospech' | 'kontrola-moci')[] }>) =>
-  polozky.filter(p => odpovidaPravidlo(p, { text: '', stitky: [], jenProjednavane: false, duvody: [], ...f })).map(p => p.slug);
+type F = { text: string; stitky: string[]; jenProjednavane: boolean; duvody: ('prospech' | 'kontrola-moci')[]; jenBezPripominek: boolean };
+const najdi = (f: Partial<F>) =>
+  polozky.filter(p => odpovidaPravidlo(p, { text: '', stitky: [], jenProjednavane: false, duvody: [], jenBezPripominek: false, ...f })).map(p => p.slug);
 
 describe('hledání pravidel', () => {
   it('bez filtru najde všechna', () => expect(najdi({})).toEqual(['zakon-omega', 'pozmenovaci-sigma', 'narizeni-tau', 'usneseni-kappa']));
@@ -23,6 +24,18 @@ describe('hledání pravidel', () => {
     expect(najdi({ duvody: ['prospech'], stitky: ['soudy'] })).toEqual([]);
   });
   it('položka nese důvody zařazení', () => expect(polozky.find(p => p.slug === 'zakon-omega')!.duvody).toEqual(['prospech', 'kontrola-moci']));
+  it('hledá i v textu „Co by to znamenalo pro vás“', () => expect(najdi({ text: 'vyssi fiktivni sazbu na zvire' })).toEqual(['narizeni-tau']));
+  it('filtr bez připomínkového řízení', () => {
+    expect(najdi({ jenBezPripominek: true })).toEqual(['zakon-omega', 'pozmenovaci-sigma']);
+    expect(najdi({ jenBezPripominek: true, jenProjednavane: true })).toEqual(['zakon-omega']);
+  });
+  it('položka nese oblasti, kategorii stavu a příznak', () => {
+    const omega = polozky.find(p => p.slug === 'zakon-omega')!;
+    expect(omega.oblasti).toEqual(['dotace-stret-zajmu', 'kontrolni-urady']);
+    expect(omega.kategorie).toBe('projednava');
+    expect(omega.bezPripominek).toBe(true);
+    expect(polozky.find(p => p.slug === 'usneseni-kappa')!).toMatchObject({ kategorie: 'prijato', bezPripominek: false });
+  });
   it('hledá bez diakritiky a velikosti písmen i v krocích řetězce', () => {
     expect(najdi({ text: 'ZAHAJENA RIZENI' })).toEqual(['zakon-omega']);
     expect(najdi({ text: 'lhutu k vymahani' })).toEqual(['zakon-omega']);

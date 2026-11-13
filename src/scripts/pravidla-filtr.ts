@@ -23,6 +23,7 @@ export function inicializujFiltrPravidel(): void {
     stitky: cipy.filter(c => c.getAttribute('aria-pressed') === 'true').map(c => c.dataset.stitek!),
     jenProjednavane: jen.checked,
     duvody: cipyDuvodu.filter(c => c.getAttribute('aria-pressed') === 'true').map(c => c.dataset.duvod as Duvod),
+    jenBezPripominek: false,
   });
   const pouzij = () => {
     const f = filtr();
