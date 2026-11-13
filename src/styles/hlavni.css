@@ -420,6 +420,7 @@ input[type="search"]:focus { outline: 2px solid var(--modra); outline-offset: 0;
 .f4 .f-zrusit[hidden] { display: inline-block; visibility: hidden; }
 .f-cipy button { flex: none; border-radius: 999px; }
 .f-cipy button[aria-pressed="true"]::before { content: "✓ "; }
+.f-oddelovac { flex: none; width: 1px; align-self: stretch; margin: 4px 4px; background: var(--linka); }
 .f-prepinac { display: flex; align-items: center; gap: 6px; font-size: 14px; white-space: nowrap; cursor: pointer; }
 .f-prepinac input { accent-color: var(--modra); width: 16px; height: 16px; }
 @media (max-width: 760px) { .filtry.f4 { flex-wrap: wrap; } .f4 .f-hledat, .f4 .f-hledat input { width: 100%; } .f-prepinac { display: none; } }

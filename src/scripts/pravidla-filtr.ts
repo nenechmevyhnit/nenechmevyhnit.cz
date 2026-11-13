@@ -1,4 +1,5 @@
 import { odpovidaPravidlo, type PolozkaPravidla, type FiltrPravidel } from '../lib/hledani-pravidel';
+import type { Duvod } from '../lib/pravidla-slovnik';
 
 export function inicializujFiltrPravidel(): void {
   const data = document.getElementById('nv-pravidla');
@@ -8,6 +9,7 @@ export function inicializujFiltrPravidel(): void {
   const hledat = obal.querySelector<HTMLInputElement>('input[type="search"]')!;
   const jen = obal.querySelector<HTMLInputElement>('[data-jen-projednavane]')!;
   const cipy = [...obal.querySelectorAll<HTMLButtonElement>('[data-stitek]')];
+  const cipyDuvodu = [...obal.querySelectorAll<HTMLButtonElement>('[data-duvod]')];
   const pocet = obal.querySelector<HTMLElement>('.pocet')!;
   const zrusit = obal.querySelector<HTMLButtonElement>('.f-zrusit')!;
   const prazdno = document.querySelector<HTMLElement>('.pravidla-seznam .prazdno')!;
@@ -17,6 +19,7 @@ export function inicializujFiltrPravidel(): void {
     text: hledat.value,
     stitky: cipy.filter(c => c.getAttribute('aria-pressed') === 'true').map(c => c.dataset.stitek!),
     jenProjednavane: jen.checked,
+    duvody: cipyDuvodu.filter(c => c.getAttribute('aria-pressed') === 'true').map(c => c.dataset.duvod as Duvod),
   });
   const pouzij = () => {
     const f = filtr();
@@ -29,17 +32,17 @@ export function inicializujFiltrPravidel(): void {
     }
     prazdno.hidden = n > 0;
     pocet.textContent = `Zobrazeno ${n} z ${polozky.length}`;
-    zrusit.hidden = !(f.text.trim() || f.stitky.length || f.jenProjednavane);
+    zrusit.hidden = !(f.text.trim() || f.stitky.length || f.duvody.length || f.jenProjednavane);
   };
   const vycisti = () => {
     hledat.value = '';
     jen.checked = false;
-    cipy.forEach(c => c.setAttribute('aria-pressed', 'false'));
+    [...cipy, ...cipyDuvodu].forEach(c => c.setAttribute('aria-pressed', 'false'));
     pouzij();
   };
   hledat.addEventListener('input', pouzij);
   jen.addEventListener('change', pouzij);
-  cipy.forEach(c => c.addEventListener('click', () => {
+  [...cipy, ...cipyDuvodu].forEach(c => c.addEventListener('click', () => {
     c.setAttribute('aria-pressed', String(c.getAttribute('aria-pressed') !== 'true'));
     pouzij();
   }));
