@@ -101,7 +101,7 @@ describe('kontrola moci', () => {
   it('musí mít aspoň jeden znak', () => expect(chyby(k(p => { p.kontrolaMoci.znaky = []; })).join(' ')).toMatch(/aspoň jeden znak/));
   it('musí mít aspoň jedno upozornění', () => expect(chyby(k(p => { p.kontrolaMoci.upozorneni = []; })).join(' ')).toMatch(/aspoň jedno upozornění/));
   it('znak musí mít primární zdroj', () => expect(chyby(k(p => { p.kontrolaMoci.znaky[0].zdroje = [2]; })).join(' ')).toMatch(/Znak 1 musí mít primární zdroj/));
-  it('znak „instituce“ musí instituci uvést', () => expect(chyby(k(p => { delete p.kontrolaMoci.znaky[0].instituce; })).join(' ')).toMatch(/Znak 1 mění kontrolní instituci, musí ji uvést/));
+  it('znak „instituce“ musí instituci uvést', () => expect(chyby(k(p => { delete p.kontrolaMoci.znaky[0].instituce; })).join(' ')).toMatch(/Znak 1 mění instituci nebo pravidla státu, musí je uvést/));
   it('instituce patří jen ke znaku „instituce“', () => expect(chyby(k(p => { p.kontrolaMoci.znaky[0].druh = 'prilepek'; })).join(' ')).toMatch(/instituce patří jen ke znaku druhu „instituce“/));
   it('neznámá instituce, upozorňovatel a druh znaku jsou chyba', () => {
     expect(cesty(k(p => { p.kontrolaMoci.znaky[0].instituce = 'armada'; }))).toEqual(['kontrolaMoci.znaky.0.instituce']);

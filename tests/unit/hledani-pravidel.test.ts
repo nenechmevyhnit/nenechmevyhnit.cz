@@ -14,7 +14,7 @@ describe('hledání pravidel', () => {
   it('hledá v textu znaků a v popiscích znaků a institucí bez diakritiky', () => {
     expect(najdi({ text: 'vyber fiktivnich soudcu ministrovi' })).toEqual(['usneseni-kappa']);
     expect(najdi({ text: 'zpetna ucinnost' })).toEqual(['zakon-omega']);
-    expect(najdi({ text: 'kontrolni instituci' })).toEqual(['usneseni-kappa']);
+    expect(najdi({ text: 'instituci nebo pravidla statu' })).toEqual(['usneseni-kappa']);
   });
   it('filtr důvodu: NEBO mezi sebou, A se štítky', () => {
     expect(najdi({ duvody: ['kontrola-moci'] })).toEqual(['zakon-omega', 'usneseni-kappa']);

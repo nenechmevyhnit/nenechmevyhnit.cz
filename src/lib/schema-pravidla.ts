@@ -93,7 +93,7 @@ const vytvorPravidloSchema = (koncepty: boolean) => z
       p.kontrolaMoci.znaky.forEach((zn, i) => {
         over(zn.zdroje, `Znak ${i + 1}`);
         if (!p.zdroje.some(zd => zd.druh === 'primarni' && zn.zdroje.includes(zd.id))) chyba(`Znak ${i + 1} musí mít primární zdroj, tedy text předpisu`);
-        if (zn.druh === 'instituce' && !zn.instituce) chyba(`Znak ${i + 1} mění kontrolní instituci, musí ji uvést (instituce)`);
+        if (zn.druh === 'instituce' && !zn.instituce) chyba(`Znak ${i + 1} mění instituci nebo pravidla státu, musí je uvést (instituce)`);
         if (zn.druh !== 'instituce' && zn.instituce) chyba(`Znak ${i + 1}: instituce patří jen ke znaku druhu „instituce“`);
       });
       p.kontrolaMoci.znaky.map(zn => (zn.instituce ? `${zn.druh}/${zn.instituce}` : zn.druh))
