@@ -45,6 +45,8 @@ export function platnePravidlo(): Record<string, unknown> {
     cesta: 'poslanecky-navrh',
     predkladatel: 'fiktivní poslanci A a B',
     stitky: ['dotace'],
+    oblasti: ['dotace-stret-zajmu'],
+    proVas: { text: 'Kdyby fiktivní novela prošla, fiktivní stát by mohl vymáhat fiktivní dotace jen čtyři roky.', zdroje: [1] },
     overeno: '2026-11-09',
     zdroje: [
       { id: 1, vydavatel: 'Fiktivní sněmovna', titulek: 'Fiktivní tisk 1', datum: '2026-06-10', druh: 'primarni', url: 'https://example.com/tisk' },
@@ -72,6 +74,7 @@ export function platnePravidloKontrolaMoci(): Record<string, unknown> {
   return {
     ...p,
     nazev: 'Testovací usnesení Kappa',
+    oblasti: ['soudy-policie'],
     druh: 'usneseni-vlady',
     cesta: 'usneseni-vlady',
     predkladatel: 'Fiktivní ministr spravedlnosti',

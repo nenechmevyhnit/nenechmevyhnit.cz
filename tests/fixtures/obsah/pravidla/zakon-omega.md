@@ -6,6 +6,8 @@ cesta: poslanecky-navrh
 predkladatel: fiktivní poslanci A, B a C
 oznaceni: fiktivní sněmovní tisk 1
 stitky: [dotace, stret-zajmu]
+oblasti: [dotace-stret-zajmu, kontrolni-urady]
+proVas: { text: "Kdyby fiktivní novela prošla, fiktivní stát by mohl chtít zpět neoprávněně vyplacenou dotaci jen čtyři roky místo deseti. Co se do té doby nevymůže, zůstane fiktivní firmě, i když jde o peníze z fiktivních veřejných rozpočtů. Kratší lhůta by platila i pro dotace vyplacené před účinností novely, takže by se týkala i už zahájených fiktivních kontrol a sporů o vrácení peněz.", zdroje: [1] }
 overeno: 2026-11-09
 zdroje:
   - { id: 1, vydavatel: Fiktivní sněmovna, titulek: Fiktivní sněmovní tisk 1, datum: 2026-06-10, druh: primarni, url: "https://example.com/omega/tisk" }

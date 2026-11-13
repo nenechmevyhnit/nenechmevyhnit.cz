@@ -133,3 +133,29 @@ describe('důvody zařazení', () => {
     expect(duvodyPravidla(pravidloSchema.parse(platnePravidloKontrolaMoci()))).toEqual(['kontrola-moci']);
   });
 });
+
+describe('oblasti a „Co by to znamenalo pro vás“', () => {
+  it('platné pravidlo má oblasti a proVas', () => {
+    const p = pravidloSchema.parse(platnePravidlo());
+    expect(p.oblasti).toEqual(['dotace-stret-zajmu']);
+    expect(p.proVas!.zdroje).toEqual([1]);
+  });
+  it('mimo režim konceptů jsou oblasti i proVas povinné', () => {
+    expect(chyby(s(p => { delete p.oblasti; })).join(' ')).toMatch(/aspoň do jedné oblasti/);
+    expect(chyby(s(p => { delete p.proVas; })).join(' ')).toMatch(/Co by to znamenalo pro vás/);
+  });
+  it('v režimu konceptů smějí chybět', () => {
+    expect(chyby(s(p => { delete p.oblasti; delete p.proVas; }), pravidloSchemaKoncepty)).toEqual([]);
+  });
+  it('odmítne neznámou oblast, prázdný seznam a opakování', () => {
+    expect(cesty(s(p => { p.oblasti = ['neznama']; }))).toContain('oblasti.0');
+    expect(chyby(s(p => { p.oblasti = []; })).length).toBeGreaterThan(0);
+    expect(chyby(s(p => { p.oblasti = ['soudy-policie', 'soudy-policie']; })).join(' ')).toMatch(/stejnou oblast dvakrát/);
+  });
+  it('proVas: nejvýš 400 znaků, aspoň jeden existující zdroj', () => {
+    expect(chyby(s(p => { p.proVas.text = 'x'.repeat(401); })).join(' ')).toMatch(/nejvýš 400 znaků/);
+    expect(chyby(s(p => { p.proVas.text = 'x'.repeat(400); }))).toEqual([]);
+    expect(chyby(s(p => { p.proVas.zdroje = []; })).join(' ')).toMatch(/aspoň jeden zdroj/);
+    expect(chyby(s(p => { p.proVas.zdroje = [9]; })).join(' ')).toMatch(/Co by to znamenalo pro vás odkazuje na neexistující zdroj 9/);
+  });
+});

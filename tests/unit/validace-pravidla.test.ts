@@ -63,6 +63,10 @@ describe('overVazbyPravidel', () => {
     const r = overVazbyPravidel('obsah', [zaznam('kauza-a')], new Set(['kauza-a']));
     expect(r.chyby[0].zprava).toMatch(/Slug „kauza-a“ už používá kauza/);
   });
+  it('slug „oblasti“ je vyhrazený pro stránky oblastí', () => {
+    const r = overVazbyPravidel('obsah', [zaznam('oblasti')], new Set());
+    expect(r.chyby.map(c => c.zprava).join(' ')).toMatch(/Slug „oblasti“ je vyhrazený/);
+  });
 });
 
 describe('overAdresar s pravidly', () => {

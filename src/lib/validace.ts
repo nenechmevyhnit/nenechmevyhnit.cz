@@ -60,6 +60,7 @@ export function overVazbyPravidel(adresar: string, pravidla: PravidloZaznam[], s
   const vysledek = pravidla.map(z => {
     const soubor = join(adresar, 'pravidla', `${z.slug}.md`);
     if (zname.has(z.slug)) chyby.push({ soubor, zprava: `Slug „${z.slug}“ už používá kauza; pravidlo musí mít jiný název souboru` });
+    if (z.slug === 'oblasti') chyby.push({ soubor, zprava: 'Slug „oblasti“ je vyhrazený pro stránky oblastí (/pravidla/oblasti/); pravidlo musí mít jiný název souboru' });
     const kauzy = z.pravidlo.kauzy.filter(k => {
       if (zname.has(k.kauza)) return true;
       const zprava = `Vazba na neexistující kauzu „${k.kauza}“`;
