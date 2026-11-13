@@ -10,7 +10,7 @@ body{margin:0;width:1200px;height:630px;background:#F5F5F8;font-family:"Redactio
 h1{font-size:96px;line-height:1;margin:18px 0 22px}
 p{font-size:34px;color:#33325A;margin:0;max-width:880px}
 .pruhy{margin-top:42px;display:grid;gap:12px;width:620px}.pruhy i{display:block;height:14px;background:#282661;border-radius:2px}
-</style></head><body><div class="nad">Archiv kauz Andreje Babiše</div><h1>Nenechme vyhnít</h1><p>Kauzy přehledně, s daty a zdroji.</p>
+</style></head><body><div class="nad">Archiv kauz Andreje Babiše</div><h1>Posuďte sami</h1><p>Kauzy přehledně, s daty a zdroji.</p>
 <div class="pruhy"><i style="width:85%"></i><i style="width:45%;margin-left:55%"></i><i style="width:25%;margin-left:70%"></i></div></body></html>`;
 const prohlizec = await chromium.launch();
 const stranka = await prohlizec.newPage({ viewport: { width: 1200, height: 630 } });
