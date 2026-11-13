@@ -28,6 +28,12 @@ function jednouNaDialog(dlg: HTMLDialogElement): void {
   }, { passive: false });
 }
 
+/** Zobrazení události zvenku (osa pravidel, adresa ?udalost=): inicializujDetail sem uloží funkci pro aktuální obsah. */
+const ukazovace = new WeakMap<HTMLDialogElement, (i: number) => boolean>();
+export function ukazUdalost(dlg: HTMLDialogElement, i: number): boolean {
+  return ukazovace.get(dlg)?.(i) ?? false;
+}
+
 export function inicializujDetail(dlg: HTMLDialogElement): void {
   const polozky = [...dlg.querySelectorAll<HTMLElement>('.udalosti-seznam > li')];
   if (!polozky.length) return;
@@ -159,4 +165,10 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
     if (s) { e.preventDefault(); navigator.clipboard?.writeText(location.href); s.textContent = 'Odkaz zkopírován ✓'; }
   });
   ukaz(akt, false);
+  ukazovace.set(dlg, (i: number) => {
+    if (!Number.isInteger(i) || i < 0 || i >= polozky.length) return false;
+    prepni('chrono');
+    ukaz(i, false);
+    return true;
+  });
 }

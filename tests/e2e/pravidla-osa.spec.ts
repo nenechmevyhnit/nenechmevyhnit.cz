@@ -109,3 +109,61 @@ for (const v of VELIKOSTI) {
     if (v.width > 1000) expect(await page.locator('.op-plocha').evaluate(e => e.scrollWidth <= e.clientWidth + 1)).toBe(true);
   });
 }
+
+test('klik na bod otevře Průběh na dané události, zavření vrátí osu a fokus', async ({ page }) => {
+  await page.goto('/pravidla/?pohled=osa');
+  await page.evaluate(() => { (window as any).bezNacteni = true; });
+  const bod = page.locator('.op-radek[data-slug="zakon-omega"] a.op-bod.krok').nth(1);
+  const index = await bod.getAttribute('data-udalost');
+  await bod.click();
+  await expect(page).toHaveURL(new RegExp(`/pravidla/zakon-omega/\\?udalost=${index}$`));
+  await expect(page.locator('dialog#detail')).toBeVisible();
+  await expect(page.getByRole('tab', { name: 'Průběh' })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator(`.udalosti-seznam > li[data-i="${index}"]`)).toBeVisible();
+  expect(await page.evaluate(() => (window as any).bezNacteni)).toBe(true);
+  await page.getByRole('button', { name: 'Zavřít detail' }).click();
+  await expect(page).toHaveURL(/\/pravidla\/\?pohled=osa$/);
+  await expect(page.locator('.osa-pravidel')).toBeVisible();
+  await expect(page.locator('.op-radek[data-slug="zakon-omega"] .op-nazev')).toBeFocused();
+});
+
+test('přímá adresa ?udalost= otevře detail na události', async ({ page }) => {
+  await page.goto('/pravidla/zakon-omega/?udalost=1');
+  await expect(page.getByRole('tab', { name: 'Průběh' })).toHaveAttribute('aria-selected', 'true');
+  await expect(page.locator('.udalosti-seznam > li[data-i="1"]')).toBeVisible();
+});
+
+test('neplatné ?udalost= otevře detail normálně a bez chyby', async ({ page }) => {
+  const chyby: string[] = [];
+  page.on('pageerror', e => chyby.push(e.message));
+  for (const u of ['-1', '99', 'abc']) {
+    await page.goto(`/pravidla/zakon-omega/?udalost=${u}`);
+    await expect(page.locator('dialog#detail')).toBeVisible();
+    await expect(page.getByRole('tab').first()).toHaveAttribute('aria-selected', 'true');
+  }
+  expect(chyby).toEqual([]);
+});
+
+test('značka „dříve“ otevře první starší událost', async ({ page }) => {
+  await page.goto('/pravidla/?pohled=osa');
+  await page.locator('.op-radek[data-slug="pozmenovaci-sigma"] .op-drive').click();
+  await expect(page).toHaveURL(/\/pravidla\/pozmenovaci-sigma\/\?udalost=0$/);
+  await expect(page.locator('.udalosti-seznam > li[data-i="0"]')).toBeVisible();
+});
+
+test('klik na název řádku osy otevře detail', async ({ page }) => {
+  await page.goto('/pravidla/?pohled=osa');
+  await page.locator('.op-radek[data-slug="narizeni-tau"] .op-nazev').click();
+  await expect(page).toHaveURL(/\/pravidla\/narizeni-tau\/$/);
+  await expect(page.locator('dialog#detail h2')).toHaveText('Testovací nařízení Tau');
+});
+
+test('zpět v prohlížeči po otevření z osy vrátí osu', async ({ page }) => {
+  await page.goto('/pravidla/?pohled=osa');
+  await page.locator('.op-radek[data-slug="zakon-omega"] a.op-bod').first().click();
+  await expect(page.locator('dialog#detail')).toBeVisible();
+  await page.goBack();
+  await expect(page.locator('dialog#detail')).toBeHidden();
+  await expect(page).toHaveURL(/\/pravidla\/\?pohled=osa$/);
+  await expect(page.locator('.osa-pravidel')).toBeVisible();
+});

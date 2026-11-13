@@ -1,3 +1,5 @@
+import { otevriPravidlo } from './navigace-pravidel';
+
 /** Přepínání Seznam · Časová osa, popisky bodů a posun osy na „dnes“ (spec osy pravidel, oddíl 2, 5 a 6). */
 export type Pohled = 'seznam' | 'osa';
 
@@ -72,4 +74,15 @@ export function inicializujOsuPravidel(): void {
     const b = bod(document.activeElement);
     if (b && !popisek.hidden) ukazPopisek(b); else skryjPopisek();
   }, { passive: true });
+
+  osa.addEventListener('click', e => {
+    const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a.op-bod, a.op-drive, a.op-nazev');
+    const me = e as MouseEvent;
+    if (!a || me.metaKey || me.ctrlKey || me.shiftKey || me.button !== 0) return;
+    e.preventDefault();
+    skryjPopisek();
+    const slug = a.closest<HTMLElement>('.op-radek')!.dataset.slug!;
+    const u = a.dataset.udalost;
+    otevriPravidlo(slug, u !== undefined ? { udalost: Number(u) } : {});
+  });
 }
