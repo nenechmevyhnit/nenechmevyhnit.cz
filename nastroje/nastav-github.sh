@@ -3,7 +3,7 @@
 # Spouštět ve vlastním terminálu:  Git Bash: bash nastroje/nastav-github.sh
 # PowerShell (tam je „bash“ z WSL):  & "C:\Program Files\Git\bin\bash.exe" nastroje/nastav-github.sh
 # Token se zadává skrytě a nikam se neukládá. Potřebuje fine-grained token účtu nenechmevyhnit,
-# omezený jen na repozitář nenechmevyhnit.cz, s oprávněním Administration: Read and write.
+# omezený jen na repozitář nenechmevyhnit/nenechmevyhnit.cz, s oprávněním Administration: Read and write.
 set -euo pipefail
 
 REPO="nenechmevyhnit/nenechmevyhnit.cz"

@@ -10,7 +10,7 @@ export const oProjektu = (sPravidly: boolean): { sekce: SekceStranky[] } => ({
       shrnuti: "Kauzy zapadají. Za půl roku si nikdo nepamatuje, co se stalo, a právě na to se spoléhá.",
       html: `<p>Každý týden přijde nová kauza, novela nebo rozhodnutí a ta předchozí zapadne. Za půl roku si ji pamatuje málokdo, za tři roky skoro nikdo.${sPravidly ? ' Proto archiv vedle kauz zapisuje i změny pravidel, u kterých rozbor archivu ukazuje prospěch pro Andreje Babiše nebo Agrofert, a změny, které mění kontrolu moci a na které upozornily instituce.' : ''}</p>
 <p>Myšlenka vzešla z rozhovoru v podcastu <em>Kecy a politika</em>: někdo by měl tyhle věci soustavně zapisovat a archivovat, jinak zmizí. Tento web se o to pokouší, přehledně, v čase a se zdrojem u každého tvrzení.</p>
-<p>Název odkazuje na rčení „nechat věc vyhnít“, tedy nechat ji ležet, dokud sama nevyšumí. Archiv drží kauzy na očích i potom, co zmizí ze zpráv.</p>`,
+<p>Název popisuje, jak archiv funguje. Nikomu neříká, co si má myslet. Ke každému tvrzení dává zdroj, ke každé kauze stanovisko dotčené strany a úsudek nechává na vás.</p>`,
     },
     {
       id: "kdo",
@@ -46,7 +46,7 @@ export const oProjektu = (sPravidly: boolean): { sekce: SekceStranky[] } => ({
       id: "licence",
       nadpis: "Sdílení a citace",
       shrnuti: "Texty archivu můžete volně sdílet a citovat s uvedením zdroje.",
-      html: `<p>Texty archivu jsou pod licencí <strong>Creative Commons Uveďte původ 4.0</strong>. Můžete je sdílet, citovat i dál zpracovávat, stačí uvést „Nenechme vyhnít“ a odkaz.</p>
+      html: `<p>Texty archivu jsou pod licencí <strong>Creative Commons Uveďte původ 4.0</strong>. Můžete je sdílet, citovat i dál zpracovávat, stačí uvést „Posuďte sami“ a odkaz.</p>
 <p>Citované články a dokumenty patří svým autorům, odkazujeme na ně. Portrét na hlavní stránce: Vox España, Wikimedia Commons, licence CC0.</p>`,
     },
     {

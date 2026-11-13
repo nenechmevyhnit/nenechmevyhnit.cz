@@ -22,7 +22,7 @@ const cipy = [...new Set(zaznamy.flatMap(z => z.pravidlo.stitky))]
 // Filtr důvodu má smysl, jen když archiv obsahuje záznamy s oběma důvody.
 const duvody = DUVODY.filter(d => zaznamy.some(z => duvodyPravidla(z.pravidlo).includes(d)));
 const sDuvody = duvody.length > 1;
-const titulek = otevrene ? `${otevrene.pravidlo.nazev} — Nenechme vyhnít` : 'Změny pravidel — Nenechme vyhnít';
+const titulek = otevrene ? `${otevrene.pravidlo.nazev} — Posuďte sami` : 'Změny pravidel — Posuďte sami';
 const popis = otevrene
   ? otevrene.pravidlo.shrnuti
   : 'Zákony, nařízení, usnesení vlády a pokyny ministerstev od prosince 2025, u kterých rozbor archivu ukazuje prospěch pro Andreje Babiše nebo Agrofert, nebo které mění kontrolu moci a instituce na to upozornily.';

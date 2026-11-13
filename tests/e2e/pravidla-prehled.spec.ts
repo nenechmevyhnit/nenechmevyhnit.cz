@@ -9,7 +9,7 @@ test('menu vede na změny pravidel a přehled je seřazený od nejnovější zm�
   await page.goto('/');
   await page.getByRole('navigation', { name: 'Hlavní' }).getByRole('link', { name: 'Změny pravidel' }).click();
   await expect(page).toHaveURL(/\/pravidla\/$/);
-  await expect(page).toHaveTitle('Změny pravidel — Nenechme vyhnít');
+  await expect(page).toHaveTitle('Změny pravidel — Posuďte sami');
   await expect(page.getByRole('navigation', { name: 'Hlavní' }).getByRole('link', { name: 'Změny pravidel' })).toHaveAttribute('aria-current', 'page');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Které změny pravidel prospívají Babišovi a Agrofertu nebo mění kontrolu moci');
   await expect(page.locator('.pr-radek .pr-nazev strong')).toHaveText(NAZVY);
