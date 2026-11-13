@@ -11,7 +11,7 @@ test('přímá adresa otevře detail pravidla s vlastním náhledem', async ({ p
   await expect(dlg.getByRole('heading', { level: 2 })).toHaveText(OMEGA);
   await expect(page).toHaveTitle(`${OMEGA} — Nenechme vyhnít`);
   await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://nenechmevyhnit.cz/pravidla/zakon-omega/');
-  await expect(dlg.locator('.m2-hlava .roky')).toHaveText('Poslanecký návrh zákona · Schváleno Sněmovnou');
+  await expect(dlg.locator('.m2-hlava .roky')).toContainText('Poslanecký návrh zákona · Schváleno Sněmovnou');
   await expect(page.locator('.pr-radek[data-slug="zakon-omega"]')).toHaveClass(/vybrany/);
   await overBezPosouvani(page);
 });
@@ -258,14 +258,49 @@ test('detail pravidla ukazuje „Co by to znamenalo pro vás“ a odkazy na obla
   await expect(page).toHaveURL(/\/pravidla\/zakon-omega\/$/);
 });
 
-test('na nízkém okně 1256×528 je celý text „pro vás“ dostupný posouváním z klávesnice', async ({ page }) => {
-  await page.setViewportSize({ width: 1256, height: 528 });
-  await page.goto('/pravidla/zakon-omega/');
-  const box = page.locator('dialog#detail .m2-hlava .pro-vas');
-  await box.focus();
-  await expect(box).toBeFocused();
-  await box.evaluate(e => { e.scrollTop = e.scrollHeight; });
-  expect(await box.evaluate(e => e.scrollTop)).toBeGreaterThan(0);
-  expect(await box.evaluate(e => e.scrollTop + e.clientHeight >= e.scrollHeight - 1)).toBe(true);
-  await expect(box).toContainText('sporů o vrácení peněz');
-});
+for (const v of VELIKOSTI) {
+  test(`${v.width}×${v.height}: cesta předložení v Průběhu není oříznutá a vynechané kontroly jsou vidět`, async ({ page }) => {
+    await page.setViewportSize(v);
+    await page.goto('/pravidla/pozmenovaci-sigma/');
+    await page.getByRole('tab', { name: 'Průběh' }).click();
+    const box = page.locator('.m2-panel[data-p="chrono"] .cesta-box');
+    expect(await box.evaluate(e => e.scrollHeight <= e.clientHeight + 1)).toBe(true);
+    await expect(box.locator('.vynechano')).toBeVisible();
+    await expect(box).toContainText('Připojeno k:');
+    const b = await box.locator('.vynechano li').last().boundingBox();
+    const bb = await box.boundingBox();
+    expect(b!.y + b!.height).toBeLessThanOrEqual(bb!.y + bb!.height + 1);
+  });
+
+  test(`${v.width}×${v.height}: „pro vás“ nemá rozříznutý řádek a celý text jde rozbalit`, async ({ page }) => {
+    await page.setViewportSize(v);
+    await page.goto('/pravidla/zakon-omega/');
+    const box = page.locator('dialog#detail .m2-hlava .pro-vas');
+    const vice = page.locator('dialog#detail .m2-hlava .pro-vas-vice');
+    const m = await box.evaluate(e => {
+      const cs = getComputedStyle(e);
+      const lh = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.2;
+      const pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+      return { lh, vyska: e.clientHeight - pad, scroll: e.scrollHeight - pad };
+    });
+    expect(m.vyska).toBeGreaterThanOrEqual(m.lh - 2);
+    const radku = m.vyska / m.lh;
+    expect(Math.abs(radku - Math.round(radku)) * m.lh).toBeLessThanOrEqual(2);
+    if (m.scroll > m.vyska + 1) {
+      await expect(vice).toBeVisible();
+      expect(await vice.evaluate(e => e.tagName)).toBe('BUTTON');
+      await expect(vice).toHaveAttribute('aria-expanded', 'false');
+      await vice.focus();
+      await page.keyboard.press('Enter');
+      await expect(vice).toHaveAttribute('aria-expanded', 'true');
+      // rozbalený text je celý vidět, nebo se posouvá uvnitř boxu (nejvýš 30 % výšky okna)
+      await box.evaluate(e => { e.scrollTop = e.scrollHeight; });
+      expect(await box.evaluate(e => e.scrollTop + e.clientHeight >= e.scrollHeight - 1)).toBe(true);
+      expect(await box.evaluate(e => e.clientHeight)).toBeGreaterThan(m.lh);
+      await expect(vice).toHaveText('méně');
+    } else {
+      await expect(vice).toBeHidden();
+    }
+    await expect(box).toContainText('sporů o vrácení peněz');
+  });
+}

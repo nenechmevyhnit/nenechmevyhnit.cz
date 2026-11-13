@@ -161,9 +161,10 @@ export function overOblasti(adresar: string, soubory: { slug: string; soubor: st
     const id = s.slug as Oblast;
     const hodnoceni = r.data.hodnoceni.map((h, i) => ({
       ...h,
-      pravidla: h.pravidla.filter(slug => {
+      pravidla: h.pravidla.filter((slug, j) => {
         const z = pravidla.find(p => p.slug === slug);
         const kde = `Hodnocení ${i + 1} („${h.kdo}“)`;
+        if (h.pravidla.indexOf(slug) !== j) { chyby.push({ soubor: s.soubor, zprava: `${kde} uvádí změnu „${slug}“ dvakrát` }); return false; }
         if (!z) {
           const zprava = `${kde} odkazuje na neexistující změnu „${slug}“`;
           if (rezim.koncepty) chyby.push({ soubor: s.soubor, zprava });

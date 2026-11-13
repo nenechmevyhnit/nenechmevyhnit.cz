@@ -103,7 +103,7 @@ export function inicializujNavigaciPravidel(): void {
     const zdroj = a.dataset.zdrojZmeny;
     otevriPravidlo(a.dataset.pravidlo!).then(() => {
       if (zdroj) dlg.querySelector<HTMLElement>(`a[data-zdroj="${CSS.escape(zdroj)}"]`)?.click();
-    });
+    }).catch(() => {});
   });
 
   dlg.addEventListener('close', () => {

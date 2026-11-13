@@ -65,7 +65,7 @@ const zalozky = [
                 <li>
                   <blockquote>„{h.citace}“</blockquote>
                   <p class="ob-kdo"><strong>{h.kdo}</strong>{h.funkce && <>, {h.funkce}</>}, {datumText(h.datum)}<span class="chipy" set:html={chipy(h.zdroje)}></span>
-                    {zmeny.length > 0 && <> · K: {zmeny.map((slug, i) => <>{i > 0 && ', '}<a href={`/pravidla/${slug}/`} data-pravidlo={slug} aria-haspopup="dialog">{nazvyZmen.get(slug)}</a></>)}</>}
+                    {zmeny.length > 0 && <> · {zmeny.length === 1 ? 'Ke změně' : 'Ke změnám'}: {zmeny.map((slug, i) => <>{i > 0 && ', '}<a href={`/pravidla/${slug}/`} data-pravidlo={slug} aria-haspopup="dialog">{nazvyZmen.get(slug)}</a></>)}</>}
                   </p>
                 </li>
               );

@@ -8,7 +8,7 @@ const hodnoceniSchema = z.object({
   kdo: text(),
   funkce: text().optional(),
   citace: text().max(500, 'Citace smí mít nejvýš 500 znaků'),
-  datum,
+  datum: datumPresne,
   zdroje: odkazy('Hodnocení'),
   /** Slugy změn v této oblasti, ke kterým se citace vztahuje. */
   pravidla: z.array(idTvar).default([]),

@@ -24,6 +24,9 @@ describe('oblastSchema', () => {
     expect(chyby(o(x => { x.uvod.text = 'x'.repeat(401); })).join(' ')).toMatch(/Úvod oblasti smí mít nejvýš 400 znaků/);
     expect(chyby(o(x => { x.hodnoceni[0].citace = 'x'.repeat(501); })).join(' ')).toMatch(/Citace smí mít nejvýš 500 znaků/);
   });
+  it('datum hodnocení musí být přesné', () => {
+    expect(chyby(o(x => { x.hodnoceni[0].datum = '2026-06'; })).join(' ')).toMatch(/RRRR-MM-DD/);
+  });
   it('odkazy na zdroje musí existovat', () => {
     expect(chyby(o(x => { x.uvod.zdroje = [7]; })).join(' ')).toMatch(/Úvod oblasti odkazuje na neexistující zdroj 7/);
     expect(chyby(o(x => { x.hodnoceni[1].zdroje = [8]; })).join(' ')).toMatch(/Hodnocení 2 \(„Fiktivní odbornice E“\) odkazuje na neexistující zdroj 8/);
@@ -69,6 +72,11 @@ describe('overOblasti', () => {
   it('hodnocení odkazuje na změnu z jiné oblasti: vždy chyba', () => {
     const r = overOblasti('obsah', [soubor('dotace-stret-zajmu')], [zaznam('novela-x', ['soudy-policie'])]);
     expect(zpravy(r.chyby)).toMatch(/„novela-x“, která do oblasti nepatří/);
+  });
+  it('duplicitní slug v hodnocení je chyba a zůstane jen jeden', () => {
+    const r = overOblasti('obsah', [soubor('dotace-stret-zajmu', o(x => { x.hodnoceni[0].pravidla = ['novela-x', 'novela-x']; }))], [zaznam('novela-x', ['dotace-stret-zajmu'])]);
+    expect(zpravy(r.chyby)).toMatch(/Hodnocení 1 .* uvádí změnu „novela-x“ dvakrát/);
+    expect(r.oblasti[0].data.hodnoceni[0].pravidla).toEqual(['novela-x']);
   });
   it('hodnocení odkazuje na neexistující změnu: veřejný build vynechá s varováním, koncepty chyba', () => {
     const verejny = overOblasti('obsah', [soubor('dotace-stret-zajmu')], [zaznam('jina', ['dotace-stret-zajmu'])]);

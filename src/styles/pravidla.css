@@ -95,11 +95,13 @@ body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
 }
 
 /* nízké a široké okno: hlavička a listování zabírají méně místa, aby se do Průběhu vešla cesta předložení i událost */
-@media (max-height: 640px) and (min-width: 761px) {
+@media (max-height: 700px) and (min-width: 761px) {
   .pravidlo .m2-hlava { padding-top: 16px; }
   .pravidlo .m2-hlava h2 { font-size: 28px; margin: 4px 0 6px; }
   .pravidlo .prubeh-detail { margin: 8px 0 0; }
   .pravidlo .m2-panel { padding-top: 14px; padding-bottom: 14px; }
+}
+@media (max-height: 640px) and (min-width: 761px) {
   .pravidlo .m2-panel[data-p="chrono"]:not([hidden]) { grid-template-columns: minmax(260px, 380px) 1fr; }
   .pravidlo .m2-panel[data-p="chrono"] .cesta-box { padding: 4px 14px; font-size: 15px; line-height: 1.3; }
   .pravidlo .m2-panel[data-p="chrono"] .vynechano { font-size: 13px; }
@@ -201,18 +203,25 @@ body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
 /* Bez JavaScriptu přehled ukazuje jen Oblasti, bez přepínače a filtrů (specifikace oblastí, oddíl 8.1). */
 html:not(.js) body .pr-filtry { display: none; }
 
-/* Detail pravidla: text pro čtenáře a oblasti pod shrnutím. Na nízkých oknech má text
-   výšku nejvýš dva řádky a zbytek se posouvá uvnitř (box jde zaostřit klávesnicí, myš i dotyk posouvají),
-   aby panel pod hlavičkou neztratil místo. Celý text je i v atributu title. */
-.m2-hlava .pro-vas { max-width: 720px; margin: 8px 0 0; font-size: 14px; }
-.m2-hlava .pr-oblasti { margin: 4px 0 0; font-size: 13px; color: var(--meta); }
+/* Detail pravidla: text pro čtenáře a oblasti. Oblasti jsou na horním řádku vedle cesty a stavu.
+   Na nízkých oknech je text „pro vás“ jeden celý řádek (bez rozříznutých písmen) a tlačítko „celý text“
+   (skript ho ukáže, jen když text pokračuje) ho rozbalí. */
+.m2-hlava .pro-vas-obal { display: flex; align-items: flex-start; gap: 10px; max-width: 720px; margin: 8px 0 0; }
+.m2-hlava .pro-vas { flex: 1 1 auto; min-width: 0; margin: 0; font-size: 14px; }
+.m2-hlava .pro-vas-vice { flex: none; margin: 0; padding: 4px 0; border: 0; background: none; font: italic 14px var(--f-text); color: var(--modra); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; white-space: nowrap; }
+.m2-hlava .pro-vas-vice[hidden] { display: none; }
 .m2-hlava .pr-oblasti a { color: var(--modra); }
 @media (max-height: 700px) {
-  .m2-hlava .pro-vas { line-height: 1.4; max-height: 2.8em; overflow-y: auto; margin-top: 4px; font-size: 13px; }
-  .m2-hlava .pr-oblasti { margin-top: 2px; font-size: 12px; }
-  /* hlavička je o dva řádky vyšší, cesta předložení v Průběhu se na nízkém okně posouvá uvnitř svého boxu */
-  .pravidlo .m2-panel[data-p="chrono"] .cesta-box { overflow-y: auto; }
+  .m2-hlava .pro-vas-obal { margin-top: 4px; }
+  .m2-hlava .pro-vas { padding: 4px 10px; line-height: 20px; max-height: 28px; overflow: hidden; font-size: 13px; }
+  .m2-hlava .pro-vas-obal.rozbalene .pro-vas { max-height: 30dvh; overflow-y: auto; }
 }
+/* mobil a nízké okno: shrnutí jsou vidět dva řádky (zbytek za tlačítkem „celé shrnutí“), aby se do Průběhu vešla cesta předložení */
 @media (max-height: 700px) and (max-width: 760px) {
-  .pravidlo .m2-panel[data-p="chrono"] .cesta-box { max-height: 4em; }
+  body .m2-hlava:not(.rozbalene) .perex { max-height: 3em; }
+  /* listování v Průběhu: název sousední události na jeden řádek, menší okraje */
+  .pravidlo .m2-panel[data-p="chrono"] { padding-top: 10px; padding-bottom: 10px; }
+  .pravidlo .m2-panel[data-p="chrono"] .listovani { padding-top: 6px; }
+  .pravidlo .m2-panel[data-p="chrono"] .listovani button { padding: 4px 10px; }
+  .pravidlo .m2-panel[data-p="chrono"] .listovani button span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }

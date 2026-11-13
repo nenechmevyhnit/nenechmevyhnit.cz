@@ -48,6 +48,9 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
   const hlava = dlg.querySelector<HTMLElement>('.m2-hlava')!;
   const perex = hlava.querySelector<HTMLElement>('.perex');
   const vice = hlava.querySelector<HTMLButtonElement>('.perex-vice');
+  const proVasObal = hlava.querySelector<HTMLElement>('.pro-vas-obal');
+  const proVas = proVasObal?.querySelector<HTMLElement>('.pro-vas');
+  const proVasVice = proVasObal?.querySelector<HTMLButtonElement>('.pro-vas-vice');
   let akt = polozky.length - 1;
 
   /** Záložky, které se nevejdou, se posouvají do strany; okraj, za kterým pokračují, se vytrácí. */
@@ -59,6 +62,10 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
   /** Tlačítko „celé shrnutí“ jen tehdy, když je shrnutí zkrácené (na mobilu na tři řádky). */
   const zmerPerex = () => {
     if (perex && vice && !hlava.classList.contains('rozbalene')) vice.hidden = perex.scrollHeight <= perex.clientHeight + 1;
+  };
+  /** Tlačítko „celý text“ u „Co by to znamenalo pro vás“ jen tehdy, když je text na nízkém okně zkrácený na jeden řádek. */
+  const zmerProVas = () => {
+    if (proVas && proVasVice && proVasObal && !proVasObal.classList.contains('rozbalene')) proVasVice.hidden = proVas.scrollHeight <= proVas.clientHeight + 1;
   };
   /** Body mini-osy mají cíl široký 24 px, ale nikdy se nepřekrývají se sousedy: u blízkých dat je cíl užší
    *  (nejméně jako viditelný bod), aby klik na bod nevzal sousední událost. */
@@ -89,12 +96,17 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
     const b = (e.target as HTMLElement).closest<HTMLElement>('[data-skupina]');
     if (b) filtrujZdroje(b.dataset.skupina!);
   });
-  premerAktualni = () => { okrajeLisy(); zmerPerex(); sirkyBodu(); okrajeZdroju(); };
+  premerAktualni = () => { okrajeLisy(); zmerPerex(); zmerProVas(); sirkyBodu(); okrajeZdroju(); };
   lista.addEventListener('scroll', okrajeLisy, { passive: true });
   vice?.addEventListener('click', () => {
     const rozbaleno = hlava.classList.toggle('rozbalene');
     vice!.setAttribute('aria-expanded', String(rozbaleno));
     vice!.textContent = rozbaleno ? 'méně' : 'celé shrnutí';
+  });
+  proVasVice?.addEventListener('click', () => {
+    const rozbaleno = proVasObal!.classList.toggle('rozbalene');
+    proVasVice.setAttribute('aria-expanded', String(rozbaleno));
+    proVasVice.textContent = rozbaleno ? 'méně' : 'celý text';
   });
   // rozměry jdou změřit až po otevření dialogu (otevírá se hned po inicializaci)
   requestAnimationFrame(() => premerAktualni?.());
