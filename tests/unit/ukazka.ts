@@ -85,3 +85,18 @@ export function platnePravidloKontrolaMoci(): Record<string, unknown> {
     },
   };
 }
+
+export function platnaOblast(): Record<string, unknown> {
+  return {
+    uvod: { text: 'Fiktivní zákon o střetu zájmů má zajistit, aby fiktivní člen vlády nerozhodoval o penězích pro vlastní firmy.', zdroje: [1] },
+    hodnoceni: [
+      { typ: 'vlada', kdo: 'Fiktivní ministr F', funkce: 'fiktivní ministr financí', citace: 'Novela jen sjednocuje fiktivní lhůty.', datum: '2026-06-18', zdroje: [2] },
+      { typ: 'odbornik', kdo: 'Fiktivní odbornice E', funkce: 'fiktivní ústavní právnička', citace: 'Kratší lhůta by ztížila vymáhání.', datum: '2026-06-20', zdroje: [2], pravidla: ['novela-x'] },
+    ],
+    zdroje: [
+      { id: 1, vydavatel: 'Fiktivní Sbírka zákonů', titulek: 'Fiktivní zákon', datum: '2017-02-01', druh: 'primarni', url: 'https://example.com/oblast/zakon' },
+      { id: 2, vydavatel: 'Fiktivní deník', titulek: 'Rozhovor', datum: '2026-06-20', druh: 'media', url: 'https://example.com/oblast/rozhovor' },
+    ],
+    overeno: '2026-11-09',
+  };
+}
