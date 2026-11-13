@@ -69,7 +69,7 @@ describe('overAdresar s pravidly', () => {
   it('načte fiktivní pravidla seřazená od nejnovější události', () => {
     const r = overAdresar('tests/fixtures/obsah');
     expect(r.chyby).toEqual([]);
-    expect(r.pravidla.map(p => p.slug)).toEqual(['zakon-omega', 'pozmenovaci-sigma', 'narizeni-tau']);
+    expect(r.pravidla.map(p => p.slug)).toEqual(['zakon-omega', 'pozmenovaci-sigma', 'narizeni-tau', 'usneseni-kappa']);
     expect(r.zaznamy).toHaveLength(6);
   });
   it('prázdný archiv nemá pravidla', () => {

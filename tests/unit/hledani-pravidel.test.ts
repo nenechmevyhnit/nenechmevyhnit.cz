@@ -4,11 +4,23 @@ import { overAdresar } from '../../src/lib/validace';
 
 const vysledek = overAdresar('tests/fixtures/obsah');
 const polozky = vysledek.pravidla.map(z => vytvorPolozkuPravidla(z, vysledek.stitky));
-const najdi = (f: Partial<{ text: string; stitky: string[]; jenProjednavane: boolean }>) =>
-  polozky.filter(p => odpovidaPravidlo(p, { text: '', stitky: [], jenProjednavane: false, ...f })).map(p => p.slug);
+const najdi = (f: Partial<{ text: string; stitky: string[]; jenProjednavane: boolean; duvody: ('prospech' | 'kontrola-moci')[] }>) =>
+  polozky.filter(p => odpovidaPravidlo(p, { text: '', stitky: [], jenProjednavane: false, duvody: [], ...f })).map(p => p.slug);
 
 describe('hledání pravidel', () => {
-  it('bez filtru najde všechna', () => expect(najdi({})).toEqual(['zakon-omega', 'pozmenovaci-sigma', 'narizeni-tau']));
+  it('bez filtru najde všechna', () => expect(najdi({})).toEqual(['zakon-omega', 'pozmenovaci-sigma', 'narizeni-tau', 'usneseni-kappa']));
+  it('hledá v textu znaků a v popiscích znaků a institucí bez diakritiky', () => {
+    expect(najdi({ text: 'vyber fiktivnich soudcu ministrovi' })).toEqual(['usneseni-kappa']);
+    expect(najdi({ text: 'zpetna ucinnost' })).toEqual(['zakon-omega']);
+    expect(najdi({ text: 'kontrolni instituci' })).toEqual(['usneseni-kappa']);
+  });
+  it('filtr důvodu: NEBO mezi sebou, A se štítky', () => {
+    expect(najdi({ duvody: ['kontrola-moci'] })).toEqual(['zakon-omega', 'usneseni-kappa']);
+    expect(najdi({ duvody: ['prospech'] })).toEqual(['zakon-omega', 'pozmenovaci-sigma', 'narizeni-tau']);
+    expect(najdi({ duvody: ['prospech', 'kontrola-moci'] })).toHaveLength(4);
+    expect(najdi({ duvody: ['prospech'], stitky: ['soudy'] })).toEqual([]);
+  });
+  it('položka nese důvody zařazení', () => expect(polozky.find(p => p.slug === 'zakon-omega')!.duvody).toEqual(['prospech', 'kontrola-moci']));
   it('hledá bez diakritiky a velikosti písmen i v krocích řetězce', () => {
     expect(najdi({ text: 'ZAHAJENA RIZENI' })).toEqual(['zakon-omega']);
     expect(najdi({ text: 'lhutu k vymahani' })).toEqual(['zakon-omega']);

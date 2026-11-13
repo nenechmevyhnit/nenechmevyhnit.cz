@@ -22,8 +22,13 @@ prospech:
     - { text: Novela by zkrátila fiktivní lhůtu k vymáhání z deseti na čtyři roky., zdroje: [1] }
     - { text: Fiktivní fond vymáhá po fiktivní firmě dotace z let 2017–2021., zdroje: [2] }
     - { text: Zkrácení by se vztáhlo i na zahájená řízení., odhad: true, zdroje: [2] }
+kontrolaMoci:
+  znaky:
+    - { druh: zpetna-ucinnost, text: Novela by zkrátila fiktivní lhůtu i pro dříve vyplacené fiktivní dotace., zdroje: [1] }
+  upozorneni:
+    - { kdo: legislativni-rada-vlady, text: "Rada upozornila, že zkrácení lhůty by působilo i zpětně.", zdroje: [4] }
 vyhrady:
-  - { kdo: Fiktivní legislativní rada, text: Rada upozornila na fiktivní zpětnou účinnost., zdroje: [4] }
+  - { kdo: Fiktivní legislativní rada, text: Rada upozornila na fiktivní nejasnost pojmů., zdroje: [4] }
 stanovisko:
   text: Předkladatel tvrdí, že novela nevznikla kvůli konkrétní firmě.
   zdroje: [3]
