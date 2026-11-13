@@ -1,3 +1,4 @@
+import { oznacNacteno } from './nacteno';
 const graf = () => document.getElementById('graf') as HTMLElement | null;
 
 /** Zvýrazní kauzu na ose: pásmo přes celý graf a popisky od/do. null = zrušit výběr. */
@@ -26,6 +27,5 @@ export function vyberKauzu(slug: string | null): void {
 }
 
 export function inicializujOsu(): void {
-  const sPohybem = !matchMedia('(prefers-reduced-motion: reduce)').matches;
-  setTimeout(() => document.body.classList.add('nacteno'), sPohybem ? 2200 : 0);
+  oznacNacteno(2200);
 }

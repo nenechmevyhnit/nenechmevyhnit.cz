@@ -1,3 +1,4 @@
+import { oznacNacteno } from './nacteno';
 export function inicializujKarty(): void {
   const dlg = document.querySelector<HTMLDialogElement>('.v4-dlg');
   if (!dlg) return;
@@ -54,5 +55,5 @@ export function inicializujKarty(): void {
   const cil = decodeURIComponent(location.hash.slice(1));
   if (cil && dlg.querySelector(`.v4-dlg-panel[data-sekce="${CSS.escape(cil)}"]`)) { ukaz(cil); dlg.showModal(); }
   dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
-  setTimeout(() => document.body.classList.add('nacteno'), matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1600);
+  oznacNacteno(1600);
 }

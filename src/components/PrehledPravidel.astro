@@ -73,8 +73,8 @@ const popis = otevrene
 <script>
   import { inicializujFiltrPravidel } from '../scripts/pravidla-filtr';
   import { inicializujNavigaciPravidel } from '../scripts/navigace-pravidel';
+  import { oznacNacteno } from '../scripts/nacteno';
   inicializujFiltrPravidel();
   inicializujNavigaciPravidel();
-  // úvodní animace .hero a .filtry doběhnou; po nich se třída nacteno chová stejně jako na ostatních stránkách
-  setTimeout(() => document.body.classList.add('nacteno'), matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 1600);
+  oznacNacteno(1600);
 </script>
