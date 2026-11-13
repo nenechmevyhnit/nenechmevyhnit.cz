@@ -11,7 +11,7 @@ const MESICE = ['led', 'úno', 'bře', 'dub', 'kvě', 'čvn', 'čvc', 'srp', 'z�
 export type DruhBodu = 'krok' | 'konec' | 'udalost' | 'ucinnost';
 export type BodOsy = { x: number; druh: DruhBodu; datum: string; popisek: string; popisekSkupiny: string | null; udalost: number | null; posun: number };
 export type RadekOsy = {
-  slug: string; nazev: string; cesta: string; body: BodOsy[];
+  slug: string; nazev: string; cesta: string; /** popisek posledního kroku, „“ bez kroku */ stav: string; body: BodOsy[];
   cara: { od: number; do: number } | null; caraBudouci: { od: number; do: number } | null;
   drive: { pocet: number; udalost: number } | null;
 };
@@ -63,8 +63,9 @@ export function osaPravidel(zaznamy: readonly ZaznamOsy[], dnes: Date): Osa {
     const kroky = body.filter(b => b.druh === 'krok' || b.druh === 'konec');
     const ucinnost = body.find(b => b.druh === 'ucinnost');
     const posledniKrok = kroky.at(-1);
+    const stav = [...p.udalosti].reverse().find(u => u.krok)?.krok;
     return {
-      slug, nazev: p.nazev, cesta: popisekCesty(p.cesta), body,
+      slug, nazev: p.nazev, cesta: popisekCesty(p.cesta), stav: stav ? popisekKroku(stav) : '', body,
       cara: kroky.length >= 2 ? { od: kroky[0].x, do: posledniKrok!.x } : null,
       caraBudouci: ucinnost && posledniKrok ? { od: posledniKrok.x, do: ucinnost.x } : null,
       drive: pocetDrive ? { pocet: pocetDrive, udalost: prvniDrive } : null,

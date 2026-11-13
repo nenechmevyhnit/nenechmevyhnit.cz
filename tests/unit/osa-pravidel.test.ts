@@ -49,6 +49,7 @@ describe('osaPravidel', () => {
     expect(b0.x).toBeLessThan(b1.x);
     expect(b1.x).toBeLessThan(b2.x);
     expect(o.radky[0].cesta).toBe('Poslanecký návrh zákona');
+    expect(o.radky[0].stav).toBe('Zamítnuto');
   });
   it('plná čára mezi prvním a posledním krokem, přerušovaná k budoucí účinnosti', () => {
     const o = osaPravidel([z('a', 'A', [

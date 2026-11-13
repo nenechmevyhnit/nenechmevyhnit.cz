@@ -146,11 +146,13 @@ body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
 .op-legenda { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 0; padding: 6px 10px; font-size: 12px; color: var(--meta); border-top: 1px solid var(--linka); }
 .op-legenda .op-bod { position: static; display: inline-block; vertical-align: middle; transform: none; margin-right: 4px; }
 .op-legenda .op-bod.ucinnost { transform: rotate(45deg); margin-right: 8px; }
+.op-vzor { display: inline-block; vertical-align: middle; width: 22px; height: 2px; margin-right: 4px; background: var(--inkoust); }
+.op-vzor.budouci { height: 0; background: none; border-top: 2px dashed var(--meta); margin-right: 2px; }
+.op-uvod { margin: 0; padding: 6px 10px; font-size: 13px; line-height: 1.35; border-bottom: 1px solid var(--linka); }
 .op-prazdno { margin: 12px; }
 /* nic neodpovídá filtru: hláška je nahoře, prázdná osa a legenda se skryjí */
-.osa-pravidel:has(.op-prazdno:not([hidden])) :is(.op-plocha, .op-legenda) { display: none; }
+.osa-pravidel:has(.op-prazdno:not([hidden])) :is(.op-uvod, .op-plocha, .op-legenda) { display: none; }
 .op-popisek { position: fixed; z-index: 20; max-width: min(360px, calc(100vw - 8px)); padding: 4px 8px; font-size: 12px; background: var(--inkoust); color: #fff; }
 @media (max-width: 760px) {
   .op-plocha { --nazvy: 120px; --mesic: 44px; }
-  .op-nazev small { display: none; }
 }
