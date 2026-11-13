@@ -19,7 +19,7 @@ planovano: { stavK: 2026-11-01, text: Fiktivní senát návrh projedná na schů
 prospech:
   komu: [babis, agrofert]
   zaver: pravdepodobny
-  proc: { text: "Kratší lhůta by se uplatnila i na zahájená fiktivní řízení, ve kterých je fiktivní firma dlužníkem.", zdroje: [2] }
+  proc: { text: "Kratší lhůta by se uplatnila i na zahájená fiktivní řízení, ve kterých je fiktivní firma dlužníkem. Fiktivní fond by tak mohl přijít o část pohledávek z let 2017 až 2021, které dosud vymáhá, a fiktivní firma by tím získala výhodu oproti ostatním příjemcům podobných dotací.", zdroje: [2] }
   retezec:
     - { text: Novela by zkrátila fiktivní lhůtu k vymáhání z deseti na čtyři roky., zdroje: [1] }
     - { text: Fiktivní fond vymáhá po fiktivní firmě dotace z let 2017–2021., zdroje: [2] }

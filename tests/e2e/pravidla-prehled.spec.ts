@@ -71,12 +71,18 @@ test('řádek s prospěchem ukazuje shrnutí „proč“, řádek jen s kontrolo
   await expect(page.locator('.pr-radek[data-slug="usneseni-kappa"] .pr-proc-radek')).toHaveCount(0);
 });
 
-test('na počítači je shrnutí v jednom řádku zakončeném třemi tečkami', async ({ page }) => {
+test('na počítači je dlouhé shrnutí oříznuté v jednom řádku třemi tečkami', async ({ page }) => {
   await page.goto('/pravidla/');
   const proc = page.locator('.pr-radek[data-slug="zakon-omega"] .pr-proc-radek');
-  expect(await proc.evaluate(e => getComputedStyle(e).textOverflow)).toBe('ellipsis');
-  const { vyska, radek } = await proc.evaluate(e => ({ vyska: e.getBoundingClientRect().height, radek: parseFloat(getComputedStyle(e).lineHeight) }));
-  expect(vyska).toBeLessThanOrEqual(radek + 1);
+  const m = await proc.evaluate(e => {
+    const cs = getComputedStyle(e);
+    return { sirka: e.scrollWidth > e.clientWidth, whiteSpace: cs.whiteSpace, overflow: cs.overflow, textOverflow: cs.textOverflow, vyska: e.getBoundingClientRect().height, radek: parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.4 };
+  });
+  expect(m.sirka).toBe(true);
+  expect(m.whiteSpace).toBe('nowrap');
+  expect(m.overflow).toBe('hidden');
+  expect(m.textOverflow).toBe('ellipsis');
+  expect(m.vyska).toBeLessThanOrEqual(m.radek + 1);
   await overBezPosouvani(page);
 });
 
@@ -135,14 +141,16 @@ test.describe('mobil 390×700', () => {
     await overBezPosouvani(page);
   });
 
-  test('shrnutí „proč“ zabere nejvýš dva řádky a stránka se neposouvá', async ({ page }) => {
+  test('dlouhé shrnutí „proč“ je oříznuté na dva řádky a stránka se neposouvá', async ({ page }) => {
     await page.goto('/pravidla/');
-    for (const slug of ['zakon-omega', 'pozmenovaci-sigma', 'narizeni-tau']) {
-      const proc = page.locator(`.pr-radek[data-slug="${slug}"] .pr-proc-radek`);
-      await expect(proc).toBeVisible();
-      const { vyska, radek } = await proc.evaluate(e => ({ vyska: e.getBoundingClientRect().height, radek: parseFloat(getComputedStyle(e).lineHeight) }));
-      expect(vyska, slug).toBeLessThanOrEqual(2 * radek + 1);
-    }
+    const proc = page.locator('.pr-radek[data-slug="zakon-omega"] .pr-proc-radek');
+    const m = await proc.evaluate(e => {
+      const cs = getComputedStyle(e) as CSSStyleDeclaration & { webkitLineClamp: string };
+      return { clamp: cs.webkitLineClamp || cs.getPropertyValue('line-clamp'), preteka: e.scrollHeight > e.clientHeight, vyska: e.getBoundingClientRect().height, radek: parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.4 };
+    });
+    expect(m.clamp).toBe('2');
+    expect(m.preteka).toBe(true);
+    expect(m.vyska).toBeLessThanOrEqual(2 * m.radek + 1);
     await overBezPosouvani(page);
   });
 
