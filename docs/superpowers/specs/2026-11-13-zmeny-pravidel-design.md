@@ -93,6 +93,12 @@ udalosti:              # průběh, od nejstarší; aspoň jedna
     nazev: Návrh podán do Sněmovny
     popis: …
     zdroje: [1]
+planovano:             # nepovinné: nejbližší naplánovaný krok, který ještě neproběhl (doplněno 13. 11. 2026)
+  stavK: 2026-11-13    # kdy byl stav zjištěn, nesmí ležet v budoucnosti
+  text: 1. čtení je navrženo na pořad 37. schůze Sněmovny od 24. 11. 2026.   # termín v textu smí být budoucí
+  zdroje: [2]
+  # Detail ho ukazuje pod průběhem jako „Stav k …: …“. Po proběhnutí se krok zapíše jako událost a pole se
+  # přepíše dalším krokem nebo smaže. Co je potřeba doplnit, vypíše _koncepty/nastroje/sleduj-pravidla.ts.
 prospech:
   komu: [babis, agrofert]   # neprázdná podmnožina {babis, agrofert}
   zaver: pravdepodobny      # dolozen | pravdepodobny

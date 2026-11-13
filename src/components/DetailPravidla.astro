@@ -38,6 +38,7 @@ const prvni = zalozky[0]?.id;
         <p class="perex" id="detail-perex">{p.shrnuti}</p>
         <button class="perex-vice" type="button" aria-expanded="false" aria-controls="detail-perex" hidden>celé shrnutí</button>
         <PrubehPravidla druh={p.druh} udalosti={p.udalosti} interaktivni />
+        {p.planovano && <p class="planovano">Stav k {datumText(p.planovano.stavK)}: {p.planovano.text}<span class="chipy" set:html={chipy(p.planovano.zdroje)}></span></p>}
       </header>
       <div class="zalozky" role="tablist">
         {zalozky.map(z => <button role="tab" type="button" data-p={z.id} aria-selected={String(z.id === prvni)}>{z.nazev}</button>)}

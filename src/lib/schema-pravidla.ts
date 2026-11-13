@@ -34,6 +34,9 @@ const vytvorPravidloSchema = (koncepty: boolean) => z
     overeno: koncepty ? datumPresne.nullable().default(null) : datumPresne,
     zdroje: z.array(zdrojSchema).min(1, 'Pravidlo musí mít aspoň jeden zdroj'),
     udalosti: z.array(udalostPravidlaSchema).min(1, 'Pravidlo musí mít aspoň jednu událost'),
+    /** Nejbližší naplánovaný krok, který ještě neproběhl. Text smí obsahovat budoucí termín, stavK (kdy byl
+     *  stav zjištěn) ne. Po proběhnutí se krok zapíše jako událost a pole se smaže nebo přepíše dalším krokem. */
+    planovano: z.object({ stavK: datumPresne, text: text(), zdroje: odkazy('Plánovaný krok') }).strict().optional(),
     prospech: z.object({
       komu: z.array(z.enum(KOMU)).min(1, 'Řetězec musí vést aspoň k jednomu z: babis, agrofert'),
       zaver: z.enum(ZAVERY),
@@ -61,6 +64,7 @@ const vytvorPravidloSchema = (koncepty: boolean) => z
       for (const c of cisla) if (!ids.has(c)) chyba(`${kde} odkazuje na neexistující zdroj ${c}`);
     };
     p.udalosti.forEach((u, i) => over(u.zdroje, `Událost ${i + 1} („${u.nazev}“)`));
+    if (p.planovano) over(p.planovano.zdroje, 'Plánovaný krok');
     over(p.stanovisko.zdroje, 'Stanovisko');
     if (p.pripojenoK) over(p.pripojenoK.zdroje, 'Připojení k zákonu');
     p.vyhrady.forEach(v => over(v.zdroje, `Výhrada („${v.kdo}“)`));
