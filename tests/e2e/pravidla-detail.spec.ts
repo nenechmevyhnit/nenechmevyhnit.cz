@@ -244,3 +244,16 @@ test('každé upozornění odkazuje na zdroj svého upozorňovatele', async ({ p
   await expect(li.nth(2).locator('a[data-zdroj]')).toHaveText(['6']);
   await expect(li.nth(3).locator('a[data-zdroj]')).toHaveText(['5']);
 });
+
+test('detail pravidla ukazuje „Co by to znamenalo pro vás“ a odkazy na oblasti', async ({ page }) => {
+  await page.goto('/pravidla/zakon-omega/');
+  const hlava = page.locator('dialog#detail .m2-hlava');
+  await expect(hlava.locator('.pro-vas')).toContainText('Co by to znamenalo pro vás:');
+  await expect(hlava.locator('.pro-vas')).toContainText('jen čtyři roky místo deseti');
+  await expect(hlava.locator('.pr-oblasti a')).toHaveText(['Dotace a střet zájmů', 'Kontrolní úřady']);
+  await hlava.getByRole('link', { name: 'Kontrolní úřady' }).click();
+  await expect(page).toHaveURL(/\/pravidla\/oblasti\/kontrolni-urady\/$/);
+  await expect(page.locator('dialog#detail').getByRole('heading', { level: 2 })).toHaveText('Kontrolní úřady');
+  await page.goBack();
+  await expect(page).toHaveURL(/\/pravidla\/zakon-omega\/$/);
+});
