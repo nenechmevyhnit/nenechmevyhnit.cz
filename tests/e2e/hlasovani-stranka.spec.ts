@@ -62,6 +62,29 @@ test('přepnutí filtru změní kotvu, Všichni ji zruší', async ({ page }) =>
   await expect(page.locator('.hl-vsichni')).toBeVisible();
 });
 
+test('kliknutí s modifikátorem filtr nepřepne (odkaz jde otevřít v nové záložce)', async ({ page }) => {
+  await page.goto('/hlasovani/psp-10-5-12/');
+  await page.locator('.hl-tabulka').getByRole('link', { name: 'STAN (2)' }).click({ modifiers: ['Control'] });
+  await expect(page.locator('.hl-tabulka a[aria-current="true"]')).toHaveText('Všichni (12)');
+  expect(page.url()).not.toContain('#stan');
+});
+
+test('kliknutí na číselnou buňku řádku vybere klub', async ({ page }) => {
+  await page.goto('/hlasovani/psp-10-5-12/');
+  // Playwright by kliknutí na td odmítl (překrývá ho ::after odkazu), proto skutečné kliknutí myší doprostřed buňky.
+  const bunka = await page.locator('.hl-tabulka tbody tr').filter({ hasText: 'ODS (3)' }).locator('td').first().boundingBox();
+  await page.mouse.click(bunka!.x + bunka!.width / 2, bunka!.y + bunka!.height / 2);
+  await expect(page).toHaveURL(/#ods$/);
+  await expect(page.locator('section#ods')).toBeVisible();
+});
+
+test('změna kotvy v adrese (hashchange) přepne filtr', async ({ page }) => {
+  await page.goto('/hlasovani/psp-10-5-12/');
+  await page.evaluate(() => { location.hash = '#stan'; });
+  await expect(page.locator('section#stan')).toBeVisible();
+  await expect(page.locator('.hl-tabulka a[aria-current="true"]')).toHaveText('STAN (2)');
+});
+
 test('Zpět po přepínání filtru vede na předchozí stránku, ne na předchozí klub', async ({ page }) => {
   await page.goto('/pravidla/zakon-omega/');
   await page.goto('/hlasovani/psp-10-5-12/#ano');

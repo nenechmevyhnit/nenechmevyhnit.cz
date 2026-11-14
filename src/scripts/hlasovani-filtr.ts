@@ -19,6 +19,7 @@ export function inicializujFiltrHlasovani(): void {
   stranka.addEventListener('click', e => {
     const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[data-klub]');
     if (!a) return;
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
     e.preventDefault();
     const slug = a.dataset.klub ?? '';
     history.replaceState(history.state, '', slug ? `#${slug}` : location.pathname + location.search);
