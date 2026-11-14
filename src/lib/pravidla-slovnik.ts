@@ -49,14 +49,25 @@ export const popisekKomu = (k: readonly Komu[]): string => KOMU.filter(x => k.in
 
 export const ZAVERY = ['dolozen', 'pravdepodobny'] as const;
 export type Zaver = (typeof ZAVERY)[number];
-const POPISKY_ZAVERU: Record<Zaver, string> = { dolozen: 'prospěch doložen', pravdepodobny: 'prospěch pravděpodobný' };
+const POPISKY_ZAVERU: Record<Zaver, string> = { dolozen: 'doložený prospěch', pravdepodobny: 'pravděpodobný prospěch' };
 export const popisekZaveru = (z: Zaver): string => POPISKY_ZAVERU[z];
+/** Závěr i s tím, komu prospěch jde: „pravděpodobný prospěch pro Andreje Babiše a Agrofert“. */
+const KOMU_4PAD: Record<Komu, string> = { babis: 'Andreje Babiše', agrofert: 'Agrofert' };
+export const popisekProspechu = (z: Zaver, k: readonly Komu[]): string =>
+  `${POPISKY_ZAVERU[z]} pro ${KOMU.filter(x => k.includes(x)).map(x => KOMU_4PAD[x]).join(' a ')}`;
 
 /** Důvody zařazení (specifikace kontroly moci, oddíl 2). Neukládají se, odvozují se z bloků prospech a kontrolaMoci. */
 export const DUVODY = ['prospech', 'kontrola-moci'] as const;
 export type Duvod = (typeof DUVODY)[number];
 const POPISKY_DUVODU: Record<Duvod, string> = { prospech: 'Prospěch', 'kontrola-moci': 'Kontrola moci' };
 export const popisekDuvodu = (d: Duvod): string => POPISKY_DUVODU[d];
+/** Co čip důvodu vybere, celou větou (nápověda po najetí myší). Delší popisek přímo na čipu by z řádku filtrů
+ *  vytlačil ostatní čipy pod „+N dalších“, proto zůstává krátký. */
+const NAPOVEDY_DUVODU: Record<Duvod, string> = {
+  prospech: 'Změny, které podle rozboru zdrojů prospívají Babišovi nebo Agrofertu',
+  'kontrola-moci': 'Změny, které mění kontrolu moci a instituce na to upozornily',
+};
+export const napovedaDuvodu = (d: Duvod): string => NAPOVEDY_DUVODU[d];
 
 /** Věcné znaky dopadu na kontrolu moci: jeden institucionální, ostatní procedurální. */
 export const DRUHY_ZNAKU = ['instituce', 'prilepek', 'legislativni-nouze', 'prvni-cteni', 'zpetna-ucinnost'] as const;

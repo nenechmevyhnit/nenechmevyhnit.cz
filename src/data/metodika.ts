@@ -21,11 +21,11 @@ export const metodika = (sPravidly: boolean): { platiOd: string; sekce: SekceStr
 <ul><li>probíhá nebo proběhlo úřední řízení (policie, státní zastupitelství, soud, OLAF, Evropská komise, NKÚ, Ústavní soud),</li>
 <li>existuje úřední zjištění, například rozsudek, audit nebo rozhodnutí úřadu,</li>
 <li>věc nezávisle na sobě doložily aspoň dvě seriózní redakce.</li></ul>
-<p>U každé kauzy je hned na začátku vysvětleno, <strong>proč je to kauza</strong>: v čem je věc sporná a proč ji řešil úřad nebo média, se zdrojem. Uvádíme také, podle kterého kritéria je zařazena. Kontrola při sestavení webu ho ověřuje: úřední řízení a úřední zjištění musí doložit primární zdroj, dvě redakce musí doložit dva mediální zdroje od různých vydavatelů.</p>
+<p>U každé kauzy je hned na začátku vysvětleno, <strong>proč je to kauza</strong>: v čem je věc sporná a proč ji řešil úřad nebo média, se zdrojem. Uvádíme také, podle kterého kritéria je zařazena. Kritérium hlídá automatická kontrola: úřední řízení a úřední zjištění musí doložit primární zdroj, dvě redakce musí doložit dva mediální zdroje od různých vydavatelů.</p>
 ${sPravidly ? '<p>Zákony, nařízení a další pravidla, která předkládá nebo vydává vláda či vládní koalice, mají vlastní část archivu s vlastními pravidly (oddíl Zákony a nařízení).</p>' : '<p>Kroky vlády jako celku zatím nezařazujeme.</p>'}
 <h3 id="vazby">Vazby mezi kauzami</h3>
 <p>Kauzy lze kromě časové osy zobrazit jako <strong>mapu souvislostí</strong>. Ukazuje, přes které firmy, osoby a nástroje (například svěřenské fondy) jsou kauzy spojené s Andrejem Babišem a které kauzy na sebe přímo navazují.</p>
-<ul><li>Každá vazba má <strong>roli</strong> z pevného seznamu (například <em>vlastní</em>, <em>příjemce dotace</em>, <em>vychází z</em>), krátké vysvětlení a <strong>zdroj</strong>. Bez zdroje se web nesestaví. Vztahy firem, osob a nástrojů mají navíc období, kdy platily.</li>
+<ul><li>Každá vazba má <strong>roli</strong> z pevného seznamu (například <em>vlastní</em>, <em>příjemce dotace</em>, <em>vychází z</em>), krátké vysvětlení a <strong>zdroj</strong>. Vazbu bez zdroje nejde zveřejnit. Vztahy firem, osob a nástrojů mají navíc období, kdy platily.</li>
 <li>Aktérem může být firma nebo nástroj, které Andrej Babiš nebo jeho firmy ovládaly, a to jen pro období, kdy je ovládaly. Osoba jen tehdy, když je veřejně činná nebo už byla v souvislosti s řízením jmenována v médiích nebo v úředních dokumentech.</li>
 <li>Úřady a instituce aktéry nejsou.</li>
 <li><strong>Vazba sama o sobě neznamená vinu ani spoluodpovědnost.</strong> Říká jen, že dvě věci spolu doloženě souvisejí.</li></ul>
@@ -37,7 +37,7 @@ ${sPravidly ? '<p>Zákony, nařízení a další pravidla, která předkládá n
       shrnuti: "Primární dokumenty a seriózní média. Sociální sítě a názorové texty nejsou doklad faktu.",
       html: `<ol class="stupne"><li><strong>Primární zdroje:</strong> soudní rozhodnutí, tiskové zprávy státních zastupitelství, zprávy OLAF, Evropské komise a NKÚ, sněmovní tisky a hlasování, veřejné rejstříky.</li>
 <li><strong>Seriózní média a investigativní redakce:</strong> například ČT, Český rozhlas, Seznam Zprávy, Deník N, Hospodářské noviny, Respekt, Investigace.cz, OCCRP.</li>
-<li><strong>Stanovisko dotčené strany:</strong> prohlášení Andreje Babiše, jeho firem nebo hnutí. Ve zdrojích je označené zvlášť, protože dokládá jen to, co dotčená strana tvrdí, ne fakta. Proto také nepodkládá kritérium zařazení kauzy.</li>
+<li><strong>Stanovisko dotčené strany:</strong> prohlášení Andreje Babiše, jeho firem nebo hnutí. Ve zdrojích je označené zvlášť, protože dokládá jen to, co dotčená strana tvrdí, ne fakta. Proto jím také nejde doložit kritérium zařazení kauzy.</li>
 <li><strong>Nepřípustné jako doklad faktu:</strong> sociální sítě, blogy, anonymní weby, komentáře a názorové texty.</li></ol>
 <p>Každé faktické tvrzení má aspoň jeden zdroj. Klíčová tvrzení, tedy obvinění, rozsudek nebo výsledek auditu, mají primární zdroj nebo dva nezávislé mediální zdroje.</p>`,
     },
@@ -48,7 +48,7 @@ ${sPravidly ? '<p>Zákony, nařízení a další pravidla, která předkládá n
       html: `<ul><li>Používáme slovesa podle skutečného stavu řízení: <em>obviněn, obžalován, zproštěn, odsouzen nepravomocně / pravomocně</em>.</li>
 <li>Nepoužíváme hodnotící přívlastky ani spekulace o úmyslech.</li>
 <li>U každé kauzy je vidět její aktuální stav a datum, kdy jsme ho naposledy ověřili.</li>
-<li>Dokud soud pravomocně nerozhodne, platí presumpce neviny. Připomínáme to přímo u kauzy.</li></ul>
+<li>Dokud soud pravomocně nerozhodne, platí presumpce neviny. U kauz v trestním řízení to připomínáme přímo v detailu.</li></ul>
 <h3 id="castky">Částky</h3>
 <p>U kauz, ve kterých jde o peníze, uvádíme v detailu nejvýš tři částky. Každá má zdroj a označení, co znamená:</p>
 <dl class="slovnicek">
@@ -74,12 +74,12 @@ ${sPravidly ? '<p>Zákony, nařízení a další pravidla, která předkládá n
     {
       id: "postup",
       nadpis: "Jak vzniká záznam",
-      shrnuti: "Koncept, kontrola každého tvrzení proti zdroji, strojová kontrola, rozhodnutí člověka. Na přípravě se podílí umělá inteligence.",
+      shrnuti: "Koncept, kontrola každého tvrzení proti zdroji, automatická kontrola, rozhodnutí člověka. Na přípravě se podílí umělá inteligence.",
       html: `<ol class="kroky"><li>Vznikne koncept záznamu se zdroji. Do zveřejnění není veřejný.</li>
 <li>Samostatný druhý průchod otevře každý zdroj a porovná ho s tvrzením, které má podložit. Co zdroj neunese, se opraví nebo vypustí. Záznam o tomto průchodu si archiv ukládá.</li>
-<li>Strojová kontrola ověří, že nic povinného nechybí.</li>
+<li>Automatická kontrola ověří, že nic povinného nechybí.</li>
 <li>Člověk projde výsledek s kontrolním listem a rozhodne, jestli záznam půjde ven. Zapíše se datum a záznam se zveřejní.</li></ol>
-<p>Pravidla hlídá i stroj. Když kauze chybí zdroj, stanovisko dotčené strany, stav řízení nebo datum ověření, web se nesestaví. Ke zdrojům ukládáme archivní kopie pro případ, že původní článek zmizí.</p>
+<p>Pravidla hlídá i automatická kontrola. Když kauze chybí zdroj, stanovisko dotčené strany, stav řízení nebo datum ověření, nejde ji zveřejnit. Ke zdrojům ukládáme archivní kopie pro případ, že původní článek zmizí.</p>
 <h3 id="ai">Čím se záznamy připravují</h3>
 <p>Rešerši, první znění textu a porovnání tvrzení se zdroji dělá <strong>umělá inteligence</strong> pod vedením autora. Samo se nezveřejní nic: o každém záznamu rozhoduje člověk a nese za něj odpovědnost.</p>
 <p>Píšeme to sem proto, že to mění způsob, jak si archiv číst. Neručíme za to, že každý zdroj otevřel vlastníma očima člověk. Ručíme za to, že <strong>u každého tvrzení je uvedený zdroj, na který se můžete podívat sami</strong>. Tím archiv stojí a padá, a proto je odkaz na zdroj u všeho, co tu tvrdíme.</p>
@@ -95,36 +95,38 @@ ${sPravidly ? '<p>Zákony, nařízení a další pravidla, která předkládá n
     {
       id: "stavy",
       nadpis: "Slovníček stavů řízení",
-      shrnuti: "Co přesně znamená „obžaloba“, „nepravomocně zproštěn“ nebo „úřední zjištění“.",
+      shrnuti: "Co přesně znamená „obžaloba“, „nepravomocné zproštění“ nebo „úřední zjištění“.",
       html: `<dl class="slovnicek">
 <dt>Prověřování</dt><dd>Policie zjišťuje, zda se stal trestný čin. Nikdo zatím není obviněn.</dd>
 <dt>Obvinění</dt><dd>Policie zahájila trestní stíhání konkrétní osoby.</dd>
 <dt>Obžaloba</dt><dd>Státní zástupce podal k soudu obžalobu.</dd>
-<dt>Nepravomocně odsouzen / zproštěn</dt><dd>Soud rozhodl, ale proti rozhodnutí se lze odvolat.</dd>
-<dt>Pravomocně odsouzen / zproštěn</dt><dd>Rozhodnutí už nelze napadnout řádným opravným prostředkem.</dd>
+<dt>Nepravomocné odsouzení / zproštění</dt><dd>Soud rozhodl, ale proti rozhodnutí se lze odvolat.</dd>
+<dt>Pravomocné odsouzení / zproštění</dt><dd>Rozhodnutí už nelze napadnout řádným opravným prostředkem.</dd>
 <dt>Odloženo</dt><dd>Věc byla odložena bez zahájení trestního stíhání.</dd>
 <dt>Zastaveno</dt><dd>Trestní stíhání skončilo bez rozhodnutí soudu o vině.</dd>
 <dt>Promlčeno</dt><dd>Uplynula zákonná lhůta, čin už nelze stíhat.</dd>
+<dt>Soudní řízení</dt><dd>Věc projednává soud mimo trestní řízení, například v občanskoprávním sporu.</dd>
 <dt>Úřední zjištění</dt><dd>Závěr úřadu mimo trestní řízení, například audit Evropské komise nebo NKÚ.</dd>
+<dt>Jiné</dt><dd>Žádný z uvedených stavů kauzu nevystihuje, například když skončil občanskoprávní spor, řízení běží víc najednou nebo žádné. Podrobnosti jsou v poznámce u kauzy.</dd>
 </dl>`,
     },
     ...(sPravidly ? [{
       id: "pravidla",
       nadpis: "Zákony a nařízení",
-      shrnuti: "Zákony, nařízení a další pravidla současné vlády, u kterých rozbor archivu ukazuje prospěch pro Andreje Babiše nebo Agrofert, nebo která mění kontrolu moci a instituce na to upozornily.",
+      shrnuti: "Zákony, nařízení a další pravidla vlády jmenované 9. 12. 2025, u kterých rozbor archivu ukazuje prospěch pro Andreje Babiše nebo Agrofert, nebo která mění kontrolu moci a instituce na to upozornily.",
       html: `<p>Vedle kauz archiv zaznamenává <strong>zákony a nařízení</strong> v širším smyslu: zákony a jejich novely, pozměňovací návrhy, nařízení vlády, vyhlášky ministerstev, pravidla dotačních programů, usnesení vlády a pokyny ministerstev s obecnou působností. Zapisujeme je od chvíle, kdy jsou oficiálně předložené nebo zveřejněné, a průběžně doplňujeme, jak projednávání pokračuje. Záznamy nemažeme: zamítnutý nebo stažený návrh zůstává v archivu s tímto stavem.</p>
-<p>Změna pravidla do archivu patří ze dvou důvodů: když rozbor ukáže prospěch pro Andreje Babiše nebo Agrofert, nebo když mění kontrolu moci a instituce nebo profesní organizace na to upozornila (viz níže). Kvůli prospěchu patří do archivu, když splní <strong>všechny</strong> tyto podmínky:</p>
+<p>Změna pravidla patří do archivu z jednoho ze dvou důvodů: když rozbor ukáže prospěch pro Andreje Babiše nebo Agrofert, nebo když mění kontrolu moci a instituce nebo profesní organizace na to upozornila (viz níže). Kvůli prospěchu patří do archivu, když splní <strong>všechny</strong> tyto podmínky:</p>
 <ul><li>má oficiální text (sněmovní tisk, připomínkové řízení, Sbírka zákonů nebo zveřejněná výzva),</li>
 <li>předložila nebo vydala ji vláda jmenovaná 9. 12. 2025, její ministerstva, státní fondy, nebo poslanci a senátoři vládní koalice,</li>
 <li>rozbor ukáže prospěch pro Andreje Babiše osobně nebo pro Agrofert,</li>
 <li>dopadá na ně zvlášť, ne plošně na všechny: na úzký obor, příjemce konkrétní dotace, členy vlády nebo na řízení, které Babiš či Agrofert vedou.</li></ul>
 <p>Plošné změny, třeba sazbu DPH pro všechny, sem nezařazujeme. Rozhodnutí v jednotlivém případě patří ke kauze, které se týká.</p>
-<p>Zatím nezařazujeme ani záměry bez oficiálního textu, změny, u kterých rozbor vede jen k jiným podnikům než k Agrofertu, a kroky z let 2014–2021, kdy byl Andrej Babiš ministrem financí a premiérem.</p>
+<p>Zatím nezařazujeme ani záměry bez oficiálního textu, změny, u kterých rozbor vede jen k jiným podnikům než k Agrofertu, a kroky z let 2014–2021, kdy byl Andrej Babiš ministrem financí a potom premiérem.</p>
 <h3 id="retezec">Rozbor krok za krokem</h3>
 <p>U každé změny sestavíme z textu předpisu <strong>řetězec</strong>: co pravidlo mění, jakého faktu o Babišovi nebo Agrofertu se to týká a jaký z toho plyne důsledek. Každý krok má vlastní zdroj a první krok vždy cituje text předpisu. Krok, který stojí na odhadu, je viditelně označený. Každá změna má navíc krátké shrnutí, proč by prospěla. Je to jedna až dvě věty se zdrojem, podrobnosti jsou v řetězci.</p>
 <dl class="slovnicek">
-<dt>prospěch doložen</dt><dd>Žádný krok řetězce nestojí na odhadu.</dd>
-<dt>prospěch pravděpodobný</dt><dd>Aspoň jeden krok stojí na odhadu, například jak se nová lhůta uplatní na už zahájená řízení.</dd>
+<dt>doložený prospěch</dt><dd>Žádný krok řetězce nestojí na odhadu.</dd>
+<dt>pravděpodobný prospěch</dt><dd>Aspoň jeden krok stojí na odhadu, například jak se nová lhůta uplatní na už zahájená řízení.</dd>
 </dl>
 <p>Kde z rozboru nic jasného nevyjde, změnu nezveřejníme. <strong>Závěr je rozbor archivu, ne úřední zjištění.</strong> U každé změny uvádíme stanovisko předkladatele. Když chybí, uvedeme aspoň účel, který předkladatel napsal do důvodové zprávy nebo odůvodnění.</p>
 <h3 id="cesta">Cesta předložení</h3>
@@ -138,7 +140,7 @@ ${sPravidly ? '<p>Zákony, nařízení a další pravidla, která předkládá n
 <li><strong>institucionální znak:</strong> mění pravomoci, nezávislost, způsob jmenování nebo odvolání, nebo financování některé z těchto institucí a pravidel: ${seznamInstituci},</li>
 <li><strong>procedurální znak:</strong> ${seznamProcedur}. Přílepek je pozměňovací návrh mimo předmět projednávaného zákona, legislativní nouze je projednání ve stavu legislativní nouze,</li>
 <li>na tento znak upozornila aspoň jedna instituce (${upozornovateleTypu('instituce')}) nebo profesní organizace (${upozornovateleTypu('profesni-organizace')}). Upozornění se musí týkat právě tohoto pravidla a tohoto znaku, ne obecného tématu.</li></ul>
-<p>Kritika jen od opozice, watchdogů nebo médií k zařazení nestačí. Hodnotící slova ve vlastním textu nepoužíváme. Zapisujeme, co pravidlo mění, s odkazem na ustanovení, a kdo na to upozornil. <strong>Záznam dopadu na kontrolu moci je záznam upozornění institucí, ne hodnocení archivu.</strong> Personální a jiná jednotlivá rozhodnutí sem nepatří.</p>
+<p>Kritika jen od opozice, hlídacích organizací nebo médií k zařazení nestačí. Hodnotící slova ve vlastním textu nepoužíváme. Zapisujeme, co pravidlo mění, s odkazem na ustanovení, a kdo na to upozornil. <strong>Záznam dopadu na kontrolu moci je záznam upozornění institucí, ne hodnocení archivu.</strong> Personální a jiná jednotlivá rozhodnutí sem nepatří.</p>
 <h3 id="vyhrady">Výhrady a jazyk</h3>
 <p>Uvádíme výhrady institucí, jako je Legislativní rada vlády, ÚOHS, NKÚ, Evropská komise nebo veřejný ochránce práv. Výhrady opozice patří do souvislostí a označujeme je jako politické. Dokud změna neplatí, píšeme podmiňovacím způsobem: novela <em>by zkrátila</em>, <em>umožnila by</em>. Upozornění ke znaku kontroly moci neřadíme mezi výhrady, uvádíme je v záložce Kontrola moci (oddíl Dopad na kontrolu moci).</p>`,
     }, {
@@ -155,7 +157,7 @@ ${sPravidly ? '<p>Zákony, nařízení a další pravidla, která předkládá n
 <ul><li><strong>vládu:</strong> člena vlády, předkladatele nebo úřad vlády. Stanovisko vlády má každá oblast, u které citace jsou. Když vláda veřejně nereagovala, citujeme účel z důvodové zprávy,</li>
 <li><strong>instituce:</strong> veřejné instituce, mezinárodní organizace a profesní organizace, které smějí upozornit na dopad na kontrolu moci,</li>
 <li><strong>odborníky:</strong> pojmenované osoby s ověřitelnou odbornou rolí v oboru, například vyučující vysoké školy, výzkumníky Akademie věd nebo bývalé soudce Ústavního či Nejvyššího soudu.</li></ul>
-<p>Necitujeme politiky mimo vládu, novináře, komentátory ani watchdogy. Mohou být zdrojem faktů, ne hodnocení. Odborníky, kteří postup vlády hájí, uvádíme za stejných podmínek jako kritiky. <strong>Výběr citací podle metodiky, ne hodnocení archivu.</strong></p>`,
+<p>Necitujeme politiky mimo vládu, novináře, komentátory ani hlídací organizace. Mohou být zdrojem faktů, ne hodnocení. Odborníky, kteří postup vlády hájí, uvádíme za stejných podmínek jako kritiky. <strong>Výběr citací podle metodiky, ne hodnocení archivu.</strong></p>`,
     }] : []),
   ],
 });
