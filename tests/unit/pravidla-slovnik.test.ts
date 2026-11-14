@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import {
-  DRUHY_PRAVIDEL, DUVODY, popisekDuvodu, DRUHY_ZNAKU, popisekDruhuZnaku, KONTROLNI_INSTITUCE, popisekInstituce,
+  DRUHY_PRAVIDEL, DUVODY, popisekDuvodu, napovedaDuvodu, DRUHY_ZNAKU, popisekDruhuZnaku, KONTROLNI_INSTITUCE, popisekInstituce,
   popisekZnaku, UPOZORNOVATELE, upozornovatel, popisekTypuUpozornovatele,
-  cestyProDruh, popisekCesty, vynechaneKontroly, popisekKomu, popisekZaveru,
+  cestyProDruh, popisekCesty, vynechaneKontroly, popisekKomu, popisekZaveru, popisekProspechu,
   OBLASTI, oblast, TYPY_HODNOCENI, popisekTypuHodnoceni,
 } from '../../src/lib/pravidla-slovnik';
 import { krokyProDruh, popisekKroku, stavPravidla, vProjednavani, prubeh, KROKY, UKONCUJICI } from '../../src/lib/pravidla-stavy';
@@ -31,8 +31,13 @@ describe('slovník pravidel', () => {
   it('komu a závěr', () => {
     expect(popisekKomu(['agrofert', 'babis'])).toBe('Andrej Babiš, Agrofert');
     expect(popisekKomu(['agrofert'])).toBe('Agrofert');
-    expect(popisekZaveru('dolozen')).toBe('prospěch doložen');
-    expect(popisekZaveru('pravdepodobny')).toBe('prospěch pravděpodobný');
+    expect(popisekZaveru('dolozen')).toBe('doložený prospěch');
+    expect(popisekZaveru('pravdepodobny')).toBe('pravděpodobný prospěch');
+  });
+  it('závěr s tím, komu prospěch jde, čte se jako věta (4. pád, pořadí Babiš, Agrofert)', () => {
+    expect(popisekProspechu('pravdepodobny', ['agrofert', 'babis'])).toBe('pravděpodobný prospěch pro Andreje Babiše a Agrofert');
+    expect(popisekProspechu('dolozen', ['babis'])).toBe('doložený prospěch pro Andreje Babiše');
+    expect(popisekProspechu('dolozen', ['agrofert'])).toBe('doložený prospěch pro Agrofert');
   });
 });
 
@@ -116,6 +121,8 @@ describe('slovník kontroly moci', () => {
   it('důvody zařazení', () => {
     expect(DUVODY).toEqual(['prospech', 'kontrola-moci']);
     expect(popisekDuvodu('prospech')).toBe('Prospěch');
+    expect(napovedaDuvodu('prospech')).toBe('Změny, které podle rozboru zdrojů prospívají Babišovi nebo Agrofertu');
+    expect(napovedaDuvodu('kontrola-moci')).toBe('Změny, které mění kontrolu moci a instituce na to upozornily');
     expect(popisekDuvodu('kontrola-moci')).toBe('Kontrola moci');
   });
   it('každý druh znaku, instituce a upozorňovatel má neprázdný popisek', () => {

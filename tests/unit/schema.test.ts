@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { kauzaSchema, rokZData } from '../../src/lib/schema';
-import { popisekStavu, STAVY } from '../../src/lib/stavy';
+import { popisekStavu, volbaStavu, pripominaPresumpci, STAVY } from '../../src/lib/stavy';
 import { platnaKauza } from './ukazka';
 
 const chyby = (data: unknown) => {
@@ -92,6 +92,25 @@ describe('rokZData a stavy', () => {
   });
   it('každý stav má popisek', () => {
     for (const s of STAVY) expect(popisekStavu(s).length).toBeGreaterThan(0);
+  });
+  it('stav popisuje kauzu podstatným jménem, ne osobu („odsouzen“)', () => {
+    expect(popisekStavu('nepravomocne-odsouzen')).toBe('Nepravomocné odsouzení');
+    expect(popisekStavu('pravomocne-zprosten')).toBe('Pravomocné zproštění');
+    for (const s of STAVY) expect(popisekStavu(s)).not.toMatch(/odsouzen$|zproštěn$/);
+  });
+  it('volba filtru je ve 2. pádě, aby šla přečíst ve větě „Ukázat kauzy ve stavu …“', () => {
+    expect(volbaStavu('obzaloba')).toBe('ve stavu obžaloby');
+    expect(volbaStavu('nepravomocne-odsouzen')).toBe('ve stavu nepravomocného odsouzení');
+    expect(volbaStavu('promlceno')).toBe('ve stavu promlčení');
+    expect(volbaStavu('uredni-zjisteni')).toBe('ve stavu úředního zjištění');
+    expect(volbaStavu('jine')).toBe('s jiným stavem');
+    for (const s of STAVY) expect(volbaStavu(s)).not.toMatch(/undefined/);
+  });
+  it('presumpci neviny připomínáme u neskončeného trestního řízení a u zbytkového stavu, jinde ne', () => {
+    const ano = STAVY.filter(pripominaPresumpci);
+    expect(ano).toEqual(['provereni', 'obvineni', 'obzaloba', 'nepravomocne-odsouzen', 'nepravomocne-zprosten', 'jine']);
+    expect(pripominaPresumpci('soudni-rizeni')).toBe(false);
+    expect(pripominaPresumpci('uredni-zjisteni')).toBe(false);
   });
 });
 

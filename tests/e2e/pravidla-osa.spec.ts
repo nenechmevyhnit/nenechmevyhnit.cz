@@ -33,14 +33,14 @@ test('přímá adresa ?pohled=osa otevře osu: řádky, body, dnes, legenda, dř
   await expect(osa.locator('.op-legenda')).toContainText('konec: zamítnuto, staženo nebo zrušeno');
   await expect(osa.locator('.op-legenda')).toContainText('jiná událost, třeba stanovisko úřadu nebo rozhodnutí soudu');
   await expect(osa.locator('.op-legenda')).toContainText('doba projednávání');
-  await expect(osa.locator('.op-legenda')).toContainText('kdy má změna začít platit');
+  await expect(osa.locator('.op-legenda')).toContainText('odkdy změna platí nebo má platit');
   await expect(osa.locator('.op-legenda .op-vzor')).toHaveCount(2);
   const sigma = osa.locator('.op-radek[data-slug="pozmenovaci-sigma"]');
   await expect(sigma.locator('.op-bod.konec')).toHaveCount(1);
-  await expect(sigma.locator('.op-drive')).toHaveText('◀ 1 starší');
+  await expect(sigma.locator('.op-drive')).toHaveText('◀ 1 starší událost');
   // pod názvem je nejdřív stav, potom druh předpisu
   await expect(sigma.locator('.op-nazev small')).toHaveText('Zamítnuto · pozměňovací návrh');
-  await expect(sigma.locator('.op-drive')).toHaveAttribute('aria-label', /^1 starší: .+, 1 událost před prosincem 2025$/);
+  await expect(sigma.locator('.op-drive')).toHaveAttribute('aria-label', /^1 starší událost před prosincem 2025: .+$/);
   const omega = osa.locator('.op-radek[data-slug="zakon-omega"]');
   await expect(omega.locator('a.op-bod.krok')).toHaveCount(2);
   await expect(omega.locator('.op-cara:not(.budouci)')).toHaveCount(1);

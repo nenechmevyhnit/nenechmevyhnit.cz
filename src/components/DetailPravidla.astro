@@ -5,7 +5,7 @@ import VazbyPravidla from './VazbyPravidla.astro';
 import SeznamZdroju from './SeznamZdroju.astro';
 import { rozdelOdstavce, odstavecNaHtml } from '../lib/souvislosti';
 import { datumText } from '../lib/casova-osa';
-import { popisekCesty, popisekKomu, popisekZaveru, vynechaneKontroly, popisekZnaku, popisekDruhuZnaku, upozornovatel, popisekTypuUpozornovatele, oblast } from '../lib/pravidla-slovnik';
+import { popisekCesty, popisekProspechu, vynechaneKontroly, popisekZnaku, popisekDruhuZnaku, upozornovatel, popisekTypuUpozornovatele, oblast } from '../lib/pravidla-slovnik';
 import { stavPravidla, popisekKroku } from '../lib/pravidla-stavy';
 import { nactiKauzy } from '../lib/kauzy';
 
@@ -16,6 +16,7 @@ const p = zaznam?.pravidlo;
 const nazvyKauz = new Map(nactiKauzy().map(z => [z.slug, z.kauza.nazev]));
 const odstavce = zaznam ? rozdelOdstavce(zaznam.telo) : [];
 const kontroly = p ? vynechaneKontroly(p.cesta) : [];
+const velkym = (t: string) => t.charAt(0).toLocaleUpperCase('cs') + t.slice(1);
 const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="chip" data-zdroj="${c}" aria-label="Zdroj ${c}">${c}</a>`).join('');
 // Záložky podle toho, co záznam má. Otevřená je první zobrazená (spec kontroly moci, oddíl 7).
 const zalozky = p ? [
@@ -55,7 +56,7 @@ const prvni = zalozky[0]?.id;
       {p.prospech && (
         <div class="m2-panel" data-p="prospech" role="tabpanel" hidden={prvni !== 'prospech'}>
           <h3 class="panel-nadpis">Komu prospívá</h3>{/* jen bez JavaScriptu, kdy jsou všechny části pod sebou */}
-          <p class="pr-zaver"><strong>{popisekZaveru(p.prospech.zaver)}</strong>: {popisekKomu(p.prospech.komu)}</p>
+          <p class="pr-zaver"><strong>{velkym(popisekProspechu(p.prospech.zaver, p.prospech.komu))}</strong></p>
           <p class="kriterium">Závěr je rozbor archivu podle metodiky, ne úřední zjištění. <a href="/metodika/#pravidla">Jak rozbor děláme</a></p>
           <p class="pr-proc"><strong>Proč by to prospělo:</strong> {p.prospech.proc.text}<span class="chipy" set:html={chipy(p.prospech.proc.zdroje)}></span></p>
           <ol class="retezec">
@@ -69,7 +70,7 @@ const prvni = zalozky[0]?.id;
         <div class="m2-panel" data-p="kontrola" role="tabpanel" hidden={prvni !== 'kontrola'}>
           <h3 class="panel-nadpis">Kontrola moci</h3>
           <p class="kriterium">Záznam upozornění institucí, ne hodnocení archivu. <a href="/metodika/#kontrola-moci">Jak záznam děláme</a></p>
-          <h4>Co pravidlo mění</h4>
+          <h4>Co se mění</h4>
           <ul class="znaky">
             {p.kontrolaMoci.znaky.map(zn => (
               <li><strong>{popisekZnaku(zn)}</strong>{zn.druh === 'instituce' && <> ({popisekDruhuZnaku(zn.druh)})</>}: {zn.text}<span class="chipy" set:html={chipy(zn.zdroje)}></span></li>
@@ -132,9 +133,9 @@ const prvni = zalozky[0]?.id;
         <h3 class="panel-nadpis">{`Zdroje (${p.zdroje.length})`}</h3>
         <SeznamZdroju zdroje={p.zdroje} />
         <div class="paticka-detailu">
-          <a href={`${REPO}/commits/main/obsah/pravidla/${zaznam.slug}.md`}>Historie změn tohoto pravidla</a>
+          <a href={`${REPO}/commits/main/obsah/pravidla/${zaznam.slug}.md`}>Historie úprav tohoto záznamu</a>
           <a href={`${REPO}/issues/new?template=oprava.yml&title=${encodeURIComponent('Oprava: ' + p.nazev)}`}>Nahlásit chybu</a>
-          <a href="#" data-sdilet>Zkopírovat odkaz na pravidlo</a>
+          <a href="#" data-sdilet>Zkopírovat odkaz na změnu</a>
         </div>
       </div>
     </>
