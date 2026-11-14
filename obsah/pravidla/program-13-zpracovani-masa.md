@@ -13,7 +13,7 @@ zdroje:
     titulek: "Zpřesnění Zásad, kterými se stanovují podmínky pro poskytování dotací pro rok 2026 na základě § 1, § 2 a § 2d zákona č. 252/1997 Sb., o zemědělství, ve znění pozdějších předpisů – DP 3.a., 9.F.m., 13., 20."
     datum: 2026-05-11
     druh: primarni
-    url: "https://mze.gov.cz/public/portal/mze/-a94652---8B5Hk2yC/zpresneni-zasad-kterymi-se-stanovuji-podminky-pro-poskytovani-dotaci-pro-rok-2026-na-zaklade-1-2-a-2d-zakona-c.-252-1997-sb.-o-zemedelstvi-ve-zneni-pozdejsich-predpisu-dp-3.a.-9.f.m.-13.-20."
+    url: "https://mze.gov.cz/public/portal/mze/-a94652---8B5Hk2yC/zpresneni-zasad-kterymi-se-stanovuji-podminky-pro-poskytovani-dotaci-pro-rok-2026-na-zaklade-1-2-a-2d-zakona-c.-252-1997-sb.-o-zemedelstvi-ve-zneni-pozdejsich-predpisu-dp-3.a.-9.f.m.-13.-20%2E"
   - id: 2
     vydavatel: Poslanecká sněmovna (sněmovní tisk 96/0)
     titulek: "Dotační programy zemědělství pro rok 2026, poskytované podle § 1, § 2 a § 2d zákona č. 252/1997 Sb., o zemědělství, ve znění pozdějších předpisů"
