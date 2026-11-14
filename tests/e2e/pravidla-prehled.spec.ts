@@ -12,7 +12,7 @@ test('menu vede na zákony a nařízení a přehled je seřazený od nejnovějš
   await expect(page).toHaveTitle('Zákony a nařízení — Posuďte sami');
   await page.getByRole('button', { name: 'Seznam' }).click();
   await expect(page.getByRole('navigation', { name: 'Hlavní' }).getByRole('link', { name: 'Zákony a nařízení' })).toHaveAttribute('aria-current', 'page');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Komu prospívají nová pravidla?');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Komu prospívají nově pravidla?');
   await expect(page.locator('.pr-radek .pr-nazev strong')).toHaveText(NAZVY);
   const prvni = page.locator('.pr-radek').first();
   await expect(prvni).toContainText('Poslanecký návrh zákona');
