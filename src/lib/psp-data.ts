@@ -93,7 +93,8 @@ export function sestavSnimek(v: VstupPsp, cil: CilHlasovani, stazeno: string): S
   const cas = h[6];
   const okamzik = `${datum} ${cas}`;
 
-  const klubyObdobi = v.organy.filter(o => o[1] === idOrganu && o[2] === '1');
+  // PSP vede nezařazené poslance jako pseudoklub „Nezařaz“; ve snímku mají klub null.
+  const klubyObdobi = v.organy.filter(o => o[1] === idOrganu && o[2] === '1' && o[3] !== 'Nezařaz');
   const kluby = new Map(klubyObdobi.map(o => [o[0], o[3]] as const));
   const nazvyKlubu = new Map(klubyObdobi.map(o => [o[3], o[4]] as const));
   const clenstvi = v.zarazeni.filter(z => z[2] === '0' && kluby.has(z[1]));

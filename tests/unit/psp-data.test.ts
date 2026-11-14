@@ -75,6 +75,17 @@ describe('sestavSnimek', () => {
     expect(s.poslanci[0]).toEqual({ id: 1, jmeno: 'Jméno1', prijmeni: 'Příjmení001', klub: 'ANO2011', hlas: 'pro' });
     expect(s.poslanci.find(p => p.id === 195)?.klub).toBeNull();
   });
+  it('pseudoklub Nezařaz z dat PSP znamená bez klubu, ne klub', () => {
+    const v = vstup();
+    v.organy.push(['1894', ORGAN, '1', 'Nezařaz', 'Nezařazení']);
+    v.zarazeni = v.zarazeni.filter(z => z[0] !== '5').concat([
+      ['5', '1750', '0', '2025-10-08 00', '2026-11-01 00'],
+      ['5', '1894', '0', '2026-11-01 00', ''],
+    ]);
+    const s = sestavSnimek(v, CIL, '2026-11-14');
+    expect(s.poslanci.find(p => p.id === 5)?.klub).toBeNull();
+    expect(s.kluby).not.toHaveProperty('Nezařaz');
+  });
   it('česká abeceda: Ch až za H, Č za C', () => {
     const v = vstup();
     v.osoby[0][2] = 'Chalupa'; v.osoby[1][2] = 'Hora'; v.osoby[2][2] = 'Čáp'; v.osoby[3][2] = 'Cyril';
