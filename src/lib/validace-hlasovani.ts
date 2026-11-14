@@ -22,27 +22,30 @@ export function overSnimek(soubor: string, data: unknown): { snimek?: Snimek; ch
   return chyby.length ? { chyby } : { snimek: s, chyby };
 }
 
-export function nactiSnimky(adresar: string): { snimky: Map<string, Snimek>; chyby: Chyba[] } {
+export function nactiSnimky(adresar: string): { snimky: Map<string, Snimek>; neplatne: Set<string>; chyby: Chyba[] } {
   const slozka = join(adresar, 'hlasovani');
   const snimky = new Map<string, Snimek>();
+  const neplatne = new Set<string>();
   const chyby: Chyba[] = [];
-  if (!existsSync(slozka)) return { snimky, chyby };
+  if (!existsSync(slozka)) return { snimky, neplatne, chyby };
   for (const f of readdirSync(slozka).filter(f => f.endsWith('.yml')).sort()) {
     const soubor = join(slozka, f);
     let data: unknown;
     try { data = parseYaml(readFileSync(soubor, 'utf8')); } catch (e) {
       chyby.push({ soubor, zprava: `Snímek hlasování nejde přečíst: ${(e as Error).message}` });
+      neplatne.add(basename(f, '.yml'));
       continue;
     }
     const r = overSnimek(soubor, data);
     chyby.push(...r.chyby);
     if (r.snimek) snimky.set(basename(f, '.yml'), r.snimek);
+    else neplatne.add(basename(f, '.yml'));
   }
-  return { snimky, chyby };
+  return { snimky, neplatne, chyby };
 }
 
 /** Odkazy událostí pravidel na snímky (spec hlasování, oddíl 6). */
-export function overHlasovaniPravidel(adresar: string, pravidla: PravidloZaznam[], snimky: Map<string, Snimek>): { chyby: Chyba[]; varovani: Chyba[]; odkazovane: Set<string> } {
+export function overHlasovaniPravidel(adresar: string, pravidla: PravidloZaznam[], snimky: Map<string, Snimek>, neplatne: ReadonlySet<string> = new Set()): { chyby: Chyba[]; varovani: Chyba[]; odkazovane: Set<string> } {
   const chyby: Chyba[] = [];
   const varovani: Chyba[] = [];
   const odkazovane = new Set<string>();
@@ -51,6 +54,7 @@ export function overHlasovaniPravidel(adresar: string, pravidla: PravidloZaznam[
     const soubor = join(adresar, 'pravidla', `${z.slug}.md`);
     for (const u of z.pravidlo.udalosti) for (const h of u.hlasovani) {
       odkazovane.add(h.id);
+      if (neplatne.has(h.id)) continue;
       const s = snimky.get(h.id);
       if (!s) {
         chyby.push({ soubor, zprava: `Hlasování „${h.id}“ nemá snímek v ${join(adresar, 'hlasovani')} (spusťte npm run hlasovani)` });

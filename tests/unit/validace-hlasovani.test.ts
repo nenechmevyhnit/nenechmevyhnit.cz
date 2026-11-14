@@ -67,6 +67,11 @@ describe('overHlasovaniPravidel', () => {
   it('dvě pravidla s různým typem téhož hlasování', () =>
     expect(overHlasovaniPravidel('obsah', [pravidlo('a', [HL]), pravidlo('b', [{ ...HL, typ: 'obsah' }])], snimky()).chyby.map(c => c.zprava))
       .toEqual(['Hlasování „psp-10-5-12“ má typ „obsah“, ale pravidlo „a“ mu dává „proceduralni“']));
+  it('neplatný snímek nehlásí zároveň chybějící snímek', () => {
+    const r = overHlasovaniPravidel('obsah', [pravidlo('a', [HL])], new Map(), new Set(['psp-10-5-12']));
+    expect(r.chyby).toEqual([]);
+    expect(r.odkazovane.has('psp-10-5-12')).toBe(true);
+  });
   it('snímek bez odkazu je jen varování', () => {
     const r = overHlasovaniPravidel('obsah', [], snimky());
     expect(r.chyby).toEqual([]);
@@ -94,6 +99,14 @@ describe('overAdresar s hlasováním', () => {
     expect(r.chyby).toEqual([]);
     expect([...r.hlasovani.keys()]).toEqual(['psp-10-5-12']);
     expect(r.varovani.map(v => v.zprava)).toContain('Na hlasování neodkazuje žádné pravidlo (stránka se nevygeneruje)');
+  });
+  it('neplatný snímek hlásí jen vlastní chybu, ne radu spustit skript', () => {
+    const d = adresar();
+    zapisPravidlo(d, [HL]);
+    writeFileSync(join(d, 'hlasovani', 'psp-10-5-12.yml'), stringify({ ...platnySnimek(), vysledek: 'ano' }));
+    const zpravy = overAdresar(d).chyby.map(c => c.zprava);
+    expect(zpravy.some(z => /^vysledek:/.test(z))).toBe(true);
+    expect(zpravy.join(' ')).not.toMatch(/spusťte npm run hlasovani/);
   });
   it('chybějící snímek je chyba buildu', () => {
     const d = adresar();

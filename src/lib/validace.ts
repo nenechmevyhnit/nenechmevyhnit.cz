@@ -187,7 +187,7 @@ export function overAdresar(adresar: string, rezim: Rezim = {}): { zaznamy: Kauz
   chyby.push(...vazbyPravidel.chyby);
   const snimky = nactiSnimky(adresar);
   chyby.push(...snimky.chyby);
-  const odkazy = overHlasovaniPravidel(adresar, vazbyPravidel.pravidla, snimky.snimky);
+  const odkazy = overHlasovaniPravidel(adresar, vazbyPravidel.pravidla, snimky.snimky, snimky.neplatne);
   chyby.push(...odkazy.chyby);
 
   return {
