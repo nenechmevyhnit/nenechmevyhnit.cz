@@ -35,7 +35,7 @@ export const nactiAktery = (): Map<string, Akter> => nacti().akteri;
 export const nactiPravidla = (): PravidloZaznam[] => nacti().pravidla;
 /** Oblasti se změnami pravidel pro pohled Oblasti a stránky /pravidla/oblasti/<id>/. */
 export const nactiOblasti = (): OblastDetail[] => { const d = nacti(); return sestavOblasti(d.pravidla, d.oblasti); };
-/** Stránka a položka menu „Změny pravidel“: ve veřejném buildu až s prvním ověřeným pravidlem, v náhledu konceptů vždy. */
+/** Stránka a položka menu „Zákony a nařízení“: ve veřejném buildu až s prvním ověřeným pravidlem, v náhledu konceptů vždy. */
 export const maPravidla = (): boolean => rezimKonceptu() || nactiPravidla().length > 0;
 export const souvisejiciPravidla = (slug: string): SouvisejiciPravidlo[] => pravidlaKauzy(nactiPravidla(), slug);
 

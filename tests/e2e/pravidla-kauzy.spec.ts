@@ -6,7 +6,7 @@ test('kauza ukazuje související změny pravidel a vede na ně', async ({ page 
   await page.goto('/kauzy/zeta-stret/');
   await page.getByRole('tab', { name: 'Souvislosti' }).click();
   const sekce = page.locator('.m2-panel[data-p="souv"] .souvisejici-pravidla');
-  await expect(sekce.getByRole('heading')).toHaveText('Související změny pravidel');
+  await expect(sekce.getByRole('heading')).toHaveText('Související zákony a nařízení');
   await expect(sekce).toContainText('Schváleno Sněmovnou');
   await expect(sekce).toContainText('Zkrácení lhůty by se dotklo fiktivního řízení Žeta.');
   await sekce.getByRole('link', { name: 'Testovací novela zákona Omega s dlouhým názvem pro mobil' }).click();

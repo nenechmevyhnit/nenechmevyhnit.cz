@@ -9,7 +9,7 @@ const seznamOblasti = OBLASTI.map(o => oblast(o).nazev).join(', ');
 // Texty převzaté doslova ze schválených prototypů (design/03-detail/_metodika.py).
 export type SekceStranky = { id: string; nadpis: string; shrnuti: string; html: string };
 
-/** Sekce Změny pravidel a věta o ní v kritériích se zobrazí jen tehdy, když archiv nějaká pravidla má (jinak stránka ani menu neexistují). */
+/** Sekce Zákony a nařízení a věta o ní v kritériích se zobrazí jen tehdy, když archiv nějaká pravidla má (jinak stránka ani menu neexistují). */
 export const metodika = (sPravidly: boolean): { platiOd: string; sekce: SekceStranky[] } => ({
   platiOd: '13. 11. 2026',
   sekce: [
@@ -22,7 +22,7 @@ export const metodika = (sPravidly: boolean): { platiOd: string; sekce: SekceStr
 <li>existuje úřední zjištění, například rozsudek, audit nebo rozhodnutí úřadu,</li>
 <li>věc nezávisle na sobě doložily aspoň dvě seriózní redakce.</li></ul>
 <p>U každé kauzy je hned na začátku vysvětleno, <strong>proč je to kauza</strong>: v čem je věc sporná a proč ji řešil úřad nebo média, se zdrojem. Uvádíme také, podle kterého kritéria je zařazena. Kontrola při sestavení webu ho ověřuje: úřední řízení a úřední zjištění musí doložit primární zdroj, dvě redakce musí doložit dva mediální zdroje od různých vydavatelů.</p>
-${sPravidly ? '<p>Změny pravidel, které předkládá nebo vydává vláda či vládní koalice, mají vlastní část archivu s vlastními pravidly (oddíl Změny pravidel).</p>' : '<p>Kroky vlády jako celku zatím nezařazujeme.</p>'}
+${sPravidly ? '<p>Zákony, nařízení a další pravidla, která předkládá nebo vydává vláda či vládní koalice, mají vlastní část archivu s vlastními pravidly (oddíl Zákony a nařízení).</p>' : '<p>Kroky vlády jako celku zatím nezařazujeme.</p>'}
 <h3 id="vazby">Vazby mezi kauzami</h3>
 <p>Kauzy lze kromě časové osy zobrazit jako <strong>mapu souvislostí</strong>. Ukazuje, přes které firmy, osoby a nástroje (například svěřenské fondy) jsou kauzy spojené s Andrejem Babišem a které kauzy na sebe přímo navazují.</p>
 <ul><li>Každá vazba má <strong>roli</strong> z pevného seznamu (například <em>vlastní</em>, <em>příjemce dotace</em>, <em>vychází z</em>), krátké vysvětlení a <strong>zdroj</strong>. Bez zdroje se web nesestaví. Vztahy firem, osob a nástrojů mají navíc období, kdy platily.</li>
@@ -105,9 +105,9 @@ ${sPravidly ? '<p>Změny pravidel, které předkládá nebo vydává vláda či 
     },
     ...(sPravidly ? [{
       id: "pravidla",
-      nadpis: "Změny pravidel",
+      nadpis: "Zákony a nařízení",
       shrnuti: "Zákony, nařízení a další pravidla současné vlády, u kterých rozbor archivu ukazuje prospěch pro Andreje Babiše nebo Agrofert, nebo která mění kontrolu moci a instituce na to upozornily.",
-      html: `<p>Vedle kauz archiv zaznamenává <strong>změny pravidel</strong>: zákony a jejich novely, pozměňovací návrhy, nařízení vlády, vyhlášky ministerstev, pravidla dotačních programů, usnesení vlády a pokyny ministerstev s obecnou působností. Zapisujeme je od chvíle, kdy jsou oficiálně předložené nebo zveřejněné, a průběžně doplňujeme, jak projednávání pokračuje. Záznamy nemažeme: zamítnutý nebo stažený návrh zůstává v archivu s tímto stavem.</p>
+      html: `<p>Vedle kauz archiv zaznamenává <strong>zákony a nařízení</strong> v širším smyslu: zákony a jejich novely, pozměňovací návrhy, nařízení vlády, vyhlášky ministerstev, pravidla dotačních programů, usnesení vlády a pokyny ministerstev s obecnou působností. Zapisujeme je od chvíle, kdy jsou oficiálně předložené nebo zveřejněné, a průběžně doplňujeme, jak projednávání pokračuje. Záznamy nemažeme: zamítnutý nebo stažený návrh zůstává v archivu s tímto stavem.</p>
 <p>Změna pravidla do archivu patří ze dvou důvodů: když rozbor ukáže prospěch pro Andreje Babiše nebo Agrofert, nebo když mění kontrolu moci a instituce nebo profesní organizace na to upozornila (viz níže). Kvůli prospěchu patří do archivu, když splní <strong>všechny</strong> tyto podmínky:</p>
 <ul><li>má oficiální text (sněmovní tisk, připomínkové řízení, Sbírka zákonů nebo zveřejněná výzva),</li>
 <li>předložila nebo vydala ji vláda jmenovaná 9. 12. 2025, její ministerstva, státní fondy, nebo poslanci a senátoři vládní koalice,</li>

@@ -2,6 +2,7 @@ import { odpovida, jeAktivni, seradit, normalizuj, PRAZDNY_FILTR, type Filtr, ty
 import { pocetNaStranku, pocetStranek, cislaStranek } from '../lib/strankovani';
 import { sklonuj } from '../lib/cestina';
 import { nastavViditelne } from './stav-filtru';
+import { inicializujCipy } from './cipy';
 
 export function inicializujFiltry(): void {
   const panel = document.querySelector<HTMLElement>('.filtry');
@@ -207,46 +208,8 @@ export function inicializujFiltry(): void {
   // po načtení písma mají názvy jinou šířku: změřit znovu
   document.fonts.ready.then(() => { posledniVyska = -1; prepocitej(); });
 
-  // Témata: v jednom řádku jen ta, která se vejdou, zbytek otevře „+N další“. Vybraná témata jsou vidět vždy,
-  // ostatní se doplní v abecedním pořadí, dokud je místo. Nic se neposouvá ani nemizí do ztracena.
-  const obal = cipy.parentElement!, vice = cipy.querySelector<HTMLButtonElement>('.f-vice')!;
-  const vsechnyCipy = [...cipy.querySelectorAll<HTMLButtonElement>('button[data-stitek]')];
-  let rozbaleno = false;
-  function rozvrhniCipy() {
-    obal.classList.toggle('rozbalene', rozbaleno);
-    vsechnyCipy.forEach(c => { c.hidden = false; });
-    if (rozbaleno) {
-      vice.hidden = false; vice.textContent = 'méně'; vice.setAttribute('aria-expanded', 'true');
-      return;
-    }
-    vice.hidden = true;
-    const sirka = cipy.clientWidth;
-    const mezera = parseFloat(getComputedStyle(cipy).columnGap) || 0;
-    const sirky = vsechnyCipy.map(c => c.getBoundingClientRect().width);
-    if (sirky.reduce((a, b) => a + b, 0) + mezera * (sirky.length - 1) <= sirka) return;
-    // místo pro tlačítko (nejdelší možný popisek)
-    vice.hidden = false; vice.textContent = `+${sklonuj(vsechnyCipy.length, ['další', 'další', 'dalších'])}`;
-    let zbyva = sirka - vice.getBoundingClientRect().width - mezera;
-    const ukazat = new Set<number>();
-    vsechnyCipy.forEach((c, i) => { if (c.getAttribute('aria-pressed') === 'true') { ukazat.add(i); zbyva -= sirky[i] + mezera; } });
-    // ostatní souvisle od začátku abecedy: první, které se nevejde, a všechna za ním jdou pod „+N další“
-    let plno = false;
-    vsechnyCipy.forEach((c, i) => {
-      if (ukazat.has(i) || plno) return;
-      if (sirky[i] + mezera <= zbyva) { ukazat.add(i); zbyva -= sirky[i] + mezera; } else plno = true;
-    });
-    vsechnyCipy.forEach((c, i) => { c.hidden = !ukazat.has(i); });
-    const skryto = vsechnyCipy.length - ukazat.size;
-    vice.textContent = `+${sklonuj(skryto, ['další', 'další', 'dalších'])}`;
-    vice.setAttribute('aria-expanded', 'false');
-  }
-  vice.addEventListener('click', () => {
-    rozbaleno = !rozbaleno;
-    rozvrhniCipy();
-    if (!rozbaleno) vice.focus();
-  });
-  new ResizeObserver(() => rozvrhniCipy()).observe(obal);
-  document.fonts.ready.then(rozvrhniCipy);
+  // témata v jednom řádku, zbytek pod „+N další“
+  const rozvrhniCipy = inicializujCipy(cipy);
 
   // prohlížeč mohl po návratu na stránku obnovit hodnoty polí: převzít je
   filtr.text = hledat.value; filtr.jenOtevrene = jen.checked;

@@ -3,7 +3,7 @@ import { aktualniPohled, nastavPohledPravidel, pohledZAdresy, vychoziPohled, adr
 
 /** Otevírání detailu pravidla nebo oblasti bez načítání stránky (obdoba navigace.ts pro kauzy).
  *  Klíč detailu je slug pravidla, nebo „oblasti/<id>“; adresa detailu je vždy /pravidla/<klíč>/. */
-const TITULEK = 'Změny pravidel — Posuďte sami';
+const TITULEK = 'Zákony a nařízení — Posuďte sami';
 const PREDPONA_OBLASTI = 'oblasti/';
 const mezipamet = new Map<string, { html: string; trida: string; titulek: string }>();
 let zaviramZHistorie = false;
@@ -18,6 +18,8 @@ const dialog = () => document.getElementById('detail') as HTMLDialogElement | nu
 const vyber = (klic: string | null) => {
   document.querySelectorAll<HTMLElement>('.pr-radek').forEach(r => r.classList.toggle('vybrany', r.dataset.slug === klic));
   document.querySelectorAll<HTMLElement>('.ob-karta').forEach(k => k.classList.toggle('vybrana', klic === PREDPONA_OBLASTI + k.dataset.oblast));
+  // stránkování přehledu přepne na stránku vybrané změny
+  document.dispatchEvent(new CustomEvent('nv:vyber', { detail: klic }));
 };
 const bezModifikatoru = (e: Event) => {
   const me = e as MouseEvent;

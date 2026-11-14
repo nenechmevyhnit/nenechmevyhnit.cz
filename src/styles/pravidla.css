@@ -1,19 +1,30 @@
 /* Změny pravidel: přehled a detail. Barvy a písma z hlavni.css, žádná červená, barva nehodnotí. */
-.pr-hero { padding: 28px 0 18px; }
-.pr-hero h1 { font-size: clamp(26px, 3.2vw, 44px); line-height: 1.05; }
+/* Úvod, filtry i rámeček seznamu mají stejné rozměry jako na stránce kauz (.hero.u2, .filtry.f4, .graf),
+   takže přepnutí mezi stránkami neposkočí. */
 
-/* Filtry přehledu: počítadlo zůstává v řádku filtrů (na hlavní stránce ho přebírá záhlaví osy) a témata se
-   při nedostatku místa posouvají do strany (skript „+N další“ z hlavní stránky tu neběží). */
-body .filtry.pr-filtry > .vpravo { display: flex; align-items: center; gap: 10px; margin-left: auto; }
-body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
+/* Filtry: témata v jednom řádku, co se nevejde, otevře „+N další“ (upravy.css, skript cipy.ts). Počítadlo
+   a Zrušit filtry jsou na počítači v záhlaví seznamu (.pr-hlava) jako v záhlaví osy kauz. */
+.pr-hlava { flex: none; display: grid; grid-template-columns: minmax(0, 3fr) minmax(260px, 2fr) auto; gap: 0 24px; align-items: center; height: 46px; padding: 0 18px; border-bottom: 1px solid var(--inkoust); font: 15px var(--f-text); color: var(--meta); }
+.pr-hlava .nazev-sloupce { display: flex; align-items: baseline; gap: 12px; white-space: nowrap; }
+.pr-hlava .f-zrusit { border: 0; background: none; padding: 0; font: 15px var(--f-text); color: var(--modra); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.pr-hlava .f-zrusit[hidden] { display: none; }
+.pr-hlava::after { content: "Detail →"; visibility: hidden; font: 12px var(--f-mono); }
+@media (max-width: 760px) { .pr-hlava { grid-template-columns: 1fr; height: 41px; padding: 0 14px; } .pr-hlava .nazev-sloupce, .pr-hlava::after { display: none; } }
 /* Zrušit filtry nechává i neaktivní své místo (visibility z hlavni.css), řádek filtrů se tak neposouvá. */
 
-.pravidla-obal { flex: 1; min-height: 0; display: flex; flex-direction: column; margin-top: 12px; background: var(--plocha); border: 1px solid var(--linka); }
+.pravidla-obal { flex: 1; min-height: 0; display: flex; flex-direction: column; margin-top: 10px; background: var(--plocha); border: 1px solid var(--linka); }
 .pravidla-obal[hidden] { display: none; }
-/* kotví .jen-ctecka uvnitř posouvaného seznamu */
+/* kotví .jen-ctecka uvnitř seznamu; posouvá se jen bez JavaScriptu, jinak stránkuje (jako osa kauz) */
 .pravidla-seznam { position: relative; flex: 1; min-height: 0; overflow-y: auto; list-style: none; margin: 0; padding: 0; }
+.pravidla-seznam.strankovane { overflow-y: hidden; }
+.pravidla-seznam.strankovane .pr-radek { display: flex; height: var(--vyska-radku); }
+.pravidla-seznam.strankovane .pr-radek[hidden] { display: none; }
+.pravidla-seznam.strankovane .pr-btn { flex: 1; min-width: 0; }
+/* měření přirozené výšky řádku: i skryté řádky, bez roztažení */
+.pravidla-seznam.meri .pr-radek { display: block !important; height: auto !important; }
+.pravidla-obal .strankovani { position: static; }
 .pr-radek + .pr-radek { border-top: 1px solid var(--linka); }
-.pr-btn { display: grid; grid-template-columns: minmax(0, 1fr) minmax(260px, 1fr) auto; gap: 6px 24px; align-items: center; padding: 10px 18px; color: inherit; text-decoration: none; }
+.pr-btn { display: grid; grid-template-columns: minmax(0, 3fr) minmax(260px, 2fr) auto; gap: 6px 24px; align-items: center; padding: 6px 18px; color: inherit; text-decoration: none; }
 .pr-btn:hover, .pr-radek.vybrany .pr-btn { background: color-mix(in srgb, var(--modra) 6%, var(--plocha)); }
 .pr-btn:focus-visible { outline: 2px solid var(--modra); outline-offset: -2px; }
 .pr-nazev { min-width: 0; }
@@ -52,13 +63,7 @@ body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
 .vyhrady ul { padding-left: 1.2em; }
 
 @media (max-width: 760px) {
-  body .filtry.f4.pr-filtry { flex-wrap: wrap; overflow-x: visible; }
-  body .filtry.pr-filtry .f-hledat { flex: 1 1 100%; }
-  body .filtry.pr-filtry .f-cipy-obal { order: 2; flex: 1 1 100%; }
-  body .filtry.pr-filtry .f-prepinac { order: 3; }
-  body .filtry.pr-filtry > .vpravo { order: 4; }
-  .pr-hero { padding: 14px 0 10px; }
-  .pr-hero .u2-pod { display: none; }
+  /* řádek filtrů se na mobilu skládá stejně jako u kauz (upravy.css) */
   .pr-btn { grid-template-columns: minmax(0, 1fr); padding: 10px 14px; }
   .pr-btn .otevrit { display: none; }
   .pr-nazev strong { white-space: normal; }
@@ -247,3 +252,5 @@ html:not(.js) body .pr-filtry { display: none; }
   .pravidlo .m2-panel[data-p="chrono"] .listovani button { padding: 4px 10px; }
   .pravidlo .m2-panel[data-p="chrono"] .listovani button span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }
+/* socha Spravedlnosti v pozadí lehce prosvítá seznamem, stejně jako portrét osou kauz */
+.pravidla-obal { background: color-mix(in srgb, var(--plocha) 84%, transparent); }

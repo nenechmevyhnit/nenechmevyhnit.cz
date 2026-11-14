@@ -1,15 +1,17 @@
 ---
 import Zaklad from '../layouts/Zaklad.astro';
 import PatickaRadek from './PatickaRadek.astro';
+import Portret from './Portret.astro';
 import PrubehPravidla from './PrubehPravidla.astro';
 import OsaPravidel from './OsaPravidel.astro';
 import { osaPravidel } from '../lib/osa-pravidel';
 import { nactiPravidla, nactiStitky, nactiOblasti } from '../lib/kauzy';
 import { bezPripominek, textPoctu, type OblastDetail } from '../lib/oblasti';
-import { popisekCesty, popisekKomu, popisekZaveru, popisekZnaku, popisekDuvodu, DUVODY } from '../lib/pravidla-slovnik';
+import { popisekCesty, popisekKomu, popisekZaveru, popisekZnaku, popisekDuvodu, DUVODY, CESTY } from '../lib/pravidla-slovnik';
 import { duvodyPravidla } from '../lib/pravidla';
-import { stavPravidla, popisekKroku } from '../lib/pravidla-stavy';
-import { vytvorPolozkuPravidla } from '../lib/hledani-pravidel';
+import { stavPravidla, popisekKroku, KROKY } from '../lib/pravidla-stavy';
+import { vytvorPolozkuPravidla, RAZENI_PRAVIDEL } from '../lib/hledani-pravidel';
+import { sklonuj } from '../lib/cestina';
 import { jsonDoSkriptu } from '../lib/html';
 import type { PravidloZaznam } from '../lib/validace';
 import '../styles/hlavni.css';
@@ -30,9 +32,14 @@ const cipy = [...new Set(zaznamy.flatMap(z => z.pravidlo.stitky))]
 // Filtr důvodu má smysl, jen když archiv obsahuje záznamy s oběma důvody.
 const duvody = DUVODY.filter(d => zaznamy.some(z => duvodyPravidla(z.pravidlo).includes(d)));
 const sDuvody = duvody.length > 1;
+const polozky = zaznamy.map(z => vytvorPolozkuPravidla(z, stitky));
+// ve větě „Ukázat změny…“ nabízíme jen volby, pod kterými je aspoň jedna změna
+const cesty = CESTY.filter(c => polozky.some(p => p.cesta === c));
+const stavy = KROKY.filter(k => polozky.some(p => p.stav === k));
+const malym = (t: string) => t.charAt(0).toLowerCase() + t.slice(1);
 const titulek = otevrene ? `${otevrene.pravidlo.nazev} — Posuďte sami`
   : otevrenaOblast ? `${otevrenaOblast.nazev} — Posuďte sami`
-  : 'Změny pravidel — Posuďte sami';
+  : 'Zákony a nařízení — Posuďte sami';
 const cesta = otevrene ? `/pravidla/${otevrene.slug}/` : otevrenaOblast ? `/pravidla/oblasti/${otevrenaOblast.id}/` : '/pravidla/';
 // klíč otevřeného detailu pro navigaci: slug pravidla, nebo „oblasti/<id>“
 const otevrena = otevrene?.slug ?? (otevrenaOblast ? `oblasti/${otevrenaOblast.id}` : undefined);
@@ -42,23 +49,26 @@ const popis = otevrene ? otevrene.pravidlo.shrnuti
 ---
 <Zaklad titulek={titulek} popis={popis} cesta={cesta} styly="hlavni" aktivni="pravidla" otevrena={otevrena}>
   <main class="hlavni-obsah">
+    {/* stejná stavba a výška jako úvod kauz (jeden řádek titulku, jeden řádek perexu), přepínání mezi stránkami neposkočí */}
     <section class="hero u2 pr-hero">
-      <p class="u2-nad">Změny pravidel</p>
-      <h1>Které změny pravidel prospívají Babišovi a Agrofertu nebo mění kontrolu moci</h1>
-      <p class="u2-pod">Zákony, nařízení, usnesení vlády a pokyny ministerstev od prosince 2025. U každé změny rozbor se zdroji, upozornění institucí a stanovisko předkladatele.</p>
+      <p class="u2-nad">Zákony a nařízení od prosince 2025</p>
+      <h1>Komu prospívají nová pravidla?</h1>
+      <p class="u2-pod">Zákony a nařízení, u kterých rozbor zdrojů ukazuje prospěch Babiše a Agrofertu nebo změnu kontroly moci.</p>
     </section>
     {zaznamy.length > 0 && (
       <>
         <h2 class="jen-ctecka">Hledání a filtry</h2>
         <div class="filtry f4 pr-filtry">
-          <label class="f-hledat"><input type="search" placeholder="Hledat ve změnách pravidel…" aria-label="Hledat ve změnách pravidel"></label>
+          <label class="f-hledat"><input type="search" placeholder="Hledat v zákonech a nařízeních…" aria-label="Hledat v zákonech a nařízeních"></label>
+          <!-- jako u kauz: témata v jednom řádku, co se nevejde, ukáže tlačítko „+N další“ (důvody jsou vidět vždy) -->
           <div class="f-cipy-obal">
-            <div class="f-cipy" role="group" aria-label={sDuvody ? 'Důvod zařazení a témata' : 'Témata'}>
+            <div class="f-cipy" id="pr-cipy" role="group" aria-label={sDuvody ? 'Důvod zařazení a témata' : 'Témata'}>
               {sDuvody && duvody.map(d => <button type="button" data-duvod={d} aria-pressed="false">{popisekDuvodu(d)}</button>)}
               {sDuvody && <span class="f-oddelovac" aria-hidden="true"></span>}
               {sBezPripominek && <button type="button" data-bez-pripominek aria-pressed="false">bez připomínkového řízení</button>}
               {sBezPripominek && <span class="f-oddelovac" aria-hidden="true"></span>}
               {cipy.map(c => <button type="button" data-stitek={c.id} aria-pressed="false">{c.nazev}</button>)}
+              <button type="button" class="f-vice" aria-expanded="false" aria-controls="pr-cipy" hidden></button>
             </div>
           </div>
           <label class="f-prepinac"><input type="checkbox" data-jen-projednavane> jen v projednávání</label>
@@ -68,6 +78,13 @@ const popis = otevrene ? otevrene.pravidlo.shrnuti
             <button type="button" data-pohled="osa" aria-pressed="false">Časová osa</button>
           </div>
           <span class="vpravo"><span class="pocet" aria-live="polite"></span><button class="f-zrusit" type="button" hidden>Zrušit filtry</button></span>
+          <!-- další filtry a řazení se čtou jako věta, stejně jako u kauz -->
+          <div class="f-dalsi" role="group" aria-label="Další filtry a řazení">
+            <span class="f-cast">Ukázat změny</span>{' '}
+            <span class="f-cast"><select data-filtr="cesta" aria-label="Druh"><option value="">jakéhokoli druhu</option>{cesty.map(c => <option value={c}>typu {malym(popisekCesty(c))}</option>)}</select>,</span>{' '}
+            <span class="f-cast"><select data-filtr="stav" aria-label="Stav"><option value="">v jakémkoli stavu</option>{stavy.map(k => <option value={k}>ve stavu {malym(popisekKroku(k))}</option>)}</select>,</span>{' '}
+            <span class="f-cast">řazené <select data-razeni aria-label="Řadit">{RAZENI_PRAVIDEL.map(r => <option value={r.id}>{r.nazev}</option>)}</select></span>
+          </div>
         </div>
       </>
     )}
@@ -89,8 +106,15 @@ const popis = otevrene ? otevrene.pravidlo.shrnuti
         <p class="ob-prazdno" hidden>Žádná změna pravidel neodpovídá filtru. <button type="button" data-zrusit>Zrušit filtry</button></p>
       </section>
     )}
-    <h2 class="jen-ctecka">Změny pravidel</h2>
+    <h2 class="jen-ctecka">Zákony a nařízení</h2>
     <div class="pravidla-obal" hidden={sOblastmi}>
+      {zaznamy.length > 0 && (
+        <div class="pr-hlava">
+          <!-- na počítači je tu počítadlo a Zrušit filtry jako v záhlaví osy kauz (na mobilu jsou v řádku filtrů) -->
+          <div class="nazev-sloupce"><span class="pocet" aria-live="polite">{sklonuj(zaznamy.length, ['změna', 'změny', 'změn'])}</span><button class="f-zrusit" type="button" hidden>Zrušit filtry</button></div>
+          <div class="pr-hlava-prubeh" aria-hidden="true">Průběh projednávání</div>
+        </div>
+      )}
       <ul class="pravidla-seznam">
         {zaznamy.length === 0 && <li class="archiv-prazdny">Zatím tu nejsou žádné ověřené záznamy.</li>}
         {zaznamy.map(({ slug, pravidlo: p }) => (
@@ -109,13 +133,22 @@ const popis = otevrene ? otevrene.pravidlo.shrnuti
         ))}
         <li class="prazdno" hidden>Žádná změna pravidel neodpovídá filtru. <button type="button" data-zrusit>Zrušit filtry</button></li>
       </ul>
+      <!-- stránkování zapíná skript, jen když se změny nevejdou na výšku (bez JS se seznam posouvá) -->
+      <nav class="strankovani" aria-label="Stránkování zákonů a nařízení" hidden>
+        <span class="s-rozsah" aria-live="polite"></span>
+        <span class="s-tlacitka">
+          <button type="button" class="s-pred" aria-label="Předchozí stránka">‹</button>
+          <span class="s-cisla"></span>
+          <button type="button" class="s-dalsi" aria-label="Další stránka">›</button>
+        </span>
+      </nav>
     </div>
     {zaznamy.length > 0 && <OsaPravidel osa={osa} />}
   </main>
-  <PatickaRadek />
-  <Fragment slot="mimo"><slot name="detail" /></Fragment>
+  <PatickaRadek foto="spravedlnost" />
+  <Fragment slot="mimo"><Portret obrazek="spravedlnost" /><slot name="detail" /></Fragment>
 </Zaklad>
-<script type="application/json" id="nv-pravidla" set:html={jsonDoSkriptu(zaznamy.map(z => vytvorPolozkuPravidla(z, stitky)))}></script>
+<script type="application/json" id="nv-pravidla" set:html={jsonDoSkriptu(polozky)}></script>
 <script>
   import { inicializujFiltrPravidel } from '../scripts/pravidla-filtr';
   import { inicializujNavigaciPravidel } from '../scripts/navigace-pravidel';

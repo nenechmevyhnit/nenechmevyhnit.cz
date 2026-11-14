@@ -152,7 +152,7 @@ test('z přehledu se detail otevře bez načtení stránky a zavřením se adres
   expect(await page.evaluate(() => (window as any).bezNacteni)).toBe(true);
   await page.getByRole('button', { name: 'Zavřít detail' }).click();
   await expect(page).toHaveURL(/\/pravidla\/\?pohled=seznam$/);
-  await expect(page).toHaveTitle('Změny pravidel — Posuďte sami');
+  await expect(page).toHaveTitle('Zákony a nařízení — Posuďte sami');
   await expect(page.locator('.pr-radek.vybrany')).toHaveCount(0);
   await page.goBack();
   await expect(page).toHaveURL(/\/pravidla\/narizeni-tau\/\?pohled=seznam$/);

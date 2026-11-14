@@ -20,11 +20,11 @@ for (const [cesta, nadpis, karet] of [['/metodika/', 'Jak archiv vedeme', 9], ['
   });
 }
 
-test('/metodika/#pravidla otevře oddíl Změny pravidel', async ({ page }) => {
+test('/metodika/#pravidla otevře oddíl Zákony a nařízení', async ({ page }) => {
   await page.goto('/metodika/#pravidla');
   const panel = page.locator('.v4-dlg-panel[data-sekce="pravidla"]');
   await expect(panel).toBeVisible();
-  await expect(panel.getByRole('heading', { level: 2 })).toHaveText('Změny pravidel');
+  await expect(panel.getByRole('heading', { level: 2 })).toHaveText('Zákony a nařízení');
   await expect(panel).toContainText('Závěr je rozbor archivu, ne úřední zjištění.');
   await expect(panel.locator('.slovnicek dt')).toHaveText(['prospěch doložen', 'prospěch pravděpodobný']);
 });
@@ -36,7 +36,7 @@ test('/metodika/#oblasti otevře oddíl Oblasti', async ({ page }) => {
   await expect(panel.getByRole('heading', { level: 2 })).toHaveText('Oblasti');
 });
 
-test('/metodika/#kontrola-moci otevře oddíl Změny pravidel na pododdílu Dopad na kontrolu moci', async ({ page }) => {
+test('/metodika/#kontrola-moci otevře oddíl Zákony a nařízení na pododdílu Dopad na kontrolu moci', async ({ page }) => {
   await page.goto('/metodika/#kontrola-moci');
   const panel = page.locator('.v4-dlg-panel[data-sekce="pravidla"]');
   await expect(panel).toBeVisible();
@@ -66,7 +66,7 @@ test('Metodika a O projektu mluví o prospěchu neutrálně, jako o výsledku ro
   await expect(page.locator('.v4-dlg-panel[data-sekce="proc"]')).toContainText('u kterých rozbor archivu ukazuje prospěch pro Andreje Babiše nebo Agrofert');
 });
 
-test('bez pravidel Metodika ani O projektu o oddílu Změny pravidel nemluví', async ({ page }) => {
+test('bez pravidel Metodika ani O projektu o oddílu Zákony a nařízení nemluví', async ({ page }) => {
   await page.goto('http://localhost:4322/metodika/');
   await expect(page.locator('.v4-karta:not(.v4-cta)')).toHaveCount(7);
   await expect(page.locator('[data-sekce="pravidla"]')).toHaveCount(0);
@@ -77,7 +77,7 @@ test('bez pravidel Metodika ani O projektu o oddílu Změny pravidel nemluví', 
   await page.goto('http://localhost:4322/o-projektu/');
   await expect(page.locator('.v4-karta:not(.v4-cta)')).toHaveCount(7);
   await page.locator('.v4-karta button[data-sekce="proc"]').click();
-  await expect(page.locator('.v4-dlg-panel[data-sekce="proc"]')).not.toContainText('změny pravidel');
+  await expect(page.locator('.v4-dlg-panel[data-sekce="proc"]')).not.toContainText('zákony a nařízení');
 });
 
 test('Metodika obsahuje slovníček stavů', async ({ page }) => {
