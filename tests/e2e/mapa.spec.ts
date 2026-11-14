@@ -1,5 +1,5 @@
 import { test, expect, type Page } from '@playwright/test';
-import { VELIKOSTI, overBezPosouvani } from './pomocne';
+import { POCITACE, overBezPosouvani, overBezPosouvaniDoStrany } from './pomocne';
 
 test.use({ viewport: { width: 1366, height: 768 } });
 const prepinac = (page: Page) => page.locator('.osa-roku .pohled');
@@ -57,7 +57,7 @@ test('názvy se vejdou do uzlů', async ({ page }) => {
   expect(pretekaji).toEqual([]);
 });
 
-for (const v of VELIKOSTI) {
+for (const v of POCITACE) {
   test(`mapa ${v.width}×${v.height} se neposouvá dolů`, async ({ page }) => {
     await page.setViewportSize(v);
     await page.goto('/?pohled=mapa');
@@ -65,6 +65,13 @@ for (const v of VELIKOSTI) {
     await overBezPosouvani(page);
   });
 }
+
+test('mapa na mobilu (strom) se posouvá jen dolů, ne do strany', async ({ page }) => {
+  await page.setViewportSize({ width: 360, height: 640 });
+  await page.goto('/?pohled=mapa');
+  await expect(page.locator('.strom')).toBeVisible();
+  await overBezPosouvaniDoStrany(page);
+});
 
 test('prázdný archiv nemá přepínač mapy', async ({ page }) => {
   await page.goto('http://localhost:4322/');

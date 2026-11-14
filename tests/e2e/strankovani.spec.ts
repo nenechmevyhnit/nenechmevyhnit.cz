@@ -83,3 +83,52 @@ test('označené pásmo vybrané kauzy končí nad lištou stránkování', asyn
   const lista = (await page.locator('.strankovani').boundingBox())!;
   expect(pasmo.y + pasmo.height).toBeLessThanOrEqual(lista.y + 1);
 });
+
+// Mobil: stránka se posouvá dolů, na stránce osy je pevný počet kauz (výchozí 10, test ho zmenší na 2).
+test.describe('mobil', () => {
+  /** Na stránku dát jen dvě kauzy; změna šířky okna přiměje skript stránkování přepočítat. */
+  async function dveNaStranku(page: Page, sirka: number) {
+    await page.addStyleTag({ content: '#graf { --na-stranku: 2; }' });
+    await page.setViewportSize({ width: sirka - 1, height: 640 });
+    await expect(page.locator('.strankovani')).toBeVisible();
+  }
+
+  for (const sirka of [320, 360, 375, 390]) {
+    test(`${sirka} px: lišta stránkování se vejde do osy a tlačítka jsou velká pro prst`, async ({ page }) => {
+      await page.setViewportSize({ width: sirka, height: 640 });
+      await page.goto('/');
+      await dveNaStranku(page, sirka);
+      await expect(viditelne(page)).toHaveCount(2);
+      await expect(page.locator('.strankovani .s-rozsah')).toHaveText('1–2 z 6');
+      const graf = (await page.locator('#graf').boundingBox())!;
+      for (const b of await page.locator('.strankovani button').all()) {
+        const r = (await b.boundingBox())!;
+        expect(r.x, 'tlačítko stránkování začíná v ose').toBeGreaterThanOrEqual(graf.x);
+        expect(r.x + r.width, 'tlačítko stránkování končí v ose').toBeLessThanOrEqual(graf.x + graf.width);
+        expect(r.height).toBeGreaterThanOrEqual(40);
+        expect(r.width).toBeGreaterThanOrEqual(30);
+      }
+      const g = await page.locator('#graf').evaluate(e => ({ sw: e.scrollWidth, cw: e.clientWidth }));
+      expect(g.sw, 'osa se nesmí posouvat do strany').toBeLessThanOrEqual(g.cw);
+    });
+  }
+
+  test('po přepnutí stránky dole pod seznamem je vidět začátek osy', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 640 });
+    await page.goto('/');
+    await dveNaStranku(page, 375);
+    await page.locator('.strankovani').scrollIntoViewIfNeeded();
+    await page.evaluate(() => scrollTo(0, document.scrollingElement!.scrollHeight));
+    await page.getByRole('button', { name: 'Další stránka' }).click();
+    await expect(page.locator('.strankovani .s-rozsah')).toHaveText('3–4 z 6');
+    await expect.poll(() => page.locator('#graf').evaluate(g => Math.round(g.getBoundingClientRect().top))).toBeGreaterThanOrEqual(0);
+    await expect(viditelne(page).first()).toBeInViewport();
+  });
+
+  test('výchozí počet kauz na stránku je 10, šest testovacích kauz se vejde na jednu', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 640 });
+    await page.goto('/');
+    await expect(viditelne(page)).toHaveCount(6);
+    await expect(page.locator('.strankovani')).toBeHidden();
+  });
+});

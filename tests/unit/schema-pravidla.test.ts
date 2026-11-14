@@ -101,7 +101,7 @@ describe('kontrola moci', () => {
   it('musí mít aspoň jeden znak', () => expect(chyby(k(p => { p.kontrolaMoci.znaky = []; })).join(' ')).toMatch(/aspoň jeden znak/));
   it('musí mít aspoň jedno upozornění', () => expect(chyby(k(p => { p.kontrolaMoci.upozorneni = []; })).join(' ')).toMatch(/aspoň jedno upozornění/));
   it('znak musí mít primární zdroj', () => expect(chyby(k(p => { p.kontrolaMoci.znaky[0].zdroje = [2]; })).join(' ')).toMatch(/Znak 1 musí mít primární zdroj/));
-  it('znak „instituce“ musí instituci uvést', () => expect(chyby(k(p => { delete p.kontrolaMoci.znaky[0].instituce; })).join(' ')).toMatch(/Znak 1 mění kontrolní instituci, musí ji uvést/));
+  it('znak „instituce“ musí instituci uvést', () => expect(chyby(k(p => { delete p.kontrolaMoci.znaky[0].instituce; })).join(' ')).toMatch(/Znak 1 mění instituci nebo pravidla státu, musí je uvést/));
   it('instituce patří jen ke znaku „instituce“', () => expect(chyby(k(p => { p.kontrolaMoci.znaky[0].druh = 'prilepek'; })).join(' ')).toMatch(/instituce patří jen ke znaku druhu „instituce“/));
   it('neznámá instituce, upozorňovatel a druh znaku jsou chyba', () => {
     expect(cesty(k(p => { p.kontrolaMoci.znaky[0].instituce = 'armada'; }))).toEqual(['kontrolaMoci.znaky.0.instituce']);
@@ -131,5 +131,30 @@ describe('důvody zařazení', () => {
     expect(duvodyPravidla(oba)).toEqual(['prospech', 'kontrola-moci']);
     expect(duvodyPravidla(pravidloSchema.parse(platnePravidlo()))).toEqual(['prospech']);
     expect(duvodyPravidla(pravidloSchema.parse(platnePravidloKontrolaMoci()))).toEqual(['kontrola-moci']);
+  });
+});
+
+describe('oblasti a „Co by to znamenalo pro vás“', () => {
+  it('platné pravidlo má oblasti a proVas', () => {
+    const p = pravidloSchema.parse(platnePravidlo());
+    expect(p.oblasti).toEqual(['dotace-stret-zajmu']);
+    expect(p.proVas!.zdroje).toEqual([1]);
+  });
+  it('schéma jedné změny oblasti ani proVas nevyžaduje (povinnost „všechny, nebo žádná“ hlídá overOblasti)', () => {
+    expect(chyby(s(p => { delete p.oblasti; delete p.proVas; }))).toEqual([]);
+  });
+  it('v režimu konceptů smějí chybět', () => {
+    expect(chyby(s(p => { delete p.oblasti; delete p.proVas; }), pravidloSchemaKoncepty)).toEqual([]);
+  });
+  it('odmítne neznámou oblast, prázdný seznam a opakování', () => {
+    expect(cesty(s(p => { p.oblasti = ['neznama']; }))).toContain('oblasti.0');
+    expect(chyby(s(p => { p.oblasti = []; })).length).toBeGreaterThan(0);
+    expect(chyby(s(p => { p.oblasti = ['soudy-policie', 'soudy-policie']; })).join(' ')).toMatch(/stejnou oblast dvakrát/);
+  });
+  it('proVas: nejvýš 400 znaků, aspoň jeden existující zdroj', () => {
+    expect(chyby(s(p => { p.proVas.text = 'x'.repeat(401); })).join(' ')).toMatch(/nejvýš 400 znaků/);
+    expect(chyby(s(p => { p.proVas.text = 'x'.repeat(400); }))).toEqual([]);
+    expect(chyby(s(p => { p.proVas.zdroje = []; })).join(' ')).toMatch(/aspoň jeden zdroj/);
+    expect(chyby(s(p => { p.proVas.zdroje = [9]; })).join(' ')).toMatch(/Co by to znamenalo pro vás odkazuje na neexistující zdroj 9/);
   });
 });

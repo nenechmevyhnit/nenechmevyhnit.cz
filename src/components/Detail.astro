@@ -87,7 +87,7 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
         )}
         {pravidla.length > 0 && (
           <section class="souvisejici-pravidla" aria-labelledby="pravidla-kauzy-nadpis">
-            <h3 id="pravidla-kauzy-nadpis">Související změny pravidel</h3>
+            <h3 id="pravidla-kauzy-nadpis">Související zákony a nařízení</h3>
             <ul>
               {pravidla.map(p => <li><a href={`/pravidla/${p.slug}/`}>{p.nazev}</a> ({p.stav}): {p.popis}</li>)}
             </ul>

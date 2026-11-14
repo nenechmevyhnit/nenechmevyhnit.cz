@@ -1,10 +1,12 @@
 import { test, expect } from '@playwright/test';
-import { VELIKOSTI, overBezPosouvani } from './pomocne';
+import { POCITACE, MOBILY, overBezPosouvani, overBezPosouvaniDoStrany } from './pomocne';
 
-for (const v of VELIKOSTI) {
+const STRANKY = ['/', '/kauzy/alfa-dotace/', '/metodika/', '/o-projektu/', '/pravidla/', '/pravidla/?pohled=seznam', '/pravidla/?pohled=osa', '/pravidla/zakon-omega/', '/pravidla/oblasti/dotace-stret-zajmu/'];
+
+for (const v of POCITACE) {
   test.describe(`${v.width}×${v.height}`, () => {
     test.use({ viewport: v });
-    for (const cesta of ['/', '/kauzy/alfa-dotace/', '/metodika/', '/o-projektu/', '/pravidla/', '/pravidla/zakon-omega/']) {
+    for (const cesta of STRANKY) {
       test(`${cesta} se neposouvá dolů`, async ({ page }) => {
         await page.goto(cesta);
         await overBezPosouvani(page);
@@ -16,6 +18,31 @@ for (const v of VELIKOSTI) {
       expect(graf!.y + graf!.height).toBeLessThanOrEqual(v.height);
       const posledni = await page.locator('.radek:not([hidden])').last().boundingBox();
       expect(posledni!.y + posledni!.height).toBeLessThanOrEqual(graf!.y + graf!.height + 1);
+    });
+  });
+}
+
+// Na mobilu se stránka posouvá dolů (na výšku telefonu se osa ani detail nevejdou), do strany nikdy.
+for (const v of MOBILY) {
+  test.describe(`mobil ${v.width}×${v.height}`, () => {
+    test.use({ viewport: v });
+    for (const cesta of STRANKY) {
+      test(`${cesta} se neposouvá do strany`, async ({ page }) => {
+        await page.goto(cesta);
+        await page.evaluate(() => document.fonts.ready);
+        await overBezPosouvaniDoStrany(page);
+        const detail = page.locator('dialog#detail[open]');
+        if (await detail.count()) {
+          const d = await detail.evaluate(e => ({ sw: e.scrollWidth, cw: e.clientWidth }));
+          expect(d.sw, 'detail se nesmí posouvat do strany').toBeLessThanOrEqual(d.cw);
+        }
+      });
+    }
+    test('všechny kauzy na stránce osy jsou vidět celé, bez vnitřního posuvníku', async ({ page }) => {
+      await page.goto('/');
+      const radky = await page.locator('#graf .radky').evaluate(e => ({ sh: e.scrollHeight, ch: e.clientHeight }));
+      expect(radky.sh).toBeLessThanOrEqual(radky.ch + 1);
+      await expect(page.locator('.radek:not([hidden])')).toHaveCount(6);
     });
   });
 }

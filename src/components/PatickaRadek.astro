@@ -1,12 +1,14 @@
 ---
-interface Props { legenda?: boolean }
-const { legenda = false } = Astro.props;
+interface Props { legenda?: boolean; foto?: 'portret' | 'spravedlnost' }
+const { legenda = false, foto = 'portret' } = Astro.props;
 const REPO = 'https://github.com/posudtesami/posudtesami.cz';
 ---
 <div class="legenda" role="contentinfo">
   {legenda && <><span><i></i>uzavřeno</span><span><i class="ok"></i>dosud neuzavřeno</span><span><i class="ud"></i>událost v kauze</span></>}
   <span class="legenda-odkazy">
-    <a href="https://commons.wikimedia.org/wiki/File:Andrej_Babi%C5%A1_2025_(cropped).jpg" title="Andrej Babiš, únor 2025. Vox España, Wikimedia Commons, CC0">Foto: Vox España (CC0)</a>
+    {foto === 'portret'
+      ? <a href="https://commons.wikimedia.org/wiki/File:Andrej_Babi%C5%A1_2025_(cropped).jpg" title="Andrej Babiš, únor 2025. Vox España, Wikimedia Commons, CC0">Foto: Vox España (CC0)</a>
+      : <a href="https://commons.wikimedia.org/wiki/File:Frankfurt_am_Main,_R%C3%B6merberg,_Justitia.JPG" title="Socha Spravedlnosti na Römerbergu ve Frankfurtu nad Mohanem. Renate007, Wikimedia Commons, CC BY-SA 4.0; upraveno (odstraněné pozadí), úprava pod stejnou licencí">Foto: Renate007 (CC BY-SA 4.0)</a>}
     <a href={`${REPO}/issues/new?template=oprava.yml`}>Nahlásit chybu</a>
     <a href={`${REPO}/commits/main/obsah`}>Historie změn</a>
     <a href="mailto:nenechmevyhnit@gmail.com">nenechmevyhnit@gmail.com</a>
