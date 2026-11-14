@@ -30,7 +30,7 @@ const filtr = [
 <Zaklad titulek={`${nadpis} — Posuďte sami`} popis={popis} cesta={`/hlasovani/${id}/`} styly="hlavni" aktivni="pravidla">
   <main class="hl-stranka">
     <nav class="hl-drobky" aria-label="Drobečková navigace">
-      <a href="/pravidla/">Změny pravidel</a>
+      <a href="/pravidla/">Zákony a nařízení</a>
       {pravidla.length === 1 && <> › <a href={`/pravidla/${pravidla[0].slug}/`}>{pravidla[0].nazev}</a></>}
       {' › '}<span aria-current="page">Hlasování č. {s.cislo}</span>
     </nav>

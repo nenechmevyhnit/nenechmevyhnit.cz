@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { MOBILY, overPosouvani } from './pomocne';
 
 test.use({ viewport: { width: 1366, height: 768 } });
 
@@ -42,7 +43,7 @@ test('pravidlo bez hlasování záložku nemá', async ({ page }) => {
 });
 
 test('detail otevřený ze seznamu (obsah načtený skriptem) má záložku Hlasování se styly', async ({ page }) => {
-  await page.goto('/pravidla/');
+  await page.goto('/pravidla/?pohled=seznam');
   await page.locator('.pr-radek[data-slug="zakon-omega"] .pr-btn').click();
   await expect(page.locator('dialog#detail')).toBeVisible();
   await page.getByRole('tab', { name: 'Hlasování (2)' }).click();
@@ -50,3 +51,19 @@ test('detail otevřený ze seznamu (obsah načtený skriptem) má záložku Hlas
   await expect(kluby).toBeVisible();
   expect(await kluby.evaluate(e => getComputedStyle(e).display)).toBe('flex');
 });
+
+// Na mobilu záložka nepokračuje do sloupců, jde pod sebou a posouvá se dolů s celým detailem (upravy.css, Mobil).
+for (const v of MOBILY) {
+  test(`mobil ${v.width}×${v.height}: záložka Hlasování se neposouvá do strany`, async ({ page }) => {
+    await page.setViewportSize(v);
+    await page.goto('/pravidla/zakon-omega/');
+    await page.evaluate(() => document.fonts.ready);
+    await page.getByRole('tab', { name: 'Hlasování (2)' }).click();
+    const panel = page.locator('.m2-panel[data-p="hlasovani"]');
+    await expect(panel).toBeVisible();
+    await overPosouvani(page);
+    const p = await panel.evaluate(e => ({ sw: e.scrollWidth, cw: e.clientWidth, sloupce: getComputedStyle(e).columnWidth }));
+    expect(p.sloupce, 'záložka bez sloupců').toBe('auto');
+    expect(p.sw, 'záložka se nesmí posouvat do strany').toBeLessThanOrEqual(p.cw + 1);
+  });
+}

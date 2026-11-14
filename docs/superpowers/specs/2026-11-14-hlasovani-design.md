@@ -194,20 +194,20 @@ Režim konceptů (`NV_KONCEPTY`) čte snímky z `<NV_OBSAH>/hlasovani/` a pravid
   - Kluby jsou seřazené podle počtu poslanců v hlasování, nezařazení na konci.
   - Pro čtečky obrazovky má každý klub celou větu, například „ANO: 62 pro, 0 proti, 3 zdrželi se nebo nehlasovali, 1 omluven“.
   - U procedurálního hlasování je pod blokem věta: „Procedurální hlasování rozhoduje o pořadu nebo způsobu projednání, ne o obsahu návrhu.“
-  - Když se hlasování nevejdou na výšku, panel pokračuje do sloupců a posouvá se do strany, stejně jako záložka Zdroje (`column-width`, blok hlasování se nedělí).
+  - Když se hlasování nevejdou na výšku, panel pokračuje do sloupců a posouvá se do strany, stejně jako záložka Zdroje (`column-width`, blok hlasování se nedělí). Na mobilu (do 760 px) jde záložka pod sebou a posouvá se dolů s celým detailem, stejně jako ostatní záložky.
 - **Průběh:** událost s hlasováním dostane pod zdroje jeden řádek „Hlasování: č. 311 · č. 328 · č. 385“. Čísla vedou na stránky hlasování.
 - Hlavička, ostatní záložky a patička se nemění.
 
 ### Stránka hlasování `/hlasovani/<id>/`
 
-Statická stránka (`src/pages/hlasovani/[id].astro`) pro každý snímek, na který odkazuje aspoň jedno pravidlo. Rozvržení vyplní výšku okna a stránka se svisle neposouvá.
+Statická stránka (`src/pages/hlasovani/[id].astro`) pro každý snímek, na který odkazuje aspoň jedno pravidlo. Na počítači rozvržení vyplní výšku okna a stránka se svisle neposouvá. Na mobilu (do 760 px) má stránka přirozenou výšku a posouvá se dolů jako ostatní stránky webu. Do strany se neposouvá nic.
 
 1. **Drobečková navigace:** název části v menu › název pravidla › Hlasování č. 311. Když na hlasování odkazuje víc pravidel, drobečková navigace končí u části v menu.
 2. **Nadpis:** „Hlasování č. 311, 34. schůze Poslanecké sněmovny“, pod ním datum a čas.
 3. **O čem se hlasovalo:** za každé navázané pravidlo štítek typu, věta `co` a odkaz zpět na pravidlo. U procedurálního hlasování věta z detailu pravidla.
 4. **Výsledek:** přijato nebo zamítnuto, pro, proti, zdržel se, nehlasoval, omluven, nepřihlášen a kvórum.
-5. **Filtr a kluby:** na počítači tabulka klubů (klub, pro, proti, zdržel se nebo nehlasoval, nepřítomen) s prvním řádkem „Všichni“. Název klubu v řádku je odkaz na kotvu (`#ano`), kliknout jde na celý řádek. Se skriptem odkaz přepíná filtr a vybraný klub má `aria-current="true"`. Na mobilu (390×700) jsou místo tabulky čipy „Všichni (200) · ANO (80) …“ v jednom řádku, který se posouvá do strany (jako témata ve filtru změn pravidel).
-6. **Seznam poslanců:** na začátku krátká legenda kategorií včetně vysvětlení „zdržel se nebo nehlasoval“ (oddíl 3) a odkaz na `/metodika/#hlasovani`. Legenda je součástí seznamu a posouvá se s ním, aby hlavička zůstala nízká. Poslanci jsou seskupení podle hlasu (Pro, Proti, Zdržel se nebo nehlasoval, Omluven, Nepřihlášen), uvnitř skupiny podle příjmení. Klub je u jména vidět, jen když je vybráno „Všichni“. Seznam pokračuje do sloupců a posouvá se do strany, nadpis skupiny zůstává se svými jmény.
+5. **Filtr a kluby:** na počítači tabulka klubů (klub, pro, proti, zdržel se nebo nehlasoval, nepřítomen) s prvním řádkem „Všichni“. Název klubu v řádku je odkaz na kotvu (`#ano`), kliknout jde na celý řádek. Se skriptem odkaz přepíná filtr a vybraný klub má `aria-current="true"`. Na mobilu (do 760 px) jsou místo tabulky čipy „Všichni (200) · ANO (80) …“, které se zalamují do více řádků. Do strany se neposouvají.
+6. **Seznam poslanců:** na začátku krátká legenda kategorií včetně vysvětlení „zdržel se nebo nehlasoval“ (oddíl 3) a odkaz na `/metodika/#hlasovani`. Legenda je součástí seznamu a posouvá se s ním, aby hlavička zůstala nízká. Poslanci jsou seskupení podle hlasu (Pro, Proti, Zdržel se nebo nehlasoval, Omluven, Nepřihlášen), uvnitř skupiny podle příjmení. Klub je u jména vidět, jen když je vybráno „Všichni“. Na počítači seznam pokračuje do sloupců a posouvá se do strany, nadpis skupiny zůstává se svými jmény. Na mobilu jde seznam pod sebou bez sloupců (legenda zůstává na začátku) a posouvá se dolů s celou stránkou.
 7. **Zdroj:** „Otevřená data Poslanecké sněmovny, staženo 14. 11. 2026“ a odkaz „Ověřit na psp.cz“ (`hlasy.sqw?g=<idPsp>`).
 
 **Filtr a adresa:**
@@ -261,7 +261,7 @@ Nový oddíl **„Hlasování“** (kotva `#hlasovani`) pod oddílem o změnách
   - přepnutí filtru změní kotvu, načtení adresy s kotvou vybere klub, neznámá kotva ukáže všechny,
   - bez JavaScriptu (`javaScriptEnabled: false`) jsou vidět oddíly všech klubů,
   - odkaz zpět na pravidlo a odkaz na psp.cz,
-  - **žádné svislé posouvání** `/hlasovani/<fixture>/` a `/pravidla/zakon-omega/` s otevřenou záložkou Hlasování na všech velikostech z hlavní specifikace a na 390×700 (`bez-posouvani.spec.ts`),
+  - na počítači (`POCITACE`) **žádné svislé posouvání** `/hlasovani/<fixture>/` a `/pravidla/zakon-omega/` s otevřenou záložkou Hlasování, na telefonech (`MOBILY`: 390×700, 375×667, 360×640, 320×568) žádné posouvání do strany, čipy klubů se zalamují (`bez-posouvani.spec.ts`, `hlasovani-stranka.spec.ts`, `hlasovani-detail.spec.ts`),
   - axe bez závažných chyb.
 - Testy se spouštějí podle zavedeného postupu: vitest z cesty `C:\`, Playwright na vlastním portu z buildu, aby se nepletly se souběžnými relacemi.
 - **lychee** v CI zkontroluje i odkazy `hlasy.sqw?g=…`: krok „Změněné kauzy a pravidla“ v `.github/workflows/kontrola.yml` zahrne i `obsah/hlasovani/*.yml`, jejichž hlavička odkaz obsahuje.

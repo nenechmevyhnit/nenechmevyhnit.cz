@@ -17,11 +17,8 @@
 .hl-pata a, .hl-odkazy a { color: var(--modra); }
 .hl-proc { margin: 6px 0 0; font-size: 13px; font-style: italic; color: var(--text2); }
 .hl-odkazy { margin-top: 6px; font-size: 14px; }
-@media (max-width: 760px) {
-  .pravidlo .m2-panel[data-p="hlasovani"] { column-width: 260px; }
-}
 
-/* stránka /hlasovani/<id>/: vyplní výšku okna, seznam poslanců pokračuje do sloupců a posouvá se do strany */
+/* stránka /hlasovani/<id>/: na počítači vyplní výšku okna, seznam poslanců pokračuje do sloupců a posouvá se do strany */
 .hl-stranka { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; padding: 10px 0 6px; }
 .hl-drobky { flex: none; font: 12px var(--f-mono); color: var(--meta); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .hl-drobky a { color: var(--modra); }
@@ -56,13 +53,17 @@ html:not(.js) .hl-klub[hidden] { display: block; }
 html:not(.js) .hl-vsichni { display: none; }
 .hl-zdroj { flex: none; margin: 0; font-size: 12px; color: var(--meta); }
 .hl-zdroj a { color: var(--modra); }
+/* Mobil (do 760 px): stránka má přirozenou výšku a posouvá se dolů jako ostatní stránky (upravy.css, Mobil),
+   do strany se neposouvá nic. Místo tabulky jsou čipy klubů, které se zalamují do více řádků, a seznam poslanců
+   jde pod sebou bez sloupců (legenda zůstává na jeho začátku). */
 @media (max-width: 760px) {
-  .hl-stranka { gap: 6px; padding-top: 6px; }
+  .hl-stranka { flex: none; gap: 6px; padding-top: 6px; }
   .hl-hlava h1 { font-size: 20px; }
   .hl-o-cem, .hl-hlava .hl-vysledek, .hl-hlava .hl-proc { font-size: 13px; }
-  .hl-telo { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); padding: 8px 10px; }
+  .hl-telo { display: block; padding: 8px 10px; }
   .hl-tabulka-obal { display: none; }
-  .hl-cipy { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: thin; padding-bottom: 4px; margin-bottom: 6px; }
-  .hl-cipy a { flex: none; border: 1px solid var(--linka); padding: 3px 10px; font-size: 13px; color: var(--inkoust); text-decoration: none; }
-  .hl-cipy a[aria-current="true"] { border-color: var(--modra); background: var(--modra); color: #fff; }
+  .hl-cipy { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .hl-cipy a { border: 1px solid var(--linka); padding: 3px 10px; font-size: 13px; color: var(--inkoust); text-decoration: none; }
+  .hl-cipy a[aria-current="true"] { border-color: var(--modra); background: var(--modra); color: var(--plocha); }
+  .hl-poslanci { overflow: visible; columns: auto; }
 }

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { VELIKOSTI, overBezPosouvani } from './pomocne';
+import { POCITACE, MOBILY, overBezPosouvani, overBezPosouvaniDoStrany } from './pomocne';
 
 test.use({ viewport: { width: 1366, height: 768 } });
 
@@ -8,7 +8,7 @@ test('stránka hlasování: nadpis, o čem, výsledek, zdroj a odkaz zpět', asy
   await expect(page).toHaveTitle('Hlasování č. 3, 7. schůze Poslanecké sněmovny — Posuďte sami');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Hlasování č. 3, 7. schůze Poslanecké sněmovny');
   await expect(page.locator('.hl-kdy')).toHaveText('20. 9. 2026, 14:30');
-  await expect(page.locator('.hl-drobky a')).toHaveText(['Změny pravidel', 'Testovací novela zákona Omega s dlouhým názvem pro mobil']);
+  await expect(page.locator('.hl-drobky a')).toHaveText(['Zákony a nařízení', 'Testovací novela zákona Omega s dlouhým názvem pro mobil']);
   await expect(page.locator('.hl-o-cem li')).toHaveCount(1);
   await expect(page.locator('.hl-o-cem li')).toContainText('o obsahu');
   await expect(page.locator('.hl-o-cem a')).toHaveAttribute('href', '/pravidla/zakon-omega/');
@@ -23,7 +23,7 @@ test('stránka hlasování: nadpis, o čem, výsledek, zdroj a odkaz zpět', asy
 test('hlasování navázané na dvě pravidla: obě v „O čem“, drobečková navigace končí u části', async ({ page }) => {
   await page.goto('/hlasovani/psp-10-5-12/');
   await expect(page.locator('.hl-o-cem li')).toHaveCount(2);
-  await expect(page.locator('.hl-drobky a')).toHaveText(['Změny pravidel']);
+  await expect(page.locator('.hl-drobky a')).toHaveText(['Zákony a nařízení']);
   await expect(page.locator('.hl-hlava .hl-proc')).toHaveText('Procedurální hlasování rozhoduje o pořadu nebo způsobu projednání, ne o obsahu návrhu.');
 });
 
@@ -112,7 +112,7 @@ test.describe('bez JavaScriptu', () => {
   });
 });
 
-for (const v of VELIKOSTI) {
+for (const v of POCITACE) {
   test(`${v.width}×${v.height}: stránka hlasování se neposouvá a seznam poslanců má místo`, async ({ page }) => {
     await page.setViewportSize(v);
     for (const adresa of ['/hlasovani/psp-10-5-12/', '/hlasovani/psp-10-7-3/#ano']) {
@@ -120,6 +120,31 @@ for (const v of VELIKOSTI) {
       await overBezPosouvani(page);
       const vyska = await page.locator('.hl-poslanci').evaluate(e => e.clientHeight);
       expect(vyska, `${adresa}: seznam poslanců má jen ${vyska} px`).toBeGreaterThanOrEqual(100);
+    }
+  });
+}
+
+// Na mobilu se stránka posouvá dolů (spec hlasování, oddíl 7), do strany nic: čipy se zalamují, seznam jde pod sebou.
+for (const v of MOBILY) {
+  test(`mobil ${v.width}×${v.height}: stránka hlasování se neposouvá do strany, čipy klubů se zalamují`, async ({ page }) => {
+    await page.setViewportSize(v);
+    for (const adresa of ['/hlasovani/psp-10-5-12/', '/hlasovani/psp-10-7-3/#ano']) {
+      await page.goto(adresa);
+      await page.evaluate(() => document.fonts.ready);
+      await overBezPosouvaniDoStrany(page);
+      const cipy = await page.locator('.hl-cipy').evaluate(e => ({
+        sw: e.scrollWidth, cw: e.clientWidth,
+        radku: new Set([...e.children].map(c => (c as HTMLElement).offsetTop)).size,
+      }));
+      expect(cipy.sw, `${adresa}: řádek čipů se nesmí posouvat do strany`).toBeLessThanOrEqual(cipy.cw + 1);
+      expect(cipy.radku, `${adresa}: čipy se mají zalomit do více řádků`).toBeGreaterThan(1);
+      const seznam = await page.locator('.hl-poslanci').evaluate(e => ({
+        sw: e.scrollWidth, cw: e.clientWidth, sh: e.scrollHeight, ch: e.clientHeight, sloupce: getComputedStyle(e).columnWidth,
+      }));
+      expect(seznam.sloupce, `${adresa}: seznam poslanců bez sloupců`).toBe('auto');
+      expect(seznam.sw, `${adresa}: seznam poslanců se nesmí posouvat do strany`).toBeLessThanOrEqual(seznam.cw + 1);
+      expect(seznam.sh, `${adresa}: seznam poslanců bez vnitřního posuvníku`).toBeLessThanOrEqual(seznam.ch + 1);
+      await expect(page.locator('.hl-poslanci > :first-child')).toHaveClass('hl-legenda-text');
     }
   });
 }
