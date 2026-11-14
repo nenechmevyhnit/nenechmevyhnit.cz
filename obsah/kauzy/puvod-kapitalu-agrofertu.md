@@ -1,7 +1,7 @@
 ---
 typ: kauza
 nazev: Švýcarská OFI a převzetí Agrofertu
-shrnuti: Agrofert, do té doby celý ve vlastnictví slovenského státního podniku Petrimex, v roce 1995 navýšil kapitál. Většinu získala švýcarská firma OFI s nezveřejněnými vlastníky, Petrimexu zbylo 25 %. A. Babiš tehdy vedl Agrofert a zároveň zasedal v představenstvu Petrimexu. Ten ho odvolal a změny neúspěšně napadl u soudu.
+shrnuti: Agrofert, do té doby celý ve vlastnictví slovenského podniku Petrimex, v roce 1995 navýšil kapitál. Většinu získala švýcarská firma OFI s nezveřejněnými vlastníky, Petrimexu zbylo 25 %. A. Babiš vedl Agrofert a zasedal v představenstvu Petrimexu. Ten ho odvolal a změny napadl žalobou; soud ji zamítl pro opožděnost.
 od: 1994
 do: null
 stav: jine
@@ -80,7 +80,7 @@ udalosti:
     zdroje: [2, 4, 6]
   - datum: 2017-03
     nazev: Audit příjmů
-    popis: Audit Babišových příjmů předložený ve sporu o korunové dluhopisy uvádí do roku 2000 čistý příjem 8,311 mil. Kč. Z auditu nevyplývá, z čeho Babiš nákup akcií financoval.
+    popis: Podle ČT24 uvádí audit Babišových příjmů, předložený ve sporu o korunové dluhopisy, do roku 2000 čistý příjem 8,311 mil. Kč. Zdroj peněz na nákup akcií audit neřeší a žádný úřad se jím nezabýval.
     zdroje: [2]
   - datum: 2017-05
     nazev: Reportéři ČT o Petrimexu
@@ -88,7 +88,7 @@ udalosti:
     zdroje: [3]
   - datum: 2020
     nazev: Zrušení OFI
-    popis: OFI byla úředně zrušena. Do té doby ji podle Seznam Zpráv na papíře udržoval správce René Kurth.
+    popis: OFI byla úředně zrušena. Podle Seznam Zpráv měla do té doby jen formálního správce; o skutečných vlastnících to nic neříká.
     zdroje: [5]
   - datum: 2023-01
     nazev: Dokumenty Seznam Zpráv
@@ -99,7 +99,7 @@ stanovisko:
   zdroje: [3, 2, 5]
 kriterium: dve-redakce
 proc:
-  text: "V únoru 1995 Agrofert navýšil základní kapitál z 1 na 4 mil. Kč. Nové akcie upsaly švýcarská firma OFI a Spolana Neratovice. Dosavadní jediný akcionář, slovenský Petrimex, se navýšení neúčastnil a jeho podíl klesl ze 100 na 25 %. A. Babiš přitom vedl Agrofert a zároveň byl členem představenstva Petrimexu, které se podle ČT vzdalo přednostního práva na nové akcie. Petrimex ho poté z představenstva odvolal a změny v Agrofertu neúspěšně napadl žalobou."
+  text: "V únoru 1995 Agrofert navýšil základní kapitál z 1 na 4 mil. Kč. Nové akcie upsaly švýcarská firma OFI a Spolana Neratovice. Dosavadní jediný akcionář, slovenský Petrimex, se navýšení neúčastnil a jeho podíl klesl ze 100 na 25 %. A. Babiš v té době vedl Agrofert a byl současně členem představenstva Petrimexu; podle ČT se toto představenstvo přednostního práva na nové akcie vzdalo. Petrimex ho poté z představenstva odvolal a změny v Agrofertu neúspěšně napadl žalobou."
   zdroje: [1, 3, 5]
 castky:
   - castka: 2600000
@@ -111,6 +111,6 @@ akteri:
 ---
 Agrofert vznikl jako firma napojená na bratislavský Petrimex, státní podnik zahraničního obchodu s chemickými komoditami, pro který Babiš pracoval mimo jiné jako obchodní zástupce v Maroku.[^4][^1] Petrimex v roce 1999 zkrachoval.[^1]
 
-Doložené je navýšení kapitálu v roce 1995, většinový podíl OFI a to, že vlastníci OFI nebyli zveřejněni. Babišovo tvrzení, že šlo o jeho spolužáky, nikdo nezávisle neověřil.[^3][^6] Podle Seznam Zpráv OFI v Česku zastupovali advokáti Agrofertu.[^5]
+Doložené je navýšení kapitálu v roce 1995, většinový podíl OFI a to, že vlastníci OFI nebyli zveřejněni. Vlastníky OFI se nepodařilo zjistit Respektu (2002), Reportérům ČT (2017) ani Seznam Zprávám (2023); Babišovo vysvětlení, že šlo o jeho švýcarské spolužáky, tyto redakce nepotvrdily ani nevyvrátily.[^3][^6] Podle Seznam Zpráv zastupovali OFI v Česku advokáti, kteří zastupovali i Agrofert.[^5]
 
 Odkud pocházely peníze OFI a z čeho Babiš financoval pozdější nákup akcií, redakce nezjistily.[^2][^5]
