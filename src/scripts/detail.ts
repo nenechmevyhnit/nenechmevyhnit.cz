@@ -82,6 +82,7 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
   /** Popisek vybrané události nad mini-osou nepřesahuje okraj modalu (u první a poslední události se posune
    *  dovnitř, šipka dál ukazuje na bod). Počítá se z cílové polohy, ne z měření, protože poloha se animuje. */
   const umistiPopis = () => {
+    if (!popis) return; // detail pravidla mini-osu s popiskem nemá
     const osa = popis.parentElement as HTMLElement;
     const w = popis.offsetWidth, sirka = osa.clientWidth;
     if (!w || !sirka) return;
@@ -125,14 +126,14 @@ export function inicializujDetail(dlg: HTMLDialogElement): void {
   // rozměry jdou změřit až po otevření dialogu (otevírá se hned po inicializaci)
   requestAnimationFrame(() => premerAktualni?.());
 
-  const osa = dlg.querySelector<HTMLElement>('.mini-osa')!;
+  const osa = dlg.querySelector<HTMLElement>('.mini-osa');
   const prepni = (p: string) => {
     dlg.querySelectorAll<HTMLElement>('.zalozky [role="tab"]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.p === p)));
     dlg.querySelectorAll<HTMLElement>('.m2-panel').forEach(x => { x.hidden = x.dataset.p !== p; });
     if (p === 'zdroje') okrajeZdroju();
     // Na mobilu se celý modal posouvá dolů a lišta záložek se přilepí nahoře. Když je čtenář níž v delší
     // záložce, nová záložka začne hned pod lištou (ne uprostřed nebo za koncem kratšího obsahu).
-    const hranice = osa.offsetTop + osa.offsetHeight;
+    const hranice = osa ? osa.offsetTop + osa.offsetHeight : 0;
     if (getComputedStyle(dlg).overflowY === 'auto' && dlg.scrollTop > hranice) dlg.scrollTop = hranice;
     // vybraná záložka musí být celá vidět, i když se lišta posouvá do strany
     const b = lista.querySelector<HTMLElement>(`[role="tab"][data-p="${p}"]`);

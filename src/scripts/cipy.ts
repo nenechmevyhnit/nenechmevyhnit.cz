@@ -11,7 +11,7 @@ export function inicializujCipy(cipy: HTMLElement): () => void {
   const obal = cipy.parentElement!;
   const vice = cipy.querySelector<HTMLButtonElement>('.f-vice');
   if (!vice) return () => {};
-  const vsechnyCipy = [...cipy.querySelectorAll<HTMLButtonElement>('button[data-duvod], button[data-stitek]')];
+  const vsechnyCipy = [...cipy.querySelectorAll<HTMLButtonElement>('button[data-duvod], button[data-bez-pripominek], button[data-stitek]')];
   const pevne = [...cipy.children].filter((e): e is HTMLElement => e instanceof HTMLElement && !e.matches('button'));
   const oddelovace = () => pevne.forEach(e => {
     const pred = vsechnyCipy.filter(c => c.compareDocumentPosition(e) & Node.DOCUMENT_POSITION_FOLLOWING);
