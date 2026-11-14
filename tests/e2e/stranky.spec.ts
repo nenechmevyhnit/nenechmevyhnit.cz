@@ -26,7 +26,7 @@ test('/metodika/#pravidla otevře oddíl Zákony a nařízení', async ({ page }
   await expect(panel).toBeVisible();
   await expect(panel.getByRole('heading', { level: 2 })).toHaveText('Zákony a nařízení');
   await expect(panel).toContainText('Závěr je rozbor archivu, ne úřední zjištění.');
-  await expect(panel.locator('.slovnicek dt')).toHaveText(['prospěch doložen', 'prospěch pravděpodobný']);
+  await expect(panel.locator('.slovnicek dt')).toHaveText(['doložený prospěch', 'pravděpodobný prospěch']);
 });
 
 test('/metodika/#oblasti otevře oddíl Oblasti', async ({ page }) => {
@@ -83,7 +83,19 @@ test('bez pravidel Metodika ani O projektu o oddílu Zákony a nařízení nemlu
 test('Metodika obsahuje slovníček stavů', async ({ page }) => {
   await page.goto('/metodika/');
   await page.locator('.v4-karta button[data-sekce="stavy"]').click();
-  await expect(page.locator('.v4-dlg-panel[data-sekce="stavy"] .slovnicek dt')).toHaveCount(9);
+  const pojmy = page.locator('.v4-dlg-panel[data-sekce="stavy"] .slovnicek dt');
+  await expect(pojmy).toHaveCount(11);
+  // slovníček vysvětluje i stavy mimo trestní řízení, které se na webu používají
+  await expect(pojmy.filter({ hasText: 'Soudní řízení' })).toHaveCount(1);
+  await expect(pojmy.filter({ hasText: 'Jiné' })).toHaveCount(1);
+});
+
+test('texty pro čtenáře nemluví o sestavování webu', async ({ page }) => {
+  for (const cesta of ['/metodika/', '/o-projektu/']) {
+    await page.goto(cesta);
+    const html = await page.content();
+    expect(html).not.toMatch(/nesestaví|sestavení webu/);
+  }
 });
 
 for (const [sirka, vyska] of [[1366, 768], [1256, 528], [990, 660]] as const) {

@@ -8,12 +8,14 @@ const styl = (x: number, posun = 0) => `left:${x}%;--posun:${posun}`;
 const popisek = (b: { popisek: string; popisekSkupiny: string | null }, nazev: string) => `${b.popisekSkupiny ?? b.popisek} · ${nazev}`;
 // druhý řádek u názvu: kde změna je, potom druh předpisu („Předloženo · vládní návrh zákona“)
 const podtitul = (stav: string, cesta: string) => [stav, stav ? cesta.charAt(0).toLocaleLowerCase('cs') + cesta.slice(1) : cesta].filter(Boolean).join(' · ');
-const udalosti = (n: number) => `${n} ${n === 1 ? 'událost' : n < 5 ? 'události' : 'událostí'}`;
+// značka starších událostí: „1 starší“ + „událost“, „3 starší“ + „události“, „5 starších“ + „událostí“
+const starsi = (n: number) => `${n} ${n < 5 ? 'starší' : 'starších'}`;
+const udalost = (n: number) => (n === 1 ? 'událost' : n < 5 ? 'události' : 'událostí');
 ---
 <!-- Bez JavaScriptu zůstává skrytá: seznam nese stejné informace (spec osy, oddíl 2). -->
 <section class="osa-pravidel" data-osa-pravidel aria-label="Časová osa změn pravidel" style={`--mesicu:${osa.znacky.length}`} hidden>
   <p class="op-prazdno" hidden>Žádná změna pravidel neodpovídá filtru. <button type="button" data-zrusit>Zrušit filtry</button></p>
-  <p class="op-uvod">Každý řádek je jedna změna pravidel. Body ukazují, kdy se s ní něco stalo: kdy ji někdo navrhl, schválil nebo zamítl a kdy má začít platit. Po kliknutí na bod uvidíte podrobnosti a zdroje.</p>
+  <p class="op-uvod">Každý řádek je jedna změna pravidel. Body ukazují, kdy se s ní něco stalo: kdy ji někdo navrhl, schválil nebo zamítl a odkdy platí nebo má platit. Po kliknutí na bod uvidíte podrobnosti a zdroje.</p>
   <div class="op-plocha" role="region" tabindex="0" aria-label="Časová osa">
     <div class="op-hlava">
       <!-- na počítači počítadlo a Zrušit filtry jako v záhlaví osy kauz (na mobilu jsou v řádku filtrů) -->
@@ -31,7 +33,7 @@ const udalosti = (n: number) => `${n} ${n === 1 ? 'událost' : n < 5 ? 'událost
             <span class="op-dnes" style={`left:${osa.dnes}%`} aria-hidden="true"></span>
             {r.cara && <span class="op-cara" style={`left:${r.cara.od}%;width:${r.cara.do - r.cara.od}%`} aria-hidden="true"></span>}
             {r.caraBudouci && <span class="op-cara budouci" style={`left:${r.caraBudouci.od}%;width:${r.caraBudouci.do - r.caraBudouci.od}%`} aria-hidden="true"></span>}
-            {r.drive && <a class="op-drive" aria-haspopup="dialog" href={`/pravidla/${r.slug}/?udalost=${r.drive.udalost}`} data-udalost={r.drive.udalost} aria-label={`${r.drive.pocet} starší: ${r.nazev}, ${udalosti(r.drive.pocet)} před prosincem 2025`}>◀ {r.drive.pocet} starší</a>}
+            {r.drive && <a class="op-drive" aria-haspopup="dialog" href={`/pravidla/${r.slug}/?udalost=${r.drive.udalost}`} data-udalost={r.drive.udalost} aria-label={`${starsi(r.drive.pocet)} ${udalost(r.drive.pocet)} před prosincem 2025: ${r.nazev}`}><span>◀ {starsi(r.drive.pocet)}</span> <span>{udalost(r.drive.pocet)}</span></a>}
             {r.body.map(b => b.udalost === null
               ? <span class:list={['op-bod', b.druh]} style={styl(b.x, b.posun)} tabindex="0" role="img" aria-label={`${r.nazev}: ${b.popisek}`} data-popisek={popisek(b, r.nazev)}></span>
               : <a class:list={['op-bod', b.druh]} aria-haspopup="dialog" style={styl(b.x, b.posun)} href={`/pravidla/${r.slug}/?udalost=${b.udalost}`} data-udalost={b.udalost} aria-label={`${r.nazev}: ${b.popisek}`} data-popisek={popisek(b, r.nazev)}></a>)}
@@ -45,7 +47,7 @@ const udalosti = (n: number) => `${n} ${n === 1 ? 'událost' : n < 5 ? 'událost
     <span><i class="op-bod konec" aria-hidden="true"></i> konec: zamítnuto, staženo nebo zrušeno</span>
     <span><i class="op-bod udalost" aria-hidden="true"></i> jiná událost<span class="op-priklad">, třeba stanovisko úřadu nebo rozhodnutí soudu</span></span>
     <span><i class="op-vzor" aria-hidden="true"></i> doba projednávání</span>
-    <span><i class="op-vzor budouci" aria-hidden="true"></i><i class="op-bod ucinnost" aria-hidden="true"></i> kdy má změna začít platit</span>
+    <span><i class="op-vzor budouci" aria-hidden="true"></i><i class="op-bod ucinnost" aria-hidden="true"></i> odkdy změna platí nebo má platit</span>
   </p>
   <div class="op-popisek" role="tooltip" hidden></div>
 </section>

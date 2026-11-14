@@ -102,6 +102,20 @@ test('stav a stanovisko', async ({ page }) => {
   await expect(page.locator('.stanovisko')).toContainText('Firma Alfa pochybení odmítá.');
 });
 
+test('presumpci neviny připomíná jen neuzavřená kauza v trestním řízení', async ({ page }) => {
+  // obžaloba: trestní řízení, které pravomocně neskončilo
+  await page.goto('/kauzy/zeta-stret/');
+  await page.getByRole('tab', { name: 'Stav a stanovisko' }).click();
+  await expect(page.locator('.stav-box')).toContainText('Dokud soud pravomocně nerozhodne, platí presumpce neviny.');
+  // občanskoprávní spor a úřední zjištění o vině nerozhodují, i když kauza neskončila
+  for (const slug of ['alfa-dotace', 'epsilon-fondy']) {
+    await page.goto(`/kauzy/${slug}/`);
+    await page.getByRole('tab', { name: 'Stav a stanovisko' }).click();
+    await expect(page.locator('.stav-box .stav')).toBeVisible();
+    await expect(page.locator('.stav-box')).not.toContainText('presumpce neviny');
+  }
+});
+
 test('neexistující kauza vrátí stránku 404', async ({ page }) => {
   const odpoved = await page.goto('/kauzy/neexistuje/');
   expect(odpoved?.status()).toBe(404);

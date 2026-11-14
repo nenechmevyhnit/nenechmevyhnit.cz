@@ -77,7 +77,7 @@ test('na počítači jsou počítadlo a Zrušit filtry v záhlaví osy, řádek 
 });
 
 test('další filtry: stav řízení, doba trvání a období', async ({ page }) => {
-  await page.getByLabel('Stav').selectOption({ label: 've stavu obžaloba' });
+  await page.getByLabel('Stav').selectOption({ label: 've stavu obžaloby' });
   await expect(viditelne(page)).toHaveCount(1);
   await expect(viditelne(page).locator('strong')).toHaveText('Testovací kauza Žeta');
   await page.getByLabel('Stav').selectOption('');
@@ -94,8 +94,9 @@ test('další filtry: stav řízení, doba trvání a období', async ({ page })
 
 test('nabízí jen stavy, které v archivu jsou', async ({ page }) => {
   const stavy = await page.getByLabel('Stav').locator('option').allTextContents();
-  expect(stavy).toContain('ve stavu obžaloba');
-  expect(stavy).not.toContain('ve stavu promlčeno');
+  expect(stavy).toContain('ve stavu obžaloby');
+  expect(stavy).toContain('ve stavu pravomocného zproštění');
+  expect(stavy).not.toContain('ve stavu promlčení');
 });
 
 test('řazení přeskládá řádky, zrušení filtrů řazení nemění', async ({ page }) => {

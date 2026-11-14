@@ -7,7 +7,7 @@ import OsaPravidel from './OsaPravidel.astro';
 import { osaPravidel } from '../lib/osa-pravidel';
 import { nactiPravidla, nactiStitky, nactiOblasti } from '../lib/kauzy';
 import { bezPripominek, textPoctu, type OblastDetail } from '../lib/oblasti';
-import { popisekCesty, popisekKomu, popisekZaveru, popisekZnaku, popisekDuvodu, DUVODY, CESTY } from '../lib/pravidla-slovnik';
+import { popisekCesty, popisekProspechu, popisekZnaku, popisekDuvodu, napovedaDuvodu, DUVODY, CESTY } from '../lib/pravidla-slovnik';
 import { duvodyPravidla } from '../lib/pravidla';
 import { stavPravidla, popisekKroku, KROKY } from '../lib/pravidla-stavy';
 import { vytvorPolozkuPravidla, RAZENI_PRAVIDEL } from '../lib/hledani-pravidel';
@@ -52,8 +52,8 @@ const popis = otevrene ? otevrene.pravidlo.shrnuti
     {/* stejná stavba a výška jako úvod kauz (jeden řádek titulku, jeden řádek perexu), přepínání mezi stránkami neposkočí */}
     <section class="hero u2 pr-hero">
       <p class="u2-nad">Zákony a nařízení od prosince 2025</p>
-      <h1>Komu prospívají nově pravidla?</h1>
-      <p class="u2-pod">Zákony a nařízení, u kterých rozbor zdrojů ukazuje prospěch Babiše a Agrofertu nebo změnu kontroly moci.</p>
+      <h1>Komu prospívají nová pravidla?</h1>
+      <p class="u2-pod">Zákony a nařízení, které podle rozboru zdrojů prospívají Babišovi nebo Agrofertu, nebo mění kontrolu moci a instituce na to upozornily.</p>
     </section>
     {zaznamy.length > 0 && (
       <>
@@ -63,7 +63,7 @@ const popis = otevrene ? otevrene.pravidlo.shrnuti
           <!-- jako u kauz: témata v jednom řádku, co se nevejde, ukáže tlačítko „+N další“ (důvody jsou vidět vždy) -->
           <div class="f-cipy-obal">
             <div class="f-cipy" id="pr-cipy" role="group" aria-label={sDuvody ? 'Důvod zařazení a témata' : 'Témata'}>
-              {sDuvody && duvody.map(d => <button type="button" data-duvod={d} aria-pressed="false">{popisekDuvodu(d)}</button>)}
+              {sDuvody && duvody.map(d => <button type="button" data-duvod={d} aria-pressed="false" title={napovedaDuvodu(d)}>{popisekDuvodu(d)}</button>)}
               {sDuvody && <span class="f-oddelovac" aria-hidden="true"></span>}
               {sBezPripominek && <button type="button" data-bez-pripominek aria-pressed="false">bez připomínkového řízení</button>}
               {sBezPripominek && <span class="f-oddelovac" aria-hidden="true"></span>}
@@ -126,7 +126,7 @@ const popis = otevrene ? otevrene.pravidlo.shrnuti
             <a class="pr-btn" href={`/pravidla/${slug}/`} aria-haspopup="dialog">
               <span class="pr-nazev">
                 <strong title={p.nazev}>{p.nazev}</strong>
-                <small><span class="pr-cesta">{popisekCesty(p.cesta)} · </span>{popisekKroku(stavPravidla(p.udalosti))}{p.prospech && ` · ${popisekKomu(p.prospech.komu)} · ${popisekZaveru(p.prospech.zaver)}`}{p.kontrolaMoci && ` · Kontrola moci: ${p.kontrolaMoci.znaky.map(popisekZnaku).join(', ')}`}{bezPripominek(p.cesta) && <> · <span class="stitek-bp">bez připomínkového řízení</span></>}</small>
+                <small><span class="pr-cesta">{popisekCesty(p.cesta)} · </span>{popisekKroku(stavPravidla(p.udalosti))}{p.prospech && ` · ${popisekProspechu(p.prospech.zaver, p.prospech.komu)}`}{p.kontrolaMoci && ` · Kontrola moci: ${p.kontrolaMoci.znaky.map(popisekZnaku).join(', ')}`}{bezPripominek(p.cesta) && <> · <span class="stitek-bp">bez připomínkového řízení</span></>}</small>
                 {p.prospech && <span class="pr-proc-radek">{p.prospech.proc.text}</span>}
               </span>
               {/* stav je v textu výše, ukazatel je pro čtečku nadbytečný */}

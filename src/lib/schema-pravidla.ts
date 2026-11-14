@@ -92,8 +92,8 @@ const vytvorPravidloSchema = (koncepty: boolean) => z
       p.prospech.retezec.forEach((k, i) => over(k.zdroje, `Krok řetězce ${i + 1}`));
       if (p.prospech.dalsiDotceni) over(p.prospech.dalsiDotceni.zdroje, 'Další dotčení');
       const odhadu = p.prospech.retezec.filter(k => k.odhad).length;
-      if (p.prospech.zaver === 'dolozen' && odhadu > 0) chyba('Závěr „prospěch doložen“ nesmí mít krok s odhadem (použijte zaver: pravdepodobny)');
-      if (p.prospech.zaver === 'pravdepodobny' && odhadu === 0) chyba('Závěr „prospěch pravděpodobný“ vyžaduje aspoň jeden krok s odhadem (jinak zaver: dolozen)');
+      if (p.prospech.zaver === 'dolozen' && odhadu > 0) chyba('Závěr „doložený prospěch“ nesmí mít krok s odhadem (použijte zaver: pravdepodobny)');
+      if (p.prospech.zaver === 'pravdepodobny' && odhadu === 0) chyba('Závěr „pravděpodobný prospěch“ vyžaduje aspoň jeden krok s odhadem (jinak zaver: dolozen)');
       const prvni = p.prospech.retezec[0];
       if (prvni && !p.zdroje.some(zd => zd.druh === 'primarni' && prvni.zdroje.includes(zd.id)))
         chyba('První krok řetězce (co pravidlo mění) musí mít primární zdroj, tedy text předpisu');
