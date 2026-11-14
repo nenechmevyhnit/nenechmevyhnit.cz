@@ -1,6 +1,7 @@
 import { z } from 'astro/zod';
 import { naText, existujeDatum, datum, datumPresne, text, odkazy, idTvar, popisVazby, zdrojSchema, udalostSchema } from './schema';
 import { KROKY, krokyProDruh } from './pravidla-stavy';
+import { TYPY_HLASOVANI, ID_HLASOVANI } from './schema-hlasovani';
 import { DRUHY_PRAVIDEL, CESTY, KOMU, ZAVERY, DRUHY_ZNAKU, KONTROLNI_INSTITUCE, UPOZORNOVATELE, OBLASTI, cestyProDruh } from './pravidla-slovnik';
 
 /** Účinnost je jediné datum pravidla, které smí ležet v budoucnosti. */
@@ -13,7 +14,17 @@ const proVasSchema = z.object({
   zdroje: odkazy('Co by to znamenalo pro vás'),
 }).strict();
 
-export const udalostPravidlaSchema = udalostSchema.extend({ krok: z.enum(KROKY).optional() }).strict();
+/** Hlasování k události (spec hlasování, oddíl 4). Snímek dat je v obsah/hlasovani/<id>.yml. */
+const hlasovaniUdalostiSchema = z.object({
+  id: z.string().regex(ID_HLASOVANI, 'Id hlasování musí mít tvar psp-<období>-<schůze>-<číslo>'),
+  typ: z.enum(TYPY_HLASOVANI),
+  co: text().max(200, 'Popis hlasování „co“ smí mít nejvýš 200 znaků'),
+}).strict();
+
+export const udalostPravidlaSchema = udalostSchema.extend({
+  krok: z.enum(KROKY).optional(),
+  hlasovani: z.array(hlasovaniUdalostiSchema).default([]),
+}).strict();
 const krokRetezceSchema = z.object({ text: text(), odhad: z.boolean().default(false), zdroje: odkazy('Krok řetězce') }).strict();
 const znakSchema = z.object({
   druh: z.enum(DRUHY_ZNAKU),
@@ -132,6 +143,9 @@ const vytvorPravidloSchema = (koncepty: boolean) => z
     p.kauzy.map(k => k.kauza)
       .filter((x, i, a) => a.indexOf(x) !== i)
       .forEach(x => chyba(`Vazba na kauzu „${x}“ je uvedena dvakrát`));
+    p.udalosti.flatMap(u => u.hlasovani.map(h => h.id))
+      .filter((x, i, a) => a.indexOf(x) !== i)
+      .forEach(x => chyba(`Hlasování „${x}“ je u pravidla uvedeno dvakrát`));
   });
 
 export const pravidloSchema = vytvorPravidloSchema(false);

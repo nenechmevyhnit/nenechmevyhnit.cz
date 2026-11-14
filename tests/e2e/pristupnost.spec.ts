@@ -3,7 +3,7 @@ import AxeBuilder from '@axe-core/playwright';
 
 test.use({ viewport: { width: 1366, height: 768 } });
 
-for (const cesta of ['/', '/?pohled=mapa', '/?pohled=mapa&vyber=alfa-dotace', '/kauzy/alfa-dotace/', '/metodika/', '/o-projektu/', '/pravidla/', '/pravidla/?pohled=seznam', '/pravidla/?pohled=osa', '/pravidla/zakon-omega/', '/pravidla/pozmenovaci-sigma/', '/pravidla/usneseni-kappa/', '/pravidla/oblasti/dotace-stret-zajmu/', 'http://localhost:4322/']) {
+for (const cesta of ['/', '/?pohled=mapa', '/?pohled=mapa&vyber=alfa-dotace', '/kauzy/alfa-dotace/', '/metodika/', '/o-projektu/', '/pravidla/', '/pravidla/?pohled=seznam', '/pravidla/?pohled=osa', '/pravidla/zakon-omega/', '/pravidla/pozmenovaci-sigma/', '/pravidla/usneseni-kappa/', '/pravidla/oblasti/dotace-stret-zajmu/', '/hlasovani/psp-10-5-12/', '/hlasovani/psp-10-7-3/#ods', 'http://localhost:4322/']) {
   test(`${cesta} bez závažných chyb přístupnosti`, async ({ page }) => {
     await page.goto(cesta);
     // kontrast měříme až po doběhnutí úvodních animací (prvky během nich prolínají z průhlednosti)
@@ -14,6 +14,18 @@ for (const cesta of ['/', '/?pohled=mapa', '/?pohled=mapa&vyber=alfa-dotace', '/
     expect(zavazne.map(v => `${v.id}: ${v.nodes.map(n => n.target.join(' ')).join(', ')}`)).toEqual([]);
   });
 }
+
+// skryté panely axe přeskakuje, záložku Hlasování proto otevřeme
+test('záložka Hlasování v detailu pravidla bez závažných chyb přístupnosti', async ({ page }) => {
+  await page.goto('/pravidla/zakon-omega/');
+  await expect(page.locator('body')).toHaveClass(/nacteno/, { timeout: 5000 });
+  await page.getByRole('tab', { name: 'Hlasování (2)' }).click();
+  await expect(page.locator('.m2-panel[data-p="hlasovani"]')).toBeVisible();
+  await page.waitForTimeout(400);
+  const vysledek = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
+  const zavazne = vysledek.violations.filter(v => v.impact === 'serious' || v.impact === 'critical');
+  expect(zavazne.map(v => `${v.id}: ${v.nodes.map(n => n.target.join(' ')).join(', ')}`)).toEqual([]);
+});
 
 test('ovládání klávesnicí: Tab dojde na řádek osy a Enter otevře detail', async ({ page }) => {
   await page.goto('/');

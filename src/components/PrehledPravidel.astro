@@ -16,6 +16,8 @@ import { jsonDoSkriptu } from '../lib/html';
 import type { PravidloZaznam } from '../lib/validace';
 import '../styles/hlavni.css';
 import '../styles/pravidla.css';
+// detail pravidla se do dialogu načítá i ze stránek oblastí, které DetailPravidla (a tím ZalozkaHlasovani) nemají
+import '../styles/hlasovani.css';
 
 interface Props { otevrene?: PravidloZaznam; otevrenaOblast?: OblastDetail }
 const { otevrene, otevrenaOblast } = Astro.props;

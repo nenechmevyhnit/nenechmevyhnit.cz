@@ -1,0 +1,225 @@
+# Vygenerováno skriptem scripts/stahni-hlasovani.ts z otevřených dat PSP. Ručně neupravovat.
+# Ověřit: https://www.psp.cz/sqw/hlasy.sqw?g=88917
+
+komora: psp
+obdobi: 10
+schuze: 34
+cislo: 328
+idPsp: 88917
+datum: 2026-11-03
+cas: '17:25'
+nazevPsp: Pořad schůze
+vysledek: zamitnuto
+kvorum: 80
+souhrn: { pro: 72, proti: 86, zdrzel: 1, nehlasoval: 0, prihlaseno: 159 }
+kluby:
+  ANO2011: Poslanecký klub ANO 2011
+  KDU-ČSL: Poslanecký klub KDU-ČSL
+  MS: Poslanecký klub Motoristé sobě
+  ODS: Poslanecký klub ODS
+  Piráti: Poslanecký klub Piráti
+  SPD: Poslanecký klub Svoboda a přímá demokracie
+  STAN: Poslanecký klub Starostové a nezávislí
+  TOP09: Poslanecký klub TOP 09
+poslanci:
+  - { id: 5700, jmeno: Ivan, prijmeni: Adamec, klub: ODS, hlas: pro }
+  - { id: 6254, jmeno: Věra, prijmeni: Adámková, klub: ANO2011, hlas: proti }
+  - { id: 6986, jmeno: Hana, prijmeni: Ančincová, klub: Piráti, hlas: omluven }
+  - { id: 6150, jmeno: Andrej, prijmeni: Babiš, klub: ANO2011, hlas: omluven }
+  - { id: 6623, jmeno: Ondřej, prijmeni: Babka, klub: ANO2011, hlas: proti }
+  - { id: 6719, jmeno: Jana, prijmeni: Bačíková, klub: ODS, hlas: omluven }
+  - { id: 6987, jmeno: Jiří, prijmeni: Barták, klub: MS, hlas: proti }
+  - { id: 6988, jmeno: Pavel, prijmeni: Bartoň, klub: ANO2011, hlas: proti }
+  - { id: 6433, jmeno: Ivan, prijmeni: Bartoš, klub: Piráti, hlas: pro }
+  - { id: 6178, jmeno: Jan, prijmeni: Bartošek, klub: KDU-ČSL, hlas: neprihlasen }
+  - { id: 6989, jmeno: Lucie, prijmeni: Bartošová, klub: ODS, hlas: pro }
+  - { id: 5379, jmeno: Jan, prijmeni: Bauer, klub: ODS, hlas: pro }
+  - { id: 6435, jmeno: Martin, prijmeni: Baxa, klub: ODS, hlas: pro }
+  - { id: 4, jmeno: Marek, prijmeni: Benda, klub: ODS, hlas: pro }
+  - { id: 346, jmeno: Petr, prijmeni: Bendl, klub: ODS, hlas: pro }
+  - { id: 6722, jmeno: Jan, prijmeni: Berki, klub: STAN, hlas: pro }
+  - { id: 6723, jmeno: Jana, prijmeni: Berkovcová, klub: ANO2011, hlas: proti }
+  - { id: 6991, jmeno: Drahomír, prijmeni: Blažej, klub: ANO2011, hlas: proti }
+  - { id: 6992, jmeno: Zdeňka, prijmeni: Blišťanová, klub: TOP09, hlas: pro }
+  - { id: 6993, jmeno: Jiří, prijmeni: Bouška, klub: ANO2011, hlas: proti }
+  - { id: 6185, jmeno: Milan, prijmeni: Brázdil, klub: ANO2011, hlas: proti }
+  - { id: 6994, jmeno: Monika, prijmeni: Brzesková, klub: KDU-ČSL, hlas: pro }
+  - { id: 6995, jmeno: František, prijmeni: Bureš, klub: ANO2011, hlas: proti }
+  - { id: 5899, jmeno: Jan, prijmeni: Bureš, klub: ODS, hlas: pro }
+  - { id: 5903, jmeno: Jana, prijmeni: Černochová, klub: ODS, hlas: pro }
+  - { id: 6996, jmeno: Igor, prijmeni: Červený, klub: MS, hlas: proti }
+  - { id: 6998, jmeno: Benjamin, prijmeni: Činčila, klub: KDU-ČSL, hlas: omluven }
+  - { id: 6727, jmeno: Eva, prijmeni: Decroix, klub: ODS, hlas: pro }
+  - { id: 6999, jmeno: Katerina, prijmeni: Demetrashvili, klub: Piráti, hlas: pro }
+  - { id: 7068, jmeno: Jana, prijmeni: Demjanová, klub: ANO2011, hlas: proti }
+  - { id: 7000, jmeno: Denis, prijmeni: Doksanský, klub: ANO2011, hlas: omluven }
+  - { id: 7001, jmeno: Tomáš, prijmeni: Doležal, klub: SPD, hlas: proti }
+  - { id: 6431, jmeno: Lenka, prijmeni: Dražilová, klub: ANO2011, hlas: proti }
+  - { id: 7002, jmeno: Karel, prijmeni: Dvořák, klub: STAN, hlas: pro }
+  - { id: 6190, jmeno: Jaroslav, prijmeni: Faltýnek, klub: ANO2011, hlas: neprihlasen }
+  - { id: 6447, jmeno: Kamal, prijmeni: Farhan, klub: ANO2011, hlas: proti }
+  - { id: 7003, jmeno: Irena, prijmeni: Ferčíková Konečná, klub: Piráti, hlas: pro }
+  - { id: 6074, jmeno: Petr, prijmeni: Fiala, klub: ODS, hlas: pro }
+  - { id: 5459, jmeno: Radim, prijmeni: Fiala, klub: SPD, hlas: neprihlasen }
+  - { id: 6457, jmeno: Eva, prijmeni: Fialová, klub: ANO2011, hlas: proti }
+  - { id: 7004, jmeno: Jana, prijmeni: Filipovičová, klub: KDU-ČSL, hlas: pro }
+  - { id: 6750, jmeno: Josef, prijmeni: Flek, klub: STAN, hlas: pro }
+  - { id: 5911, jmeno: Jaroslav, prijmeni: Foldyna, klub: SPD, hlas: proti }
+  - { id: 7106, jmeno: Libor, prijmeni: Forman, klub: MS, hlas: proti }
+  - { id: 6451, jmeno: Stanislav, prijmeni: Fridrich, klub: ANO2011, hlas: proti }
+  - { id: 7005, jmeno: Karin, prijmeni: Gajdová, klub: ANO2011, hlas: proti }
+  - { id: 7006, jmeno: Matěj, prijmeni: Gregor, klub: MS, hlas: omluven }
+  - { id: 6751, jmeno: Karel, prijmeni: Haas, klub: ODS, hlas: omluven }
+  - { id: 6753, jmeno: Jana, prijmeni: Hanzlíková, klub: ANO2011, hlas: proti }
+  - { id: 6754, jmeno: Matěj Ondřej, prijmeni: Havel, klub: TOP09, hlas: pro }
+  - { id: 6621, jmeno: Karel, prijmeni: Havlíček, klub: ANO2011, hlas: neprihlasen }
+  - { id: 6755, jmeno: Jiří, prijmeni: Havránek, klub: ODS, hlas: pro }
+  - { id: 7066, jmeno: Vlastimil, prijmeni: Hebr, klub: ANO2011, hlas: proti }
+  - { id: 6756, jmeno: Tomáš, prijmeni: Helebrant, klub: ANO2011, hlas: proti }
+  - { id: 6758, jmeno: Igor, prijmeni: Hendrych, klub: ANO2011, hlas: proti }
+  - { id: 6881, jmeno: Petr, prijmeni: Hladík, klub: KDU-ČSL, hlas: omluven }
+  - { id: 7011, jmeno: Matěj, prijmeni: Hlavatý, klub: STAN, hlas: pro }
+  - { id: 6905, jmeno: Andrea, prijmeni: Hoffmannová, klub: Piráti, hlas: pro }
+  - { id: 6693, jmeno: Libor, prijmeni: Hoppe, klub: ODS, hlas: omluven }
+  - { id: 6803, jmeno: Jiří, prijmeni: Horák, klub: KDU-ČSL, hlas: pro }
+  - { id: 6455, jmeno: Jan, prijmeni: Hrnčíř, klub: SPD, hlas: proti }
+  - { id: 6552, jmeno: Zdeněk, prijmeni: Hřib, klub: Piráti, hlas: pro }
+  - { id: 7007, jmeno: Monika, prijmeni: Hubíková, klub: ANO2011, hlas: proti }
+  - { id: 6997, jmeno: Adriana, prijmeni: Chochelová, klub: STAN, hlas: pro }
+  - { id: 6687, jmeno: Jan, prijmeni: Jakob, klub: TOP09, hlas: pro }
+  - { id: 6459, jmeno: Jakub, prijmeni: Janda, klub: ODS, hlas: pro }
+  - { id: 6201, jmeno: Miloslav, prijmeni: Janulík, klub: ANO2011, hlas: proti }
+  - { id: 6463, jmeno: Aleš, prijmeni: Juchelka, klub: ANO2011, hlas: omluven }
+  - { id: 6205, jmeno: Marian, prijmeni: Jurečka, klub: KDU-ČSL, hlas: omluven }
+  - { id: 6603, jmeno: Pavel, prijmeni: Karpíšek, klub: ODS, hlas: pro }
+  - { id: 6209, jmeno: David, prijmeni: Kasal, klub: ANO2011, hlas: proti }
+  - { id: 7008, jmeno: Zdena, prijmeni: Kašparová, klub: STAN, hlas: pro }
+  - { id: 7009, jmeno: Jiřina, prijmeni: Klčová, klub: ANO2011, hlas: proti }
+  - { id: 7010, jmeno: Oto, prijmeni: Klempíř, klub: MS, hlas: proti }
+  - { id: 6506, jmeno: Tomáš, prijmeni: Kohoutek, klub: ANO2011, hlas: omluven }
+  - { id: 7012, jmeno: Vladimír, prijmeni: Kolek, klub: ANO2011, hlas: omluven }
+  - { id: 6211, jmeno: Martin, prijmeni: Kolovratník, klub: ANO2011, hlas: proti }
+  - { id: 6508, jmeno: Radek, prijmeni: Koten, klub: SPD, hlas: proti }
+  - { id: 7108, jmeno: Jiří, prijmeni: Kotlík, klub: ANO2011, hlas: proti }
+  - { id: 6214, jmeno: Věra, prijmeni: Kovářová, klub: STAN, hlas: pro }
+  - { id: 7013, jmeno: Veronika, prijmeni: Kovářová, klub: Piráti, hlas: pro }
+  - { id: 7014, jmeno: Petr, prijmeni: Kowanda, klub: ANO2011, hlas: omluven }
+  - { id: 7015, jmeno: Jakub, prijmeni: Krainer, klub: STAN, hlas: pro }
+  - { id: 6509, jmeno: Robert, prijmeni: Králíček, klub: ANO2011, hlas: omluven }
+  - { id: 7016, jmeno: Miroslav, prijmeni: Krejčí, klub: MS, hlas: proti }
+  - { id: 7017, jmeno: Vojtěch, prijmeni: Krňanský, klub: MS, hlas: omluven }
+  - { id: 7018, jmeno: Marie, prijmeni: Kršková, klub: KDU-ČSL, hlas: pro }
+  - { id: 6466, jmeno: Jana, prijmeni: Krutáková, klub: STAN, hlas: omluven }
+  - { id: 6215, jmeno: Roman, prijmeni: Kubíček, klub: ANO2011, hlas: proti }
+  - { id: 6216, jmeno: Michal, prijmeni: Kučera, klub: TOP09, hlas: pro }
+  - { id: 7021, jmeno: Martin, prijmeni: Kupec, klub: ANO2011, hlas: proti }
+  - { id: 6538, jmeno: Martin, prijmeni: Kupka, klub: ODS, hlas: omluven }
+  - { id: 6738, jmeno: Hubert, prijmeni: Lang, klub: ANO2011, hlas: proti }
+  - { id: 5943, jmeno: Helena, prijmeni: Langšádlová, klub: TOP09, hlas: pro }
+  - { id: 6537, jmeno: Jan, prijmeni: Lipavský, klub: ODS, hlas: pro }
+  - { id: 7022, jmeno: Petr, prijmeni: Macinka, klub: MS, hlas: omluven }
+  - { id: 6732, jmeno: Ivana, prijmeni: Mádlová, klub: ANO2011, hlas: proti }
+  - { id: 6467, jmeno: Zuzana, prijmeni: Majerová, klub: SPD, hlas: omluven }
+  - { id: 6468, jmeno: Taťána, prijmeni: Malá, klub: ANO2011, hlas: proti }
+  - { id: 7023, jmeno: Lenka, prijmeni: Martínková Španihelová, klub: Piráti, hlas: pro }
+  - { id: 6534, jmeno: Jiří, prijmeni: Mašek, klub: ANO2011, hlas: proti }
+  - { id: 6544, jmeno: Lubomír, prijmeni: Metnar, klub: ANO2011, hlas: proti }
+  - { id: 7024, jmeno: Michaela, prijmeni: Moricová, klub: Piráti, hlas: pro }
+  - { id: 7040, jmeno: Zuzana, prijmeni: Mrázová, klub: ANO2011, hlas: omluven }
+  - { id: 6486, jmeno: Vojtěch, prijmeni: Munzar, klub: ODS, hlas: pro }
+  - { id: 7025, jmeno: Jana, prijmeni: Murová, klub: ANO2011, hlas: proti }
+  - { id: 6487, jmeno: Patrik, prijmeni: Nacher, klub: ANO2011, hlas: proti }
+  - { id: 7026, jmeno: Anežka, prijmeni: Nedomová, klub: STAN, hlas: pro }
+  - { id: 7027, jmeno: Irena, prijmeni: Němcová, klub: SPD, hlas: proti }
+  - { id: 6804, jmeno: Zdenka, prijmeni: Němečková Crkvenjaš, klub: ODS, hlas: pro }
+  - { id: 6664, jmeno: Josef, prijmeni: Nerušil, klub: SPD, hlas: proti }
+  - { id: 7028, jmeno: Bohuslav, prijmeni: Niemiec, klub: KDU-ČSL, hlas: pro }
+  - { id: 6533, jmeno: Marek, prijmeni: Novák, klub: ANO2011, hlas: proti }
+  - { id: 6475, jmeno: Monika, prijmeni: Oborná, klub: ANO2011, hlas: proti }
+  - { id: 6769, jmeno: Hayato, prijmeni: Okamura, klub: KDU-ČSL, hlas: neprihlasen }
+  - { id: 6105, jmeno: Tomio, prijmeni: Okamura, klub: SPD, hlas: proti }
+  - { id: 6172, jmeno: Ladislav, prijmeni: Okleštěk, klub: ANO2011, hlas: proti }
+  - { id: 6766, jmeno: Eliška, prijmeni: Olšáková, klub: STAN, hlas: pro }
+  - { id: 6770, jmeno: Renata, prijmeni: Oulehlová, klub: ANO2011, hlas: proti }
+  - { id: 7029, jmeno: Pavel, prijmeni: Outrata, klub: ANO2011, hlas: proti }
+  - { id: 6474, jmeno: Zuzana, prijmeni: Ožanová, klub: ANO2011, hlas: proti }
+  - { id: 7030, jmeno: Jan, prijmeni: Papajanovský, klub: STAN, hlas: neprihlasen }
+  - { id: 7031, jmeno: Patrik, prijmeni: Pařil, klub: ANO2011, hlas: proti }
+  - { id: 6225, jmeno: Jana, prijmeni: Pastuchová, klub: ANO2011, hlas: proti }
+  - { id: 7032, jmeno: Jana, prijmeni: Patková, klub: Piráti, hlas: pro }
+  - { id: 7067, jmeno: Jiří, prijmeni: Penc, klub: ANO2011, hlas: proti }
+  - { id: 6780, jmeno: Berenika, prijmeni: Peštová, klub: ANO2011, hlas: proti }
+  - { id: 6409, jmeno: František, prijmeni: Petrtýl, klub: ANO2011, hlas: proti }
+  - { id: 6555, jmeno: Tom, prijmeni: Philipp, klub: KDU-ČSL, hlas: pro }
+  - { id: 7034, jmeno: Vladimír, prijmeni: Pikora, klub: MS, hlas: proti }
+  - { id: 7035, jmeno: Barbora, prijmeni: Pipášová, klub: Piráti, hlas: omluven }
+  - { id: 6762, jmeno: Pavla, prijmeni: Pivoňka Vaňková, klub: STAN, hlas: pro }
+  - { id: 6549, jmeno: Robert, prijmeni: Plaga, klub: ANO2011, hlas: omluven }
+  - { id: 7036, jmeno: Václav, prijmeni: Pláteník, klub: KDU-ČSL, hlas: neprihlasen }
+  - { id: 5273, jmeno: Jiří, prijmeni: Pospíšil, klub: TOP09, hlas: neprihlasen }
+  - { id: 6745, jmeno: Marie, prijmeni: Pošarová, klub: SPD, hlas: zdrzel-nehlasoval }
+  - { id: 6527, jmeno: David, prijmeni: Pražák, klub: null, hlas: neprihlasen }
+  - { id: 7037, jmeno: Jindřich, prijmeni: Rajchl, klub: SPD, hlas: proti }
+  - { id: 6524, jmeno: Vít, prijmeni: Rakušan, klub: STAN, hlas: pro }
+  - { id: 6523, jmeno: Michal, prijmeni: Ratiborský, klub: ANO2011, hlas: proti }
+  - { id: 7038, jmeno: Barbora, prijmeni: Rázga, klub: ANO2011, hlas: proti }
+  - { id: 6500, jmeno: Jan, prijmeni: Richter, klub: ANO2011, hlas: proti }
+  - { id: 6473, jmeno: Olga, prijmeni: Richterová, klub: Piráti, hlas: pro }
+  - { id: 6520, jmeno: Pavel, prijmeni: Růžička, klub: ANO2011, hlas: proti }
+  - { id: 6782, jmeno: Drahoslav, prijmeni: Ryba, klub: ANO2011, hlas: proti }
+  - { id: 6767, jmeno: Michaela, prijmeni: Řehková, klub: STAN, hlas: pro }
+  - { id: 6518, jmeno: Petr, prijmeni: Sadovský, klub: ANO2011, hlas: proti }
+  - { id: 6688, jmeno: Miroslav, prijmeni: Samaš, klub: ANO2011, hlas: proti }
+  - { id: 7041, jmeno: Gabriela, prijmeni: Sedláčková, klub: MS, hlas: proti }
+  - { id: 7042, jmeno: Lucie, prijmeni: Sedmihradská, klub: STAN, hlas: pro }
+  - { id: 6545, jmeno: Alena, prijmeni: Schillerová, klub: ANO2011, hlas: proti }
+  - { id: 7039, jmeno: Vítězslav, prijmeni: Schrek, klub: ODS, hlas: pro }
+  - { id: 6783, jmeno: Jan, prijmeni: Síla, klub: SPD, hlas: proti }
+  - { id: 6418, jmeno: Jan, prijmeni: Skopeček, klub: ODS, hlas: omluven }
+  - { id: 7043, jmeno: Štěpán, prijmeni: Slovák, klub: ODS, hlas: omluven }
+  - { id: 7044, jmeno: Julie, prijmeni: Smejkalová, klub: STAN, hlas: pro }
+  - { id: 7045, jmeno: Petr, prijmeni: Sokol, klub: ODS, hlas: pro }
+  - { id: 7048, jmeno: Kateřina, prijmeni: Stojanová, klub: Piráti, hlas: pro }
+  - { id: 6515, jmeno: Jiří, prijmeni: Strýček, klub: ANO2011, hlas: proti }
+  - { id: 6743, jmeno: Robert, prijmeni: Stržínek, klub: ANO2011, hlas: proti }
+  - { id: 7049, jmeno: Gabriela, prijmeni: Svárovská, klub: Piráti, hlas: pro }
+  - { id: 7050, jmeno: Jan, prijmeni: Sviták, klub: STAN, hlas: pro }
+  - { id: 7033, jmeno: Jiří, prijmeni: Svoboda, klub: ANO2011, hlas: proti }
+  - { id: 7051, jmeno: Vendula, prijmeni: Svobodová, klub: Piráti, hlas: pro }
+  - { id: 6479, jmeno: Lucie, prijmeni: Šafránková, klub: SPD, hlas: proti }
+  - { id: 6763, jmeno: Michaela, prijmeni: Šebelová, klub: STAN, hlas: pro }
+  - { id: 6064, jmeno: Miroslav, prijmeni: Ševčík, klub: SPD, hlas: proti }
+  - { id: 7065, jmeno: Martin, prijmeni: Šmída, klub: Piráti, hlas: neprihlasen }
+  - { id: 7046, jmeno: Eva, prijmeni: Šrámková, klub: Piráti, hlas: pro }
+  - { id: 5512, jmeno: Boris, prijmeni: Šťastný, klub: MS, hlas: proti }
+  - { id: 6484, jmeno: David, prijmeni: Štolpa, klub: ANO2011, hlas: proti }
+  - { id: 7052, jmeno: František, prijmeni: Talíř, klub: KDU-ČSL, hlas: pro }
+  - { id: 6786, jmeno: Róbert, prijmeni: Teleky, klub: KDU-ČSL, hlas: pro }
+  - { id: 7053, jmeno: Václav, prijmeni: Trojan, klub: ANO2011, hlas: omluven }
+  - { id: 6240, jmeno: Karel, prijmeni: Tureček, klub: ANO2011, hlas: proti }
+  - { id: 7059, jmeno: Filip, prijmeni: Turek, klub: MS, hlas: neprihlasen }
+  - { id: 6787, jmeno: Libor, prijmeni: Turek, klub: ODS, hlas: pro }
+  - { id: 6788, jmeno: Barbora, prijmeni: Urbanová, klub: STAN, hlas: pro }
+  - { id: 6482, jmeno: Vlastimil, prijmeni: Válek, klub: TOP09, hlas: pro }
+  - { id: 6168, jmeno: Helena, prijmeni: Válková, klub: ANO2011, hlas: proti }
+  - { id: 6946, jmeno: Josef, prijmeni: Váňa, klub: ANO2011, hlas: proti }
+  - { id: 7054, jmeno: Renata, prijmeni: Vesecká, klub: MS, hlas: proti }
+  - { id: 6789, jmeno: Lukáš, prijmeni: Vlček, klub: STAN, hlas: pro }
+  - { id: 7055, jmeno: Jiří, prijmeni: Vojáček, klub: KDU-ČSL, hlas: neprihlasen }
+  - { id: 6491, jmeno: Adam, prijmeni: Vojtěch, klub: ANO2011, hlas: omluven }
+  - { id: 7056, jmeno: Jitka, prijmeni: Volfová, klub: ANO2011, hlas: proti }
+  - { id: 7057, jmeno: Samuel, prijmeni: Volpe, klub: Piráti, hlas: pro }
+  - { id: 7058, jmeno: Libor, prijmeni: Vondráček, klub: SPD, hlas: proti }
+  - { id: 6165, jmeno: Radek, prijmeni: Vondráček, klub: ANO2011, hlas: omluven }
+  - { id: 7060, jmeno: Otto, prijmeni: Vopěnka, klub: ANO2011, hlas: proti }
+  - { id: 6490, jmeno: Petr, prijmeni: Vrána, klub: ANO2011, hlas: proti }
+  - { id: 6513, jmeno: Marek, prijmeni: Výborný, klub: KDU-ČSL, hlas: pro }
+  - { id: 7061, jmeno: Ester, prijmeni: Weimerová, klub: STAN, hlas: pro }
+  - { id: 6730, jmeno: Lubomír, prijmeni: Wenzl, klub: ANO2011, hlas: proti }
+  - { id: 7062, jmeno: Martin, prijmeni: Záhoř, klub: ANO2011, hlas: proti }
+  - { id: 6793, jmeno: Renáta, prijmeni: Zajíčková, klub: ODS, hlas: pro }
+  - { id: 6796, jmeno: Michal, prijmeni: Zuna, klub: TOP09, hlas: pro }
+  - { id: 5226, jmeno: Pavel, prijmeni: Žáček, klub: ODS, hlas: omluven }
+  - { id: 7064, jmeno: Miroslav, prijmeni: Žbánek, klub: ANO2011, hlas: proti }
+  - { id: 6154, jmeno: Marek, prijmeni: Ženíšek, klub: TOP09, hlas: pro }
+stazeno: 2026-11-14

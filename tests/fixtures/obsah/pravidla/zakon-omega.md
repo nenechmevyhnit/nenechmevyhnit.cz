@@ -15,8 +15,8 @@ zdroje:
   - { id: 3, vydavatel: Fiktivní poslanec A, titulek: Prohlášení předkladatele, datum: 2026-06-15, druh: stanovisko, url: "https://example.com/omega/prohlaseni" }
   - { id: 4, vydavatel: Fiktivní legislativní rada, titulek: Stanovisko rady, datum: 2026-07-01, druh: primarni, url: "https://example.com/omega/rada" }
 udalosti:
-  - { datum: 2026-06-10, krok: predlozeno, nazev: Návrh podán, popis: Fiktivní poslanci podali návrh., zdroje: [1] }
-  - { datum: 2026-09-20, krok: schvaleno-snemovnou, nazev: Schváleno Sněmovnou, popis: Fiktivní sněmovna návrh schválila., zdroje: [1] }
+  - { datum: 2026-06-10, krok: predlozeno, nazev: Návrh podán, popis: Fiktivní poslanci podali návrh., zdroje: [1], hlasovani: [{ id: psp-10-5-12, typ: proceduralni, co: Fiktivní návrh zařadit první čtení na pořad schůze }] }
+  - { datum: 2026-09-20, krok: schvaleno-snemovnou, nazev: Schváleno Sněmovnou, popis: Fiktivní sněmovna návrh schválila., zdroje: [1], hlasovani: [{ id: psp-10-7-3, typ: obsah, co: Fiktivní návrh zákona jako celek ve třetím čtení }] }
 planovano: { stavK: 2026-11-01, text: Fiktivní senát návrh projedná na schůzi od 2. 12. 2099., zdroje: [1] }
 prospech:
   komu: [babis, agrofert]

@@ -1,0 +1,101 @@
+---
+import Zaklad from '../../layouts/Zaklad.astro';
+import PatickaRadek from '../../components/PatickaRadek.astro';
+import { nactiHlasovani, nactiPravidla } from '../../lib/kauzy';
+import {
+  souhrnKlubu, skupinyPoslancu, navazanaPravidla, popisekTypu, popisekVysledku, nadpisHlasovani, odkazPsp, nepritomni, VETA_PROCEDURALNI,
+} from '../../lib/hlasovani';
+import { klub } from '../../lib/hlasovani-kluby';
+import { datumText } from '../../lib/casova-osa';
+import type { Snimek } from '../../lib/schema-hlasovani';
+import '../../styles/hlavni.css';
+import '../../styles/hlasovani.css';
+
+// Stránka vznikne jen pro snímky, na které odkazuje aspoň jedno pravidlo (nactiHlasovani je už takto vyfiltruje).
+export function getStaticPaths() {
+  return [...nactiHlasovani()].map(([id, snimek]) => ({ params: { id }, props: { id, snimek } }));
+}
+interface Props { id: string; snimek: Snimek }
+const { id, snimek: s } = Astro.props;
+const pravidla = navazanaPravidla(nactiPravidla(), id);
+const kluby = souhrnKlubu(s);
+const nadpis = nadpisHlasovani(s);
+const { omluven, neprihlasen } = nepritomni(s);
+const popis = `${popisekVysledku(s)} ${s.souhrn.pro} : ${s.souhrn.proti}. ${pravidla.map(p => p.co).join(' ')}`;
+const filtr = [
+  { slug: '', popisek: `Všichni (${s.poslanci.length})`, href: '#' },
+  ...kluby.map(k => ({ slug: k.slug, popisek: `${k.popisek} (${k.celkem})`, href: `#${k.slug}` })),
+];
+---
+<Zaklad titulek={`${nadpis} — Posuďte sami`} popis={popis} cesta={`/hlasovani/${id}/`} styly="hlavni" aktivni="pravidla">
+  <main class="hl-stranka">
+    <nav class="hl-drobky" aria-label="Drobečková navigace">
+      <a href="/pravidla/">Zákony a nařízení</a>
+      {pravidla.length === 1 && <> › <a href={`/pravidla/${pravidla[0].slug}/`}>{pravidla[0].nazev}</a></>}
+      {' › '}<span aria-current="page">Hlasování č. {s.cislo}</span>
+    </nav>
+    <header class="hl-hlava">
+      <h1>{nadpis}</h1>
+      <p class="hl-kdy">{datumText(s.datum)}, {s.cas}</p>
+      <ul class="hl-o-cem" aria-label="O čem se hlasovalo">
+        {pravidla.map(p => <li><span class="hl-typ">{popisekTypu(p.typ)}</span> {p.co} <a href={`/pravidla/${p.slug}/`}>← {p.nazev}</a></li>)}
+      </ul>
+      {pravidla.some(p => p.typ === 'proceduralni') && <p class="hl-proc">{VETA_PROCEDURALNI}</p>}
+      <p class="hl-vysledek"><strong>{popisekVysledku(s)}</strong> · {s.souhrn.pro} pro · {s.souhrn.proti} proti · {s.souhrn.zdrzel} zdržel se · {s.souhrn.nehlasoval} nehlasoval · {omluven} omluven · {neprihlasen} nepřihlášen · kvórum {s.kvorum}</p>
+    </header>
+    <div class="hl-telo">
+      <div class="hl-tabulka-obal">
+        <table class="hl-tabulka">
+          <caption class="jen-ctecka">Jak hlasovaly kluby</caption>
+          <thead><tr><th scope="col">Klub</th><th scope="col">pro</th><th scope="col">proti</th><th scope="col">zdržel se nebo nehlasoval</th><th scope="col">nepřítomen</th></tr></thead>
+          <tbody>
+            <tr>
+              <th scope="row"><a href="#" data-klub="" aria-current="true">Všichni ({s.poslanci.length})</a></th>
+              <td>{s.souhrn.pro}</td><td>{s.souhrn.proti}</td><td>{s.souhrn.zdrzel + s.souhrn.nehlasoval}</td><td>{omluven + neprihlasen}</td>
+            </tr>
+            {kluby.map(k => (
+              <tr>
+                <th scope="row"><a href={`#${k.slug}`} data-klub={k.slug} aria-current="false">{k.popisek} ({k.celkem})</a></th>
+                <td>{k.pro}</td><td>{k.proti}</td><td>{k.zdrzelNehlasoval}</td><td>{k.omluven + k.neprihlasen}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <nav class="hl-cipy" aria-label="Filtr klubu">
+        {filtr.map(f => <a href={f.href} data-klub={f.slug} aria-current={String(f.slug === '')}>{f.popisek}</a>)}
+      </nav>
+      <div class="hl-poslanci" role="region" tabindex="0" aria-label="Poslanci podle hlasu">
+        <p class="hl-legenda-text">„Zdržel se nebo nehlasoval“: data PSP u jednotlivých poslanců tyto dvě možnosti nerozlišují, souhrn je uvádí zvlášť. Omluven: nepřihlášen s omluvou z jednání. Nepřihlášen: bez omluvy. <a href="/metodika/#hlasovani">Jak hlasování zapisujeme</a></p>
+        <div class="hl-vsichni">
+          <h2 class="jen-ctecka">Všichni poslanci</h2>
+          {skupinyPoslancu(s.poslanci).map(g => (
+            <div class="hl-skupina">
+              <h3>{g.nadpis} ({g.poslanci.length})</h3>
+              <ul>{g.poslanci.map(p => <li>{p.jmeno} {p.prijmeni} <span class="hl-u-jmena">{klub(p.klub)?.popisek}</span></li>)}</ul>
+            </div>
+          ))}
+        </div>
+        {kluby.map(k => (
+          <section class="hl-klub" id={k.slug} aria-labelledby={`klub-${k.slug}`} hidden>
+            <h2 id={`klub-${k.slug}`}>{k.popisek}</h2>
+            {skupinyPoslancu(s.poslanci.filter(p => p.klub === k.zkratka)).map(g => (
+              <div class="hl-skupina">
+                <h3>{g.nadpis} ({g.poslanci.length})</h3>
+                <ul>{g.poslanci.map(p => <li>{p.jmeno} {p.prijmeni}</li>)}</ul>
+              </div>
+            ))}
+          </section>
+        ))}
+      </div>
+    </div>
+    <p class="hl-zdroj">Otevřená data Poslanecké sněmovny, staženo {datumText(s.stazeno)} · <a href={odkazPsp(s)}>Ověřit na psp.cz</a></p>
+  </main>
+  <PatickaRadek />
+</Zaklad>
+<script>
+  import { inicializujFiltrHlasovani } from '../../scripts/hlasovani-filtr';
+  import { oznacNacteno } from '../../scripts/nacteno';
+  inicializujFiltrHlasovani();
+  oznacNacteno(0);
+</script>

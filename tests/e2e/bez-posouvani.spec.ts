@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { POCITACE, MOBILY, overBezPosouvani, overBezPosouvaniDoStrany } from './pomocne';
 
-const STRANKY = ['/', '/kauzy/alfa-dotace/', '/metodika/', '/o-projektu/', '/pravidla/', '/pravidla/?pohled=seznam', '/pravidla/?pohled=osa', '/pravidla/zakon-omega/', '/pravidla/oblasti/dotace-stret-zajmu/'];
+const STRANKY = ['/', '/kauzy/alfa-dotace/', '/metodika/', '/o-projektu/', '/pravidla/', '/pravidla/?pohled=seznam', '/pravidla/?pohled=osa', '/pravidla/zakon-omega/', '/pravidla/oblasti/dotace-stret-zajmu/', '/hlasovani/psp-10-5-12/'];
 
 for (const v of POCITACE) {
   test.describe(`${v.width}×${v.height}`, () => {

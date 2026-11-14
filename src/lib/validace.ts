@@ -9,6 +9,8 @@ import { OBLASTI, type Oblast } from './pravidla-slovnik';
 import { seraditPravidla } from './pravidla';
 import { STRED } from './role';
 import { rozdelOdstavce, poznamkyVOdstavci } from './souvislosti';
+import { nactiSnimky, overHlasovaniPravidel } from './validace-hlasovani';
+import type { Snimek } from './schema-hlasovani';
 
 export type Chyba = { soubor: string; zprava: string };
 export type KauzaZaznam = { slug: string; kauza: Kauza; telo: string };
@@ -218,7 +220,7 @@ function nactiSlozku(adresar: string, nazev: string, chyby: Chyba[]): SouborObsa
   return vysledek;
 }
 
-export function overAdresar(adresar: string, rezim: Rezim = {}): { zaznamy: KauzaZaznam[]; pravidla: PravidloZaznam[]; oblasti: OblastZaznam[]; stitky: Map<string, string>; akteri: Map<string, Akter>; chyby: Chyba[]; varovani: Chyba[] } {
+export function overAdresar(adresar: string, rezim: Rezim = {}): { zaznamy: KauzaZaznam[]; pravidla: PravidloZaznam[]; oblasti: OblastZaznam[]; hlasovani: Map<string, Snimek>; stitky: Map<string, string>; akteri: Map<string, Akter>; chyby: Chyba[]; varovani: Chyba[] } {
   const stitky = nactiSlovnikStitku(adresar);
   const sadaStitku = new Set(stitky.keys());
   const chyby: Chyba[] = [];
@@ -243,6 +245,10 @@ export function overAdresar(adresar: string, rezim: Rezim = {}): { zaznamy: Kauz
   }
   const vazbyPravidel = overVazbyPravidel(adresar, nactenaPravidla, new Set(zaznamy.map(z => z.slug)), rezim);
   chyby.push(...vazbyPravidel.chyby);
+  const snimky = nactiSnimky(adresar);
+  chyby.push(...snimky.chyby);
+  const odkazy = overHlasovaniPravidel(adresar, vazbyPravidel.pravidla, snimky.snimky, snimky.neplatne);
+  chyby.push(...odkazy.chyby);
   const ob = overOblasti(adresar, nactiSlozku(adresar, 'oblasti', chyby), vazbyPravidel.pravidla, rezim);
   chyby.push(...ob.chyby);
 
@@ -250,9 +256,10 @@ export function overAdresar(adresar: string, rezim: Rezim = {}): { zaznamy: Kauz
     zaznamy,
     pravidla: seraditPravidla(vazbyPravidel.pravidla),
     oblasti: ob.oblasti,
+    hlasovani: new Map([...snimky.snimky].filter(([id]) => odkazy.odkazovane.has(id))),
     stitky,
     akteri: slovnik.akteri,
     chyby,
-    varovani: [...vazby.varovani, ...vazbyPravidel.varovani, ...ob.varovani],
+    varovani: [...vazby.varovani, ...vazbyPravidel.varovani, ...ob.varovani, ...odkazy.varovani],
   };
 }

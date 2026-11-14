@@ -219,10 +219,24 @@ udalosti:
     nazev: 1. čtení zařazeno na 34. schůzi
     popis: 'Na návrh R. Králíčka (ANO) Sněmovna určila 1. čtení tisku 221 pořadí mezi body prvního čtení na 34. schůzi (96 pro, 63 proti).'
     zdroje: [23, 24]
+    hlasovani:
+      - id: psp-10-34-32
+        typ: proceduralni
+        co: 'Návrh R. Králíčka (ANO) na pořadí bodů 34. schůze, který určil i pořadí 1. čtení tisku 221'
   - datum: 2026-11-03
     nazev: Návrhy na vyřazení z pořadu zamítnuty
     popis: 'Sněmovna na návrh T. Malé (ANO) zařadila 1. čtení jako poslední bod jednacího dne (86 pro, 69 proti) a zamítla návrh Z. Hřiba (Piráti) a V. Rakušana (STAN) bod z pořadu vyřadit (72 pro, 86 proti). Obdobný návrh I. Bartoše (Piráti) zamítla 4. 11. (58 pro, 79 proti). Schůze skončila 6. 11. 2026, aniž se k 1. čtení dostala.'
     zdroje: [25, 26, 27, 28]
+    hlasovani:
+      - id: psp-10-34-311
+        typ: proceduralni
+        co: 'Návrh T. Malé (ANO) zařadit 1. čtení jako poslední bod jednacího dne'
+      - id: psp-10-34-328
+        typ: proceduralni
+        co: 'Návrh Z. Hřiba (Piráti) a V. Rakušana (STAN) vyřadit 1. čtení tisku 221 z pořadu schůze'
+      - id: psp-10-34-385
+        typ: proceduralni
+        co: 'Návrh I. Bartoše (Piráti) vyřadit 1. čtení tisku 221 z pořadu schůze'
 planovano:
   stavK: 2026-11-13
   text: '1. čtení je navrženo na pořad 37. schůze Sněmovny od 24. 11. 2026.'

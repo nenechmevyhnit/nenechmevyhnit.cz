@@ -2,6 +2,7 @@ import { existsSync, readdirSync } from 'node:fs';
 import { basename } from 'node:path';
 import { overAdresar, type KauzaZaznam, type PravidloZaznam } from './validace';
 import type { Akter } from './schema';
+import type { Snimek } from './schema-hlasovani';
 import { sestavGraf, type Graf } from './mapa';
 import { pravidlaKauzy, type SouvisejiciPravidlo } from './pravidla';
 import { sestavOblasti, type OblastDetail } from './oblasti';
@@ -33,6 +34,8 @@ export const nactiKauzy = (): KauzaZaznam[] => nacti().zaznamy;
 export const nactiStitky = (): Map<string, string> => nacti().stitky;
 export const nactiAktery = (): Map<string, Akter> => nacti().akteri;
 export const nactiPravidla = (): PravidloZaznam[] => nacti().pravidla;
+/** Snímky hlasování, na které odkazuje aspoň jedno pravidlo (klíč je id hlasování, např. psp-10-34-311). */
+export const nactiHlasovani = (): Map<string, Snimek> => nacti().hlasovani;
 /** Oblasti se změnami pravidel pro pohled Oblasti a stránky /pravidla/oblasti/<id>/. */
 export const nactiOblasti = (): OblastDetail[] => { const d = nacti(); return sestavOblasti(d.pravidla, d.oblasti); };
 /** Stránka a položka menu „Zákony a nařízení“: ve veřejném buildu až s prvním ověřeným pravidlem, v náhledu konceptů vždy. */

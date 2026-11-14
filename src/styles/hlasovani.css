@@ -1,0 +1,72 @@
+/* Hlasování: záložka v detailu pravidla a stránka hlasování (spec hlasování, oddíl 7).
+   Bez stranických barev; „pro“ a „proti“ nerozlišuje zelená ani červená, hlas pro návrh není hodnocení. */
+
+/* záložka v detailu pravidla: co se nevejde na výšku, pokračuje do sloupců a posouvá se do strany (jako Zdroje).
+   Široký sloupec, aby se čipy klubů vešly do méně řádků a blok hlasování se vešel na výšku panelu.
+   Na mobilu (do 760 px) jde záložka pod sebou a posouvá se dolů s celým detailem (upravy.css, Mobil). */
+.pravidlo .m2-panel[data-p="hlasovani"] { overflow-x: auto; overflow-y: hidden; column-width: 400px; column-gap: 32px; column-fill: auto; }
+.hl-seznam { list-style: none; margin: 0; padding: 0; }
+.hl-blok { break-inside: avoid; margin: 0 0 14px; padding: 0 0 14px; border-bottom: 1px dashed var(--linka); }
+.hl-meta { margin: 0; font: 12px/1.5 var(--f-mono); color: var(--meta); }
+.hl-typ { border: 1px solid var(--inkoust); padding: 0 5px; color: var(--inkoust); white-space: nowrap; }
+.hl-co { margin: 4px 0; font-size: 15px; }
+.hl-vysledek { margin: 0 0 6px; font-size: 15px; }
+.hl-blok .hl-vysledek .hl-legenda { font-size: 13px; color: var(--meta); }
+.hl-blok .hl-vysledek a { font-size: 13px; }
+.hl-kluby { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 0 0 6px; padding: 0; }
+.hl-kluby a { display: inline-block; border: 1px solid var(--linka); background: var(--plocha); padding: 2px 8px; font-size: 13px; color: var(--inkoust); text-decoration: none; }
+.hl-kluby a:hover { border-color: var(--modra); }
+.hl-cisla { font-family: var(--f-mono); }
+.hl-blok .hl-vysledek a, .hl-odkazy a { color: var(--modra); }
+.hl-proc { margin: 6px 0 0; font-size: 13px; font-style: italic; color: var(--text2); }
+.hl-odkazy { margin-top: 6px; font-size: 14px; }
+
+/* stránka /hlasovani/<id>/: na počítači vyplní výšku okna, seznam poslanců pokračuje do sloupců a posouvá se do strany */
+.hl-stranka { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; padding: 10px 0 6px; }
+.hl-drobky { flex: none; font: 12px var(--f-mono); color: var(--meta); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hl-drobky a { color: var(--modra); }
+.hl-hlava { flex: none; }
+.hl-hlava h1 { margin: 0; font: 800 clamp(22px, 2.4vw, 32px)/1.1 var(--f-nadpis); }
+.hl-kdy { margin: 2px 0 6px; font: 13px var(--f-mono); color: var(--meta); }
+.hl-o-cem { list-style: none; margin: 0 0 4px; padding: 0; font-size: 15px; }
+.hl-o-cem a { color: var(--modra); }
+.hl-hlava .hl-vysledek { margin: 4px 0 0; font-size: 14px; }
+.hl-telo { flex: 1; min-height: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0 24px; padding: 10px 14px; background: var(--plocha); border: 1px solid var(--linka); }
+.hl-tabulka-obal { min-height: 0; overflow-y: auto; }
+.hl-tabulka { border-collapse: collapse; font-size: 13px; }
+.hl-tabulka th, .hl-tabulka td { padding: 3px 8px; border-bottom: 1px solid var(--linka); text-align: right; font: 13px var(--f-mono); }
+.hl-tabulka thead th { color: var(--meta); font-size: 11px; vertical-align: bottom; }
+.hl-tabulka th[scope="row"], .hl-tabulka thead th:first-child { text-align: left; font-family: var(--f-text); }
+.hl-tabulka tbody tr { position: relative; }
+.hl-tabulka tbody a { color: var(--inkoust); text-decoration: none; }
+.hl-tabulka tbody a::after { content: ""; position: absolute; inset: 0; } /* klikne se na celý řádek */
+.hl-tabulka tbody tr:hover, .hl-tabulka tbody tr:has(a[aria-current="true"]) { background: color-mix(in srgb, var(--modra) 8%, var(--plocha)); }
+.hl-tabulka a[aria-current="true"] { font-weight: 700; }
+.hl-cipy { display: none; }
+.hl-poslanci { min-height: 0; overflow-x: auto; overflow-y: hidden; column-width: 190px; column-gap: 24px; column-fill: auto; font-size: 14px; }
+.hl-legenda-text { margin: 0 0 8px; font-size: 12px; color: var(--meta); break-inside: avoid; }
+.hl-legenda-text a { color: var(--modra); }
+.hl-poslanci h2 { margin: 0 0 4px; font: 700 15px var(--f-nadpis); break-after: avoid; }
+.hl-skupina h3 { margin: 6px 0 2px; font: 600 12px var(--f-mono); color: var(--meta); break-after: avoid; }
+.hl-skupina ul { list-style: none; margin: 0; padding: 0; }
+.hl-skupina li { break-inside: avoid; line-height: 1.45; }
+.hl-u-jmena { margin-left: 4px; font: 11px var(--f-mono); color: var(--meta); }
+/* bez JavaScriptu: oddíly všech klubů pod sebou (kotva #ano na ně posune), přehled „Všichni“ se nezobrazí */
+html:not(.js) .hl-klub[hidden] { display: block; }
+html:not(.js) .hl-vsichni { display: none; }
+.hl-zdroj { flex: none; margin: 0; font-size: 12px; color: var(--meta); }
+.hl-zdroj a { color: var(--modra); }
+/* Mobil (do 760 px): stránka má přirozenou výšku a posouvá se dolů jako ostatní stránky (upravy.css, Mobil),
+   do strany se neposouvá nic. Místo tabulky jsou čipy klubů, které se zalamují do více řádků, a seznam poslanců
+   jde pod sebou bez sloupců (legenda zůstává na jeho začátku). */
+@media (max-width: 760px) {
+  .hl-stranka { flex: none; gap: 6px; padding-top: 6px; }
+  .hl-hlava h1 { font-size: 20px; }
+  .hl-o-cem, .hl-hlava .hl-vysledek, .hl-hlava .hl-proc { font-size: 13px; }
+  .hl-telo { display: block; padding: 8px 10px; }
+  .hl-tabulka-obal { display: none; }
+  .hl-cipy { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .hl-cipy a { border: 1px solid var(--linka); padding: 3px 10px; font-size: 13px; color: var(--inkoust); text-decoration: none; }
+  .hl-cipy a[aria-current="true"] { border-color: var(--modra); background: var(--modra); color: var(--plocha); }
+  .hl-poslanci { overflow: visible; columns: auto; }
+}

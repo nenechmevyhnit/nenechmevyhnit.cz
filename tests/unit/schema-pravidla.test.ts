@@ -134,6 +134,18 @@ describe('důvody zařazení', () => {
   });
 });
 
+describe('hlasování u události', () => {
+  const HL = { id: 'psp-10-34-311', typ: 'proceduralni', co: 'Návrh zařadit bod na pořad schůze' };
+  const sHl = (hl: unknown[]) => s(p => { p.udalosti[0].hlasovani = hl; });
+  it('bez hlasování je pole prázdné', () => expect(pravidloSchema.parse(platnePravidlo()).udalosti[0].hlasovani).toEqual([]));
+  it('přijme platné hlasování', () => expect(chyby(sHl([HL]))).toEqual([]));
+  it('odmítne id v jiném tvaru', () => expect(chyby(sHl([{ ...HL, id: 'psp-10-34' }])).join(' ')).toMatch(/psp-<období>-<schůze>-<číslo>/));
+  it('odmítne neznámý typ', () => expect(cesty(sHl([{ ...HL, typ: 'jine' }]))).toEqual(['udalosti.0.hlasovani.0.typ']));
+  it('odmítne popis „co“ delší než 200 znaků', () => expect(chyby(sHl([{ ...HL, co: 'x'.repeat(201) }])).join(' ')).toMatch(/nejvýš 200 znaků/));
+  it('odmítne stejné hlasování u pravidla dvakrát', () =>
+    expect(chyby(sHl([HL, HL])).join(' ')).toMatch(/Hlasování „psp-10-34-311“ je u pravidla uvedeno dvakrát/));
+});
+
 describe('oblasti a „Co by to znamenalo pro vás“', () => {
   it('platné pravidlo má oblasti a proVas', () => {
     const p = pravidloSchema.parse(platnePravidlo());

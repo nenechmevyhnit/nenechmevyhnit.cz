@@ -86,6 +86,25 @@ export function platnePravidloKontrolaMoci(): Record<string, unknown> {
   };
 }
 
+/** Fiktivní snímek hlasování: 5 poslanců, 2 kluby a jeden nezařazený. Souhrn sedí se jmenovitými hlasy. */
+export function platnySnimek(): Record<string, unknown> {
+  return {
+    komora: 'psp', obdobi: 10, schuze: 5, cislo: 12, idPsp: 90012,
+    datum: '2026-06-12', cas: '10:05', nazevPsp: 'Pořad schůze',
+    vysledek: 'prijato', kvorum: 3,
+    souhrn: { pro: 2, proti: 1, zdrzel: 0, nehlasoval: 1, prihlaseno: 4 },
+    kluby: { ANO2011: 'Fiktivní klub ANO', ODS: 'Fiktivní klub ODS' },
+    poslanci: [
+      { id: 1, jmeno: 'Adam', prijmeni: 'Alfa', klub: 'ANO2011', hlas: 'pro' },
+      { id: 2, jmeno: 'Bára', prijmeni: 'Beta', klub: 'ANO2011', hlas: 'pro' },
+      { id: 4, jmeno: 'Dana', prijmeni: 'Delta', klub: null, hlas: 'zdrzel-nehlasoval' },
+      { id: 5, jmeno: 'Emil', prijmeni: 'Epsilon', klub: 'ODS', hlas: 'omluven' },
+      { id: 3, jmeno: 'Cyril', prijmeni: 'Gama', klub: 'ODS', hlas: 'proti' },
+    ],
+    stazeno: '2026-11-14',
+  };
+}
+
 export function platnaOblast(): Record<string, unknown> {
   return {
     uvod: { text: 'Fiktivní zákon o střetu zájmů má zajistit, aby fiktivní člen vlády nerozhodoval o penězích pro vlastní firmy.', zdroje: [1] },

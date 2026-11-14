@@ -26,7 +26,19 @@ test('/metodika/#pravidla otevře oddíl Zákony a nařízení', async ({ page }
   await expect(panel).toBeVisible();
   await expect(panel.getByRole('heading', { level: 2 })).toHaveText('Zákony a nařízení');
   await expect(panel).toContainText('Závěr je rozbor archivu, ne úřední zjištění.');
-  await expect(panel.locator('.slovnicek dt')).toHaveText(['doložený prospěch', 'pravděpodobný prospěch']);
+  await expect(panel.locator('.slovnicek:not(.hl-slovnicek) dt')).toHaveText(['doložený prospěch', 'pravděpodobný prospěch']);
+});
+
+test('/metodika/#hlasovani otevře oddíl Zákony a nařízení na pododdílu Hlasování', async ({ page }) => {
+  await page.goto('/metodika/#hlasovani');
+  const panel = page.locator('.v4-dlg-panel[data-sekce="pravidla"]');
+  await expect(panel).toBeVisible();
+  await expect(panel.locator('#hlasovani')).toHaveText('Hlasování');
+  await expect(panel).toContainText('Procedurální hlasování rozhoduje o pořadu nebo způsobu projednání, ne o obsahu návrhu');
+  await expect(panel.locator('.hl-slovnicek dt')).toHaveText(['zdržel se nebo nehlasoval', 'omluven', 'nepřihlášen']);
+  await expect(panel).toContainText('jak hlasovali jednotliví členové vlády, se nezveřejňuje');
+  await expect(panel).toContainText('npm run hlasovani -- --znovu');
+  await expect(panel).toContainText('Samy se data neaktualizují.');
 });
 
 test('/metodika/#oblasti otevře oddíl Oblasti', async ({ page }) => {
