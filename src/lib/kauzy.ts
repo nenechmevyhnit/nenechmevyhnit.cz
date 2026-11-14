@@ -2,6 +2,7 @@ import { existsSync, readdirSync } from 'node:fs';
 import { basename } from 'node:path';
 import { overAdresar, type KauzaZaznam, type PravidloZaznam } from './validace';
 import type { Akter } from './schema';
+import type { Snimek } from './schema-hlasovani';
 import { sestavGraf, type Graf } from './mapa';
 import { pravidlaKauzy, type SouvisejiciPravidlo } from './pravidla';
 
@@ -32,6 +33,8 @@ export const nactiKauzy = (): KauzaZaznam[] => nacti().zaznamy;
 export const nactiStitky = (): Map<string, string> => nacti().stitky;
 export const nactiAktery = (): Map<string, Akter> => nacti().akteri;
 export const nactiPravidla = (): PravidloZaznam[] => nacti().pravidla;
+/** Snímky hlasování, na které odkazuje aspoň jedno pravidlo (klíč je id hlasování, např. psp-10-34-311). */
+export const nactiHlasovani = (): Map<string, Snimek> => nacti().hlasovani;
 /** Stránka a položka menu „Změny pravidel“: ve veřejném buildu až s prvním ověřeným pravidlem, v náhledu konceptů vždy. */
 export const maPravidla = (): boolean => rezimKonceptu() || nactiPravidla().length > 0;
 export const souvisejiciPravidla = (slug: string): SouvisejiciPravidlo[] => pravidlaKauzy(nactiPravidla(), slug);
