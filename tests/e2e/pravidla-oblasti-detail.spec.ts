@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { VELIKOSTI, overBezPosouvani, presahPanelu } from './pomocne';
+import { VELIKOSTI, overPosouvani, presahPanelu } from './pomocne';
 
 test.use({ viewport: { width: 1366, height: 768 } });
 const dialog = (page: import('@playwright/test').Page) => page.locator('dialog#detail');
@@ -93,7 +93,7 @@ for (const v of VELIKOSTI) {
   test(`${v.width}×${v.height}: detail oblasti se neposouvá a obsah záložek není oříznutý`, async ({ page }) => {
     await page.setViewportSize(v);
     await page.goto('/pravidla/oblasti/dotace-stret-zajmu/');
-    await overBezPosouvani(page);
+    await overPosouvani(page);
     for (const zalozka of [/^Co se mění/, /^Jak to hodnotí/, /^Zdroje/]) {
       await dialog(page).getByRole('tab', { name: zalozka }).click();
       const presah = await presahPanelu(page, true);

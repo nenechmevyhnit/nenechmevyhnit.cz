@@ -3,11 +3,12 @@
    takže přepnutí mezi stránkami neposkočí. */
 
 /* Filtry: témata v jednom řádku, co se nevejde, otevře „+N další“ (upravy.css, skript cipy.ts). Počítadlo
-   a Zrušit filtry jsou na počítači v záhlaví seznamu (.pr-hlava) jako v záhlaví osy kauz. */
+   a Zrušit filtry jsou na počítači v záhlaví pohledu jako v záhlaví osy kauz: v Seznamu v .pr-hlava, na Časové
+   ose v rohu nad názvy (.op-roh), v Oblastech na řádku úvodu (.ob-hlava). Na mobilu jsou v řádku filtrů. */
 .pr-hlava { flex: none; display: grid; grid-template-columns: minmax(0, 3fr) minmax(260px, 2fr) auto; gap: 0 24px; align-items: center; height: 46px; padding: 0 18px; border-bottom: 1px solid var(--inkoust); font: 15px var(--f-text); color: var(--meta); }
 .pr-hlava .nazev-sloupce { display: flex; align-items: baseline; gap: 12px; white-space: nowrap; }
-.pr-hlava .f-zrusit { border: 0; background: none; padding: 0; font: 15px var(--f-text); color: var(--modra); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
-.pr-hlava .f-zrusit[hidden] { display: none; }
+:is(.pr-hlava, .op-roh, .ob-hlava) .f-zrusit { border: 0; background: none; padding: 0; font: 15px var(--f-text); color: var(--modra); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+:is(.pr-hlava, .op-roh, .ob-hlava) .f-zrusit[hidden] { display: none; }
 .pr-hlava::after { content: "Detail →"; visibility: hidden; font: 12px var(--f-mono); }
 @media (max-width: 760px) { .pr-hlava { grid-template-columns: 1fr; height: 41px; padding: 0 14px; } .pr-hlava .nazev-sloupce, .pr-hlava::after { display: none; } }
 /* Zrušit filtry nechává i neaktivní své místo (visibility z hlavni.css), řádek filtrů se tak neposouvá. */
@@ -105,8 +106,8 @@
   .pravidlo .m2-panel[data-p="chrono"] .planovano-prubeh { display: block; flex: none; margin: 0; font-size: 13px; color: var(--meta); }
   /* Průběh pod sebou: Stav k, cesta předložení, událost, listování */
   .pravidlo .m2-panel[data-p="chrono"]:not([hidden]) { display: flex; flex-direction: column; gap: 8px; }
-  /* na mobilu má cesta předložení nejvýš asi pět řádků, zbytek místa patří události */
-  .pravidlo .m2-panel[data-p="chrono"] .cesta-box { flex: none; padding: 4px 10px; font-size: 14px; max-height: 7.5em; }
+  /* celý modal se na mobilu posouvá dolů (upravy.css), cesta předložení proto má přirozenou výšku */
+  .pravidlo .m2-panel[data-p="chrono"] .cesta-box { flex: none; padding: 4px 10px; font-size: 14px; overflow: visible; }
   .pravidlo .m2-panel[data-p="chrono"] .cesta-box p { margin: 0 0 2px; }
   .pravidlo .m2-panel[data-p="chrono"] .vynechano { font-size: 13px; }
   .pravidlo .m2-panel[data-p="chrono"] .udalosti-seznam { flex: 1; min-height: 0; }
@@ -141,6 +142,12 @@
 .pr-pohled[hidden] { display: none; }
 .pr-pohled button { font: 500 12px var(--f-text); border: 0; background: var(--plocha); color: var(--inkoust); padding: 2px 9px; cursor: pointer; }
 .pr-pohled button[aria-pressed="true"] { background: var(--modra); color: #fff; }
+/* Mobil: přepínač pohledů má vždy vlastní řádek nad hledáním (se dvěma i třemi pohledy stejně) a tlačítka
+   jsou rozdělená po celé šířce, aby se dobře trefovala prstem. */
+@media (max-width: 760px) {
+  body .filtry.f4.pr-filtry .pr-pohled { order: 0; flex: 1 0 100%; }
+  .pr-pohled button { flex: 1; padding: 6px 9px; }
+}
 
 /* Časová osa: zabírá stejné místo jako seznam, posouvá se jen uvnitř */
 .osa-pravidel { flex: 1; min-height: 0; display: flex; flex-direction: column; margin-top: 12px; background: var(--plocha); border: 1px solid var(--linka); }
@@ -151,6 +158,7 @@
 .op-hlava, .op-radek { display: grid; grid-template-columns: var(--nazvy) 1fr; }
 .op-hlava { position: sticky; top: 0; z-index: 2; background: var(--plocha); border-bottom: 1px solid var(--linka); height: 38px; }
 .op-roh { position: sticky; left: 0; background: var(--plocha); z-index: 1; }
+.op-roh.nazev-sloupce { display: flex; align-items: center; gap: 12px; min-width: 0; padding: 0 10px; white-space: nowrap; font: 15px var(--f-text); color: var(--meta); }
 .op-mesice, .op-cas { position: relative; margin: 0 14px 0 calc(14px + var(--odstup)); } /* vlevo místo pro „◀ dříve“ */
 .op-znacka { position: absolute; top: 3px; transform: translateX(-1px); font: 11px var(--f-mono); color: var(--meta); white-space: nowrap; border-left: 1px solid var(--linka); padding-left: 3px; }
 .op-znacka.rok { color: var(--inkoust); border-left-color: var(--inkoust); }
@@ -184,6 +192,7 @@
 .op-popisek { position: fixed; z-index: 20; max-width: min(360px, calc(100vw - 8px)); padding: 4px 8px; font-size: 12px; background: var(--inkoust); color: #fff; }
 @media (max-width: 760px) {
   .op-plocha { --nazvy: 120px; --mesic: 44px; }
+  .op-roh.nazev-sloupce > * { display: none; }
   /* na mobilu bez příkladů v legendě a s menším písmem, aby zbylo místo pro řádky osy */
   .op-uvod { font-size: 12px; padding: 4px 8px; }
   .op-legenda { font-size: 11px; gap: 2px 10px; padding: 4px 8px; }
@@ -193,7 +202,9 @@
 /* Pohled Oblasti (specifikace oblastí, oddíl 8.1): karty se posouvají uvnitř, stránka zůstává bez posuvníku. */
 .oblasti-pohled { flex: 1; min-height: 0; display: flex; flex-direction: column; margin-top: 12px; }
 .oblasti-pohled[hidden] { display: none; }
-.ob-uvod-prehledu { margin: 0 0 10px; max-width: 60em; font-size: 14px; color: var(--text2); }
+.ob-hlava { display: flex; align-items: baseline; gap: 4px 24px; margin: 0 0 10px; }
+.ob-uvod-prehledu { flex: 1; min-width: 0; margin: 0; max-width: 60em; font-size: 14px; color: var(--text2); }
+.ob-hlava .nazev-sloupce { display: flex; align-items: baseline; gap: 12px; margin-left: auto; white-space: nowrap; font: 15px var(--f-text); color: var(--meta); }
 .ob-karty { flex: 1; min-height: 0; overflow-y: auto; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; align-content: start; }
 .ob-karta[hidden] { display: none; }
 .ob-btn { display: flex; flex-direction: column; gap: 4px; height: 100%; box-sizing: border-box; padding: 12px 14px; background: var(--plocha); border: 1px solid var(--linka); color: inherit; text-decoration: none; }
@@ -206,7 +217,7 @@
 .ob-prazdno[hidden] { display: none; }
 .stitek-bp { border: 1px solid var(--linka); padding: 0 5px; white-space: nowrap; }
 @media (max-width: 760px) {
-  .ob-uvod-prehledu { display: none; }
+  .ob-hlava { display: none; }
   .ob-karty { grid-template-columns: 1fr; }
 }
 
@@ -254,3 +265,10 @@ html:not(.js) body .pr-filtry { display: none; }
 }
 /* socha Spravedlnosti v pozadí lehce prosvítá seznamem, stejně jako portrét osou kauz */
 .pravidla-obal { background: color-mix(in srgb, var(--plocha) 84%, transparent); }
+
+/* Mobil: stránka se posouvá dolů (upravy.css), proto seznam, karty oblastí i osa mají přirozenou výšku.
+   Seznam na stránce ukazuje pevný počet změn (pravidla-filtr.ts), ne tolik, kolik se vejde na výšku okna. */
+@media (max-width: 760px) {
+  .pravidla-obal, .pravidla-seznam, .oblasti-pohled, .ob-karty, .osa-pravidel { flex: none; }
+  .pravidla-seznam, .ob-karty { overflow: visible; }
+}

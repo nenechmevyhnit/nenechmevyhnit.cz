@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { POCITACE, MOBILY, overBezPosouvani, overBezPosouvaniDoStrany } from './pomocne';
 
-const STRANKY = ['/', '/kauzy/alfa-dotace/', '/metodika/', '/o-projektu/'];
+const STRANKY = ['/', '/kauzy/alfa-dotace/', '/metodika/', '/o-projektu/', '/pravidla/', '/pravidla/?pohled=seznam', '/pravidla/?pohled=osa', '/pravidla/zakon-omega/', '/pravidla/oblasti/dotace-stret-zajmu/'];
 
 for (const v of POCITACE) {
   test.describe(`${v.width}×${v.height}`, () => {
@@ -34,7 +34,7 @@ for (const v of MOBILY) {
         const detail = page.locator('dialog#detail[open]');
         if (await detail.count()) {
           const d = await detail.evaluate(e => ({ sw: e.scrollWidth, cw: e.clientWidth }));
-          expect(d.sw, 'detail kauzy se nesmí posouvat do strany').toBeLessThanOrEqual(d.cw);
+          expect(d.sw, 'detail se nesmí posouvat do strany').toBeLessThanOrEqual(d.cw);
         }
       });
     }

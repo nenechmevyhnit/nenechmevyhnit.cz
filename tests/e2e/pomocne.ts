@@ -1,4 +1,4 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, type Page, type Locator } from '@playwright/test';
 
 export const VELIKOSTI = [
   { width: 1256, height: 528 },
@@ -67,4 +67,31 @@ export async function overBezPosouvaniDoStrany(page: Page) {
     okno: window.innerWidth,
   }));
   expect(sirka, 'stránka se nesmí posouvat do strany').toBeLessThanOrEqual(okno);
+}
+
+/** Posouvání podle velikosti okna (spec oddíl 7): na počítači se stránka neposouvá dolů, na mobilu (do 760 px)
+ *  se dolů posouvat smí, ale stránka ani otevřený detail se nikdy neposouvají do strany. */
+export async function overPosouvani(page: Page) {
+  if (await page.evaluate(() => innerWidth) > 760) return overBezPosouvani(page);
+  await overBezPosouvaniDoStrany(page);
+  const detail = page.locator('dialog#detail[open]');
+  if (await detail.count()) {
+    const d = await detail.evaluate(e => ({ sw: e.scrollWidth, cw: e.clientWidth }));
+    expect(d.sw, 'detail se nesmí posouvat do strany').toBeLessThanOrEqual(d.cw);
+  }
+}
+
+/** Čip filtru, který se do řádku nevešel, je pod „+N další“: rozbalí témata, aby šel stisknout. */
+export async function ukazCip(page: Page, cip: Locator): Promise<Locator> {
+  await page.evaluate(() => document.fonts.ready);
+  if (await cip.isHidden()) await page.locator('.pr-filtry .f-vice').click();
+  await expect(cip).toBeVisible();
+  return cip;
+}
+
+/** Sbalí rozbalená témata (tlačítko „méně“); rozbalený řádek filtrů ubírá výšku seznamu. */
+export async function sbalCipy(page: Page) {
+  const vice = page.locator('.pr-filtry .f-vice');
+  if (await vice.getAttribute('aria-expanded') === 'true') await vice.click();
+  await expect(vice).not.toHaveAttribute('aria-expanded', 'true');
 }

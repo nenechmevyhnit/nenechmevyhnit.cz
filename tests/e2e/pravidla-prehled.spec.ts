@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { VELIKOSTI, overBezPosouvani } from './pomocne';
+import { VELIKOSTI, overBezPosouvani, overPosouvani, ukazCip, sbalCipy } from './pomocne';
 
 test.use({ viewport: { width: 1366, height: 768 } });
 
@@ -41,10 +41,11 @@ test('filtry: hledání bez diakritiky, štítek, jen v projednávání, zrušen
   await page.locator('.pr-hlava .f-zrusit').click();
   await expect(viditelne).toHaveCount(4);
   await expect(hledat).toHaveValue('');
-  await page.locator('.pr-filtry [data-stitek="eu-fondy"]').click();
+  await (await ukazCip(page, page.locator('.pr-filtry [data-stitek="eu-fondy"]'))).click();
   await expect(viditelne).toHaveCount(1);
   await expect(viditelne.first()).toHaveAttribute('data-slug', 'narizeni-tau');
   await page.locator('.pr-filtry [data-stitek="eu-fondy"]').click();
+  await sbalCipy(page);
   await page.getByLabel('jen v projednávání').check();
   await expect(viditelne).toHaveCount(1);
   await expect(viditelne.first()).toHaveAttribute('data-slug', 'zakon-omega');
@@ -102,7 +103,8 @@ test('filtr důvodu: každý čip zvlášť, oba, kombinace se štítkem a zruš
   await expect(viditelne).toHaveCount(4);
   await kontrola.click();
   await expect(viditelne).toHaveCount(3);
-  await page.locator('.pr-filtry [data-stitek="soudy"]').click();
+  await (await ukazCip(page, page.locator('.pr-filtry [data-stitek="soudy"]'))).click();
+  await sbalCipy(page);
   await expect(viditelne).toHaveCount(0);
   await expect(page.locator('.pravidla-seznam .prazdno')).toBeVisible();
   await page.locator('.pr-hlava .f-zrusit').click();
@@ -118,13 +120,13 @@ test('Zrušit filtry je na počítači v záhlaví seznamu jen při aktivním fi
   const pred = await hledat.boundingBox();
   await expect(zrusit).toBeHidden();
   await expect(page.locator('.pr-filtry > .vpravo')).toBeHidden();
-  await page.locator('.pr-filtry [data-stitek="dotace"]').click();
+  await page.locator('.pr-filtry [data-duvod="prospech"]').click();
   await expect(zrusit).toBeVisible();
   expect(await hledat.boundingBox()).toEqual(pred);
 });
 
 test('věta pod filtry: druh, stav a řazení', async ({ page }) => {
-  await page.goto('/pravidla/');
+  await page.goto('/pravidla/?pohled=seznam');
   const viditelne = page.locator('.pr-radek:not([hidden])');
   await page.getByLabel('Druh').selectOption({ label: 'typu nařízení vlády' });
   await expect(viditelne).toHaveCount(1);
@@ -148,7 +150,7 @@ test('úvod, filtry a rámeček seznamu jsou na stejném místě jako na stránc
     await page.setViewportSize(v);
     await page.goto('/');
     const kauzy = await mista();
-    await page.goto('/pravidla/');
+    await page.goto('/pravidla/?pohled=seznam');
     expect(await mista(), `${v.width}×${v.height}`).toEqual(kauzy);
   }
 });
@@ -161,17 +163,17 @@ test('řádek na počítači nabízí „Detail →“', async ({ page }) => {
 test.describe('mobil 390×700', () => {
   test.use({ viewport: { width: 390, height: 700 } });
 
-  test('řádek ukazuje stav, komu a závěr jako text a bez posouvání stránky', async ({ page }) => {
+  test('řádek ukazuje stav, komu a závěr jako text a nic se neposouvá do strany', async ({ page }) => {
     await page.goto('/pravidla/?pohled=seznam');
     const prvni = page.locator('.pr-radek').first();
     const text = await prvni.evaluate(e => (e as HTMLElement).innerText);
     expect(text).toContain('prospěch pravděpodobný');
     expect(text).toContain('Schváleno Sněmovnou');
     expect(text).toContain('Andrej Babiš, Agrofert');
-    await overBezPosouvani(page);
+    await overPosouvani(page);
   });
 
-  test('dlouhé shrnutí „proč“ je oříznuté na dva řádky a stránka se neposouvá', async ({ page }) => {
+  test('dlouhé shrnutí „proč“ je oříznuté na dva řádky a nic se neposouvá do strany', async ({ page }) => {
     await page.goto('/pravidla/?pohled=seznam');
     const proc = page.locator('.pr-radek[data-slug="zakon-omega"] .pr-proc-radek');
     const m = await proc.evaluate(e => {
@@ -181,14 +183,14 @@ test.describe('mobil 390×700', () => {
     expect(m.clamp).toBe('2');
     expect(m.preteka).toBe(true);
     expect(m.vyska).toBeLessThanOrEqual(2 * m.radek + 1);
-    await overBezPosouvani(page);
+    await overPosouvani(page);
   });
 
   test('řádek jen s kontrolou moci ukazuje důvod jako text', async ({ page }) => {
     await page.goto('/pravidla/?pohled=seznam');
     const text = await page.locator('.pr-radek[data-slug="usneseni-kappa"]').evaluate(e => (e as HTMLElement).innerText);
     expect(text).toContain('Kontrola moci: soudy');
-    await overBezPosouvani(page);
+    await overPosouvani(page);
   });
 
   test('témata, která se nevejdou, schovají se pod „+N další“, důvody zůstanou vidět a nic se neposouvá do strany', async ({ page }) => {
@@ -199,7 +201,7 @@ test.describe('mobil 390×700', () => {
     // tlačítko „+N další“ je celé vidět, nic ho neořízne
     const [vb, ob] = [await vice.boundingBox(), await page.locator('.pr-filtry .f-cipy').boundingBox()];
     expect(vb!.x + vb!.width).toBeLessThanOrEqual(ob!.x + ob!.width + 1);
-    const vsechny = page.locator('.pr-filtry .f-cipy button[data-stitek], .pr-filtry .f-cipy button[data-duvod]');
+    const vsechny = page.locator('.pr-filtry .f-cipy :is(button[data-stitek], button[data-duvod], button[data-bez-pripominek])');
     const skryte = await vsechny.evaluateAll(cs => cs.filter(c => (c as HTMLElement).hidden).length);
     expect(skryte).toBeGreaterThan(0);
     await expect(vice).toContainText(`+${skryte} dalš`);
@@ -212,7 +214,7 @@ test.describe('mobil 390×700', () => {
     await vice.click();
     await expect(posledni).toBeVisible();
     await expect(posledni).toHaveAttribute('aria-pressed', 'true');
-    await overBezPosouvani(page);
+    await overPosouvani(page);
   });
 
   test('názvy fází průběhu se v řádku nezkracují třemi tečkami', async ({ page }) => {
@@ -239,7 +241,7 @@ test('témata na počítači v jednom řádku bez posuvníku', async ({ page }) 
 
 test('nízké okno: změny se stránkují místo posouvání seznamu, otevřená změna přepne na svou stránku', async ({ page }) => {
   await page.setViewportSize({ width: 1256, height: 528 });
-  await page.goto('/pravidla/');
+  await page.goto('/pravidla/?pohled=seznam');
   const seznam = page.locator('.pravidla-seznam');
   const strankovani = page.locator('.pravidla-obal .strankovani');
   await expect(strankovani).toBeVisible();
@@ -252,22 +254,23 @@ test('nízké okno: změny se stránkují místo posouvání seznamu, otevřená
   await expect(page.locator('.pr-radek[data-slug="zakon-omega"]')).toBeHidden();
   await strankovani.locator('button[data-strana="1"]').click();
   await expect(page.locator('.pr-radek[data-slug="zakon-omega"]')).toBeVisible();
-  // změna z poslední stránky otevřená rovnou z adresy
-  await page.goto('/pravidla/usneseni-kappa/');
+  // změna z poslední stránky otevřená rovnou z adresy (adresa nese pohled na pozadí, výchozí jsou Oblasti)
+  await page.goto('/pravidla/usneseni-kappa/?pohled=seznam');
   await page.locator('#detail .zavrit').click();
   await expect(page.locator('.pr-radek[data-slug="usneseni-kappa"]')).toBeVisible();
   await overBezPosouvani(page);
 });
 
 for (const v of VELIKOSTI) {
-  test(`${v.width}×${v.height}: přehled se neposouvá dolů a poslední řádek jde zobrazit`, async ({ page }) => {
+  test(`${v.width}×${v.height}: přehled se neposouvá (počítač dolů, mobil do strany) a poslední řádek jde zobrazit`, async ({ page }) => {
     await page.setViewportSize(v);
     await page.goto('/pravidla/?pohled=seznam');
-    await overBezPosouvani(page);
+    await overPosouvani(page);
     const dalsi = page.locator('.pravidla-obal .strankovani .s-dalsi');
     while (await dalsi.isVisible() && await dalsi.isEnabled()) await dalsi.click();
     const posledni = page.locator('.pr-radek').last();
+    await posledni.scrollIntoViewIfNeeded();
     await expect(posledni).toBeInViewport();
-    await overBezPosouvani(page);
+    await overPosouvani(page);
   });
 }

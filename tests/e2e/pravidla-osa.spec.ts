@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { VELIKOSTI, overBezPosouvani } from './pomocne';
+import { VELIKOSTI, overBezPosouvani, overPosouvani, ukazCip } from './pomocne';
 
 test.use({ viewport: { width: 1366, height: 768 } });
 
@@ -121,23 +121,23 @@ test.describe('bez JavaScriptu', () => {
 
 test.describe('mobil 390×700', () => {
   test.use({ viewport: { width: 390, height: 700 } });
-  test('osa se posouvá do strany, názvy zůstávají vlevo a je vidět dnes', async ({ page }) => {
+  test('osa se posouvá do strany uvnitř své plochy, názvy zůstávají vlevo a je vidět dnes', async ({ page }) => {
     await page.goto('/pravidla/?pohled=osa');
     const plocha = page.locator('.op-plocha');
     expect(await plocha.evaluate(e => e.scrollWidth > e.clientWidth)).toBe(true);
     await expect(page.locator('.op-dnes').first()).toBeInViewport();
     const nazev = page.locator('.op-radek .op-nazev').first();
     expect(await nazev.evaluate(e => getComputedStyle(e).position)).toBe('sticky');
-    await overBezPosouvani(page);
+    await overPosouvani(page);
   });
 });
 
 for (const v of VELIKOSTI) {
-  test(`${v.width}×${v.height}: osa se neposouvá dolů`, async ({ page }) => {
+  test(`${v.width}×${v.height}: osa se neposouvá (počítač dolů, mobil do strany)`, async ({ page }) => {
     await page.setViewportSize(v);
     await page.goto('/pravidla/?pohled=osa');
     await expect(page.locator('.osa-pravidel')).toBeVisible();
-    await overBezPosouvani(page);
+    await overPosouvani(page);
     if (v.width > 1000) expect(await page.locator('.op-plocha').evaluate(e => e.scrollWidth <= e.clientWidth + 1)).toBe(true);
   });
 }
@@ -247,11 +247,13 @@ test('filtry skrývají řádky osy, počítadlo a prázdný stav platí i pro o
   await page.goto('/pravidla/?pohled=osa');
   const radky = page.locator('.op-radek:not([hidden])');
   await expect(radky).toHaveCount(4);
-  await page.getByRole('searchbox', { name: 'Hledat ve změnách pravidel' }).fill('lhutu k vymahani');
+  await page.getByRole('searchbox', { name: 'Hledat v zákonech a nařízeních' }).fill('lhutu k vymahani');
   await expect(radky).toHaveCount(1);
   await expect(radky.first()).toHaveAttribute('data-slug', 'zakon-omega');
-  await expect(page.locator('.pr-filtry .pocet')).toHaveText('Zobrazeno 1 z 4');
-  await page.getByRole('searchbox', { name: 'Hledat ve změnách pravidel' }).fill('nic takoveho neexistuje');
+  // na počítači je počítadlo a Zrušit filtry v rohu záhlaví osy nad názvy
+  await expect(page.locator('.op-roh .pocet')).toHaveText('1 z 4');
+  await expect(page.locator('.op-roh .f-zrusit')).toBeVisible();
+  await page.getByRole('searchbox', { name: 'Hledat v zákonech a nařízeních' }).fill('nic takoveho neexistuje');
   await expect(page.locator('.op-prazdno')).toBeVisible();
   await page.locator('.op-prazdno [data-zrusit]').click();
   await expect(radky).toHaveCount(4);
@@ -260,13 +262,14 @@ test('filtry skrývají řádky osy, počítadlo a prázdný stav platí i pro o
 
 test('Seznam → Osa → Seznam zachová filtr i počítadlo', async ({ page }) => {
   await page.goto('/pravidla/?pohled=seznam');
-  await page.locator('.pr-filtry [data-stitek="soudy"]').click();
-  await expect(page.locator('.pr-filtry .pocet')).toHaveText('Zobrazeno 1 z 4');
+  await (await ukazCip(page, page.locator('.pr-filtry [data-stitek="soudy"]'))).click();
+  await expect(page.locator('.pr-hlava .pocet')).toHaveText('1 z 4');
   await page.getByRole('button', { name: 'Časová osa' }).click();
   await expect(page.locator('.op-radek:not([hidden])')).toHaveCount(1);
+  await expect(page.locator('.op-roh .pocet')).toHaveText('1 z 4');
   await page.getByRole('button', { name: 'Seznam' }).click();
   await expect(page.locator('.pr-radek:not([hidden])')).toHaveCount(1);
-  await expect(page.locator('.pr-filtry .pocet')).toHaveText('Zobrazeno 1 z 4');
+  await expect(page.locator('.pr-hlava .pocet')).toHaveText('1 z 4');
 });
 
 test('Zpět po přepnutí na osu vrátí seznam a /pravidla/ (a naopak osu)', async ({ page }) => {
@@ -326,7 +329,7 @@ test('přímé načtení ?udalost= ponechá událost ve stavu historie', async (
 
 test('prázdný stav filtru je nahoře a skryje prázdnou osu i legendu', async ({ page }) => {
   await page.goto('/pravidla/?pohled=osa');
-  await page.getByRole('searchbox', { name: 'Hledat ve změnách pravidel' }).fill('nic takoveho neexistuje');
+  await page.getByRole('searchbox', { name: 'Hledat v zákonech a nařízeních' }).fill('nic takoveho neexistuje');
   const prazdno = page.locator('.op-prazdno');
   await expect(prazdno).toBeVisible();
   await expect(page.locator('.op-plocha')).toBeHidden();

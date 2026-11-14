@@ -42,6 +42,9 @@ export function inicializujFiltrPravidel(): void {
   let shoda: PolozkaPravidla[] = poradi;
   let strana = 1;
   let naStranku = Infinity; // Infinity = stránkování vypnuté (vše se vejde)
+  // Na mobilu se stránka posouvá dolů a řádky mají přirozenou výšku: na stránce je pevný počet změn
+  // (jako na ose kauz), ne tolik, kolik se vejde na výšku okna.
+  const mobil = matchMedia('(max-width: 760px)');
 
   const radkyOsy = new Map([...document.querySelectorAll<HTMLElement>('.op-radek')].map(r => [r.dataset.slug!, r]));
   const prazdnoOsy = document.querySelector<HTMLElement>('.op-prazdno');
@@ -74,6 +77,11 @@ export function inicializujFiltrPravidel(): void {
     if (!radky.size) return;
     strankovani.hidden = true;
     seznam.classList.remove('strankovane');
+    if (mobil.matches) {
+      naStranku = polozky.length <= NEJVIC_PRAVIDEL_NA_STRANKU ? Infinity : NEJVIC_PRAVIDEL_NA_STRANKU;
+      strankovani.hidden = !isFinite(naStranku);
+      return;
+    }
     const vyskaRadku = potrebnaVyskaRadku();
     if (polozky.length <= pocetNaStranku(seznam.clientHeight, vyskaRadku, NEJVIC_PRAVIDEL_NA_STRANKU)) { naStranku = Infinity; return; }
     strankovani.hidden = false;
@@ -92,7 +100,7 @@ export function inicializujFiltrPravidel(): void {
     rozsah.textContent = shoda.length ? `${od + 1}–${Math.min(od + naStranku, shoda.length)} z ${shoda.length}` : '0 z 0';
     pred.disabled = strana <= 1;
     dalsi.disabled = strana >= celkem;
-    cisla.replaceChildren(...cislaStranek(strana, celkem).map(c => {
+    cisla.replaceChildren(...cislaStranek(strana, celkem, mobil.matches ? 5 : 7).map(c => {
       if (c === null) { const s = document.createElement('span'); s.className = 's-mezera'; s.textContent = '…'; return s; }
       const b = document.createElement('button');
       b.type = 'button'; b.textContent = String(c); b.dataset.strana = String(c);

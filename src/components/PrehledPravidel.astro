@@ -91,7 +91,11 @@ const popis = otevrene ? otevrene.pravidlo.shrnuti
     {sOblastmi && (
       <section class="oblasti-pohled" data-oblasti-pohled aria-labelledby="oblasti-nadpis">
         <h2 class="jen-ctecka" id="oblasti-nadpis">Oblasti</h2>
-        <p class="ob-uvod-prehledu">Změny pravidel podle oblastí státu. U každé oblasti vysvětlujeme, k čemu slouží, a u každé změny, co by znamenala pro vás.</p>
+        <!-- na počítači je tu počítadlo a Zrušit filtry jako v záhlaví seznamu (na mobilu jsou v řádku filtrů) -->
+        <div class="ob-hlava">
+          <p class="ob-uvod-prehledu">Změny pravidel podle oblastí státu. U každé oblasti vysvětlujeme, k čemu slouží, a u každé změny, co by znamenala pro vás.</p>
+          <div class="nazev-sloupce"><span class="pocet" aria-live="polite">{sklonuj(zaznamy.length, ['změna', 'změny', 'změn'])}</span><button class="f-zrusit" type="button" hidden>Zrušit filtry</button></div>
+        </div>
         <ul class="ob-karty">
           {oblasti.map(o => (
             <li class="ob-karta" data-oblast={o.id}>

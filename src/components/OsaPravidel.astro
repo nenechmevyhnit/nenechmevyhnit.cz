@@ -1,5 +1,6 @@
 ---
 import type { Osa } from '../lib/osa-pravidel';
+import { sklonuj } from '../lib/cestina';
 interface Props { osa: Osa }
 const { osa } = Astro.props;
 const styl = (x: number, posun = 0) => `left:${x}%;--posun:${posun}`;
@@ -14,9 +15,10 @@ const udalosti = (n: number) => `${n} ${n === 1 ? 'událost' : n < 5 ? 'událost
   <p class="op-prazdno" hidden>Žádná změna pravidel neodpovídá filtru. <button type="button" data-zrusit>Zrušit filtry</button></p>
   <p class="op-uvod">Každý řádek je jedna změna pravidel. Body ukazují, kdy se s ní něco stalo: kdy ji někdo navrhl, schválil nebo zamítl a kdy má začít platit. Po kliknutí na bod uvidíte podrobnosti a zdroje.</p>
   <div class="op-plocha" role="region" tabindex="0" aria-label="Časová osa">
-    <div class="op-hlava" aria-hidden="true">
-      <span class="op-roh"></span>
-      <div class="op-mesice">
+    <div class="op-hlava">
+      <!-- na počítači počítadlo a Zrušit filtry jako v záhlaví osy kauz (na mobilu jsou v řádku filtrů) -->
+      <div class="op-roh nazev-sloupce"><span class="pocet" aria-live="polite">{sklonuj(osa.radky.length, ['změna', 'změny', 'změn'])}</span><button class="f-zrusit" type="button" hidden>Zrušit filtry</button></div>
+      <div class="op-mesice" aria-hidden="true">
         {osa.znacky.map(z => <span class:list={['op-znacka', { rok: z.rok }]} style={`left:${z.x}%`}>{z.text}</span>)}
         <span class="op-dnes-popisek" style={`left:${osa.dnes}%`}>dnes</span>
       </div>

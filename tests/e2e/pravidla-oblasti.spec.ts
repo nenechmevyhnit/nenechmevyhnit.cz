@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { VELIKOSTI, overBezPosouvani } from './pomocne';
+import { VELIKOSTI, overPosouvani, ukazCip } from './pomocne';
 
 test.use({ viewport: { width: 1366, height: 768 } });
 
@@ -37,18 +37,22 @@ test('přepínač tří pohledů zapisuje adresu a přímá adresa otevře pohle
 
 test('filtr skryje kartu bez odpovídajících změn a přepočítá počty', async ({ page }) => {
   await page.goto('/pravidla/');
-  await page.locator('.pr-filtry [data-stitek="soudy"]').click();
+  await (await ukazCip(page, page.locator('.pr-filtry [data-stitek="soudy"]'))).click();
   await expect(page.locator('.ob-karta:not([hidden])')).toHaveCount(1);
   await expect(page.locator('.ob-karta:not([hidden])')).toHaveAttribute('data-oblast', 'soudy-policie');
-  await page.locator('.pr-filtry .f-zrusit').click();
-  await page.getByRole('searchbox', { name: 'Hledat ve změnách pravidel' }).fill('lhutu k vymahani');
+  // na počítači je počítadlo a Zrušit filtry na řádku úvodu oblastí
+  await expect(page.locator('.ob-hlava .pocet')).toHaveText('1 z 4');
+  await page.locator('.ob-hlava .f-zrusit').click();
+  await expect(page.locator('.ob-hlava .pocet')).toHaveText('4 změny');
+  await expect(page.locator('.ob-hlava .f-zrusit')).toBeHidden();
+  await page.getByRole('searchbox', { name: 'Hledat v zákonech a nařízeních' }).fill('lhutu k vymahani');
   await expect(page.locator('.ob-karta:not([hidden])')).toHaveCount(2);
   await expect(page.locator('.ob-karta[data-oblast="dotace-stret-zajmu"] .ob-pocty')).toHaveText('1 změna · 0 přijato · 1 v projednávání');
 });
 
 test('filtr, který nic nenajde, ukáže prázdný stav oblastí a jde zrušit', async ({ page }) => {
   await page.goto('/pravidla/');
-  await page.getByRole('searchbox', { name: 'Hledat ve změnách pravidel' }).fill('xyzneexistuje');
+  await page.getByRole('searchbox', { name: 'Hledat v zákonech a nařízeních' }).fill('xyzneexistuje');
   await expect(page.locator('.ob-prazdno')).toBeVisible();
   await page.locator('.ob-prazdno [data-zrusit]').click();
   await expect(page.locator('.ob-karta:not([hidden])')).toHaveCount(4);
@@ -58,7 +62,7 @@ test('filtr, který nic nenajde, ukáže prázdný stav oblastí a jde zrušit',
 test('čip bez připomínkového řízení filtruje a seznam ukazuje štítek', async ({ page }) => {
   await page.goto('/pravidla/');
   await page.locator('.pr-filtry [data-bez-pripominek]').click();
-  await expect(page.locator('.pr-filtry .pocet')).toHaveText('Zobrazeno 2 z 4');
+  await expect(page.locator('.ob-hlava .pocet')).toHaveText('2 z 4');
   await expect(page.locator('.ob-karta:not([hidden])')).toHaveCount(2);
   await page.getByRole('button', { name: 'Seznam' }).click();
   await expect(page.locator('.pr-radek:not([hidden])')).toHaveCount(2);
@@ -79,9 +83,9 @@ test.describe('bez JavaScriptu', () => {
 });
 
 for (const v of VELIKOSTI) {
-  test(`${v.width}×${v.height}: pohled Oblasti se neposouvá dolů`, async ({ page }) => {
+  test(`${v.width}×${v.height}: pohled Oblasti se neposouvá (počítač dolů, mobil do strany)`, async ({ page }) => {
     await page.setViewportSize(v);
     await page.goto('/pravidla/');
-    await overBezPosouvani(page);
+    await overPosouvani(page);
   });
 }

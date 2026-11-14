@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { VELIKOSTI, overBezPosouvani, presahPanelu } from './pomocne';
+import { VELIKOSTI, overBezPosouvani, overPosouvani, presahPanelu } from './pomocne';
 
 test.use({ viewport: { width: 1366, height: 768 } });
 const OMEGA = 'Testovací novela zákona Omega s dlouhým názvem pro mobil';
@@ -59,7 +59,7 @@ test.describe('mobil 390×700', () => {
       await expect(page.locator('.prubeh-detail li:not(.konec) .jen-ctecka').first()).toHaveText(/^: hotovo, /);
       expect(await page.locator('#detail-nadpis').evaluate(e => parseFloat(getComputedStyle(e).fontSize))).toBeLessThanOrEqual(22);
       await expect(page.locator('.m2-hlava .planovano')).toBeHidden();
-      await overBezPosouvani(page);
+      await overPosouvani(page);
     }
     // schválený zákon: souhrn s posledním krokem a fází; zamítnutý návrh má místo souhrnu políčko ukončení
     await page.goto('/pravidla/zakon-omega/');
@@ -174,11 +174,11 @@ test.describe('bez JavaScriptu', () => {
 });
 
 for (const v of VELIKOSTI) {
-  test(`${v.width}×${v.height}: detail pravidla se neposouvá dolů`, async ({ page }) => {
+  test(`${v.width}×${v.height}: detail pravidla se neposouvá (počítač dolů, mobil do strany)`, async ({ page }) => {
     await page.setViewportSize(v);
     for (const adresa of ['/pravidla/zakon-omega/', '/pravidla/usneseni-kappa/']) {
       await page.goto(adresa);
-      await overBezPosouvani(page);
+      await overPosouvani(page);
     }
   });
 }
@@ -207,13 +207,14 @@ for (const v of VELIKOSTI) {
 
 // Delší cesta předložení (vynechané kontroly, připojení) nesmí ubrat místo události ani se oříznout.
 // Na Linuxu v CI se písmo láme jinak než ve Windows, proto test vyžaduje rezervu, ne jen hranici.
-for (const v of [{ width: 390, height: 700 }, { width: 1256, height: 528 }]) {
+const DLOUHA_CESTA = (el: Element) => { for (let i = 1; i <= 12; i++) el.insertAdjacentHTML('beforeend', `<p>Doplněný řádek ${i} s delším textem o cestě předložení.</p>`); };
+for (const v of [{ width: 1256, height: 528 }]) {
   test(`${v.width}×${v.height}: dlouhá cesta předložení se posouvá ve vlastním boxu a událost má místo`, async ({ page }) => {
     await page.setViewportSize(v);
     await page.goto('/pravidla/pozmenovaci-sigma/');
     await page.getByRole('tab', { name: 'Průběh' }).click();
     const box = page.locator('.m2-panel[data-p="chrono"] .cesta-box');
-    await box.evaluate(el => { for (let i = 1; i <= 12; i++) el.insertAdjacentHTML('beforeend', `<p>Doplněný řádek ${i} s delším textem o cestě předložení.</p>`); });
+    await box.evaluate(DLOUHA_CESTA);
     expect(await box.evaluate(el => el.scrollHeight > el.clientHeight + 1)).toBe(true);
     await expect(box).toHaveAttribute('tabindex', '0');
     await expect(box).toHaveAccessibleName('Cesta předložení');
@@ -223,6 +224,21 @@ for (const v of [{ width: 390, height: 700 }, { width: 1256, height: 528 }]) {
     expect(volno, 'pod nadpisem události zbývá místo aspoň na dva řádky textu').toBeGreaterThanOrEqual(40);
   });
 }
+
+// Na mobilu se celý detail posouvá dolů: dlouhá cesta předložení má přirozenou výšku a událost je pod ní.
+test('390×700: dlouhá cesta předložení se na mobilu neořízne, událost je pod ní a detail se neposouvá do strany', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 700 });
+  await page.goto('/pravidla/pozmenovaci-sigma/');
+  await page.getByRole('tab', { name: 'Průběh' }).click();
+  const box = page.locator('.m2-panel[data-p="chrono"] .cesta-box');
+  await box.evaluate(DLOUHA_CESTA);
+  expect(await box.evaluate(el => el.scrollHeight <= el.clientHeight + 1)).toBe(true);
+  expect(await presahPanelu(page, true)).toBeLessThanOrEqual(1);
+  const udalost = page.locator('.udalosti-seznam > li:not([hidden]) h3');
+  await udalost.scrollIntoViewIfNeeded();
+  await expect(udalost).toBeInViewport();
+  await overPosouvani(page);
+});
 
 test('pravidlo jen s kontrolou moci otevře záložku Kontrola moci: znaky, upozornění a odkaz na Metodiku', async ({ page }) => {
   await page.goto('/pravidla/usneseni-kappa/');
