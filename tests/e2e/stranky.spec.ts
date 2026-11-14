@@ -26,7 +26,17 @@ test('/metodika/#pravidla otevře oddíl Změny pravidel', async ({ page }) => {
   await expect(panel).toBeVisible();
   await expect(panel.getByRole('heading', { level: 2 })).toHaveText('Změny pravidel');
   await expect(panel).toContainText('Závěr je rozbor archivu, ne úřední zjištění.');
-  await expect(panel.locator('.slovnicek dt')).toHaveText(['prospěch doložen', 'prospěch pravděpodobný']);
+  await expect(panel.locator('.slovnicek:not(.hl-slovnicek) dt')).toHaveText(['prospěch doložen', 'prospěch pravděpodobný']);
+});
+
+test('/metodika/#hlasovani otevře oddíl Změny pravidel na pododdílu Hlasování', async ({ page }) => {
+  await page.goto('/metodika/#hlasovani');
+  const panel = page.locator('.v4-dlg-panel[data-sekce="pravidla"]');
+  await expect(panel).toBeVisible();
+  await expect(panel.locator('#hlasovani')).toHaveText('Hlasování');
+  await expect(panel).toContainText('Procedurální hlasování rozhoduje o pořadu nebo způsobu projednání, ne o obsahu návrhu');
+  await expect(panel.locator('.hl-slovnicek dt')).toHaveText(['zdržel se nebo nehlasoval', 'omluven', 'nepřihlášen']);
+  await expect(panel).toContainText('jak hlasovali jednotliví členové vlády, se nezveřejňuje');
 });
 
 test('/metodika/#kontrola-moci otevře oddíl Změny pravidel na pododdílu Dopad na kontrolu moci', async ({ page }) => {

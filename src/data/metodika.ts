@@ -133,6 +133,15 @@ ${sPravidly ? '<p>Změny pravidel, které předkládá nebo vydává vláda či 
 <li><strong>procedurální znak:</strong> ${seznamProcedur}. Přílepek je pozměňovací návrh mimo předmět projednávaného zákona, legislativní nouze je projednání ve stavu legislativní nouze,</li>
 <li>na tento znak upozornila aspoň jedna instituce (${upozornovateleTypu('instituce')}) nebo profesní organizace (${upozornovateleTypu('profesni-organizace')}). Upozornění se musí týkat právě tohoto pravidla a tohoto znaku, ne obecného tématu.</li></ul>
 <p>Kritika jen od opozice, watchdogů nebo médií k zařazení nestačí. Hodnotící slova ve vlastním textu nepoužíváme. Zapisujeme, co pravidlo mění, s odkazem na ustanovení, a kdo na to upozornil. <strong>Záznam dopadu na kontrolu moci je záznam upozornění institucí, ne hodnocení archivu.</strong> Personální a jiná jednotlivá rozhodnutí sem nepatří.</p>
+<h3 id="hlasovani">Hlasování</h3>
+<p>U zákonů projednávaných ve Sněmovně zapisujeme, jak hlasovaly poslanecké kluby a jednotliví poslanci. Zapisujeme <strong>hlasování o obsahu</strong> (zamítnutí nebo propuštění v 1. čtení, přikázání výboru, schválení ve 3. čtení, hlasování o vetu prezidenta nebo o návrhu Senátu, u pozměňovacího návrhu hlasování o něm) a <strong>procedurální hlasování</strong>, která rozhodla o osudu návrhu: zařazení na pořad, vyřazení nebo přesunutí bodu, zkrácení lhůt nebo schválení už v 1. čtení. Procedurální hlasování rozhoduje o pořadu nebo způsobu projednání, ne o obsahu návrhu, a vždy ho tak označujeme. Hlasování vybíráme, nezapisujeme automaticky každé hlasování k tisku.</p>
+<p>Údaje pocházejí z <a href="https://www.psp.cz/sqw/hp.sqw?k=1300">otevřených dat Poslanecké sněmovny</a>. Stahuje je veřejný skript <code>scripts/stahni-hlasovani.ts</code>. U každého hlasování uvádíme datum stažení a odkaz na jeho stránku na psp.cz, kde lze čísla ověřit. Klub poslance je ten, ve kterém byl v den hlasování.</p>
+<dl class="slovnicek hl-slovnicek">
+<dt>zdržel se nebo nehlasoval</dt><dd>Poslanec byl přihlášen, ale nehlasoval pro ani proti. Data PSP u jednotlivých poslanců tyto dvě možnosti nerozlišují, souhrn hlasování je uvádí zvlášť.</dd>
+<dt>omluven</dt><dd>Poslanec nebyl přihlášen a na dobu hlasování měl omluvu z jednání.</dd>
+<dt>nepřihlášen</dt><dd>Poslanec nebyl přihlášen a omluvu v evidenci neměl.</dd>
+</dl>
+<p>U nařízení vlády, usnesení vlády, pravidel dotačních programů a pokynů ministerstev hlasování neuvádíme: jak hlasovali jednotliví členové vlády, se nezveřejňuje, a o pravidlech programů a pokynech se nehlasuje vůbec.</p>
 <h3 id="vyhrady">Výhrady a jazyk</h3>
 <p>Uvádíme výhrady institucí, jako je Legislativní rada vlády, ÚOHS, NKÚ, Evropská komise nebo veřejný ochránce práv. Výhrady opozice patří do souvislostí a označujeme je jako politické. Dokud změna neplatí, píšeme podmiňovacím způsobem: novela <em>by zkrátila</em>, <em>umožnila by</em>. Upozornění ke znaku kontroly moci neřadíme mezi výhrady, uvádíme je v záložce Kontrola moci (oddíl Dopad na kontrolu moci).</p>`,
     }] : []),
