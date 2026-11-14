@@ -4,6 +4,8 @@ import matter from 'gray-matter';
 import { parse as parseYaml } from 'yaml';
 import { kauzaSchema, kauzaSchemaKoncepty, akterSchema, akterSchemaKoncepty, type Kauza, type Akter } from './schema';
 import { pravidloSchema, pravidloSchemaKoncepty, type Pravidlo } from './schema-pravidla';
+import { oblastSchema, oblastSchemaKoncepty, type OblastData } from './schema-oblasti';
+import { OBLASTI, type Oblast } from './pravidla-slovnik';
 import { seraditPravidla } from './pravidla';
 import { STRED } from './role';
 import { rozdelOdstavce, poznamkyVOdstavci } from './souvislosti';
@@ -13,6 +15,7 @@ import type { Snimek } from './schema-hlasovani';
 export type Chyba = { soubor: string; zprava: string };
 export type KauzaZaznam = { slug: string; kauza: Kauza; telo: string };
 export type PravidloZaznam = { slug: string; pravidlo: Pravidlo; telo: string };
+export type OblastZaznam = { id: Oblast; data: OblastData };
 /** koncepty: lokální náhled neověřených konceptů (smí chybět overeno). Nikdy pro veřejný web.
  *  znameKauzy: slugy kauz mimo načítaný adresář (náhled konceptů nevidí zveřejněné kauzy, pravidla na ně ale odkazují). */
 export type Rezim = { koncepty?: boolean; znameKauzy?: Iterable<string> };
@@ -62,6 +65,7 @@ export function overVazbyPravidel(adresar: string, pravidla: PravidloZaznam[], s
   const vysledek = pravidla.map(z => {
     const soubor = join(adresar, 'pravidla', `${z.slug}.md`);
     if (zname.has(z.slug)) chyby.push({ soubor, zprava: `Slug „${z.slug}“ už používá kauza; pravidlo musí mít jiný název souboru` });
+    if (z.slug === 'oblasti') chyby.push({ soubor, zprava: 'Slug „oblasti“ je vyhrazený pro stránky oblastí (/pravidla/oblasti/); pravidlo musí mít jiný název souboru' });
     const kauzy = z.pravidlo.kauzy.filter(k => {
       if (zname.has(k.kauza)) return true;
       const zprava = `Vazba na neexistující kauzu „${k.kauza}“`;
@@ -144,6 +148,62 @@ export function overVazby(adresar: string, zaznamy: KauzaZaznam[], akteri: Map<s
   return { zaznamy: vysledek, chyby, varovani };
 }
 
+/** Soubory oblastí (specifikace oblastí, oddíl 7.2 a 7.3). Oblast s aspoň jednou změnou musí mít soubor s úvodem.
+ *  Odkaz hodnocení na neexistující změnu veřejný build vynechá s varováním (změna může být zatím jen v konceptech),
+ *  odkaz na změnu z jiné oblasti je vždy chyba. */
+export function overOblasti(adresar: string, soubory: { slug: string; soubor: string; data: unknown }[], pravidla: PravidloZaznam[], rezim: Rezim = {}): { oblasti: OblastZaznam[]; chyby: Chyba[]; varovani: Chyba[] } {
+  const chyby: Chyba[] = [];
+  const varovani: Chyba[] = [];
+  const nactene = new Map<Oblast, OblastData>();
+  const schema = rezim.koncepty ? oblastSchemaKoncepty : oblastSchema;
+  for (const s of soubory) {
+    if (!(OBLASTI as readonly string[]).includes(s.slug)) { chyby.push({ soubor: s.soubor, zprava: `Neznámá oblast „${s.slug}“ (oblasti jsou ve slovníku src/lib/pravidla-slovnik.ts)` }); continue; }
+    const r = schema.safeParse(s.data);
+    if (!r.success) { for (const i of r.error.issues) chyby.push({ soubor: s.soubor, zprava: `${i.path.join('.') || 'oblast'}: ${i.message}` }); continue; }
+    const id = s.slug as Oblast;
+    const hodnoceni = r.data.hodnoceni.map((h, i) => ({
+      ...h,
+      pravidla: h.pravidla.filter((slug, j) => {
+        const z = pravidla.find(p => p.slug === slug);
+        const kde = `Hodnocení ${i + 1} („${h.kdo}“)`;
+        if (h.pravidla.indexOf(slug) !== j) { chyby.push({ soubor: s.soubor, zprava: `${kde} uvádí změnu „${slug}“ dvakrát` }); return false; }
+        if (!z) {
+          const zprava = `${kde} odkazuje na neexistující změnu „${slug}“`;
+          if (rezim.koncepty) chyby.push({ soubor: s.soubor, zprava });
+          else varovani.push({ soubor: s.soubor, zprava: `${zprava} (odkaz se nezobrazí)` });
+          return false;
+        }
+        if (!z.pravidlo.oblasti?.includes(id)) { chyby.push({ soubor: s.soubor, zprava: `${kde} odkazuje na změnu „${slug}“, která do oblasti nepatří` }); return false; }
+        return true;
+      }),
+    }));
+    nactene.set(id, { ...r.data, hodnoceni });
+  }
+  // Přechodné pravidlo (14. 11. 2026): oblasti a proVas mají všechny zveřejněné změny, nebo žádná. Dokud je
+  // nemá žádná, pohled Oblasti se nezobrazí; jakmile je dostane jedna, musí je mít všechny (spec oblastí, 7.3).
+  const zapnuto = pravidla.some(z => z.pravidlo.oblasti || z.pravidlo.proVas);
+  if (!rezim.koncepty && !zapnuto && pravidla.length > 0)
+    varovani.push({ soubor: join(adresar, 'pravidla'), zprava: 'Žádná změna zatím nemá oblasti ani text „Co by to znamenalo pro vás“, pohled Oblasti se nezobrazí' });
+  for (const z of pravidla) {
+    const soubor = join(adresar, 'pravidla', `${z.slug}.md`);
+    if (rezim.koncepty) {
+      if (!z.pravidlo.oblasti) varovani.push({ soubor, zprava: 'Změna zatím nemá oblasti (v pohledu Oblasti se nezobrazí)' });
+      if (!z.pravidlo.proVas) varovani.push({ soubor, zprava: 'Změna zatím nemá text „Co by to znamenalo pro vás“' });
+    } else if (zapnuto) {
+      if (!z.pravidlo.oblasti) chyby.push({ soubor, zprava: 'Změna musí patřit aspoň do jedné oblasti (oblasti)' });
+      if (!z.pravidlo.proVas) chyby.push({ soubor, zprava: 'Změna musí mít text „Co by to znamenalo pro vás“ (proVas)' });
+    }
+  }
+  for (const id of OBLASTI) {
+    if (nactene.has(id) || !pravidla.some(z => z.pravidlo.oblasti?.includes(id))) continue;
+    const soubor = join(adresar, 'oblasti', `${id}.md`);
+    const zprava = `Oblast „${id}“ má zveřejněné změny, ale chybí soubor ${soubor} s úvodem`;
+    if (rezim.koncepty) varovani.push({ soubor, zprava });
+    else chyby.push({ soubor, zprava });
+  }
+  return { oblasti: OBLASTI.filter(id => nactene.has(id)).map(id => ({ id, data: nactene.get(id)! })), chyby, varovani };
+}
+
 type SouborObsahu = { slug: string; soubor: string; data: unknown; content: string };
 
 function nactiSlozku(adresar: string, nazev: string, chyby: Chyba[]): SouborObsahu[] {
@@ -160,7 +220,7 @@ function nactiSlozku(adresar: string, nazev: string, chyby: Chyba[]): SouborObsa
   return vysledek;
 }
 
-export function overAdresar(adresar: string, rezim: Rezim = {}): { zaznamy: KauzaZaznam[]; pravidla: PravidloZaznam[]; hlasovani: Map<string, Snimek>; stitky: Map<string, string>; akteri: Map<string, Akter>; chyby: Chyba[]; varovani: Chyba[] } {
+export function overAdresar(adresar: string, rezim: Rezim = {}): { zaznamy: KauzaZaznam[]; pravidla: PravidloZaznam[]; oblasti: OblastZaznam[]; hlasovani: Map<string, Snimek>; stitky: Map<string, string>; akteri: Map<string, Akter>; chyby: Chyba[]; varovani: Chyba[] } {
   const stitky = nactiSlovnikStitku(adresar);
   const sadaStitku = new Set(stitky.keys());
   const chyby: Chyba[] = [];
@@ -189,14 +249,17 @@ export function overAdresar(adresar: string, rezim: Rezim = {}): { zaznamy: Kauz
   chyby.push(...snimky.chyby);
   const odkazy = overHlasovaniPravidel(adresar, vazbyPravidel.pravidla, snimky.snimky, snimky.neplatne);
   chyby.push(...odkazy.chyby);
+  const ob = overOblasti(adresar, nactiSlozku(adresar, 'oblasti', chyby), vazbyPravidel.pravidla, rezim);
+  chyby.push(...ob.chyby);
 
   return {
     zaznamy,
     pravidla: seraditPravidla(vazbyPravidel.pravidla),
+    oblasti: ob.oblasti,
     hlasovani: new Map([...snimky.snimky].filter(([id]) => odkazy.odkazovane.has(id))),
     stitky,
     akteri: slovnik.akteri,
     chyby,
-    varovani: [...vazby.varovani, ...vazbyPravidel.varovani, ...odkazy.varovani],
+    varovani: [...vazby.varovani, ...vazbyPravidel.varovani, ...ob.varovani, ...odkazy.varovani],
   };
 }

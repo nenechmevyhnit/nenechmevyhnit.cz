@@ -1,1 +1,6 @@
-<div class="portret" aria-hidden="true"><img src="/obrazky/portret.webp" alt="" width="960" height="1280" decoding="async"></div>
+---
+// Velký obrázek v pozadí vpravo (pozicování v hlavni.css). Kauzy: portrét Andreje Babiše, změny pravidel: socha Spravedlnosti.
+interface Props { obrazek?: 'portret' | 'spravedlnost' }
+const { obrazek = 'portret' } = Astro.props;
+---
+<div class="portret" aria-hidden="true"><img src={`/obrazky/${obrazek}.webp`} alt="" width="960" height="1280" decoding="async"></div>

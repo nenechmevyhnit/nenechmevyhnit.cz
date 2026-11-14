@@ -3,6 +3,7 @@ import {
   DRUHY_PRAVIDEL, DUVODY, popisekDuvodu, DRUHY_ZNAKU, popisekDruhuZnaku, KONTROLNI_INSTITUCE, popisekInstituce,
   popisekZnaku, UPOZORNOVATELE, upozornovatel, popisekTypuUpozornovatele,
   cestyProDruh, popisekCesty, vynechaneKontroly, popisekKomu, popisekZaveru,
+  OBLASTI, oblast, TYPY_HODNOCENI, popisekTypuHodnoceni,
 } from '../../src/lib/pravidla-slovnik';
 import { krokyProDruh, popisekKroku, stavPravidla, vProjednavani, prubeh, KROKY, UKONCUJICI } from '../../src/lib/pravidla-stavy';
 
@@ -130,8 +131,8 @@ describe('slovník kontroly moci', () => {
   });
   it('uzavřené seznamy odpovídají specifikaci', () => {
     expect(DRUHY_ZNAKU).toEqual(['instituce', 'prilepek', 'legislativni-nouze', 'prvni-cteni', 'zpetna-ucinnost']);
-    expect(KONTROLNI_INSTITUCE).toEqual(['soudy', 'statni-zastupitelstvi', 'nku', 'uohs', 'ombudsman', 'policie', 'media-verejne-sluzby', 'dohled-strany', 'cnb', 'pristup-k-informacim', 'registr-smluv']);
-    expect(UPOZORNOVATELE.filter(u => upozornovatel(u).typ === 'instituce')).toEqual(['ustavni-soud', 'legislativni-rada-vlady', 'ombudsman', 'nku', 'evropska-komise', 'benatska-komise', 'nejvyssi-soud', 'nejvyssi-statni-zastupitelstvi', 'legislativni-odbor-snemovny']);
+    expect(KONTROLNI_INSTITUCE).toEqual(['soudy', 'statni-zastupitelstvi', 'nku', 'uohs', 'ombudsman', 'policie', 'media-verejne-sluzby', 'dohled-strany', 'cnb', 'pristup-k-informacim', 'registr-smluv', 'rozpoctova-rada', 'rozpoctova-pravidla', 'statni-sluzba', 'statni-podniky', 'neziskove-organizace']);
+    expect(UPOZORNOVATELE.filter(u => upozornovatel(u).typ === 'instituce')).toEqual(['ustavni-soud', 'legislativni-rada-vlady', 'ombudsman', 'nku', 'evropska-komise', 'benatska-komise', 'nejvyssi-soud', 'nejvyssi-statni-zastupitelstvi', 'legislativni-odbor-snemovny', 'narodni-rozpoctova-rada']);
     expect(UPOZORNOVATELE.filter(u => upozornovatel(u).typ === 'profesni-organizace')).toEqual(['soudcovska-unie', 'unie-statnich-zastupcu', 'ceska-advokatni-komora', 'syndikat-novinaru']);
   });
   it('popisky znaků a typů', () => {
@@ -143,5 +144,32 @@ describe('slovník kontroly moci', () => {
     expect(upozornovatel('soudcovska-unie')).toEqual({ nazev: 'Soudcovská unie ČR', typ: 'profesni-organizace' });
     expect(popisekTypuUpozornovatele('profesni-organizace')).toBe('profesní organizace');
     expect(popisekTypuUpozornovatele('instituce')).toBe('instituce');
+    expect(popisekDruhuZnaku('instituce')).toBe('mění instituci nebo pravidla státu');
+    expect(popisekInstituce('statni-sluzba')).toBe('státní služba');
+    expect(popisekInstituce('rozpoctova-pravidla', 'plne')).toBe('pravidla rozpočtové odpovědnosti (limity dluhu a schodku, schvalování schodku Sněmovnou)');
+    expect(upozornovatel('narodni-rozpoctova-rada')).toEqual({ nazev: 'Národní rozpočtová rada', typ: 'instituce' });
+  });
+});
+
+describe('slovník oblastí', () => {
+  it('osm oblastí v pořadí specifikace (pořadí karet)', () => {
+    expect(OBLASTI).toEqual(['dotace-stret-zajmu', 'zemedelstvi-potraviny', 'soudy-policie', 'kontrolni-urady', 'verejne-finance', 'verejnopravni-media', 'statni-sprava', 'obcanska-spolecnost']);
+  });
+  it('názvy a popisky', () => {
+    expect(oblast('dotace-stret-zajmu')).toEqual({ nazev: 'Dotace a střet zájmů', popisek: 'Kdo dostane peníze z dotací a kdo to hlídá' });
+    expect(oblast('soudy-policie').nazev).toBe('Soudy, státní zastupitelství a policie');
+    for (const o of OBLASTI) {
+      expect(oblast(o).nazev.length).toBeGreaterThan(0);
+      expect(oblast(o).popisek.length).toBeGreaterThan(0);
+    }
+  });
+  it('popisky nepojmenovávají vládu ani konkrétní osobu či firmu', () => {
+    for (const o of OBLASTI) expect(`${oblast(o).nazev} ${oblast(o).popisek}`).not.toMatch(/babiš|agrofert|vlád/i);
+  });
+  it('typy hodnocení v pořadí zobrazení', () => {
+    expect(TYPY_HODNOCENI).toEqual(['vlada', 'instituce', 'odbornik']);
+    expect(popisekTypuHodnoceni('vlada')).toBe('Stanovisko vlády');
+    expect(popisekTypuHodnoceni('instituce')).toBe('Instituce');
+    expect(popisekTypuHodnoceni('odbornik')).toBe('Odborníci');
   });
 });

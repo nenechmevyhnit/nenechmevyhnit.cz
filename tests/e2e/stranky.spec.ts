@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { overBezPosouvani } from './pomocne';
+import { overBezPosouvani, overBezPosouvaniDoStrany } from './pomocne';
 
 test.use({ viewport: { width: 1366, height: 768 } });
 
-for (const [cesta, nadpis, karet] of [['/metodika/', 'Jak archiv vedeme', 8], ['/o-projektu/', 'Kdo, proč a jak', 7]] as const) {
+for (const [cesta, nadpis, karet] of [['/metodika/', 'Jak archiv vedeme', 9], ['/o-projektu/', 'Kdo, proč a jak', 7]] as const) {
   test(`${cesta}: karty, modal s plným zněním, bez posouvání`, async ({ page }) => {
     await page.goto(cesta);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(nadpis);
@@ -20,11 +20,11 @@ for (const [cesta, nadpis, karet] of [['/metodika/', 'Jak archiv vedeme', 8], ['
   });
 }
 
-test('/metodika/#pravidla otevře oddíl Změny pravidel', async ({ page }) => {
+test('/metodika/#pravidla otevře oddíl Zákony a nařízení', async ({ page }) => {
   await page.goto('/metodika/#pravidla');
   const panel = page.locator('.v4-dlg-panel[data-sekce="pravidla"]');
   await expect(panel).toBeVisible();
-  await expect(panel.getByRole('heading', { level: 2 })).toHaveText('Změny pravidel');
+  await expect(panel.getByRole('heading', { level: 2 })).toHaveText('Zákony a nařízení');
   await expect(panel).toContainText('Závěr je rozbor archivu, ne úřední zjištění.');
   await expect(panel.locator('.slovnicek:not(.hl-slovnicek) dt')).toHaveText(['prospěch doložen', 'prospěch pravděpodobný']);
 });
@@ -39,7 +39,14 @@ test('/metodika/#hlasovani otevře oddíl Změny pravidel na pododdílu Hlasová
   await expect(panel).toContainText('jak hlasovali jednotliví členové vlády, se nezveřejňuje');
 });
 
-test('/metodika/#kontrola-moci otevře oddíl Změny pravidel na pododdílu Dopad na kontrolu moci', async ({ page }) => {
+test('/metodika/#oblasti otevře oddíl Oblasti', async ({ page }) => {
+  await page.goto('/metodika/#oblasti');
+  const panel = page.locator('.v4-dlg-panel[data-sekce="oblasti"]');
+  await expect(panel).toBeVisible();
+  await expect(panel.getByRole('heading', { level: 2 })).toHaveText('Oblasti');
+});
+
+test('/metodika/#kontrola-moci otevře oddíl Zákony a nařízení na pododdílu Dopad na kontrolu moci', async ({ page }) => {
   await page.goto('/metodika/#kontrola-moci');
   const panel = page.locator('.v4-dlg-panel[data-sekce="pravidla"]');
   await expect(panel).toBeVisible();
@@ -69,7 +76,7 @@ test('Metodika a O projektu mluví o prospěchu neutrálně, jako o výsledku ro
   await expect(page.locator('.v4-dlg-panel[data-sekce="proc"]')).toContainText('u kterých rozbor archivu ukazuje prospěch pro Andreje Babiše nebo Agrofert');
 });
 
-test('bez pravidel Metodika ani O projektu o oddílu Změny pravidel nemluví', async ({ page }) => {
+test('bez pravidel Metodika ani O projektu o oddílu Zákony a nařízení nemluví', async ({ page }) => {
   await page.goto('http://localhost:4322/metodika/');
   await expect(page.locator('.v4-karta:not(.v4-cta)')).toHaveCount(7);
   await expect(page.locator('[data-sekce="pravidla"]')).toHaveCount(0);
@@ -80,7 +87,7 @@ test('bez pravidel Metodika ani O projektu o oddílu Změny pravidel nemluví', 
   await page.goto('http://localhost:4322/o-projektu/');
   await expect(page.locator('.v4-karta:not(.v4-cta)')).toHaveCount(7);
   await page.locator('.v4-karta button[data-sekce="proc"]').click();
-  await expect(page.locator('.v4-dlg-panel[data-sekce="proc"]')).not.toContainText('změny pravidel');
+  await expect(page.locator('.v4-dlg-panel[data-sekce="proc"]')).not.toContainText('zákony a nařízení');
 });
 
 test('Metodika obsahuje slovníček stavů', async ({ page }) => {
@@ -89,7 +96,7 @@ test('Metodika obsahuje slovníček stavů', async ({ page }) => {
   await expect(page.locator('.v4-dlg-panel[data-sekce="stavy"] .slovnicek dt')).toHaveCount(9);
 });
 
-for (const [sirka, vyska] of [[1366, 768], [1256, 528], [990, 660], [390, 700]] as const) {
+for (const [sirka, vyska] of [[1366, 768], [1256, 528], [990, 660]] as const) {
   test(`${sirka}×${vyska}: delší text v modalu Metodiky se neořízne, pokračuje do strany s nápovědou`, async ({ page }) => {
     await page.setViewportSize({ width: sirka, height: vyska });
     await page.goto('/metodika/');
@@ -116,6 +123,29 @@ for (const [sirka, vyska] of [[1366, 768], [1256, 528], [990, 660], [390, 700]] 
     await expect(posledni).toBeInViewport();
   });
 }
+
+// Mobil: plné znění oddílu se posouvá dolů (menu oddílů zůstane nahoře), ne ve sloupcích do strany.
+test('mobil 390×700: plné znění v modalu Metodiky se posouvá dolů, nic se neořízne', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 700 });
+  await page.goto('/metodika/');
+  await page.locator('.v4-karta button[data-sekce]').first().click();
+  const tlacitka = page.locator('.v4-dlg-menu button');
+  for (let i = 0; i < await tlacitka.count(); i++) {
+    const id = await tlacitka.nth(i).getAttribute('data-sekce');
+    await tlacitka.nth(i).click();
+    const panel = page.locator(`.v4-dlg-panel[data-sekce="${id}"]`);
+    await expect(panel).toBeVisible();
+    const p = await panel.evaluate(el => ({ sw: el.scrollWidth, cw: el.clientWidth, oy: getComputedStyle(el).overflowY }));
+    expect(p.sw, `oddíl ${id} se nesmí posouvat do strany`).toBeLessThanOrEqual(p.cw);
+    expect(p.oy).toBe('auto');
+    await expect(panel.locator('.posun-napoveda')).toBeHidden();
+  }
+  await page.locator('.v4-dlg-menu button[data-sekce="jazyk"]').click();
+  const posledni = page.locator('.v4-dlg-panel[data-sekce="jazyk"] p').last();
+  await posledni.scrollIntoViewIfNeeded();
+  await expect(posledni).toBeInViewport();
+  await expect(page.locator('.v4-dlg-menu')).toBeInViewport();
+});
 
 test('kolečko myši posouvá delší oddíl modalu do strany', async ({ page }) => {
   await page.goto('/metodika/#jazyk');
@@ -190,7 +220,7 @@ test.describe('mobil 390×700', () => {
     await page.goto('/metodika/');
     const karty = page.locator('.v4-karta:not(.v4-cta)');
     const pocet = await karty.count();
-    expect(pocet).toBe(8);
+    expect(pocet).toBe(9);
     for (let i = 0; i < pocet; i++) {
       await karty.nth(i).click({ position: { x: 20, y: 20 } });
       await expect(page.locator('dialog.v4-dlg')).toBeVisible();
@@ -219,8 +249,7 @@ test.describe('mobil 390×700: hlavní stránka', () => {
     await expect(page.locator('.pocet:visible')).toBeVisible();
     await page.getByLabel('jen neuzavřené').check();
     await expect(page.locator('.f-zrusit:visible')).toBeVisible();
-    const { svisle, vyska } = await page.evaluate(() => ({ svisle: document.scrollingElement!.scrollHeight, vyska: innerHeight }));
-    expect(svisle).toBeLessThanOrEqual(vyska);
+    await overBezPosouvaniDoStrany(page);
   });
 });
 
@@ -231,4 +260,15 @@ test('Metodika vysvětluje vazby mezi kauzami v oddílu Co do archivu patří', 
   await expect(panel.getByRole('heading', { name: 'Vazby mezi kauzami' })).toBeVisible();
   await expect(panel).toContainText('Vazba sama o sobě neznamená vinu ani spoluodpovědnost.');
   await expect(panel).toContainText('Vztahy firem, osob a nástrojů mají navíc období');
+});
+
+test('Metodika má oddíl Oblasti se seznamem oblastí a pravidly citací', async ({ page }) => {
+  await page.goto('/metodika/');
+  await page.locator('.v4-karta button[data-sekce="oblasti"]').click();
+  const oddil = page.locator('.v4-dlg-panel[data-sekce="oblasti"]');
+  await expect(oddil).toBeVisible();
+  for (const nazev of ['Dotace a střet zájmů', 'Veřejnoprávní média', 'Občanská společnost']) await expect(oddil).toContainText(nazev);
+  await expect(oddil).toContainText('Výběr citací podle metodiky, ne hodnocení archivu.');
+  await page.locator('.v4-dlg-menu button[data-sekce="pravidla"]').click();
+  await expect(page.locator('.v4-dlg-panel[data-sekce="pravidla"]')).toContainText('státní služba (přijímání, hodnocení a odvolávání státních zaměstnanců)');
 });

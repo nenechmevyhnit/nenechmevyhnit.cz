@@ -8,6 +8,8 @@ pripojenoK:
   nazev: Fiktivní novela zákona o fiktivních dotacích
   zdroje: [1]
 stitky: [dotace]
+oblasti: [dotace-stret-zajmu]
+proVas: { text: "Přímo se vás to nedotkne. Fiktivní návrh by změnil podmínky fiktivní dotace pro velké podniky.", zdroje: [1] }
 overeno: 2026-11-09
 zdroje:
   - { id: 1, vydavatel: Fiktivní sněmovna, titulek: Pozměňovací návrh Sigma, datum: 2026-04-02, druh: primarni, url: "https://example.com/sigma/navrh" }

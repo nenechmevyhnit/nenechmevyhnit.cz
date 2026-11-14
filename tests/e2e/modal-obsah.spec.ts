@@ -80,3 +80,56 @@ test('záložky detailu nemají svislý posuvník', async ({ page }) => {
   const z = await page.locator('#detail .zalozky').evaluate(e => ({ vyska: e.scrollHeight, viditelna: e.clientHeight, oy: getComputedStyle(e).overflowY }));
   expect(z.oy === 'hidden' || z.vyska <= z.viditelna, `obsah záložek ${z.vyska} px > ${z.viditelna} px`).toBe(true);
 });
+
+// Mobil: hlavička detailu (shrnutí, částky, mini-osa) zabere většinu výšky telefonu. Celý modal se proto posouvá
+// dolů, každá záložka má přirozenou výšku (nic se neořízne, nic nemá vlastní posuvník) a zavírací tlačítko
+// i lišta záložek zůstanou při posouvání vidět.
+for (const v of [{ width: 375, height: 667 }, { width: 320, height: 568 }]) {
+  test(`mobil ${v.width}×${v.height}: detail se posouvá dolů a žádná záložka není useknutá`, async ({ page }) => {
+    await page.setViewportSize(v);
+    await page.goto('/kauzy/alfa-dotace/');
+    const dlg = page.locator('dialog#detail');
+    expect(await dlg.evaluate(d => getComputedStyle(d).overflowY)).toBe('auto');
+    for (const zalozka of ['Proč je to kauza', 'Chronologie', 'Souvislosti', 'Stav a stanovisko', /^Zdroje/]) {
+      await page.getByRole('tab', { name: zalozka }).click();
+      const panel = page.locator('#detail .m2-panel:not([hidden])');
+      const p = await panel.evaluate(el => {
+        const vnitrni = [el, ...el.querySelectorAll<HTMLElement>('*')].filter(x =>
+          x.scrollHeight > x.clientHeight + 1 && getComputedStyle(x).overflowY !== 'visible');
+        return { sw: el.scrollWidth, cw: el.clientWidth, vnitrni: vnitrni.map(x => x.className || x.tagName) };
+      });
+      expect(p.vnitrni, `záložka ${zalozka}: nic se nesmí posouvat (ani ořezat) uvnitř panelu`).toEqual([]);
+      expect(p.sw, `záložka ${zalozka}: panel se nesmí posouvat do strany`).toBeLessThanOrEqual(p.cw);
+      // konec záložky jde posunem modalu zobrazit, zavírací tlačítko a lišta záložek zůstanou vidět
+      await dlg.evaluate(d => { d.scrollTop = d.scrollHeight; });
+      await expect(panel.locator(':scope > *:not(.panel-nadpis)').last()).toBeInViewport();
+      await expect(page.getByRole('button', { name: 'Zavřít detail' })).toBeInViewport();
+      await expect(page.getByRole('tab', { name: zalozka })).toBeInViewport();
+      await dlg.evaluate(d => { d.scrollTop = 0; });
+    }
+  });
+}
+
+test('mobil: přepnutí záložky dole v dlouhém obsahu ukáže začátek nové záložky', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await page.goto('/kauzy/alfa-dotace/');
+  await page.getByRole('tab', { name: /^Zdroje/ }).click();
+  await page.locator('dialog#detail').evaluate(d => { d.scrollTop = d.scrollHeight; });
+  await page.getByRole('tab', { name: 'Proč je to kauza' }).click();
+  await expect(page.locator('#detail .proc-text')).toBeInViewport();
+});
+
+for (const v of [{ width: 390, height: 700 }, { width: 320, height: 568 }, { width: 1366, height: 768 }]) {
+  test(`${v.width}×${v.height}: popisek vybrané události nepřesahuje okraj detailu`, async ({ page }) => {
+    await page.setViewportSize(v);
+    await page.goto('/kauzy/zeta-stret/');
+    const body = page.locator('#detail .mini-osa .bod');
+    for (const i of [0, await body.count() - 1]) {
+      await body.nth(i).click();
+      await expect.poll(() => page.locator('#detail .vybrany-popis').evaluate(p => {
+        const r = p.getBoundingClientRect(), d = p.closest('dialog')!.getBoundingClientRect();
+        return r.left >= d.left && r.right <= d.right;
+      })).toBe(true);
+    }
+  });
+}

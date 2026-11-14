@@ -5,6 +5,8 @@ druh: usneseni-vlady
 cesta: usneseni-vlady
 predkladatel: Fiktivní ministr spravedlnosti
 stitky: [soudy]
+oblasti: [soudy-policie]
+proVas: { text: "Fiktivní soudce by vybíral fiktivní ministr bez výběrové komise. Uchazeči by se proti pořadí nemohli odvolat.", zdroje: [1] }
 overeno: 2026-11-09
 zdroje:
   - { id: 1, vydavatel: Fiktivní úřad vlády, titulek: Usnesení vlády Kappa, datum: 2026-01-12, druh: primarni, url: "https://example.com/kappa/usneseni" }

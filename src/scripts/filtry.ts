@@ -1,7 +1,8 @@
 import { odpovida, jeAktivni, seradit, normalizuj, PRAZDNY_FILTR, type Filtr, type PolozkaHledani } from '../lib/hledani';
-import { pocetNaStranku, pocetStranek, cislaStranek } from '../lib/strankovani';
+import { pocetNaStranku, pocetStranek, cislaStranek, NEJVIC_NA_STRANKU } from '../lib/strankovani';
 import { sklonuj } from '../lib/cestina';
 import { nastavViditelne } from './stav-filtru';
+import { inicializujCipy } from './cipy';
 
 export function inicializujFiltry(): void {
   const panel = document.querySelector<HTMLElement>('.filtry');
@@ -24,6 +25,9 @@ export function inicializujFiltry(): void {
   const cisla = strankovani.querySelector<HTMLElement>('.s-cisla')!;
   const pred = strankovani.querySelector<HTMLButtonElement>('.s-pred')!;
   const dalsi = strankovani.querySelector<HTMLButtonElement>('.s-dalsi')!;
+  // Na mobilu se stránka posouvá dolů a řádky osy mají přirozenou výšku: na stránce je pevný počet kauz
+  // (CSS proměnná --na-stranku, jinak 10), ne tolik, kolik se vejde na výšku okna.
+  const mobil = matchMedia('(max-width: 760px)');
 
   const radekPodle = new Map<string, HTMLElement>();
   for (const p of polozky) {
@@ -60,6 +64,14 @@ export function inicializujFiltry(): void {
     if (!prvni) return;
     strankovani.hidden = true;
     radky.classList.remove('strankovane');
+    if (mobil.matches) {
+      const n = parseInt(getComputedStyle(graf).getPropertyValue('--na-stranku'), 10) || NEJVIC_NA_STRANKU;
+      if (polozky.length <= n) { naStranku = Infinity; return; }
+      strankovani.hidden = false;
+      graf.style.setProperty('--vyska-strankovani', `${strankovani.offsetHeight}px`);
+      naStranku = n;
+      return;
+    }
     // aspoň 34 px, jinak se popisek let nad pruhem nevejde; a tolik, aby byl celý vidět i dvouřádkový název
     // se stavem a počtem zdrojů (řádky jedné stránky jsou stejně vysoké, rozhoduje nejvyšší obsah)
     const vyskaRadku = Math.max(parseFloat(getComputedStyle(prvni).minHeight) || 0, 34, potrebnaVyskaRadku());
@@ -83,7 +95,7 @@ export function inicializujFiltry(): void {
     rozsah.textContent = shoda.length ? `${od + 1}–${Math.min(od + naStranku, shoda.length)} z ${shoda.length}` : '0 z 0';
     pred.disabled = strana <= 1;
     dalsi.disabled = strana >= celkem;
-    cisla.replaceChildren(...cislaStranek(strana, celkem).map(c => {
+    cisla.replaceChildren(...cislaStranek(strana, celkem, mobil.matches ? 5 : 7).map(c => {
       if (c === null) { const s = document.createElement('span'); s.className = 's-mezera'; s.textContent = '…'; return s; }
       const b = document.createElement('button');
       b.type = 'button'; b.textContent = String(c); b.dataset.strana = String(c);
@@ -175,12 +187,17 @@ export function inicializujFiltry(): void {
   zrusit.forEach(z => z.addEventListener('click', reset));
   prazdno.querySelector('[data-zrusit]')!.addEventListener('click', reset);
 
-  // stránkování
-  pred.addEventListener('click', () => { strana--; aplikuj(); });
-  dalsi.addEventListener('click', () => { strana++; aplikuj(); });
+  // stránkování; na mobilu je lišta pod seznamem, po přepnutí stránky se proto ukáže začátek osy
+  const naZacatekOsy = () => {
+    if (!mobil.matches || graf.getBoundingClientRect().top >= 0) return;
+    const sPohybem = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+    graf.scrollIntoView({ block: 'start', behavior: sPohybem ? 'smooth' : 'instant' });
+  };
+  pred.addEventListener('click', () => { strana--; aplikuj(); naZacatekOsy(); });
+  dalsi.addEventListener('click', () => { strana++; aplikuj(); naZacatekOsy(); });
   cisla.addEventListener('click', e => {
     const b = (e.target as HTMLElement).closest<HTMLElement>('button[data-strana]');
-    if (b) { strana = Number(b.dataset.strana); aplikuj(); }
+    if (b) { strana = Number(b.dataset.strana); aplikuj(); naZacatekOsy(); }
   });
   // otevřená kauza (detail) musí být na ose vidět: přepni na její stránku
   document.addEventListener('nv:vyber', e => {
@@ -192,8 +209,9 @@ export function inicializujFiltry(): void {
   const prepocitej = () => {
     // v pohledu mapy jsou řádky osy skryté, měřit se nedají
     if (graf.dataset.pohled === 'mapa') return;
-    // i změna šířky: názvy kauz se můžou zalomit jinak a řádek potřebuje jinou výšku
-    const v = graf.clientHeight * 100000 + graf.clientWidth;
+    // i změna šířky: názvy kauz se můžou zalomit jinak a řádek potřebuje jinou výšku.
+    // Na mobilu výška osy záleží na obsahu (mění se s každou stránkou), rozhoduje jen šířka.
+    const v = mobil.matches ? -graf.clientWidth : graf.clientHeight * 100000 + graf.clientWidth;
     if (v === posledniVyska) return;
     posledniVyska = v;
     const kotva = vybrany() ?? (isFinite(naStranku) ? shoda[(strana - 1) * naStranku]?.slug : null) ?? null;
@@ -207,46 +225,8 @@ export function inicializujFiltry(): void {
   // po načtení písma mají názvy jinou šířku: změřit znovu
   document.fonts.ready.then(() => { posledniVyska = -1; prepocitej(); });
 
-  // Témata: v jednom řádku jen ta, která se vejdou, zbytek otevře „+N další“. Vybraná témata jsou vidět vždy,
-  // ostatní se doplní v abecedním pořadí, dokud je místo. Nic se neposouvá ani nemizí do ztracena.
-  const obal = cipy.parentElement!, vice = cipy.querySelector<HTMLButtonElement>('.f-vice')!;
-  const vsechnyCipy = [...cipy.querySelectorAll<HTMLButtonElement>('button[data-stitek]')];
-  let rozbaleno = false;
-  function rozvrhniCipy() {
-    obal.classList.toggle('rozbalene', rozbaleno);
-    vsechnyCipy.forEach(c => { c.hidden = false; });
-    if (rozbaleno) {
-      vice.hidden = false; vice.textContent = 'méně'; vice.setAttribute('aria-expanded', 'true');
-      return;
-    }
-    vice.hidden = true;
-    const sirka = cipy.clientWidth;
-    const mezera = parseFloat(getComputedStyle(cipy).columnGap) || 0;
-    const sirky = vsechnyCipy.map(c => c.getBoundingClientRect().width);
-    if (sirky.reduce((a, b) => a + b, 0) + mezera * (sirky.length - 1) <= sirka) return;
-    // místo pro tlačítko (nejdelší možný popisek)
-    vice.hidden = false; vice.textContent = `+${sklonuj(vsechnyCipy.length, ['další', 'další', 'dalších'])}`;
-    let zbyva = sirka - vice.getBoundingClientRect().width - mezera;
-    const ukazat = new Set<number>();
-    vsechnyCipy.forEach((c, i) => { if (c.getAttribute('aria-pressed') === 'true') { ukazat.add(i); zbyva -= sirky[i] + mezera; } });
-    // ostatní souvisle od začátku abecedy: první, které se nevejde, a všechna za ním jdou pod „+N další“
-    let plno = false;
-    vsechnyCipy.forEach((c, i) => {
-      if (ukazat.has(i) || plno) return;
-      if (sirky[i] + mezera <= zbyva) { ukazat.add(i); zbyva -= sirky[i] + mezera; } else plno = true;
-    });
-    vsechnyCipy.forEach((c, i) => { c.hidden = !ukazat.has(i); });
-    const skryto = vsechnyCipy.length - ukazat.size;
-    vice.textContent = `+${sklonuj(skryto, ['další', 'další', 'dalších'])}`;
-    vice.setAttribute('aria-expanded', 'false');
-  }
-  vice.addEventListener('click', () => {
-    rozbaleno = !rozbaleno;
-    rozvrhniCipy();
-    if (!rozbaleno) vice.focus();
-  });
-  new ResizeObserver(() => rozvrhniCipy()).observe(obal);
-  document.fonts.ready.then(rozvrhniCipy);
+  // témata v jednom řádku, zbytek pod „+N další“
+  const rozvrhniCipy = inicializujCipy(cipy);
 
   // prohlížeč mohl po návratu na stránku obnovit hodnoty polí: převzít je
   filtr.text = hledat.value; filtr.jenOtevrene = jen.checked;

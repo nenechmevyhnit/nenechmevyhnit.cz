@@ -11,7 +11,7 @@ const aktualni = (id: string) => (id === aktivni ? 'page' : undefined);
   <nav aria-label="Hlavní">
     <a href="/" aria-current={aktualni('kauzy')}>Kauzy</a>
     {/* na mobilu se plný název nevejde na řádek se značkou; skrytý tvar (display: none) se nečte ani čtečkou */}
-    {pravidla && <a href="/pravidla/" aria-current={aktualni('pravidla')}><span class="menu-dlouhy">Změny pravidel</span><span class="menu-kratky">Pravidla</span></a>}
+    {pravidla && <a href="/pravidla/" aria-current={aktualni('pravidla')}><span class="menu-dlouhy">Zákony a nařízení</span><span class="menu-kratky">Zákony</span></a>}
     <a href="/metodika/" aria-current={aktualni('metodika')}>Metodika</a>
     <a href="/o-projektu/" aria-current={aktualni('o-projektu')}>O projektu</a>
   </nav>

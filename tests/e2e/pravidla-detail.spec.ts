@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { VELIKOSTI, overBezPosouvani, presahPanelu } from './pomocne';
+import { VELIKOSTI, overBezPosouvani, overPosouvani, presahPanelu } from './pomocne';
 
 test.use({ viewport: { width: 1366, height: 768 } });
 const OMEGA = 'Testovací novela zákona Omega s dlouhým názvem pro mobil';
@@ -11,7 +11,7 @@ test('přímá adresa otevře detail pravidla s vlastním náhledem', async ({ p
   await expect(dlg.getByRole('heading', { level: 2 })).toHaveText(OMEGA);
   await expect(page).toHaveTitle(`${OMEGA} — Posuďte sami`);
   await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://posudtesami.cz/pravidla/zakon-omega/');
-  await expect(dlg.locator('.m2-hlava .roky')).toHaveText('Poslanecký návrh zákona · Schváleno Sněmovnou');
+  await expect(dlg.locator('.m2-hlava .roky')).toContainText('Poslanecký návrh zákona · Schváleno Sněmovnou');
   await expect(page.locator('.pr-radek[data-slug="zakon-omega"]')).toHaveClass(/vybrany/);
   await overBezPosouvani(page);
 });
@@ -59,7 +59,7 @@ test.describe('mobil 390×700', () => {
       await expect(page.locator('.prubeh-detail li:not(.konec) .jen-ctecka').first()).toHaveText(/^: hotovo, /);
       expect(await page.locator('#detail-nadpis').evaluate(e => parseFloat(getComputedStyle(e).fontSize))).toBeLessThanOrEqual(22);
       await expect(page.locator('.m2-hlava .planovano')).toBeHidden();
-      await overBezPosouvani(page);
+      await overPosouvani(page);
     }
     // schválený zákon: souhrn s posledním krokem a fází; zamítnutý návrh má místo souhrnu políčko ukončení
     await page.goto('/pravidla/zakon-omega/');
@@ -143,19 +143,19 @@ test('záložka Souvislosti jen u pravidla s textem', async ({ page }) => {
 });
 
 test('z přehledu se detail otevře bez načtení stránky a zavřením se adresa vrátí', async ({ page }) => {
-  await page.goto('/pravidla/');
+  await page.goto('/pravidla/?pohled=seznam');
   await page.evaluate(() => { (window as any).bezNacteni = true; });
   await page.locator('.pr-radek[data-slug="narizeni-tau"] a.pr-btn').click();
-  await expect(page).toHaveURL(/\/pravidla\/narizeni-tau\/$/);
+  await expect(page).toHaveURL(/\/pravidla\/narizeni-tau\/\?pohled=seznam$/);
   await expect(page.locator('dialog#detail')).toBeVisible();
   await expect(page.locator('dialog#detail h2')).toHaveText('Testovací nařízení Tau');
   expect(await page.evaluate(() => (window as any).bezNacteni)).toBe(true);
   await page.getByRole('button', { name: 'Zavřít detail' }).click();
-  await expect(page).toHaveURL(/\/pravidla\/$/);
-  await expect(page).toHaveTitle('Změny pravidel — Posuďte sami');
+  await expect(page).toHaveURL(/\/pravidla\/\?pohled=seznam$/);
+  await expect(page).toHaveTitle('Zákony a nařízení — Posuďte sami');
   await expect(page.locator('.pr-radek.vybrany')).toHaveCount(0);
   await page.goBack();
-  await expect(page).toHaveURL(/\/pravidla\/narizeni-tau\/$/);
+  await expect(page).toHaveURL(/\/pravidla\/narizeni-tau\/\?pohled=seznam$/);
   await expect(page.locator('dialog#detail')).toBeVisible();
 });
 
@@ -174,11 +174,11 @@ test.describe('bez JavaScriptu', () => {
 });
 
 for (const v of VELIKOSTI) {
-  test(`${v.width}×${v.height}: detail pravidla se neposouvá dolů`, async ({ page }) => {
+  test(`${v.width}×${v.height}: detail pravidla se neposouvá (počítač dolů, mobil do strany)`, async ({ page }) => {
     await page.setViewportSize(v);
     for (const adresa of ['/pravidla/zakon-omega/', '/pravidla/usneseni-kappa/']) {
       await page.goto(adresa);
-      await overBezPosouvani(page);
+      await overPosouvani(page);
     }
   });
 }
@@ -207,13 +207,14 @@ for (const v of VELIKOSTI) {
 
 // Delší cesta předložení (vynechané kontroly, připojení) nesmí ubrat místo události ani se oříznout.
 // Na Linuxu v CI se písmo láme jinak než ve Windows, proto test vyžaduje rezervu, ne jen hranici.
-for (const v of [{ width: 390, height: 700 }, { width: 1256, height: 528 }]) {
+const DLOUHA_CESTA = (el: Element) => { for (let i = 1; i <= 12; i++) el.insertAdjacentHTML('beforeend', `<p>Doplněný řádek ${i} s delším textem o cestě předložení.</p>`); };
+for (const v of [{ width: 1256, height: 528 }]) {
   test(`${v.width}×${v.height}: dlouhá cesta předložení se posouvá ve vlastním boxu a událost má místo`, async ({ page }) => {
     await page.setViewportSize(v);
     await page.goto('/pravidla/pozmenovaci-sigma/');
     await page.getByRole('tab', { name: 'Průběh' }).click();
     const box = page.locator('.m2-panel[data-p="chrono"] .cesta-box');
-    await box.evaluate(el => { for (let i = 1; i <= 12; i++) el.insertAdjacentHTML('beforeend', `<p>Doplněný řádek ${i} s delším textem o cestě předložení.</p>`); });
+    await box.evaluate(DLOUHA_CESTA);
     expect(await box.evaluate(el => el.scrollHeight > el.clientHeight + 1)).toBe(true);
     await expect(box).toHaveAttribute('tabindex', '0');
     await expect(box).toHaveAccessibleName('Cesta předložení');
@@ -223,6 +224,21 @@ for (const v of [{ width: 390, height: 700 }, { width: 1256, height: 528 }]) {
     expect(volno, 'pod nadpisem události zbývá místo aspoň na dva řádky textu').toBeGreaterThanOrEqual(40);
   });
 }
+
+// Na mobilu se celý detail posouvá dolů: dlouhá cesta předložení má přirozenou výšku a událost je pod ní.
+test('390×700: dlouhá cesta předložení se na mobilu neořízne, událost je pod ní a detail se neposouvá do strany', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 700 });
+  await page.goto('/pravidla/pozmenovaci-sigma/');
+  await page.getByRole('tab', { name: 'Průběh' }).click();
+  const box = page.locator('.m2-panel[data-p="chrono"] .cesta-box');
+  await box.evaluate(DLOUHA_CESTA);
+  expect(await box.evaluate(el => el.scrollHeight <= el.clientHeight + 1)).toBe(true);
+  expect(await presahPanelu(page, true)).toBeLessThanOrEqual(1);
+  const udalost = page.locator('.udalosti-seznam > li:not([hidden]) h3');
+  await udalost.scrollIntoViewIfNeeded();
+  await expect(udalost).toBeInViewport();
+  await overPosouvani(page);
+});
 
 test('pravidlo jen s kontrolou moci otevře záložku Kontrola moci: znaky, upozornění a odkaz na Metodiku', async ({ page }) => {
   await page.goto('/pravidla/usneseni-kappa/');
@@ -258,10 +274,10 @@ test('pravidlo jen s prospěchem záložku Kontrola moci nemá', async ({ page }
 });
 
 test('přechod bez načtení z pravidla s prospěchem na pravidlo jen s kontrolou moci otevře Kontrolu moci', async ({ page }) => {
-  await page.goto('/pravidla/zakon-omega/');
+  await page.goto('/pravidla/zakon-omega/?pohled=seznam');
   await page.getByRole('button', { name: 'Zavřít detail' }).click();
   await page.locator('.pr-radek[data-slug="usneseni-kappa"] a.pr-btn').click();
-  await expect(page).toHaveURL(/\/pravidla\/usneseni-kappa\/$/);
+  await expect(page).toHaveURL(/\/pravidla\/usneseni-kappa\/\?pohled=seznam$/);
   await expect(page.getByRole('tab', { name: 'Kontrola moci' })).toHaveAttribute('aria-selected', 'true');
   await expect(page.locator('.m2-panel[data-p="kontrola"]')).toBeVisible();
 });
@@ -290,3 +306,63 @@ test('každé upozornění odkazuje na zdroj svého upozorňovatele', async ({ p
   await expect(li.nth(2).locator('a[data-zdroj]')).toHaveText(['6']);
   await expect(li.nth(3).locator('a[data-zdroj]')).toHaveText(['5']);
 });
+
+test('detail pravidla ukazuje „Co by to znamenalo pro vás“ a odkazy na oblasti', async ({ page }) => {
+  await page.goto('/pravidla/zakon-omega/');
+  const hlava = page.locator('dialog#detail .m2-hlava');
+  await expect(hlava.locator('.pro-vas')).toContainText('Co by to znamenalo pro vás:');
+  await expect(hlava.locator('.pro-vas')).toContainText('jen čtyři roky místo deseti');
+  await expect(hlava.locator('.pr-oblasti a')).toHaveText(['Dotace a střet zájmů', 'Kontrolní úřady']);
+  await hlava.getByRole('link', { name: 'Kontrolní úřady' }).click();
+  await expect(page).toHaveURL(/\/pravidla\/oblasti\/kontrolni-urady\/$/);
+  await expect(page.locator('dialog#detail').getByRole('heading', { level: 2 })).toHaveText('Kontrolní úřady');
+  await page.goBack();
+  await expect(page).toHaveURL(/\/pravidla\/zakon-omega\/$/);
+});
+
+for (const v of VELIKOSTI) {
+  test(`${v.width}×${v.height}: cesta předložení v Průběhu není oříznutá a vynechané kontroly jsou vidět`, async ({ page }) => {
+    await page.setViewportSize(v);
+    await page.goto('/pravidla/pozmenovaci-sigma/');
+    await page.getByRole('tab', { name: 'Průběh' }).click();
+    const box = page.locator('.m2-panel[data-p="chrono"] .cesta-box');
+    expect(await box.evaluate(e => e.scrollHeight <= e.clientHeight + 1)).toBe(true);
+    await expect(box.locator('.vynechano')).toBeVisible();
+    await expect(box).toContainText('Připojeno k:');
+    const b = await box.locator('.vynechano li').last().boundingBox();
+    const bb = await box.boundingBox();
+    expect(b!.y + b!.height).toBeLessThanOrEqual(bb!.y + bb!.height + 1);
+  });
+
+  test(`${v.width}×${v.height}: „pro vás“ nemá rozříznutý řádek a celý text jde rozbalit`, async ({ page }) => {
+    await page.setViewportSize(v);
+    await page.goto('/pravidla/zakon-omega/');
+    const box = page.locator('dialog#detail .m2-hlava .pro-vas');
+    const vice = page.locator('dialog#detail .m2-hlava .pro-vas-vice');
+    const m = await box.evaluate(e => {
+      const cs = getComputedStyle(e);
+      const lh = parseFloat(cs.lineHeight) || parseFloat(cs.fontSize) * 1.2;
+      const pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+      return { lh, vyska: e.clientHeight - pad, scroll: e.scrollHeight - pad };
+    });
+    expect(m.vyska).toBeGreaterThanOrEqual(m.lh - 2);
+    const radku = m.vyska / m.lh;
+    expect(Math.abs(radku - Math.round(radku)) * m.lh).toBeLessThanOrEqual(2);
+    if (m.scroll > m.vyska + 1) {
+      await expect(vice).toBeVisible();
+      expect(await vice.evaluate(e => e.tagName)).toBe('BUTTON');
+      await expect(vice).toHaveAttribute('aria-expanded', 'false');
+      await vice.focus();
+      await page.keyboard.press('Enter');
+      await expect(vice).toHaveAttribute('aria-expanded', 'true');
+      // rozbalený text je celý vidět, nebo se posouvá uvnitř boxu (nejvýš 30 % výšky okna)
+      await box.evaluate(e => { e.scrollTop = e.scrollHeight; });
+      expect(await box.evaluate(e => e.scrollTop + e.clientHeight >= e.scrollHeight - 1)).toBe(true);
+      expect(await box.evaluate(e => e.clientHeight)).toBeGreaterThan(m.lh);
+      await expect(vice).toHaveText('méně');
+    } else {
+      await expect(vice).toBeHidden();
+    }
+    await expect(box).toContainText('sporů o vrácení peněz');
+  });
+}

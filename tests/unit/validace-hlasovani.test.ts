@@ -87,8 +87,13 @@ describe('overAdresar s hlasováním', () => {
     writeFileSync(join(d, 'stitky.yml'), 'dotace: Dotace\n');
     return d;
   };
-  const zapisPravidlo = (d: string, hlasovani: unknown[]) =>
-    writeFileSync(join(d, 'pravidla', 'novela-a.md'), `---\n${stringify({ ...platnePravidlo(), udalosti: [udalost(hlasovani)] })}---\n`);
+  // bez oblastí a textu pro vás (smějí chybět u všech změn najednou), ať test nepotřebuje soubory oblastí
+  const zapisPravidlo = (d: string, hlasovani: unknown[]) => {
+    const p = platnePravidlo();
+    delete p.oblasti;
+    delete p.proVas;
+    writeFileSync(join(d, 'pravidla', 'novela-a.md'), `---\n${stringify({ ...p, udalosti: [udalost(hlasovani)] })}---\n`);
+  };
 
   it('vrátí jen odkazované snímky, neodkazovaný nahlásí varováním', () => {
     const d = adresar();

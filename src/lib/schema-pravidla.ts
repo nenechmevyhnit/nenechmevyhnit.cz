@@ -2,13 +2,17 @@ import { z } from 'astro/zod';
 import { naText, existujeDatum, datum, datumPresne, text, odkazy, idTvar, popisVazby, zdrojSchema, udalostSchema } from './schema';
 import { KROKY, krokyProDruh } from './pravidla-stavy';
 import { TYPY_HLASOVANI, ID_HLASOVANI } from './schema-hlasovani';
-import { DRUHY_PRAVIDEL,CESTY, KOMU, ZAVERY, DRUHY_ZNAKU, KONTROLNI_INSTITUCE, UPOZORNOVATELE, cestyProDruh } from './pravidla-slovnik';
+import { DRUHY_PRAVIDEL, CESTY, KOMU, ZAVERY, DRUHY_ZNAKU, KONTROLNI_INSTITUCE, UPOZORNOVATELE, OBLASTI, cestyProDruh } from './pravidla-slovnik';
 
 /** Účinnost je jediné datum pravidla, které smí ležet v budoucnosti. */
 const ucinnost = z.preprocess(naText, z.string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, 'Účinnost musí být ve tvaru RRRR-MM-DD')
   .refine(existujeDatum, 'Datum účinnosti neexistuje'));
 const sZdroji = (co: string) => z.object({ text: text(), zdroje: odkazy(co) }).strict();
+const proVasSchema = z.object({
+  text: text().max(400, 'Text „Co by to znamenalo pro vás“ smí mít nejvýš 400 znaků'),
+  zdroje: odkazy('Co by to znamenalo pro vás'),
+}).strict();
 
 /** Hlasování k události (spec hlasování, oddíl 4). Snímek dat je v obsah/hlasovani/<id>.yml. */
 const hlasovaniUdalostiSchema = z.object({
@@ -42,6 +46,9 @@ const vytvorPravidloSchema = (koncepty: boolean) => z
     pripojenoK: z.object({ nazev: text(), zdroje: odkazy('Připojení k zákonu') }).strict().optional(),
     ucinnostOd: ucinnost.optional(),
     stitky: z.array(z.string().regex(/^[a-z0-9-]+$/)).min(1),
+    /** Oblasti státu (specifikace oblastí, oddíl 7.1). Ve schématu nepovinné, povinnost hlídá overOblasti (validace.ts). */
+    oblasti: z.array(z.enum(OBLASTI)).min(1, 'Seznam oblastí nesmí být prázdný').optional(),
+    proVas: proVasSchema.optional(),
     overeno: koncepty ? datumPresne.nullable().default(null) : datumPresne,
     zdroje: z.array(zdrojSchema).min(1, 'Pravidlo musí mít aspoň jeden zdroj'),
     udalosti: z.array(udalostPravidlaSchema).min(1, 'Pravidlo musí mít aspoň jednu událost'),
@@ -83,6 +90,11 @@ const vytvorPravidloSchema = (koncepty: boolean) => z
     p.vyhrady.forEach(v => over(v.zdroje, `Výhrada („${v.kdo}“)`));
     p.kauzy.forEach(k => over(k.zdroje, `Vazba na kauzu „${k.kauza}“`));
 
+    // Oblasti a text pro čtenáře (specifikace oblastí, oddíl 7.3). Jejich povinnost hlídá overOblasti
+    // napříč změnami (přechodně: všechny zveřejněné změny, nebo žádná).
+    if (p.proVas) over(p.proVas.zdroje, 'Co by to znamenalo pro vás');
+    if (p.oblasti && new Set(p.oblasti).size !== p.oblasti.length) chyba('Pole oblasti obsahuje stejnou oblast dvakrát');
+
     if (!p.prospech && !p.kontrolaMoci) chyba('Záznam musí mít aspoň jeden důvod zařazení: prospech nebo kontrolaMoci');
 
     // Prospěch: odkazy a závěr řetězce (spec pravidel, oddíl 4)
@@ -104,7 +116,7 @@ const vytvorPravidloSchema = (koncepty: boolean) => z
       p.kontrolaMoci.znaky.forEach((zn, i) => {
         over(zn.zdroje, `Znak ${i + 1}`);
         if (!p.zdroje.some(zd => zd.druh === 'primarni' && zn.zdroje.includes(zd.id))) chyba(`Znak ${i + 1} musí mít primární zdroj, tedy text předpisu`);
-        if (zn.druh === 'instituce' && !zn.instituce) chyba(`Znak ${i + 1} mění kontrolní instituci, musí ji uvést (instituce)`);
+        if (zn.druh === 'instituce' && !zn.instituce) chyba(`Znak ${i + 1} mění instituci nebo pravidla státu, musí je uvést (instituce)`);
         if (zn.druh !== 'instituce' && zn.instituce) chyba(`Znak ${i + 1}: instituce patří jen ke znaku druhu „instituce“`);
       });
       p.kontrolaMoci.znaky.map(zn => (zn.instituce ? `${zn.druh}/${zn.instituce}` : zn.druh))

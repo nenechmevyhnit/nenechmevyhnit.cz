@@ -6,6 +6,8 @@ cesta: narizeni-vlady
 predkladatel: Fiktivní vláda
 ucinnostOd: 2027-01-01
 stitky: [eu-fondy]
+oblasti: [zemedelstvi-potraviny]
+proVas: { text: "Kdo chová drůbež, dostal by podle fiktivního nařízení vyšší fiktivní sazbu na zvíře.", zdroje: [1] }
 overeno: 2026-11-09
 zdroje:
   - { id: 1, vydavatel: Fiktivní Sbírka zákonů, titulek: Nařízení vlády Tau, datum: 2026-03-15, druh: primarni, url: "https://example.com/tau/narizeni" }

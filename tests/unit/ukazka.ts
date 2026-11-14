@@ -45,6 +45,8 @@ export function platnePravidlo(): Record<string, unknown> {
     cesta: 'poslanecky-navrh',
     predkladatel: 'fiktivní poslanci A a B',
     stitky: ['dotace'],
+    oblasti: ['dotace-stret-zajmu'],
+    proVas: { text: 'Kdyby fiktivní novela prošla, fiktivní stát by mohl vymáhat fiktivní dotace jen čtyři roky.', zdroje: [1] },
     overeno: '2026-11-09',
     zdroje: [
       { id: 1, vydavatel: 'Fiktivní sněmovna', titulek: 'Fiktivní tisk 1', datum: '2026-06-10', druh: 'primarni', url: 'https://example.com/tisk' },
@@ -72,6 +74,7 @@ export function platnePravidloKontrolaMoci(): Record<string, unknown> {
   return {
     ...p,
     nazev: 'Testovací usnesení Kappa',
+    oblasti: ['soudy-policie'],
     druh: 'usneseni-vlady',
     cesta: 'usneseni-vlady',
     predkladatel: 'Fiktivní ministr spravedlnosti',
@@ -99,5 +102,20 @@ export function platnySnimek(): Record<string, unknown> {
       { id: 3, jmeno: 'Cyril', prijmeni: 'Gama', klub: 'ODS', hlas: 'proti' },
     ],
     stazeno: '2026-11-14',
+  };
+}
+
+export function platnaOblast(): Record<string, unknown> {
+  return {
+    uvod: { text: 'Fiktivní zákon o střetu zájmů má zajistit, aby fiktivní člen vlády nerozhodoval o penězích pro vlastní firmy.', zdroje: [1] },
+    hodnoceni: [
+      { typ: 'vlada', kdo: 'Fiktivní ministr F', funkce: 'fiktivní ministr financí', citace: 'Novela jen sjednocuje fiktivní lhůty.', datum: '2026-06-18', zdroje: [2] },
+      { typ: 'odbornik', kdo: 'Fiktivní odbornice E', funkce: 'fiktivní ústavní právnička', citace: 'Kratší lhůta by ztížila vymáhání.', datum: '2026-06-20', zdroje: [2], pravidla: ['novela-x'] },
+    ],
+    zdroje: [
+      { id: 1, vydavatel: 'Fiktivní Sbírka zákonů', titulek: 'Fiktivní zákon', datum: '2017-02-01', druh: 'primarni', url: 'https://example.com/oblast/zakon' },
+      { id: 2, vydavatel: 'Fiktivní deník', titulek: 'Rozhovor', datum: '2026-06-20', druh: 'media', url: 'https://example.com/oblast/rozhovor' },
+    ],
+    overeno: '2026-11-09',
   };
 }

@@ -27,4 +27,14 @@ describe('stránkování', () => {
     expect(cislaStranek(9, 12)).toEqual([1, null, 8, 9, 10, 11, 12]);
     expect(cislaStranek(12, 12)).toEqual([1, null, 8, 9, 10, 11, 12]);
   });
+  it('čísla stránek na mobilu: nejvýš 5 položek, první, aktuální a poslední stránka jsou vždy vidět', () => {
+    expect(cislaStranek(2, 4, 5)).toEqual([1, 2, 3, 4]);
+    expect(cislaStranek(3, 5, 5)).toEqual([1, 2, 3, 4, 5]);
+    expect(cislaStranek(1, 12, 5)).toEqual([1, 2, 3, null, 12]);
+    expect(cislaStranek(3, 12, 5)).toEqual([1, 2, 3, null, 12]);
+    expect(cislaStranek(4, 12, 5)).toEqual([1, null, 4, null, 12]);
+    expect(cislaStranek(9, 12, 5)).toEqual([1, null, 9, null, 12]);
+    expect(cislaStranek(10, 12, 5)).toEqual([1, null, 10, 11, 12]);
+    expect(cislaStranek(12, 12, 5)).toEqual([1, null, 10, 11, 12]);
+  });
 });

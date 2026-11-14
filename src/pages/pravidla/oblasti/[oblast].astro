@@ -1,0 +1,14 @@
+---
+import PrehledPravidel from '../../../components/PrehledPravidel.astro';
+import DetailOblasti from '../../../components/DetailOblasti.astro';
+import { nactiOblasti } from '../../../lib/kauzy';
+
+// Stránka vznikne jen pro oblast s aspoň jednou změnou (specifikace oblastí, oddíl 8.2).
+export function getStaticPaths() {
+  return nactiOblasti().map(o => ({ params: { oblast: o.id }, props: { o } }));
+}
+const { o } = Astro.props;
+---
+<PrehledPravidel otevrenaOblast={o}>
+  <DetailOblasti slot="detail" oblast={o} />
+</PrehledPravidel>

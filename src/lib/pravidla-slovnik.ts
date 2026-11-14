@@ -62,7 +62,7 @@ export const popisekDuvodu = (d: Duvod): string => POPISKY_DUVODU[d];
 export const DRUHY_ZNAKU = ['instituce', 'prilepek', 'legislativni-nouze', 'prvni-cteni', 'zpetna-ucinnost'] as const;
 export type DruhZnaku = (typeof DRUHY_ZNAKU)[number];
 const POPISKY_ZNAKU: Record<DruhZnaku, string> = {
-  instituce: 'mění kontrolní instituci',
+  instituce: 'mění instituci nebo pravidla státu',
   prilepek: 'přílepek',
   'legislativni-nouze': 'legislativní nouze',
   'prvni-cteni': 'schválení v prvním čtení',
@@ -70,9 +70,12 @@ const POPISKY_ZNAKU: Record<DruhZnaku, string> = {
 };
 export const popisekDruhuZnaku = (d: DruhZnaku): string => POPISKY_ZNAKU[d];
 
+/** Instituce a pravidla státu, jejichž změna je institucionálním znakem (spec kontroly moci, oddíl 4; rozšíření
+ *  podle specifikace oblastí, oddíl 6). Název v kódu zůstává, obsahuje i nekontrolní instituce a pravidla. */
 export const KONTROLNI_INSTITUCE = [
   'soudy', 'statni-zastupitelstvi', 'nku', 'uohs', 'ombudsman', 'policie', 'media-verejne-sluzby',
   'dohled-strany', 'cnb', 'pristup-k-informacim', 'registr-smluv',
+  'rozpoctova-rada', 'rozpoctova-pravidla', 'statni-sluzba', 'statni-podniky', 'neziskove-organizace',
 ] as const;
 export type KontrolniInstituce = (typeof KONTROLNI_INSTITUCE)[number];
 /** Krátký popisek se vejde do řádku přehledu, plný je pro Metodiku. */
@@ -88,6 +91,11 @@ const POPISKY_INSTITUCI: Record<KontrolniInstituce, { kratce: string; plne: stri
   cnb: { kratce: 'ČNB', plne: 'Česká národní banka' },
   'pristup-k-informacim': { kratce: 'přístup k informacím', plne: 'svobodný přístup k informacím' },
   'registr-smluv': { kratce: 'registr smluv', plne: 'registr smluv' },
+  'rozpoctova-rada': { kratce: 'Národní rozpočtová rada', plne: 'Národní rozpočtová rada' },
+  'rozpoctova-pravidla': { kratce: 'rozpočtová pravidla', plne: 'pravidla rozpočtové odpovědnosti (limity dluhu a schodku, schvalování schodku Sněmovnou)' },
+  'statni-sluzba': { kratce: 'státní služba', plne: 'státní služba (přijímání, hodnocení a odvolávání státních zaměstnanců)' },
+  'statni-podniky': { kratce: 'vedení státních firem', plne: 'obsazování orgánů státních podniků a společností s účastí státu' },
+  'neziskove-organizace': { kratce: 'neziskové organizace', plne: 'spolky a neziskové organizace (registrace a financování)' },
 };
 export const popisekInstituce = (i: KontrolniInstituce, delka: 'kratce' | 'plne' = 'kratce'): string => POPISKY_INSTITUCI[i][delka];
 export const popisekZnaku = (z: { druh: DruhZnaku; instituce?: KontrolniInstituce }): string =>
@@ -105,6 +113,7 @@ const UPOZORNOVATELE_DATA = {
   'nejvyssi-soud': { nazev: 'Nejvyšší soud', typ: 'instituce' },
   'nejvyssi-statni-zastupitelstvi': { nazev: 'Nejvyšší státní zastupitelství', typ: 'instituce' },
   'legislativni-odbor-snemovny': { nazev: 'Legislativní odbor Kanceláře Poslanecké sněmovny', typ: 'instituce' },
+  'narodni-rozpoctova-rada': { nazev: 'Národní rozpočtová rada', typ: 'instituce' },
   'soudcovska-unie': { nazev: 'Soudcovská unie ČR', typ: 'profesni-organizace' },
   'unie-statnich-zastupcu': { nazev: 'Unie státních zástupců ČR', typ: 'profesni-organizace' },
   'ceska-advokatni-komora': { nazev: 'Česká advokátní komora', typ: 'profesni-organizace' },
@@ -115,3 +124,25 @@ export const UPOZORNOVATELE = Object.keys(UPOZORNOVATELE_DATA) as [Upozornovatel
 export const upozornovatel = (id: Upozornovatel): { nazev: string; typ: TypUpozornovatele } => UPOZORNOVATELE_DATA[id];
 const POPISKY_TYPU: Record<TypUpozornovatele, string> = { instituce: 'instituce', 'profesni-organizace': 'profesní organizace' };
 export const popisekTypuUpozornovatele = (t: TypUpozornovatele): string => POPISKY_TYPU[t];
+
+/** Oblasti státu pro výchozí pohled přehledu (specifikace oblastí, oddíl 3). Uzavřený seznam, pořadí je pořadí karet.
+ *  Rozšíření je změna metodiky a jde přes PR se zdůvodněním. */
+const OBLASTI_DATA = {
+  'dotace-stret-zajmu': { nazev: 'Dotace a střet zájmů', popisek: 'Kdo dostane peníze z dotací a kdo to hlídá' },
+  'zemedelstvi-potraviny': { nazev: 'Zemědělství a potraviny', popisek: 'Pravidla pro zemědělce, půdu a výrobu potravin' },
+  'soudy-policie': { nazev: 'Soudy, státní zastupitelství a policie', popisek: 'Kdo vyšetřuje, žaluje a rozhoduje o vině' },
+  'kontrolni-urady': { nazev: 'Kontrolní úřady', popisek: 'Kdo kontroluje, jak stát a strany hospodaří' },
+  'verejne-finance': { nazev: 'Veřejné finance', popisek: 'Jak stát hospodaří, zadlužuje se a kdo to hlídá' },
+  'verejnopravni-media': { nazev: 'Veřejnoprávní média', popisek: 'Jak fungují a z čeho se platí ČT a ČRo' },
+  'statni-sprava': { nazev: 'Státní správa a státní firmy', popisek: 'Jak se obsazují úřady a vedení státních firem' },
+  'obcanska-spolecnost': { nazev: 'Občanská společnost', popisek: 'Pravidla pro spolky a neziskové organizace' },
+} as const satisfies Record<string, { nazev: string; popisek: string }>;
+export type Oblast = keyof typeof OBLASTI_DATA;
+export const OBLASTI = Object.keys(OBLASTI_DATA) as [Oblast, ...Oblast[]];
+export const oblast = (id: Oblast): { nazev: string; popisek: string } => OBLASTI_DATA[id];
+
+/** Kdo smí být citován v „Jak to hodnotí“ (specifikace oblastí, oddíl 5). Pořadí je pořadí skupin v detailu. */
+export const TYPY_HODNOCENI = ['vlada', 'instituce', 'odbornik'] as const;
+export type TypHodnoceni = (typeof TYPY_HODNOCENI)[number];
+const POPISKY_HODNOCENI: Record<TypHodnoceni, string> = { vlada: 'Stanovisko vlády', instituce: 'Instituce', odbornik: 'Odborníci' };
+export const popisekTypuHodnoceni = (t: TypHodnoceni): string => POPISKY_HODNOCENI[t];

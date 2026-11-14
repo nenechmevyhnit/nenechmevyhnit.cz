@@ -12,10 +12,14 @@ export function pocetStranek(n: number, naStranku: number): number {
   return Math.max(1, Math.ceil(n / Math.max(1, naStranku)));
 }
 
-/** Čísla stránek pro ovládání; null = vynechané stránky („…“). Nejvýš 7 položek. */
-export function cislaStranek(aktualni: number, celkem: number): (number | null)[] {
-  if (celkem <= 7) return Array.from({ length: celkem }, (_, i) => i + 1);
-  if (aktualni <= 4) return [1, 2, 3, 4, 5, null, celkem];
-  if (aktualni >= celkem - 3) return [1, null, celkem - 4, celkem - 3, celkem - 2, celkem - 1, celkem];
-  return [1, null, aktualni - 1, aktualni, aktualni + 1, null, celkem];
+/** Čísla stránek pro ovládání; null = vynechané stránky („…“). Nejvýš `max` položek: 7 na počítači,
+ *  5 na mobilu (úzká lišta s tlačítky pro prst). První, aktuální a poslední stránka jsou vidět vždy. */
+export function cislaStranek(aktualni: number, celkem: number, max: 5 | 7 = 7): (number | null)[] {
+  if (celkem <= max) return Array.from({ length: celkem }, (_, i) => i + 1);
+  // kolem aktuální stránky: na počítači i sousední, na mobilu jen ona sama
+  const okoli = max === 7 ? 1 : 0;
+  const kraj = max - 2; // kolik čísel zbude u kraje vedle „…“ a poslední (první) stránky
+  if (aktualni + okoli <= kraj) return [...Array.from({ length: kraj }, (_, i) => i + 1), null, celkem];
+  if (aktualni - okoli >= celkem - kraj + 1) return [1, null, ...Array.from({ length: kraj }, (_, i) => celkem - kraj + 1 + i)];
+  return [1, null, ...Array.from({ length: 2 * okoli + 1 }, (_, i) => aktualni - okoli + i), null, celkem];
 }
