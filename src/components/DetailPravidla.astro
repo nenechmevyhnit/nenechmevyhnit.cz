@@ -7,7 +7,9 @@ import { rozdelOdstavce, odstavecNaHtml } from '../lib/souvislosti';
 import { datumText } from '../lib/casova-osa';
 import { popisekCesty, popisekKomu, popisekZaveru, vynechaneKontroly, popisekZnaku, popisekDruhuZnaku, upozornovatel, popisekTypuUpozornovatele } from '../lib/pravidla-slovnik';
 import { stavPravidla, popisekKroku } from '../lib/pravidla-stavy';
-import { nactiKauzy } from '../lib/kauzy';
+import ZalozkaHlasovani from './ZalozkaHlasovani.astro';
+import { nactiKauzy, nactiHlasovani } from '../lib/kauzy';
+import { hlasovaniPravidla, cisloHlasovani } from '../lib/hlasovani';
 
 interface Props { zaznam?: PravidloZaznam }
 const { zaznam } = Astro.props;
@@ -16,12 +18,14 @@ const p = zaznam?.pravidlo;
 const nazvyKauz = new Map(nactiKauzy().map(z => [z.slug, z.kauza.nazev]));
 const odstavce = zaznam ? rozdelOdstavce(zaznam.telo) : [];
 const kontroly = p ? vynechaneKontroly(p.cesta) : [];
+const hlasovani = p ? hlasovaniPravidla(p.udalosti, nactiHlasovani()) : [];
 const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="chip" data-zdroj="${c}" aria-label="Zdroj ${c}">${c}</a>`).join('');
 // Záložky podle toho, co záznam má. Otevřená je první zobrazená (spec kontroly moci, oddíl 7).
 const zalozky = p ? [
   ...(p.prospech ? [{ id: 'prospech', nazev: 'Komu prospívá' }] : []),
   ...(p.kontrolaMoci ? [{ id: 'kontrola', nazev: 'Kontrola moci' }] : []),
   { id: 'chrono', nazev: 'Průběh' },
+  ...(hlasovani.length > 0 ? [{ id: 'hlasovani', nazev: `Hlasování (${hlasovani.length})` }] : []),
   { id: 'vyhrady', nazev: 'Výhrady a stanovisko' },
   ...(odstavce.length > 0 ? [{ id: 'souv', nazev: 'Souvislosti' }] : []),
   { id: 'zdroje', nazev: `Zdroje (${p.zdroje.length})` },
@@ -92,7 +96,7 @@ const prvni = zalozky[0]?.id;
             <li data-i={i} data-datum={u.datum}>
               <div class="udalost-velka">
                 <time>{datumText(u.datum)}<small>{u.krok ? popisekKroku(u.krok) : `událost ${i + 1} z ${p.udalosti.length}`}</small></time>
-                <div><h3>{u.nazev}</h3><p>{u.popis}</p><div>Zdroje:<span class="chipy" set:html={chipy(u.zdroje)}></span></div></div>
+                <div><h3>{u.nazev}</h3><p>{u.popis}</p><div>Zdroje:<span class="chipy" set:html={chipy(u.zdroje)}></span></div>{u.hlasovani.length > 0 && <div class="hl-odkazy">Hlasování: {u.hlasovani.map((h, j) => <>{j > 0 && ' · '}<a href={`/hlasovani/${h.id}/`}>č. {cisloHlasovani(h.id)}</a></>)}</div>}</div>
               </div>
             </li>
           ))}
@@ -102,6 +106,11 @@ const prvni = zalozky[0]?.id;
           <button type="button" data-krok="1" style="text-align:right"><small>další →</small><span></span></button>
         </div>
       </div>
+      {hlasovani.length > 0 && (
+        <div class="m2-panel" data-p="hlasovani" role="tabpanel" hidden={prvni !== 'hlasovani'}>
+          <ZalozkaHlasovani hlasovani={hlasovani} />
+        </div>
+      )}
       <div class="m2-panel" data-p="vyhrady" role="tabpanel" hidden={prvni !== 'vyhrady'}>
         <h3 class="panel-nadpis">Výhrady a stanovisko</h3>
         <div class="vyhrady">

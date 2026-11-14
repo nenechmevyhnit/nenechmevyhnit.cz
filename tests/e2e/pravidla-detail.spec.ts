@@ -190,8 +190,8 @@ for (const v of VELIKOSTI) {
   test(`${v.width}×${v.height}: v žádné záložce detailu pravidla není oříznutý obsah`, async ({ page }) => {
     await page.setViewportSize(v);
     for (const [adresa, zalozky] of [
-      ['/pravidla/zakon-omega/', [...ZALOZKY, 'Kontrola moci']],
-      ['/pravidla/pozmenovaci-sigma/', ZALOZKY],
+      ['/pravidla/zakon-omega/', [...ZALOZKY, 'Kontrola moci', 'Hlasování (2)']],
+      ['/pravidla/pozmenovaci-sigma/', [...ZALOZKY, 'Hlasování (1)']],
       ['/pravidla/narizeni-tau/', [...ZALOZKY, 'Souvislosti']],
       ['/pravidla/usneseni-kappa/', ZALOZKY_KAPPA],
     ] as const) {
@@ -245,7 +245,7 @@ test('pravidlo jen s kontrolou moci otevře záložku Kontrola moci: znaky, upoz
 
 test('pravidlo s oběma důvody má obě záložky v pořadí Komu prospívá, Kontrola moci', async ({ page }) => {
   await page.goto('/pravidla/zakon-omega/');
-  await expect(page.getByRole('tab')).toHaveText(['Komu prospívá', 'Kontrola moci', 'Průběh', 'Výhrady a stanovisko', 'Zdroje (4)']);
+  await expect(page.getByRole('tab')).toHaveText(['Komu prospívá', 'Kontrola moci', 'Průběh', 'Hlasování (2)', 'Výhrady a stanovisko', 'Zdroje (4)']);
   await expect(page.getByRole('tab', { name: 'Komu prospívá' })).toHaveAttribute('aria-selected', 'true');
   await page.getByRole('tab', { name: 'Kontrola moci' }).click();
   await expect(page.locator('.m2-panel[data-p="kontrola"] .znaky > li')).toContainText('zpětná účinnost');

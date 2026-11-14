@@ -1,0 +1,31 @@
+# Fiktivní hlasování jen pro testy (12 vymyšlených poslanců).
+komora: psp
+obdobi: 10
+schuze: 7
+cislo: 3
+idPsp: 90103
+datum: 2026-09-20
+cas: '14:30'
+nazevPsp: Návrh zákona
+vysledek: prijato
+kvorum: 6
+souhrn: { pro: 7, proti: 3, zdrzel: 0, nehlasoval: 0, prihlaseno: 10 }
+kluby:
+  ANO2011: Fiktivní klub ANO
+  ODS: Fiktivní klub ODS
+  STAN: Fiktivní klub STAN
+  Piráti: Fiktivní klub Piráti
+poslanci:
+  - { id: 1, jmeno: Adam, prijmeni: Alfa, klub: ANO2011, hlas: pro }
+  - { id: 2, jmeno: Bára, prijmeni: Beta, klub: ANO2011, hlas: pro }
+  - { id: 4, jmeno: Dan, prijmeni: Delta, klub: ANO2011, hlas: pro }
+  - { id: 5, jmeno: Eva, prijmeni: Epsilon, klub: ANO2011, hlas: pro }
+  - { id: 7, jmeno: Ema, prijmeni: Éta, klub: ODS, hlas: proti }
+  - { id: 3, jmeno: Gustav, prijmeni: Gama, klub: ANO2011, hlas: pro }
+  - { id: 12, jmeno: Chrudoš, prijmeni: Chí, klub: null, hlas: pro }
+  - { id: 9, jmeno: Ivo, prijmeni: Ióta, klub: STAN, hlas: proti }
+  - { id: 10, jmeno: Karel, prijmeni: Kappa, klub: STAN, hlas: omluven }
+  - { id: 11, jmeno: Lea, prijmeni: Lambda, klub: Piráti, hlas: neprihlasen }
+  - { id: 8, jmeno: Tomáš, prijmeni: Théta, klub: ODS, hlas: pro }
+  - { id: 6, jmeno: Zita, prijmeni: Zéta, klub: ODS, hlas: proti }
+stazeno: 2026-11-14

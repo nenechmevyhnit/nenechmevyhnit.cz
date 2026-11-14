@@ -1,0 +1,26 @@
+---
+import type { HlasovaniPravidla } from '../lib/hlasovani';
+import { souhrnKlubu, vetaKlubu, popisekTypu, popisekVysledku, VETA_PROCEDURALNI } from '../lib/hlasovani';
+import { datumText } from '../lib/casova-osa';
+import '../styles/hlasovani.css';
+
+interface Props { hlasovani: HlasovaniPravidla[] }
+const { hlasovani } = Astro.props;
+---
+<h3 class="panel-nadpis">Hlasování</h3>{/* jen bez JavaScriptu, kdy jsou všechny části pod sebou */}
+<ol class="hl-seznam">
+  {hlasovani.map(h => (
+    <li class="hl-blok" data-hlasovani={h.id}>
+      <p class="hl-meta">{datumText(h.snimek.datum)} · hlasování č. {h.snimek.cislo} · <span class="hl-typ">{popisekTypu(h.typ)}</span></p>
+      <p class="hl-co">{h.co}</p>
+      <p class="hl-vysledek"><strong>{popisekVysledku(h.snimek)} {h.snimek.souhrn.pro} : {h.snimek.souhrn.proti}</strong></p>
+      <ul class="hl-kluby" aria-label="Jak hlasovaly kluby">
+        {souhrnKlubu(h.snimek).map(k => (
+          <li><a href={`/hlasovani/${h.id}/#${k.slug}`} aria-label={vetaKlubu(k)}>{k.popisek} <span class="hl-cisla">{k.pro} : {k.proti}</span></a></li>
+        ))}
+      </ul>
+      <p class="hl-pata"><span class="hl-legenda">pro : proti</span> · <a href={`/hlasovani/${h.id}/`}>Všichni poslanci →</a></p>
+      {h.typ === 'proceduralni' && <p class="hl-proc">{VETA_PROCEDURALNI}</p>}
+    </li>
+  ))}
+</ol>

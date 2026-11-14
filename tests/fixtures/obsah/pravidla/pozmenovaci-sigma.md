@@ -17,7 +17,7 @@ zdroje:
 udalosti:
   - { datum: 2025-11-20, nazev: Návrh ohlášen v médiích, popis: Fiktivní deník napsal o chystaném návrhu., zdroje: [4] }
   - { datum: 2026-04-02, krok: predlozeno, nazev: Návrh podán ve druhém čtení, popis: Fiktivní poslanec podal pozměňovací návrh., zdroje: [1] }
-  - { datum: 2026-05-14, krok: zamitnuto, nazev: Návrh zamítnut, popis: Fiktivní sněmovna návrh nepřijala., zdroje: [1] }
+  - { datum: 2026-05-14, krok: zamitnuto, nazev: Návrh zamítnut, popis: Fiktivní sněmovna návrh nepřijala., zdroje: [1], hlasovani: [{ id: psp-10-5-12, typ: proceduralni, co: Fiktivní návrh zařadit první čtení na pořad schůze }] }
 prospech:
   komu: [agrofert]
   zaver: dolozen
