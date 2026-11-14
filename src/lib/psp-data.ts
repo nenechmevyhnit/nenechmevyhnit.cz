@@ -91,6 +91,8 @@ export function sestavSnimek(v: VstupPsp, cil: CilHlasovani, stazeno: string): S
   if (!vysledek) throw new ChybaPsp(`${id}: neznámý výsledek hlasování „${h[14]}“`);
   const datum = datumZPsp(h[5]);
   const cas = h[6];
+  // čas se s časy omluv porovnává jako text, proto musí mít hodiny i minuty vždy dvě číslice
+  if (!/^\d{2}:\d{2}$/.test(cas)) throw new ChybaPsp(`${id}: čas hlasování „${cas}“ není ve tvaru HH:MM`);
   const okamzik = `${datum} ${cas}`;
 
   // PSP vede nezařazené poslance jako pseudoklub „Nezařaz“; ve snímku mají klub null.

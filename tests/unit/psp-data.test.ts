@@ -112,6 +112,7 @@ describe('sestavSnimek', () => {
     ['neznámý výsledek', (() => { const v = vstup(); v.hlasovani[0][14] = 'X'; return v; })(), CIL, /neznámý výsledek hlasování „X“/],
     ['méně než 200 hlasů', (() => { const v = vstup(); v.hlasy.pop(); return v; })(), CIL, /199 jmenovitých hlasů místo 200/],
     ['neznámý kód hlasu', vstup(kody({ 5: 'W' })), CIL, /Neznámý kód hlasu „W“/],
+    ['čas bez úvodní nuly', (() => { const v = vstup(); v.hlasovani[0][6] = '9:05'; return v; })(), CIL, /čas hlasování „9:05“ není ve tvaru HH:MM/],
     ['nesedící součty', (() => { const v = vstup(); v.hlasovani[0][7] = '199'; return v; })(), CIL, /součty nesedí \(pro: jmenovitě 200, v souhrnu 199/],
   ])('chyba: %s', (_, v, cil, hlaska) => expect(() => sestavSnimek(v, cil, '2026-11-14')).toThrow(hlaska));
 });

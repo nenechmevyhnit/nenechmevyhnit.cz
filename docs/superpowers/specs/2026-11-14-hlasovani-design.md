@@ -142,7 +142,7 @@ Zkratka, která ve slovníku chybí, je chyba buildu („doplňte klub do hlasov
 3. Rozbalí potřebné soubory (knihovna `fflate` jako vývojová závislost), dekóduje windows-1250 (`TextDecoder`) a sestaví snímek podle oddílu 4.
 4. Zapíše `obsah/hlasovani/<id>.yml` a vypíše souhrn (id, výsledek, pro : proti).
 
-S parametrem `--znovu` přepočítá všechny odkazované snímky. Soubor přepíše, jen když se data liší v něčem jiném než `stazeno`. Bez změny dat tak nevzniká diff.
+Datum `stazeno` je den stažení v UTC, protože kontrola v CI hlídá, že neleží v budoucnosti, podle UTC. S parametrem `--znovu` přepočítá všechny odkazované snímky. Soubor přepíše, jen když se data liší v něčem jiném než `stazeno`. Bez změny dat tak nevzniká diff.
 
 **Skript skončí chybou a soubor nezapíše, když:**
 - hlasování s daným obdobím, schůzí a číslem v datech není,
@@ -150,6 +150,7 @@ S parametrem `--znovu` přepočítá všechny odkazované snímky. Soubor přep�
 - výsledek není „přijato“ ani „zamítnuto“, nebo jde o ruční hlasování bez jmenovitých hlasů,
 - počet poslanců v hlasování není 200,
 - se vyskytne neznámý kód hlasu,
+- čas hlasování není ve tvaru HH:MM (s časy omluv se porovnává jako text),
 - součty jmenovitých hlasů nesedí se souhrnem (oddíl 6).
 
 Čtení souborů PSP, převod kódů, určení klubu a sestavení snímku jsou čisté funkce v `src/lib/psp-data.ts`. Testují se bez sítě (oddíl 9).

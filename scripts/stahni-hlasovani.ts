@@ -8,7 +8,7 @@ import {
 } from '../src/lib/psp-data';
 
 /** Snímky hlasování z otevřených dat PSP pro všechna hlasování, na která odkazují události pravidel
- *  (spec hlasování, oddíl 5). Použití: npm run hlasovani [-- --znovu] [-- --obsah <adresář>] */
+ *  (spec hlasování, oddíl 5). Použití: npm run hlasovani -- [--znovu] [--obsah <adresář>] */
 const OPENDATA = 'https://www.psp.cz/eknih/cdrom/opendata';
 const argumenty = process.argv.slice(2);
 const znovu = argumenty.includes('--znovu');
@@ -19,8 +19,8 @@ if (!adresar || adresar.startsWith('--')) {
   process.exit(1);
 }
 
-const d = new Date();
-const dnes = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+// datum v UTC: kontrola obsahu v CI hlídá „stazeno“ (nesmí být v budoucnosti) podle UTC, místní datum by po půlnoci neprošlo
+const dnes = new Date().toISOString().slice(0, 10);
 
 async function stahniZip(soubor: string): Promise<Record<string, Uint8Array>> {
   const odpoved = await fetch(`${OPENDATA}/${soubor}`);
