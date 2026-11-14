@@ -1,9 +1,10 @@
 import { inicializujDetail } from './detail';
 import { vyberKauzu } from './osa';
 import { nastavPohled, aktualniPohled } from './mapa';
+import { titulek } from '../lib/web';
 
 const mezipamet = new Map<string, { html: string; trida: string; titulek: string }>();
-const TITULEK_HLAVNI = 'Archiv kauz Andreje Babiše — Posuďte sami';
+const TITULEK_HLAVNI = titulek('Archiv kauz Andreje Babiše');
 let zaviramZHistorie = false;
 
 const dialog = () => document.getElementById('detail') as HTMLDialogElement;

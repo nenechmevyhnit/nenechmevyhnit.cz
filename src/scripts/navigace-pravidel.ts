@@ -1,9 +1,10 @@
 import { inicializujDetail, ukazUdalost } from './detail';
 import { aktualniPohled, nastavPohledPravidel, pohledZAdresy, vychoziPohled, adresaPohledu } from './osa-pravidel';
+import { titulek } from '../lib/web';
 
 /** Otevírání detailu pravidla nebo oblasti bez načítání stránky (obdoba navigace.ts pro kauzy).
  *  Klíč detailu je slug pravidla, nebo „oblasti/<id>“; adresa detailu je vždy /pravidla/<klíč>/. */
-const TITULEK = 'Zákony a nařízení — Posuďte sami';
+const TITULEK = titulek('Zákony a nařízení');
 const PREDPONA_OBLASTI = 'oblasti/';
 const mezipamet = new Map<string, { html: string; trida: string; titulek: string }>();
 let zaviramZHistorie = false;

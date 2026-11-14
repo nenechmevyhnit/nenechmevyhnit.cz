@@ -1,11 +1,12 @@
 ---
+import { WEB } from '../lib/web';
 interface Props { aktivni?: 'kauzy' | 'pravidla' | 'metodika' | 'o-projektu'; pravidla?: boolean }
 const { aktivni, pravidla = false } = Astro.props;
 const aktualni = (id: string) => (id === aktivni ? 'page' : undefined);
 ---
 <header class={pravidla ? 'top top-4' : 'top'}>
   <div class="hlavicka-znacka">
-    <a class="brand" href="/">Posuďte sami</a>
+    <a class="brand" href="/">{WEB.nazev}</a>
     <span class="hlavicka-pod">nezávislý archiv se zdroji</span>
   </div>
   <nav aria-label="Hlavní">

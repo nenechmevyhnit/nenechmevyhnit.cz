@@ -1,8 +1,9 @@
 ---
 import Zaklad from '../layouts/Zaklad.astro';
 import '../styles/stranky.css';
+import { titulek as nazevStranky } from '../lib/web';
 ---
-<Zaklad titulek="Stránka neexistuje — Posuďte sami" popis="Tahle stránka neexistuje." cesta="/404/" styly="stranky">
+<Zaklad titulek={nazevStranky('Stránka neexistuje')} popis="Tahle stránka neexistuje." cesta="/404/" styly="stranky">
   <main class="chyba404">
     {/* Ilustrace: list archivu, kterému červ s brýlemi ukousal roh. Jen ozdoba, nadpis říká totéž. */}
     <svg class="chyba404-obr" aria-hidden="true" viewBox="0 0 320 270" xmlns="http://www.w3.org/2000/svg">

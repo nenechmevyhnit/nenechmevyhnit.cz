@@ -10,6 +10,7 @@ import { datumText } from '../../lib/casova-osa';
 import type { Snimek } from '../../lib/schema-hlasovani';
 import '../../styles/hlavni.css';
 import '../../styles/hlasovani.css';
+import { titulek as nazevStranky } from '../../lib/web';
 
 // Stránka vznikne jen pro snímky, na které odkazuje aspoň jedno pravidlo (nactiHlasovani je už takto vyfiltruje).
 export function getStaticPaths() {
@@ -27,7 +28,7 @@ const filtr = [
   ...kluby.map(k => ({ slug: k.slug, popisek: `${k.popisek} (${k.celkem})`, href: `#${k.slug}` })),
 ];
 ---
-<Zaklad titulek={`${nadpis} — Posuďte sami`} popis={popis} cesta={`/hlasovani/${id}/`} styly="hlavni" aktivni="pravidla">
+<Zaklad titulek={nazevStranky(nadpis)} popis={popis} cesta={`/hlasovani/${id}/`} styly="hlavni" aktivni="pravidla">
   <main class="hl-stranka">
     <nav class="hl-drobky" aria-label="Drobečková navigace">
       <a href="/pravidla/">Zákony a nařízení</a>
