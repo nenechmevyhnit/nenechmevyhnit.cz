@@ -310,14 +310,6 @@ body .legenda i.ok { --srafa: 11px; }
 html body:not(.nacteno) .hero > *, html body:not(.nacteno) .filtry, html body:not(.nacteno) .graf,
 html body:not(.nacteno) .legenda, html body:not(.nacteno) .radek .nazev { animation: none; }
 
-/* Titulek úvodu se ke konci drolí: tučné rozpadlé řezy Redaction 20, 35, 50 a 70.
-   Jen skutečná tučná váha (umělé ztučnění pixelové tvary rozmaže) a nic silnějšího než 70, aby šel konec přečíst. */
-.hero.u2 h1 .drol { font-style: normal; font-weight: 700; font-synthesis: none; }
-.hero.u2 h1 .d1 { font-family: "Redaction 20", var(--f-nadpis); }
-.hero.u2 h1 .d2 { font-family: "Redaction 35", var(--f-nadpis); }
-.hero.u2 h1 .d3 { font-family: "Redaction 50", var(--f-nadpis); }
-.hero.u2 h1 .d4 { font-family: "Redaction 70", var(--f-nadpis); }
-
 /* Témata (čipy): jeden řádek bez posouvání a bez mizení do ztracena. Co se nevejde, otevře textové tlačítko
    „+N další“ (skript vybírá, která témata se vejdou; vybraná jsou vidět vždy). Rozbalená témata se zalomí pod sebe.
    Pravidla počítadla míří jen na přímého potomka (.filtry > .vpravo), aby nezasahovala do ničeho uvnitř řádku. */
