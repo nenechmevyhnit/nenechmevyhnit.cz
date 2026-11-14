@@ -3,7 +3,7 @@ import '../styles/fonty.css';
 import '../styles/upravy.css';
 import Hlavicka from '../components/Hlavicka.astro';
 import { rezimKonceptu, maPravidla } from '../lib/kauzy';
-import { WEB } from '../lib/web';
+import { WEB, popisKratky } from '../lib/web';
 
 interface Props {
   titulek: string;
@@ -16,6 +16,8 @@ interface Props {
 const { titulek, popis, cesta, styly, aktivni, otevrena } = Astro.props;
 const url = new URL(cesta, Astro.site).toString();
 const nahled = new URL('/obrazky/nahled.png', Astro.site).toString();
+// vstupní popis zůstává celý pro ostatní použití; vyhledávačům jde zkrácený na hranici slova
+const popisProVyhledavace = popisKratky(popis);
 ---
 <!doctype html>
 <html lang="cs">
@@ -23,13 +25,13 @@ const nahled = new URL('/obrazky/nahled.png', Astro.site).toString();
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>{titulek}</title>
-  <meta name="description" content={popis}>
+  <meta name="description" content={popisProVyhledavace}>
   <link rel="canonical" href={url}>
   <meta property="og:type" content="website">
   <meta property="og:locale" content="cs_CZ">
   <meta property="og:site_name" content={WEB.nazev}>
   <meta property="og:title" content={titulek}>
-  <meta property="og:description" content={popis}>
+  <meta property="og:description" content={popisProVyhledavace}>
   <meta property="og:url" content={url}>
   <meta property="og:image" content={nahled}>
   <meta name="twitter:card" content="summary_large_image">

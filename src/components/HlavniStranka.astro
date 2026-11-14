@@ -10,14 +10,16 @@ import { nactiKauzy, nactiStitky, nactiGraf, maMapu } from '../lib/kauzy';
 import type { KauzaZaznam } from '../lib/validace';
 import '../styles/hlavni.css';
 import '../styles/mapa.css';
-import { WEB, titulek as nazevStranky } from '../lib/web';
+import { WEB, titulek as nazevStranky, titulekKauzy } from '../lib/web';
 
 interface Props { otevrena?: KauzaZaznam }
 const { otevrena } = Astro.props;
 const zaznamy = nactiKauzy();
 const stitky = nactiStitky();
 const mapa = maMapu();
-const titulek = nazevStranky(otevrena ? otevrena.kauza.nazev : 'Archiv kauz Andreje Babiše');
+const titulek = otevrena
+  ? titulekKauzy(otevrena.kauza.nazev, otevrena.kauza.od, otevrena.kauza.do)
+  : nazevStranky('Archiv kauz Andreje Babiše');
 const popis = otevrena ? otevrena.kauza.shrnuti : WEB.popis;
 ---
 <Zaklad titulek={titulek} popis={popis} cesta={otevrena ? `/kauzy/${otevrena.slug}/` : '/'} styly="hlavni" aktivni="kauzy" otevrena={otevrena?.slug}>
