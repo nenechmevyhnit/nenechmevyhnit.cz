@@ -16,7 +16,8 @@ test('stránka kauzy nese platný Article s citacemi a drobečky', async ({ page
   expect(d['@type']).toBe('Article');
   expect(d.headline).toBe('Testovací kauza Alfa');
   expect(d.citation.length).toBeGreaterThan(0);
-  expect(d.breadcrumb.itemListElement).toHaveLength(3);
+  // dvě úrovně: seznam kauz je na titulní stránce, samostatnou adresu /kauzy/ nemá
+  expect(d.breadcrumb.itemListElement).toHaveLength(2);
   expect(d.datePublished).toBeUndefined();
 });
 

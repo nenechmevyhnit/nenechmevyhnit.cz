@@ -25,12 +25,13 @@ export const webJsonLd = () => ({
   publisher: organizace(),
 });
 
+/** Dvě úrovně, ne tři: seznam kauz je na titulní stránce, samostatnou adresu /kauzy/ nemá.
+ *  Dvě položky se stejným odkazem Google v drobečkách ignoruje. */
 const drobecky = (nazev: string, cesta: string) => ({
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Domů', item: adresa('/') },
-    { '@type': 'ListItem', position: 2, name: 'Kauzy', item: adresa('/') },
-    { '@type': 'ListItem', position: 3, name: nazev, item: adresa(cesta) },
+    { '@type': 'ListItem', position: 1, name: 'Kauzy', item: adresa('/') },
+    { '@type': 'ListItem', position: 2, name: nazev, item: adresa(cesta) },
   ],
 });
 
@@ -46,9 +47,14 @@ export function kauzaJsonLd({ slug, kauza }: KauzaZaznam) {
     // datum vydání nemáme a nebudeme ho vymýšlet; overeno je datum poslední kontroly
     ...(kauza.overeno ? { dateModified: kauza.overeno } : {}),
     publisher: organizace(),
+    // Andrej Babiš je předmětem celého archivu. Agrofert se tvrdí jen tam, kde ho kauza
+    // uvádí mezi aktéry — strojově čitelné tvrzení bez podkladu by porušilo pravidlo,
+    // že každé tvrzení v archivu má zdroj.
     about: [
       { '@type': 'Person', name: 'Andrej Babiš', sameAs: BABIS_WIKIDATA },
-      { '@type': 'Organization', name: 'Agrofert', sameAs: AGROFERT_WIKIDATA },
+      ...(kauza.akteri.some(a => a.id === 'agrofert')
+        ? [{ '@type': 'Organization', name: 'Agrofert', sameAs: AGROFERT_WIKIDATA }]
+        : []),
     ],
     citation: kauza.zdroje.map(z => ({
       '@type': 'CreativeWork',

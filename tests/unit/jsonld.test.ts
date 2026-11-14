@@ -49,17 +49,28 @@ describe('kauzaJsonLd', () => {
     });
   });
 
-  it('napojuje kauzu na entity ve Wikidatech', () => {
+  it('napojuje kauzu na Andreje Babiše, který je předmětem celého archivu', () => {
     const o = JSON.stringify((kauzaJsonLd(zaznam) as any).about);
     expect(o).toContain(BABIS_WIKIDATA);
-    expect(o).toContain(AGROFERT_WIKIDATA);
   });
 
-  it('má drobečkovou navigaci na tři úrovně', () => {
+  it('Agrofert tvrdí jen u kauzy, která ho má mezi aktéry', () => {
+    const bez = kauzaJsonLd(zaznam) as any;
+    expect(JSON.stringify(bez.about)).not.toContain(AGROFERT_WIKIDATA);
+
+    const sAgrofertem = kauzaJsonLd({
+      ...zaznam,
+      kauza: { ...KAUZA, akteri: [{ id: 'agrofert', role: 'vlastnik', popis: 'Vlastní.', zdroje: [1] }] },
+    } as any) as any;
+    expect(JSON.stringify(sAgrofertem.about)).toContain(AGROFERT_WIKIDATA);
+  });
+
+  it('má drobečkovou navigaci bez dvou položek na stejnou adresu', () => {
     const b = (kauzaJsonLd(zaznam) as any).breadcrumb;
     expect(b['@type']).toBe('BreadcrumbList');
-    expect(b.itemListElement.map((p: any) => p.position)).toEqual([1, 2, 3]);
-    expect(b.itemListElement[2].name).toBe(KAUZA.nazev);
+    const adresy = b.itemListElement.map((p: any) => p.item);
+    expect(new Set(adresy).size).toBe(adresy.length);
+    expect(b.itemListElement.at(-1).name).toBe(KAUZA.nazev);
   });
 
   it('text s uvozovkami a ampersandem projde JSON bez poškození', () => {

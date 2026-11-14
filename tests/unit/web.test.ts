@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { WEB, titulek, MAX_TITULEK, MAX_POPIS, titulekKauzy, popisKratky } from '../../src/lib/web';
+import { nactiKauzy, nactiPravidla, nactiOblasti, nactiHlasovani } from '../../src/lib/kauzy';
+import { nadpisHlasovani } from '../../src/lib/hlasovani';
 
 describe('web', () => {
   it('drží název a doménu projektu', () => {
@@ -9,6 +11,33 @@ describe('web', () => {
 
   it('skládá titulek stránky s příponou názvu webu', () => {
     expect(titulek('Metodika')).toBe('Metodika — Posuďte sami');
+  });
+
+  it('u dlouhého názvu obětuje příponu, ne obsah titulku', () => {
+    // název pravidla smí mít 60 znaků, s příponou by titulek přetekl limit;
+    // v takovém případě je užitečnější celý název než jméno webu
+    const dlouhy = 'PGRLF: podpora pojištění pro velké zemědělské podniky';
+    expect(titulek(dlouhy)).toBe(dlouhy);
+    expect(titulek(dlouhy).length).toBeLessThanOrEqual(MAX_TITULEK);
+  });
+});
+
+describe('délka titulků skutečného obsahu', () => {
+  const vsechny = (): string[] => [
+    titulek('Archiv kauz Andreje Babiše'),
+    titulek('Metodika'),
+    titulek('O projektu'),
+    titulek('Zákony a nařízení'),
+    titulek('Stránka neexistuje'),
+    ...nactiKauzy().map(z => titulekKauzy(z.kauza.nazev, z.kauza.od, z.kauza.do)),
+    ...nactiPravidla().map(z => titulek(z.pravidlo.nazev)),
+    ...nactiOblasti().map(o => titulek(o.nazev)),
+    ...[...nactiHlasovani().values()].map(s => titulek(nadpisHlasovani(s))),
+  ];
+
+  it('žádný titulek stránky nepřeteče limit', () => {
+    const dlouhe = vsechny().filter(t => t.length > MAX_TITULEK).map(t => `${t.length}: ${t}`);
+    expect(dlouhe).toEqual([]);
   });
 });
 

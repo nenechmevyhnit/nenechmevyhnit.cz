@@ -9,7 +9,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { chromium } from '@playwright/test';
 import { nactiKauzy } from '../src/lib/kauzy.ts';
 import { WEB } from '../src/lib/web.ts';
-import { rozsahText, datumText } from '../src/lib/casova-osa.ts';
+import { rozsahText } from '../src/lib/casova-osa.ts';
 import { sklonuj } from '../src/lib/cestina.ts';
 
 const SIRKA = 1200;
@@ -38,7 +38,7 @@ const stranka = (kauza) => `<!doctype html>
     <h1>${escapuj(kauza.nazev)}</h1>
     <p class="roky">${escapuj(rozsahText(kauza.od, kauza.do))}</p>
   </div>
-  <p class="pata"><strong>${escapuj(WEB.nazev)}</strong><span>${escapuj(sklonuj(kauza.zdroje.length, ['zdroj', 'zdroje', 'zdrojů']))} · ověřeno ${escapuj(kauza.overeno ? datumText(kauza.overeno) : '—')}</span></p>
+  <p class="pata"><strong>${escapuj(WEB.nazev)}</strong><span>${escapuj(sklonuj(kauza.zdroje.length, ['zdroj', 'zdroje', 'zdrojů']))}</span></p>
 </body></html>`;
 
 const prohlizec = await chromium.launch();

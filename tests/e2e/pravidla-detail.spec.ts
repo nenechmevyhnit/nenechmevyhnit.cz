@@ -9,7 +9,8 @@ test('přímá adresa otevře detail pravidla s vlastním náhledem', async ({ p
   const dlg = page.locator('dialog#detail');
   await expect(dlg).toBeVisible();
   await expect(dlg.locator('#detail-nadpis')).toHaveText(OMEGA);
-  await expect(page).toHaveTitle(`${OMEGA} — Posuďte sami`);
+  // název pravidla (55 znaků) s příponou přeteče limit titulku, přípona proto odpadá
+  await expect(page).toHaveTitle(OMEGA);
   await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://posudtesami.cz/pravidla/zakon-omega/');
   await expect(dlg.locator('.m2-hlava .roky')).toContainText('Poslanecký návrh zákona · Schváleno Sněmovnou');
   await expect(page.locator('.pr-radek[data-slug="zakon-omega"]')).toHaveClass(/vybrany/);
