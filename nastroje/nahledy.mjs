@@ -27,10 +27,10 @@ const stranka = (kauza) => `<!doctype html>
   body { width: ${SIRKA}px; height: ${VYSKA}px; padding: 72px; background: #FBF9F4; color: #16130F;
          font-family: "Redaction 10", Georgia, serif; display: flex; flex-direction: column; justify-content: space-between; }
   .nad { font: 600 22px ui-monospace, monospace; color: #DB1F2D; letter-spacing: .06em; text-transform: uppercase; }
-  h1 { font-family: "Redaction 50", Georgia, serif; font-weight: 700; font-size: 82px; line-height: 1.02; letter-spacing: -0.02em; }
+  h1 { font-family: "Redaction 10", Georgia, serif; font-weight: 700; font-size: 82px; line-height: 1.02; letter-spacing: -0.02em; }
   .roky { font-size: 30px; color: #5B544B; margin-top: 20px; }
   .pata { display: flex; justify-content: space-between; align-items: baseline; font-size: 26px; color: #5B544B; }
-  .pata strong { font-family: "Redaction 35", Georgia, serif; font-size: 32px; color: #16130F; }
+  .pata strong { font-family: "Redaction 10", Georgia, serif; font-size: 32px; color: #16130F; }
 </style></head>
 <body>
   <p class="nad">Archiv kauz Andreje Babiše</p>
