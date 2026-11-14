@@ -4,12 +4,16 @@ test.use({ viewport: { width: 1366, height: 768 } });
 
 test('plánovaný krok stojí v hlavičce pod průběhem i se stavem a zdrojem', async ({ page }) => {
   await page.goto('/pravidla/zakon-omega/');
-  const pl = page.locator('dialog#detail .m2-hlava .prubeh + .planovano');
+  const pl = page.locator('dialog#detail .m2-hlava .planovano');
   await expect(pl).toBeVisible();
   // datumText odděluje části data pevnou mezerou, proto se mezery před porovnáním sjednotí
   const text = (await pl.textContent())!.replace(/\s+/g, ' ');
   expect(text).toBe('Stav k 1. 11. 2026: Fiktivní senát návrh projedná na schůzi od 2. 12. 2099.1');
   await expect(pl.locator('.chip')).toHaveAttribute('href', '#zdroj-1');
+  // kopie pro mobil v záložce Průběh je na počítači skrytá, souhrn pod pruhy fází také
+  await page.getByRole('tab', { name: 'Průběh' }).click();
+  await expect(page.locator('.m2-panel[data-p="chrono"] .planovano-prubeh')).toBeHidden();
+  await expect(page.locator('.m2-hlava .prubeh-souhrn')).toBeHidden();
 });
 
 test('pravidlo bez plánovaného kroku blok nemá', async ({ page }) => {

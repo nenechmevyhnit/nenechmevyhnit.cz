@@ -9,6 +9,12 @@ interface Props { druh: DruhPravidla; udalosti: { datum: string; krok?: Krok }[]
 const { druh, udalosti, interaktivni = false } = Astro.props;
 const { faze, konec } = prubeh(druh, udalosti);
 const stavFaze = (f: (typeof faze)[number]) => (f.hotovo ? 'hotovo' : f.poznamka ? f.poznamka.toLowerCase() : 'zatím ne');
+// Souhrn pod pruhy pro mobil, kde se popisky fází nevejdou: poslední krok a kolikátá je to fáze.
+// Ukončení (zamítnuto, staženo) má vlastní políčko, souhrn pak není potřeba.
+const dosazena = faze.findLastIndex(f => f.udalost !== null);
+const souhrn = interaktivni && !konec && dosazena >= 0
+  ? `${popisekKroku(udalosti[faze[dosazena].udalost!].krok!)} ${datumText(faze[dosazena].datum!)} · fáze ${dosazena + 1} z ${faze.length}`
+  : null;
 ---
 <ol class={`prubeh${interaktivni ? ' prubeh-detail' : ''}`} aria-label="Průběh projednávání">
   {faze.map(f => {
@@ -27,3 +33,4 @@ const stavFaze = (f: (typeof faze)[number]) => (f.hotovo ? 'hotovo' : f.poznamka
     </li>
   )}
 </ol>
+{souhrn && <p class="prubeh-souhrn" aria-hidden="true">{souhrn}</p>}
