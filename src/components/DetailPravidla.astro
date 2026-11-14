@@ -42,7 +42,7 @@ const prvni = zalozky[0]?.id;
         <div class="roky">{popisekCesty(p.cesta)} · {popisekKroku(stavPravidla(p.udalosti))}{p.oblasti && p.oblasti.length > 0 && (
           <span class="pr-oblasti"> · Oblasti: {p.oblasti.map((o, i) => <>{i > 0 && ', '}<a href={`/pravidla/oblasti/${o}/`} data-oblast-odkaz={o} aria-haspopup="dialog">{oblast(o).nazev}</a></>)}</span>
         )}</div>
-        <h2 id="detail-nadpis">{p.nazev}</h2>
+        <h1 id="detail-nadpis">{p.nazev}</h1>
         <p class="perex" id="detail-perex">{p.shrnuti}</p>
         <button class="perex-vice" type="button" aria-expanded="false" aria-controls="detail-perex" hidden>celé shrnutí</button>
         {p.proVas && (

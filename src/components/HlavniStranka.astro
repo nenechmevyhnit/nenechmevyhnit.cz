@@ -22,7 +22,7 @@ const popis = otevrena ? otevrena.kauza.shrnuti : WEB.popis;
 ---
 <Zaklad titulek={titulek} popis={popis} cesta={otevrena ? `/kauzy/${otevrena.slug}/` : '/'} styly="hlavni" aktivni="kauzy" otevrena={otevrena?.slug}>
   <main class="hlavni-obsah">
-    <Uvod />
+    <Uvod jakoNadpis={!otevrena} />
     <h2 class="jen-ctecka">Hledání a filtry</h2>
     <Filtry zaznamy={zaznamy} stitky={stitky} mapa={mapa} />
     <h2 class="jen-ctecka">Kauzy</h2>

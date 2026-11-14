@@ -96,7 +96,7 @@
   .pravidlo .m2-panel[data-p="prospech"], .pravidlo .m2-panel[data-p="kontrola"], .pravidlo .m2-panel[data-p="vyhrady"] { column-width: 260px; }
   /* hlavička detailu: menší nadpis, fáze jen jako pruhy (popisky by se lámaly uprostřed slova) a pod nimi
      jeden řádek s posledním krokem; „Stav k“ je v záložce Průběh. Víc místa tak zbude pro obsah záložek. */
-  .pravidlo .m2-hlava h2 { font-size: 22px; margin: 4px 0 6px; }
+  .pravidlo .m2-hlava :is(h1, h2) { font-size: 22px; margin: 4px 0 6px; }
   .prubeh-detail { margin-top: 10px; }
   .prubeh-detail li:not(.konec) { padding-top: 0; }
   .prubeh-detail li:not(.konec) :is(.f-nazev, time) { display: none; }
@@ -125,7 +125,7 @@
 /* nízké a široké okno: hlavička a listování zabírají méně místa, aby se do Průběhu vešla cesta předložení i událost */
 @media (max-height: 700px) and (min-width: 761px) {
   .pravidlo .m2-hlava { padding-top: 16px; }
-  .pravidlo .m2-hlava h2 { font-size: 28px; margin: 4px 0 6px; }
+  .pravidlo .m2-hlava :is(h1, h2) { font-size: 28px; margin: 4px 0 6px; }
   .pravidlo .prubeh-detail { margin: 8px 0 0; }
   .pravidlo .m2-panel { padding-top: 14px; padding-bottom: 14px; }
 }

@@ -27,7 +27,7 @@ const zalozky = [
   <button class="zavrit" type="button" aria-label="Zavřít detail">×</button>
   <header class="m2-hlava">
     <p class="u2-nad">Oblast</p>
-    <h2 id="detail-nadpis">{o.nazev}</h2>
+    <h1 id="detail-nadpis">{o.nazev}</h1>
     {d
       ? <p class="perex" id="detail-perex"><strong>K čemu to je:</strong> {d.uvod.text}<span class="chipy" set:html={chipy(d.uvod.zdroje)}></span></p>
       : <p class="perex" id="detail-perex">{o.popisek}</p>}

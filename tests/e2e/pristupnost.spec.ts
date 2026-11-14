@@ -62,7 +62,7 @@ test.describe('bez JavaScriptu', () => {
     await page.goto('/kauzy/alfa-dotace/');
     const dlg = page.locator('dialog#detail');
     await expect(dlg).toBeVisible();
-    await expect(dlg.getByRole('heading', { level: 2 })).toHaveText('Testovací kauza Alfa');
+    await expect(dlg.locator('#detail-nadpis')).toHaveText('Testovací kauza Alfa');
     for (const nadpis of ['Proč je to kauza', 'Chronologie', 'Souvislosti', 'Stav a stanovisko']) {
       await expect(dlg.getByRole('heading', { level: 3, name: nadpis, exact: true })).toBeVisible();
     }

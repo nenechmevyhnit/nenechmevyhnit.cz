@@ -7,7 +7,7 @@ test('přímá adresa otevře detail s vlastním náhledem', async ({ page }) =>
   await page.goto('/kauzy/alfa-dotace/');
   const dlg = page.locator('dialog#detail');
   await expect(dlg).toBeVisible();
-  await expect(dlg.getByRole('heading', { level: 2 })).toHaveText('Testovací kauza Alfa');
+  await expect(dlg.locator('#detail-nadpis')).toHaveText('Testovací kauza Alfa');
   await expect(page).toHaveTitle('Testovací kauza Alfa — Posuďte sami');
   await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://posudtesami.cz/kauzy/alfa-dotace/');
   await expect(page.locator('#graf')).toHaveAttribute('data-vybrano', 'alfa-dotace');

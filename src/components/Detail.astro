@@ -26,7 +26,9 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
       <button class="zavrit" type="button" aria-label="Zavřít detail">×</button>
       <header class="m2-hlava">
         <div class="roky">{rozsahText(k.od, k.do)} · {delkaText(k.od, k.do)} · {popisekStavu(k.stav)}</div>
-        <h2 id="detail-nadpis">{k.nazev}</h2>
+        {/* Název kauzy je nadpisem stránky. Detail s obsahem vzniká vždy jako samostatná stránka;
+            na titulní stránce je dialog prázdný a skript do něj vloží obsah právě odtud. */}
+        <h1 id="detail-nadpis">{k.nazev}</h1>
         <p class="perex" id="detail-perex">{k.shrnuti}</p>
         <button class="perex-vice" type="button" aria-expanded="false" aria-controls="detail-perex" hidden>celé shrnutí</button>
         {k.castky.length > 0 && (

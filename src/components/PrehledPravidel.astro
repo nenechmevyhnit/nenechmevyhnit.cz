@@ -55,7 +55,10 @@ const popis = otevrene ? otevrene.pravidlo.shrnuti
     {/* stejná stavba a výška jako úvod kauz (jeden řádek titulku, jeden řádek perexu), přepínání mezi stránkami neposkočí */}
     <section class="hero u2 pr-hero">
       <p class="u2-nad">Zákony a nařízení od prosince 2025</p>
-      <h1>Komu prospívají nová pravidla?</h1>
+      {/* Na stránce pravidla nebo oblasti není otázka přehledu nadpisem stránky — tím je název v detailu. */}
+      {otevrena
+        ? <p class="u2-titul">Komu prospívají nová pravidla?</p>
+        : <h1 class="u2-titul">Komu prospívají nová pravidla?</h1>}
       <p class="u2-pod">Zákony a nařízení, které podle rozboru zdrojů prospívají Babišovi nebo Agrofertu, nebo mění kontrolu moci a instituce na to upozornily.</p>
     </section>
     {zaznamy.length > 0 && (

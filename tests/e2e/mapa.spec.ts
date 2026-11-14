@@ -271,7 +271,7 @@ test('návaznost v detailu přejde na druhou kauzu, opačný směr je dopočíta
   await page.getByRole('tab', { name: 'Souvislosti' }).click();
   await page.locator('.vazby').getByRole('link', { name: 'Testovací kauza Alfa' }).click();
   await expect(page).toHaveURL(/\/kauzy\/alfa-dotace\/$/);
-  await expect(page.locator('dialog#detail h2')).toHaveText('Testovací kauza Alfa');
+  await expect(page.locator('dialog#detail #detail-nadpis')).toHaveText('Testovací kauza Alfa');
   await page.getByRole('tab', { name: 'Souvislosti' }).click();
   await expect(page.locator('.vazby')).toContainText('Navazují na ni:');
   await expect(page.locator('.vazby').getByRole('link', { name: 'Testovací kauza Žeta' })).toBeVisible();

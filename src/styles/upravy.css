@@ -103,7 +103,7 @@ body .m2-panel[data-p="stav"] h4 { break-after: avoid; }
   body .filtry.f4 .f-zrusit[hidden] { display: none; }
   /* řádky nesmí zmáčknout pruh pod název: nižší stopa a řádek se nezmenší pod svůj obsah */
   body .graf .radek { min-height: 49px; }
-  body .hero.u2 h1 { font-size: 22px; }
+  body .hero.u2 .u2-titul { font-size: 22px; }
   body .legenda { font-size: 11px; gap: 4px 10px; }
   body .filtry.f4 { padding: 6px 0; gap: 6px 10px; }
   body .filtry.f4 .f-hledat input { padding-top: 6px; padding-bottom: 6px; }

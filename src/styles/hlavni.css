@@ -30,7 +30,7 @@ button { font: inherit; color: inherit; }
 .top nav a { font-size: 14px; margin-left: 22px; text-decoration: none; }
 
 .hero { display: flex; justify-content: space-between; align-items: end; gap: 40px; padding: 48px 0 32px; flex-wrap: wrap; }
-.hero h1 { font-family: var(--f-nadpis); font-weight: 800; font-stretch: 125%; font-size: clamp(40px, 5.4vw, 72px); line-height: .95; letter-spacing: -0.03em; margin: 0; }
+.hero .u2-titul { font-family: var(--f-nadpis); font-weight: 800; font-stretch: 125%; font-size: clamp(40px, 5.4vw, 72px); line-height: .95; letter-spacing: -0.03em; margin: 0; }
 .hero .lead { font-size: 17px; margin: 0; max-width: 28em; color: var(--text2); }
 
 .filtry { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 0; border-top: 1px solid var(--linka); border-bottom: 1px solid var(--linka); align-items: center; }
@@ -213,8 +213,8 @@ body > footer { display: none; }
 @media (max-height: 560px) {
   .radek { min-height: 28px; }
   .radek .nazev small { display: none; }
-  .hero h1 { font-size: 30px !important; }
-  .hero h1 span { margin-top: 2px !important; }
+  .hero .u2-titul { font-size: 30px !important; }
+  .hero .u2-titul span { margin-top: 2px !important; }
 }
 .radek .nazev strong { line-height: 1.15; }
 .radek .nazev small { margin-top: 1px; line-height: 1.2; }
@@ -306,7 +306,7 @@ dialog.m2.otevrena { border-top-color: var(--okr); }
 .m2-hlava { padding: 30px 72px 6px 36px; }
 .m2-hlava .roky { font: 600 14px var(--f-mono); color: var(--modra); }
 dialog.otevrena .m2-hlava .roky { color: var(--okr-text); }
-.m2-hlava h2 { font-family: var(--f-nadpis); font-weight: 800; font-stretch: 118%; font-size: clamp(28px, 3.6vw, 42px); line-height: 1.05; letter-spacing: -0.02em; margin: 6px 0 10px; }
+.m2-hlava :is(h1, h2) { font-family: var(--f-nadpis); font-weight: 800; font-stretch: 118%; font-size: clamp(28px, 3.6vw, 42px); line-height: 1.05; letter-spacing: -0.02em; margin: 6px 0 10px; }
 .m2-hlava .perex { margin: 0; color: var(--text2); max-width: 46em; }
 .m2-hlava .castky { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 28px; align-items: baseline; }
 .m2-hlava .castky li { max-width: 30em; }
@@ -365,7 +365,7 @@ dialog.m2 > .m2-hlava, dialog.m2 > .mini-osa, dialog.m2 > .zalozky { flex: none;
 .posun-napoveda { font: 12px var(--f-mono); color: var(--meta); margin: 0 0 8px; column-span: all; }
 @media (max-width: 760px) {
   dialog.m2 { height: 100dvh; }
-  .m2-hlava h2 { font-size: 26px; }
+  .m2-hlava :is(h1, h2) { font-size: 26px; }
   .m2-hlava .perex { -webkit-line-clamp: 2; font-size: 14px; }
   .mini-osa { height: 80px; margin-top: 6px; }
   .m2-panel { padding: 16px 18px; }
@@ -380,7 +380,7 @@ dialog.m2 > .m2-hlava, dialog.m2 > .mini-osa, dialog.m2 > .zalozky { flex: none;
 /* ---- vložený <style> ---- */
 
 :root { --f-nadpis: "Redaction 10", Georgia, serif; --f-text: "Redaction 10", Georgia, serif; }
-.hero h1, .m2-hlava h2, .brand { font-stretch: 100%; letter-spacing: -0.01em; }
+.hero .u2-titul, .m2-hlava :is(h1, h2), .brand { font-stretch: 100%; letter-spacing: -0.01em; }
 :root { --bila:#F5F5F8; --plocha:#FFFFFF; --modra:#282661; --okr:#8F8DC4; --okr-text:#4B4994; --inkoust:#16153A; --text2:#33325A; --linka:#D3D3E2; --meta:#5C5B7A; }
 .brand::before { background: linear-gradient(180deg, #282661 50%, #DB1F2D 50%); }
 .top { border-bottom: 3px solid #DB1F2D; }
@@ -389,9 +389,9 @@ dialog.m2 > .m2-hlava, dialog.m2 > .mini-osa, dialog.m2 > .zalozky { flex: none;
 
 .hero.u2 { display: block; padding: 14px 0 10px; }
 .u2-nad { font: 600 12px var(--f-mono); color: #DB1F2D; letter-spacing: .06em; text-transform: uppercase; margin: 0 0 6px; }
-.hero.u2 h1 { font-size: clamp(28px, 3.4vw, 46px); line-height: 1.08; margin: 0; }
-.hero.u2 h1 span { display: block; font-weight: 400; color: var(--text2); font-size: max(15px, .4em); letter-spacing: 0; margin-top: 8px; }
-@media (max-width: 760px) { .hero.u2 { padding: 10px 0 8px; } .hero.u2 h1 { font-size: 24px; } }
+.hero.u2 .u2-titul { font-size: clamp(28px, 3.4vw, 46px); line-height: 1.08; margin: 0; }
+.hero.u2 .u2-titul span { display: block; font-weight: 400; color: var(--text2); font-size: max(15px, .4em); letter-spacing: 0; margin-top: 8px; }
+@media (max-width: 760px) { .hero.u2 { padding: 10px 0 8px; } .hero.u2 .u2-titul { font-size: 24px; } }
 
 /* ---- vložený <style> ---- */
 
@@ -439,7 +439,7 @@ body { position: relative; }
 .radek .nazev { background: color-mix(in srgb, var(--plocha) 92%, transparent); }
 .filtry .f-cipy button, .filtry input { background: var(--plocha); }
 /* čitelnost textů nad portrétem: světlá aura v barvě pozadí (na čistém pozadí neviditelná) */
-.top nav a, .hero h1, .hero p, .filtry .f-prepinac, .filtry .vpravo, .legenda, .legenda a, .osa-roku .stitky span {
+.top nav a, .hero .u2-titul, .hero p, .filtry .f-prepinac, .filtry .vpravo, .legenda, .legenda a, .osa-roku .stitky span {
   text-shadow: 0 0 2px var(--bila), 0 0 6px var(--bila), 0 0 12px var(--bila), 0 0 18px var(--bila); }
 .radek .otevrit { text-shadow: 0 0 4px var(--plocha), 0 0 10px var(--plocha); }
 @media (max-width: 760px) { .portret { width: 80vw; opacity: .45 !important; } }

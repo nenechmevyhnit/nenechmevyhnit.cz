@@ -1,5 +1,13 @@
+---
+interface Props { jakoNadpis?: boolean }
+const { jakoNadpis = true } = Astro.props;
+const SLOGAN = 'Za půl roku si to jinak nikdo nebude pamatovat.';
+---
 <section class="hero u2">
   <p class="u2-nad">Archiv kauz Andreje Babiše</p>
-  <h1>Za půl roku si to jinak nikdo nebude pamatovat.</h1>
+  {/* Na stránce kauzy není slogan nadpisem stránky — tím je název kauzy v detailu — ale vypadá stejně. */}
+  {jakoNadpis
+    ? <h1 class="u2-titul">{SLOGAN}</h1>
+    : <p class="u2-titul">{SLOGAN}</p>}
   <p class="u2-pod">Proto je to tady zapsané, se zdrojem u každého tvrzení a se stanoviskem dotčené strany.</p>
 </section>
