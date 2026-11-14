@@ -11,6 +11,7 @@ import type { KauzaZaznam } from '../lib/validace';
 import '../styles/hlavni.css';
 import '../styles/mapa.css';
 import { WEB, titulek as nazevStranky, titulekKauzy } from '../lib/web';
+import { webJsonLd, kauzaJsonLd } from '../lib/jsonld';
 
 interface Props { otevrena?: KauzaZaznam }
 const { otevrena } = Astro.props;
@@ -22,7 +23,8 @@ const titulek = otevrena
   : nazevStranky('Archiv kauz Andreje Babiše');
 const popis = otevrena ? otevrena.kauza.shrnuti : WEB.popis;
 ---
-<Zaklad titulek={titulek} popis={popis} cesta={otevrena ? `/kauzy/${otevrena.slug}/` : '/'} styly="hlavni" aktivni="kauzy" otevrena={otevrena?.slug}>
+<Zaklad titulek={titulek} popis={popis} cesta={otevrena ? `/kauzy/${otevrena.slug}/` : '/'} styly="hlavni" aktivni="kauzy" otevrena={otevrena?.slug}
+  jsonLd={otevrena ? kauzaJsonLd(otevrena) : webJsonLd()}>
   <main class="hlavni-obsah">
     <Uvod jakoNadpis={!otevrena} />
     <h2 class="jen-ctecka">Hledání a filtry</h2>

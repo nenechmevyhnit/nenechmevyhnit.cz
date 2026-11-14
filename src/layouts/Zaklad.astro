@@ -2,6 +2,7 @@
 import '../styles/fonty.css';
 import '../styles/upravy.css';
 import Hlavicka from '../components/Hlavicka.astro';
+import StrukturovanaData from '../components/StrukturovanaData.astro';
 import { rezimKonceptu, maPravidla } from '../lib/kauzy';
 import { WEB, popisKratky } from '../lib/web';
 
@@ -12,8 +13,9 @@ interface Props {
   styly: 'hlavni' | 'stranky';
   aktivni?: 'kauzy' | 'pravidla' | 'metodika' | 'o-projektu';
   otevrena?: string;
+  jsonLd?: object | object[];
 }
-const { titulek, popis, cesta, styly, aktivni, otevrena } = Astro.props;
+const { titulek, popis, cesta, styly, aktivni, otevrena, jsonLd } = Astro.props;
 const url = new URL(cesta, Astro.site).toString();
 const nahled = new URL('/obrazky/nahled.png', Astro.site).toString();
 // vstupní popis zůstává celý pro ostatní použití; vyhledávačům jde zkrácený na hranici slova
@@ -38,6 +40,7 @@ const popisProVyhledavace = popisKratky(popis);
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <!-- třída js: styly pro návštěvníky bez JavaScriptu (html:not(.js)) se použijí jen tehdy, když skripty neběží -->
   <script is:inline>document.documentElement.classList.add('js')</script>
+  {jsonLd && <StrukturovanaData data={jsonLd} />}
 </head>
 <body data-otevrena={otevrena}>
   <div class="wrap" id="obsah">
