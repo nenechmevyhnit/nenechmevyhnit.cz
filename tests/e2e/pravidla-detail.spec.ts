@@ -8,8 +8,9 @@ test('přímá adresa otevře detail pravidla s vlastním náhledem', async ({ p
   await page.goto('/pravidla/zakon-omega/');
   const dlg = page.locator('dialog#detail');
   await expect(dlg).toBeVisible();
-  await expect(dlg.getByRole('heading', { level: 2 })).toHaveText(OMEGA);
-  await expect(page).toHaveTitle(`${OMEGA} — Posuďte sami`);
+  await expect(dlg.locator('#detail-nadpis')).toHaveText(OMEGA);
+  // název pravidla (55 znaků) s příponou přeteče limit titulku, přípona proto odpadá
+  await expect(page).toHaveTitle(OMEGA);
   await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://posudtesami.cz/pravidla/zakon-omega/');
   await expect(dlg.locator('.m2-hlava .roky')).toContainText('Poslanecký návrh zákona · Schváleno Sněmovnou');
   await expect(page.locator('.pr-radek[data-slug="zakon-omega"]')).toHaveClass(/vybrany/);
@@ -148,7 +149,7 @@ test('z přehledu se detail otevře bez načtení stránky a zavřením se adres
   await page.locator('.pr-radek[data-slug="narizeni-tau"] a.pr-btn').click();
   await expect(page).toHaveURL(/\/pravidla\/narizeni-tau\/\?pohled=seznam$/);
   await expect(page.locator('dialog#detail')).toBeVisible();
-  await expect(page.locator('dialog#detail h2')).toHaveText('Testovací nařízení Tau');
+  await expect(page.locator('dialog#detail #detail-nadpis')).toHaveText('Testovací nařízení Tau');
   expect(await page.evaluate(() => (window as any).bezNacteni)).toBe(true);
   await page.getByRole('button', { name: 'Zavřít detail' }).click();
   await expect(page).toHaveURL(/\/pravidla\/\?pohled=seznam$/);
@@ -315,7 +316,7 @@ test('detail pravidla ukazuje „Co by to znamenalo pro vás“ a odkazy na obla
   await expect(hlava.locator('.pr-oblasti a')).toHaveText(['Dotace a střet zájmů', 'Kontrolní úřady']);
   await hlava.getByRole('link', { name: 'Kontrolní úřady' }).click();
   await expect(page).toHaveURL(/\/pravidla\/oblasti\/kontrolni-urady\/$/);
-  await expect(page.locator('dialog#detail').getByRole('heading', { level: 2 })).toHaveText('Kontrolní úřady');
+  await expect(page.locator('dialog#detail #detail-nadpis')).toHaveText('Kontrolní úřady');
   await page.goBack();
   await expect(page).toHaveURL(/\/pravidla\/zakon-omega\/$/);
 });

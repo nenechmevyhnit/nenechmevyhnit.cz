@@ -1,0 +1,5 @@
+# Archiv je veřejný a statický, zakazovat není co.
+User-agent: *
+Disallow:
+
+Sitemap: https://posudtesami.cz/sitemap.xml

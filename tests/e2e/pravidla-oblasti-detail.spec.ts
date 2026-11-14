@@ -12,7 +12,7 @@ test('karta otevře detail oblasti bez načtení stránky, zavření vrátí př
   await expect(page).toHaveURL(/\/pravidla\/oblasti\/dotace-stret-zajmu\/$/);
   await expect(page).toHaveTitle('Dotace a střet zájmů — Posuďte sami');
   await expect(dialog(page).locator('.u2-nad')).toHaveText('Oblast');
-  await expect(dialog(page).getByRole('heading', { level: 2 })).toHaveText('Dotace a střet zájmů');
+  await expect(dialog(page).locator('#detail-nadpis')).toHaveText('Dotace a střet zájmů');
   await expect(dialog(page).locator('.perex')).toContainText('K čemu to je:');
   await expect(dialog(page).locator('.ob-pocty-detail')).toHaveText('Od prosince 2025: 2 změny · 0 přijato · 1 v projednávání · 1 ukončena');
   await expect(dialog(page).getByRole('tab')).toHaveText(['Co se mění (2)', 'Jak to hodnotí (3)', 'Zdroje (4)']);
@@ -60,10 +60,10 @@ test('Celý rozbor → otevře detail změny, Zpět vrátí oblast a další Zp�
   await page.locator('.ob-karta[data-oblast="dotace-stret-zajmu"] a.ob-btn').click();
   await dialog(page).locator('.ob-zmeny li[data-slug="zakon-omega"] a.ob-rozbor').click();
   await expect(page).toHaveURL(/\/pravidla\/zakon-omega\/$/);
-  await expect(dialog(page).getByRole('heading', { level: 2 })).toHaveText('Testovací novela zákona Omega s dlouhým názvem pro mobil');
+  await expect(dialog(page).locator('#detail-nadpis')).toHaveText('Testovací novela zákona Omega s dlouhým názvem pro mobil');
   await page.goBack();
   await expect(page).toHaveURL(/\/pravidla\/oblasti\/dotace-stret-zajmu\/$/);
-  await expect(dialog(page).getByRole('heading', { level: 2 })).toHaveText('Dotace a střet zájmů');
+  await expect(dialog(page).locator('#detail-nadpis')).toHaveText('Dotace a střet zájmů');
   await page.goBack();
   await expect(page).toHaveURL(/\/pravidla\/$/);
   await expect(dialog(page)).toBeHidden();

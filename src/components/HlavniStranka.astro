@@ -10,18 +10,24 @@ import { nactiKauzy, nactiStitky, nactiGraf, maMapu } from '../lib/kauzy';
 import type { KauzaZaznam } from '../lib/validace';
 import '../styles/hlavni.css';
 import '../styles/mapa.css';
+import { WEB, titulek as nazevStranky, titulekKauzy } from '../lib/web';
+import { webJsonLd, kauzaJsonLd } from '../lib/jsonld';
 
 interface Props { otevrena?: KauzaZaznam }
 const { otevrena } = Astro.props;
 const zaznamy = nactiKauzy();
 const stitky = nactiStitky();
 const mapa = maMapu();
-const titulek = otevrena ? `${otevrena.kauza.nazev} — Posuďte sami` : 'Archiv kauz Andreje Babiše — Posuďte sami';
-const popis = otevrena ? otevrena.kauza.shrnuti : 'Archiv kauz Andreje Babiše přehledně, s daty a zdroji. Každé tvrzení má zdroj, každá kauza stanovisko dotčené strany.';
+const titulek = otevrena
+  ? titulekKauzy(otevrena.kauza.nazev, otevrena.kauza.od, otevrena.kauza.do)
+  : nazevStranky('Archiv kauz Andreje Babiše');
+const popis = otevrena ? otevrena.kauza.shrnuti : WEB.popis;
 ---
-<Zaklad titulek={titulek} popis={popis} cesta={otevrena ? `/kauzy/${otevrena.slug}/` : '/'} styly="hlavni" aktivni="kauzy" otevrena={otevrena?.slug}>
+<Zaklad titulek={titulek} popis={popis} cesta={otevrena ? `/kauzy/${otevrena.slug}/` : '/'} styly="hlavni" aktivni="kauzy" otevrena={otevrena?.slug}
+  jsonLd={otevrena ? kauzaJsonLd(otevrena) : webJsonLd()}
+  nahledSoubor={otevrena ? `/obrazky/nahledy/${otevrena.slug}.png` : undefined}>
   <main class="hlavni-obsah">
-    <Uvod />
+    <Uvod jakoNadpis={!otevrena} />
     <h2 class="jen-ctecka">Hledání a filtry</h2>
     <Filtry zaznamy={zaznamy} stitky={stitky} mapa={mapa} />
     <h2 class="jen-ctecka">Kauzy</h2>

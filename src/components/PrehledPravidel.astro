@@ -18,6 +18,7 @@ import '../styles/hlavni.css';
 import '../styles/pravidla.css';
 // detail pravidla se do dialogu načítá i ze stránek oblastí, které DetailPravidla (a tím ZalozkaHlasovani) nemají
 import '../styles/hlasovani.css';
+import { titulek as nazevStranky } from '../lib/web';
 
 interface Props { otevrene?: PravidloZaznam; otevrenaOblast?: OblastDetail }
 const { otevrene, otevrenaOblast } = Astro.props;
@@ -39,9 +40,9 @@ const polozky = zaznamy.map(z => vytvorPolozkuPravidla(z, stitky));
 const cesty = CESTY.filter(c => polozky.some(p => p.cesta === c));
 const stavy = KROKY.filter(k => polozky.some(p => p.stav === k));
 const malym = (t: string) => t.charAt(0).toLowerCase() + t.slice(1);
-const titulek = otevrene ? `${otevrene.pravidlo.nazev} — Posuďte sami`
-  : otevrenaOblast ? `${otevrenaOblast.nazev} — Posuďte sami`
-  : 'Zákony a nařízení — Posuďte sami';
+const titulek = nazevStranky(otevrene ? otevrene.pravidlo.nazev
+  : otevrenaOblast ? otevrenaOblast.nazev
+  : 'Zákony a nařízení');
 const cesta = otevrene ? `/pravidla/${otevrene.slug}/` : otevrenaOblast ? `/pravidla/oblasti/${otevrenaOblast.id}/` : '/pravidla/';
 // klíč otevřeného detailu pro navigaci: slug pravidla, nebo „oblasti/<id>“
 const otevrena = otevrene?.slug ?? (otevrenaOblast ? `oblasti/${otevrenaOblast.id}` : undefined);
@@ -54,7 +55,10 @@ const popis = otevrene ? otevrene.pravidlo.shrnuti
     {/* stejná stavba a výška jako úvod kauz (jeden řádek titulku, jeden řádek perexu), přepínání mezi stránkami neposkočí */}
     <section class="hero u2 pr-hero">
       <p class="u2-nad">Zákony a nařízení od prosince 2025</p>
-      <h1>Komu prospívají nová pravidla?</h1>
+      {/* Na stránce pravidla nebo oblasti není otázka přehledu nadpisem stránky — tím je název v detailu. */}
+      {otevrena
+        ? <p class="u2-titul">Komu prospívají nová pravidla?</p>
+        : <h1 class="u2-titul">Komu prospívají nová pravidla?</h1>}
       <p class="u2-pod">Zákony a nařízení, které podle rozboru zdrojů prospívají Babišovi nebo Agrofertu, nebo mění kontrolu moci a instituce na to upozornily.</p>
     </section>
     {zaznamy.length > 0 && (

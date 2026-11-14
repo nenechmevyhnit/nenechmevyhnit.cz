@@ -197,7 +197,7 @@ test('klik na název řádku osy otevře detail', async ({ page }) => {
   await page.evaluate(() => { (window as any).bezNacteni = true; });
   await page.locator('.op-radek[data-slug="narizeni-tau"] .op-nazev').click();
   await expect(page).toHaveURL(/\/pravidla\/narizeni-tau\/\?pohled=osa$/);
-  await expect(page.locator('dialog#detail h2')).toHaveText('Testovací nařízení Tau');
+  await expect(page.locator('dialog#detail #detail-nadpis')).toHaveText('Testovací nařízení Tau');
   expect(await page.evaluate(() => (window as any).bezNacteni)).toBe(true);
 });
 

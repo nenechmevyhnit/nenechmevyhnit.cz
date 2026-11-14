@@ -2,7 +2,9 @@
 import '../styles/fonty.css';
 import '../styles/upravy.css';
 import Hlavicka from '../components/Hlavicka.astro';
+import StrukturovanaData from '../components/StrukturovanaData.astro';
 import { rezimKonceptu, maPravidla } from '../lib/kauzy';
+import { WEB, popisKratky } from '../lib/web';
 
 interface Props {
   titulek: string;
@@ -11,10 +13,14 @@ interface Props {
   styly: 'hlavni' | 'stranky';
   aktivni?: 'kauzy' | 'pravidla' | 'metodika' | 'o-projektu';
   otevrena?: string;
+  jsonLd?: object | object[];
+  nahledSoubor?: string;
 }
-const { titulek, popis, cesta, styly, aktivni, otevrena } = Astro.props;
+const { titulek, popis, cesta, styly, aktivni, otevrena, jsonLd, nahledSoubor } = Astro.props;
 const url = new URL(cesta, Astro.site).toString();
-const nahled = new URL('/obrazky/nahled.png', Astro.site).toString();
+const nahled = new URL(nahledSoubor ?? '/obrazky/nahled.png', Astro.site).toString();
+// vstupní popis zůstává celý pro ostatní použití; vyhledávačům jde zkrácený na hranici slova
+const popisProVyhledavace = popisKratky(popis);
 ---
 <!doctype html>
 <html lang="cs">
@@ -22,19 +28,23 @@ const nahled = new URL('/obrazky/nahled.png', Astro.site).toString();
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>{titulek}</title>
-  <meta name="description" content={popis}>
+  <meta name="description" content={popisProVyhledavace}>
   <link rel="canonical" href={url}>
   <meta property="og:type" content="website">
   <meta property="og:locale" content="cs_CZ">
-  <meta property="og:site_name" content="Posuďte sami">
+  <meta property="og:site_name" content={WEB.nazev}>
   <meta property="og:title" content={titulek}>
-  <meta property="og:description" content={popis}>
+  <meta property="og:description" content={popisProVyhledavace}>
   <meta property="og:url" content={url}>
   <meta property="og:image" content={nahled}>
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content={titulek}>
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <!-- třída js: styly pro návštěvníky bez JavaScriptu (html:not(.js)) se použijí jen tehdy, když skripty neběží -->
   <script is:inline>document.documentElement.classList.add('js')</script>
+  {jsonLd && <StrukturovanaData data={jsonLd} />}
 </head>
 <body data-otevrena={otevrena}>
   <div class="wrap" id="obsah">

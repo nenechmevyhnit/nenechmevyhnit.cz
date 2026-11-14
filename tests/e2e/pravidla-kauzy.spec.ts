@@ -11,14 +11,14 @@ test('kauza ukazuje související změny pravidel a vede na ně', async ({ page 
   await expect(sekce).toContainText('Zkrácení lhůty by se dotklo fiktivního řízení Žeta.');
   await sekce.getByRole('link', { name: 'Testovací novela zákona Omega s dlouhým názvem pro mobil' }).click();
   await expect(page).toHaveURL(/\/pravidla\/zakon-omega\/$/);
-  await expect(page.locator('dialog#detail h2')).toHaveText('Testovací novela zákona Omega s dlouhým názvem pro mobil');
+  await expect(page.locator('dialog#detail #detail-nadpis')).toHaveText('Testovací novela zákona Omega s dlouhým názvem pro mobil');
 });
 
 test('z pravidla se jde na kauzu', async ({ page }) => {
   await page.goto('/pravidla/zakon-omega/');
   await page.locator('.m2-panel[data-p="prospech"]').getByRole('link', { name: 'Testovací kauza Žeta' }).click();
   await expect(page).toHaveURL(/\/kauzy\/zeta-stret\/$/);
-  await expect(page.locator('dialog#detail h2')).toHaveText('Testovací kauza Žeta');
+  await expect(page.locator('dialog#detail #detail-nadpis')).toHaveText('Testovací kauza Žeta');
 });
 
 test('kauza bez souvisejících pravidel sekci nemá', async ({ page }) => {
