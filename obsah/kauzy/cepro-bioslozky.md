@@ -1,7 +1,7 @@
 ---
 typ: kauza
-nazev: Biosložky pro Čepro bez tendrů
-shrnuti: Státní Čepro od roku 2017 nakupuje biosložky do paliv od firem Agrofertu, hlavně od Preolu, mimo zadávací řízení, do konce roku 2025 podle Seznam Zpráv za přes 19 mld. Kč. ÚOHS v roce 2021 uvedl, že Čepro není veřejným zadavatelem. Nákupy prověřovala i NCOZ, nikdo nebyl obviněn. Agrofert pochybení odmítá.
+nazev: Biosložky pro Čepro mimo tendry
+shrnuti: Státní Čepro od roku 2017 nakupuje biosložky do paliv od firem Agrofertu, hlavně od Preolu, většinu mimo zadávací řízení, podle Seznam Zpráv za přes 19 mld. Kč. ÚOHS v roce 2021 uvedl, že Čepro není veřejným zadavatelem. Nákupy spadaly do prověřování NCOZ, nikdo nebyl obviněn. Agrofert pochybení odmítá.
 od: 2017
 do: null
 stav: jine
@@ -72,7 +72,7 @@ zdroje:
 udalosti:
   - datum: 2017
     nazev: Nákupy mimo zadávací řízení
-    popis: Čepro do roku 2016 nakupovalo biosložky od Agrofertu převážně ve veřejných zakázkách (v letech 2014 a 2015 přes 80 % nákupů metylesteru řepkového oleje). V dalších dvou letech šlo touto cestou jen 2,5 % a v letech 2019 a 2020 nic. Ve stejné době začal platit zákaz zakázek pro firmy členů vlády („lex Babiš“).
+    popis: Čepro do roku 2016 nakupovalo biosložky od Agrofertu převážně ve veřejných zakázkách (v letech 2014 a 2015 přes 80 % nákupů metylesteru řepkového oleje). V dalších dvou letech šlo touto cestou jen 2,5 % a v letech 2019 a 2020 nic. V únoru 2017 nabyla účinnosti novela zákona o střetu zájmů se zákazem veřejných zakázek pro firmy členů vlády („lex Babiš“); ÚOHS v roce 2021 uvedl, že se na nákupy Čepra nevztahuje, protože Čepro není veřejným zadavatelem. Souvislost mezi novelou a změnou způsobu nákupů žádný úřad nekonstatoval.
     zdroje: [3, 4]
   - datum: 2019-09-03
     nazev: Čepro ponechalo Agrofert
@@ -83,7 +83,7 @@ udalosti:
     popis: Senátor Lukáš Wagenknecht a analytici Pirátů podali trestní oznámení kvůli dotacím a zakázkám pro Agrofert v době, kdy mohl být premiér Babiš ve střetu zájmů. V červenci 2020 podal oznámení kvůli účasti Agrofertu ve veřejných zakázkách i Nadační fond proti korupci.
     zdroje: [4]
   - datum: 2021-01-19
-    nazev: Zjištění o pěti miliardách
+    nazev: iHNED.cz o nákupech za pět miliard
     popis: Podle iHNED.cz Čepro za čtyři roky nakoupilo od firem Agrofertu biosložky za asi 5 mld. Kč, většinu mimo veřejné zakázky. Spolky Oživení a DatLab s platformou Rekonstrukce státu ohlásily podnět k ÚOHS.
     zdroje: [3]
   - datum: 2021-02-10
@@ -111,7 +111,7 @@ stanovisko:
   zdroje: [4, 5, 1]
 kriterium: dve-redakce
 proc:
-  text: "Státní podnik Čepro nakupuje biosložky od firem Agrofertu za miliardy korun bez veřejné soutěže, i v době, kdy byl A. Babiš premiérem a zákon zakazoval firmám členů vlády ucházet se o veřejné zakázky. Doložily to iHNED.cz, Aktuálně.cz a Seznam Zprávy. ÚOHS podnět k postupu Čepra uzavřel bez zahájení řízení. Nákupy prověřovala i policie, nikdo nebyl obviněn."
+  text: "Státní podnik Čepro nakupuje biosložky od firem Agrofertu za miliardy korun převážně mimo zadávací řízení, i v době, kdy byl A. Babiš premiérem. Doložily to iHNED.cz, Aktuálně.cz a Seznam Zprávy. ÚOHS v roce 2021 uzavřel podnět bez zahájení řízení se závěrem, že Čepro není veřejným zadavatelem, a zákaz zakázek pro firmy členů vlády se proto na jeho nákupy nevztahuje. Nákupy prověřovala i policie, nikdo nebyl obviněn."
   zdroje: [3, 4, 10, 7]
 castky:
   - castka: 19000000000
@@ -126,7 +126,7 @@ castky:
 akteri:
   - { id: preol, role: dodavatel-zakazky, popis: "Preol z Agrofertu je hlavním dodavatelem biosložek do nafty pro Čepro, v letech 2018 a 2019 za asi 1,6 mld. Kč ročně.", zdroje: [2, 7] }
   - { id: primagra, role: dodavatel-zakazky, popis: "Primagra z Agrofertu patří vedle Preolu k dodavatelům biosložek pro Čepro, nákupy od ní posuzoval i ÚOHS.", zdroje: [7, 10] }
-  - { id: agrofert, role: dodavatel-zakazky, popis: "Firmy Agrofertu dodaly Čepru od roku 2017 do konce roku 2025 biosložky za přes 19 mld. Kč mimo zadávací řízení.", zdroje: [3, 10] }
+  - { id: agrofert, role: dodavatel-zakazky, popis: "Firmy Agrofertu dodaly Čepru podle Seznam Zpráv od roku 2017 do konce roku 2025 biosložky za přes 19 mld. Kč, většinu mimo zadávací řízení.", zdroje: [3, 10] }
 navazuje:
   - { kauza: stret-zajmu-audit-ek, role: souvisejici-rizeni, popis: "Čepro si nechalo zpracovat právní analýzu kvůli návrhu auditní zprávy Evropské komise o Babišově střetu zájmů a podle ní Agrofert z dodávek nevyloučilo.", zdroje: [1] }
 ---

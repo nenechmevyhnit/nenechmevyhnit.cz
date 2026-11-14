@@ -1,7 +1,7 @@
 ---
 import type { KauzaZaznam } from '../lib/validace';
 import { vytvorPolozku, odpovida, PRAZDNY_FILTR, TRVANI, OBDOBI, CASTKY, RAZENI } from '../lib/hledani';
-import { STAVY, popisekStavu } from '../lib/stavy';
+import { STAVY, volbaStavu } from '../lib/stavy';
 import { jsonDoSkriptu } from '../lib/html';
 import PrepinacPohledu from './PrepinacPohledu.astro';
 
@@ -34,7 +34,7 @@ const castky = CASTKY.filter(c => neprazdne({ castka: c.id }));
          Každá volba drží se svou čárkou (.f-cast), věta se tak na úzkém displeji zalomí jen mezi volbami. -->
     <div class="f-dalsi" role="group" aria-label="Další filtry a řazení">
       <span class="f-cast">Ukázat kauzy</span>{' '}
-      <span class="f-cast"><select data-filtr="stav" aria-label="Stav"><option value="">v jakémkoli stavu</option>{stavy.map(s => <option value={s}>{s === 'jine' ? 's jiným stavem' : `ve stavu ${popisekStavu(s).toLowerCase()}`}</option>)}</select>,</span>{' '}
+      <span class="f-cast"><select data-filtr="stav" aria-label="Stav"><option value="">v jakémkoli stavu</option>{stavy.map(s => <option value={s}>{volbaStavu(s)}</option>)}</select>,</span>{' '}
       <span class="f-cast"><select data-filtr="trvani" aria-label="Trvání"><option value="">jakkoli dlouhé</option>{trvani.map(t => <option value={t.id}>trvající {t.nazev}</option>)}</select>,</span>{' '}
       <span class="f-cast"><select data-filtr="obdobi" aria-label="Probíhala"><option value="">z kteréhokoli období</option>{obdobi.map(o => <option value={o.id}>probíhající {o.nazev}</option>)}</select>,</span>{' '}
       {castky.length > 0 && <><span class="f-cast"><select data-filtr="castka" aria-label="Částka"><option value="">s částkou i bez ní</option>{castky.map(c => <option value={c.id}>{c.nazev}</option>)}</select>,</span>{' '}</>}

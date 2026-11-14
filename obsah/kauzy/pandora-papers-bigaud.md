@@ -1,11 +1,11 @@
 ---
 typ: kauza
 nazev: "Pandora Papers: zámek Bigaud"
-shrnuti: Podle Pandora Papers financoval A. Babiš v letech 2009–2010 přes offshorové firmy nákup nemovitostí včetně zámku Bigaud u Cannes za téměř 400 mil. Kč. Francouzská prokuratura vede předběžné vyšetřování pro podezření z praní peněz, česká policie trestný čin neshledala. Babiš nezákonné jednání popírá.
+shrnuti: Podle Pandora Papers financoval A. Babiš v letech 2009–2010 přes offshorové firmy nákup nemovitostí na Azurovém pobřeží včetně panství Bigaud u Cannes. Francouzská prokuratura vede předběžné vyšetřování pro podezření z praní peněz, česká policie trestný čin neshledala. Nikdo nebyl obviněn, Babiš to popírá.
 od: 2009
 do: null
 stav: provereni
-stavPoznamka: Francouzská Národní finanční prokuratura (PNF) od února 2022 vede předběžné vyšetřování (praní peněz, podezření z daňového úniku), Babiš je podle Seznam Zpráv jediným podezřelým. Obviněn nebyl. Podle Seznam Zpráv (leden 2026) se čeká na vrácení spisu státnímu zástupci, který rozhodne o dalším postupu. Po dobu výkonu funkce premiéra Babiše podle Seznam Zpráv chrání ve Francii mezinárodní imunita. NCOZ v roce 2022 uzavřela, že na území ČR nejde o podezření z trestného činu. Platí presumpce neviny.
+stavPoznamka: Francouzská Národní finanční prokuratura (PNF) od února 2022 vede předběžné vyšetřování pro podezření z praní peněz v organizované skupině, Babiš je podle Seznam Zpráv jediným podezřelým. Obviněn nebyl. Podle Seznam Zpráv (leden 2026) se čeká na vrácení spisu státnímu zástupci, který rozhodne o dalším postupu. Po dobu výkonu funkce premiéra Babiše podle Seznam Zpráv chrání ve Francii mezinárodní imunita. NCOZ v roce 2022 uzavřela, že na území ČR nejde o podezření z trestného činu. Platí presumpce neviny.
 stitky: [offshore, dane, imunita]
 overeno: 2026-11-12
 zdroje:
@@ -54,7 +54,7 @@ udalosti:
     zdroje: [2]
   - datum: 2021-10
     nazev: Zveřejnění Pandora Papers
-    popis: ICIJ a partneři včetně Investigace.cz zveřejnili zjištění. Zámek ani vlastnické firmy nebyly uvedeny v Babišových majetkových přiznáních. Několik dní poté hnutí ANO prohrálo sněmovní volby.
+    popis: ICIJ a partneři včetně Investigace.cz zveřejnili zjištění, čtyři dny před sněmovními volbami 2021. Podle ICIJ a Investigace.cz se zámek ani vlastnické firmy neobjevily v majetkových přiznáních, která A. Babiš podával jako člen vlády. O jeho přiznáních žádný úřad nerozhodoval.
     zdroje: [1, 2]
   - datum: 2022-02
     nazev: Francie zahájila předběžné vyšetřování
@@ -66,18 +66,18 @@ udalosti:
     zdroje: [3]
   - datum: 2025-11
     nazev: Policie uzavírá vyšetřování
-    popis: Podle Investigace.cz, které se odvolává na Seznam Zprávy, francouzská policie uzavírá vyšetřování nákupu nemovitostí. Verdikt byl ohlášen do konce roku 2025, později na začátek roku 2026.
+    popis: Seznam Zprávy informovaly, že francouzská policie uzavírá vyšetřování nákupu nemovitostí; zprávu převzala Investigace.cz. Verdikt byl ohlášen do konce roku 2025, později na začátek roku 2026.
     zdroje: [2]
   - datum: 2026-01-09
     nazev: Rozhodnutí PNF se odkládá
     popis: Zástupkyně finančního prokurátora Bérénice Dinh uvedla, že se čeká na vrácení spisu státnímu zástupci k rozhodnutí. Babiš je podle vyšetřovatelů jediným podezřelým z možného praní peněz. Jako premiér má podle Seznam Zpráv ve Francii imunitu.
     zdroje: [5]
 stanovisko:
-  text: 'Babiš popírá, že by udělal něco nezákonného. Podle ČT24 řekl, že šlo o doporučení realitní kanceláře koupit nemovitost přes advokáta, a dodal: „Není to nic nelegálního.“ O penězích řekl, že „odešly z české banky, byly zdaněné, byly to moje peníze a vrátily se do české banky“. Mluvčí SynBiolu ICIJ sdělil, že všechny transakce proběhly v souladu s právem.'
+  text: 'Babiš popírá, že by udělal něco nezákonného. Podle ČT24 řekl, že šlo o doporučení realitní kanceláře koupit nemovitost přes advokáta, a dodal: „Není to nic nelegálního.“ O penězích řekl, že „odešly z české banky, byly zdaněné, byly to moje peníze a vrátily se do české banky“. Mluvčí SynBiolu ICIJ sdělil, že všechny transakce proběhly v souladu s právem. K tomu, že se zámek neobjevil v majetkových přiznáních, se Babiš podle uvedených zdrojů věcně nevyjádřil.'
   zdroje: [3, 4, 1]
 kriterium: dve-redakce
 proc:
-  text: "Uniklé dokumenty ukázaly, že A. Babiš koupil nemovitosti ve Francii přes offshorové firmy a že zámek ani tyto firmy nebyly uvedeny v jeho majetkových přiznáních. Francouzská prokuratura vede předběžné vyšetřování pro podezření z praní peněz."
+  text: "Z uniklých dokumentů ICIJ vyplývá, že A. Babiš koupil nemovitosti ve Francii přes offshorové firmy. Podle ICIJ a Investigace.cz se zámek ani tyto firmy neobjevily v majetkových přiznáních, která podával jako člen vlády; žádný úřad o jeho přiznáních nerozhodoval. Francouzská prokuratura vede předběžné vyšetřování pro podezření z praní peněz, nikdo nebyl obviněn."
   zdroje: [1, 2, 4]
 castky:
   - castka: 22000000

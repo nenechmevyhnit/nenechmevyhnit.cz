@@ -22,7 +22,7 @@ test('první záložka Komu prospívá: závěr, řetězec s odhadem, souvisejí
   await expect(tab).toHaveText('Komu prospívá');
   await expect(tab).toHaveAttribute('aria-selected', 'true');
   const panel = page.locator('.m2-panel[data-p="prospech"]');
-  await expect(panel.locator('.pr-zaver')).toHaveText(/prospěch pravděpodobný: Andrej Babiš, Agrofert/);
+  await expect(panel.locator('.pr-zaver')).toHaveText('Pravděpodobný prospěch pro Andreje Babiše a Agrofert');
   await expect(panel.locator('.retezec > li')).toHaveCount(3);
   await expect(panel.locator('.retezec > li').nth(2).locator('.odhad')).toHaveText('odhad');
   await expect(panel.locator('.retezec > li').nth(0).locator('.odhad')).toHaveCount(0);
@@ -126,7 +126,7 @@ test('výhrady, stanovisko a přechod na zdroj', async ({ page }) => {
   await panel.locator('.stanovisko a[data-zdroj="3"]').click();
   await expect(page.locator('.m2-panel[data-p="zdroje"]')).toBeVisible();
   await expect(page.locator('#zdroj-3')).toBeInViewport();
-  await expect(page.getByRole('link', { name: 'Historie změn tohoto pravidla' })).toHaveAttribute('href', /\/commits\/main\/obsah\/pravidla\/zakon-omega\.md$/);
+  await expect(page.getByRole('link', { name: 'Historie úprav tohoto záznamu' })).toHaveAttribute('href', /\/commits\/main\/obsah\/pravidla\/zakon-omega\.md$/);
 });
 
 test('pravidlo bez výhrad to věcně uvede', async ({ page }) => {

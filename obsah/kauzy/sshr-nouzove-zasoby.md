@@ -1,7 +1,7 @@
 ---
 typ: kauza
 nazev: Agrofert a státní hmotné rezervy
-shrnuti: Navos z Agrofertu skladuje státní obilí podle smlouvy z roku 2005 na dobu neurčitou, kterou SSHR znovu nesoutěžila. Podle Reportérů ČT a týdeníku Euro na ní vydělával a v roce 2013 odmítl obilí vrátit. Podle ČTK šéf SSHR v roce 2015 řadil smlouvy s Agrofertem k nevýhodným. A. Babiš smlouvu označil za standardní.
+shrnuti: Navos z Agrofertu skladuje státní obilí podle smlouvy z roku 2005 na dobu neurčitou, kterou SSHR znovu nesoutěžila. Podle Reportérů ČT a týdeníku Euro na ní vydělával a v roce 2013 odmítl výzvu obilí naskladnit s tím, že podle smlouvy není oprávněná. A. Babiš smlouvu označil za standardní.
 od: 2005
 do: 2021
 stav: jine
@@ -88,11 +88,11 @@ udalosti:
     zdroje: [1, 8, 10, 11, 12]
   - datum: 2013-09
     nazev: Spor o rotaci 271 tisíc tun
-    popis: Navos se podle týdeníku Euro v roce 2013 dohodl se SSHR na rotaci 271 tisíc tun přebytečného státního obilí za 2400 až 3100 Kč za tunu, když se tržní cena pohybovala kolem 5000 Kč. SSHR ho v září 2013 vyzvala, aby obilí vrátil. Navos podle ČT odmítl 271 tisíc tun naskladnit s tím, že požadavek vzhledem ke smlouvě není oprávněný. Nejmenovaný úředník SSHR podle Euro odhadl, že pokud by Navos chybějící obilí vrátil za cenu podle dodatků, vydělal by minimálně půl miliardy korun.
+    popis: Navos se podle týdeníku Euro v roce 2013 dohodl se SSHR na rotaci 271 tisíc tun přebytečného státního obilí za 2400 až 3100 Kč za tunu, když se tržní cena pohybovala kolem 5000 Kč. SSHR ho v září 2013 vyzvala, aby obilí vrátil. Navos podle ČT odmítl 271 tisíc tun naskladnit s tím, že požadavek vzhledem ke smlouvě není oprávněný. Týdeník Euro uvedl odhad nejmenovaného úředníka SSHR, podle něhož by Navos při vrácení chybějícího obilí za cenu podle dodatků vydělal nejméně půl miliardy korun. Jde o odhad jednoho nejmenovaného zdroje, výši případného zisku nevyčíslil žádný úřad a Navos ani Agrofert se k němu nevyjádřily.
     zdroje: [1, 6]
   - datum: 2014-03-17
     nazev: Tendr na maso a ÚOHS
-    popis: V tendru SSHR na mražené maso, který přitáhl pozornost kvůli možnému střetu zájmů ministra financí A. Babiše, vydal ÚOHS na návrh Animalca z Agrofertu předběžné opatření. SSHR nesměla do jeho rozhodnutí podepsat smlouvu s vítězem.
+    popis: V tendru SSHR na mražené maso, o němž E15 psala v souvislosti s možným střetem zájmů ministra financí A. Babiše, vydal ÚOHS na návrh Animalca z Agrofertu předběžné opatření. SSHR nesměla do jeho rozhodnutí podepsat smlouvu s vítězem.
     zdroje: [2]
   - datum: 2014-11
     nazev: Reportéři ČT o smlouvě Navosu
@@ -104,7 +104,7 @@ udalosti:
     zdroje: [3, 4]
   - datum: 2015-06-22
     nazev: Animalco vyhrálo tendr na maso
-    popis: Animalco, ze 70 % vlastněné Agrofertem, vyhrálo tendr SSHR na dodávku a tříleté skladování 500 tun mraženého masa za 46,4 mil. Kč. Podle E15 uspělo díky změně podmínek a vyřazení druhého uchazeče.
+    popis: Animalco, ze 70 % vlastněné Agrofertem, vyhrálo tendr SSHR na dodávku a tříleté skladování 500 tun mraženého masa za 46,4 mil. Kč. Podle E15 uspělo díky změně podmínek a vyřazení druhého uchazeče. SSHR ani Agrofert se podle dostupných zdrojů ke změně podmínek nevyjádřily.
     zdroje: [5]
   - datum: 2016-01-16
     nazev: Týdeník Euro o rotaci obilí
@@ -127,7 +127,7 @@ stanovisko:
   zdroje: [1, 6]
 kriterium: dve-redakce
 proc:
-  text: "Navos z Agrofertu skladuje státní obilí podle smlouvy z roku 2005 na dobu neurčitou, kterou SSHR do roku 2021 znovu nesoutěžila. Reportéři ČT a týdeník Euro nezávisle popsali, že firma na smlouvě vydělávala obchodem se státním obilím a v roce 2013 odmítla výzvu SSHR obilí vrátit. Podle zprávy ČTK o vystoupení předsedy SSHR v roce 2015 byly smlouvy s Agrofertem pro stát nevýhodné."
+  text: "Navos z Agrofertu skladuje státní obilí podle smlouvy z roku 2005 na dobu neurčitou, kterou SSHR do roku 2021 znovu nesoutěžila. Reportéři ČT a týdeník Euro nezávisle popsali, že firma na smlouvě vydělávala obchodem se státním obilím a v roce 2013 odmítla výzvu SSHR obilí naskladnit s odůvodněním, že požadavek podle smlouvy není oprávněný. Podle zprávy ČTK o vystoupení předsedy SSHR v roce 2015 byly smlouvy s Agrofertem pro stát nevýhodné. NKÚ naopak v roce 2021 u vybraného vzorku smluv o ochraňování nevýhodné podmínky nezjistil; smlouva na obilí ve vzorku nebyla."
   zdroje: [1, 6, 4, 8]
 castky:
   - castka: 170000000
@@ -140,7 +140,7 @@ akteri:
   - { id: agrofert, role: dodavatel-zakazky, popis: "Pět firem Agrofertu dostávalo podle Deníku N od SSHR asi 170 mil. Kč ročně, téměř 60 % jejích výdajů na potravinové zásoby.", zdroje: [8] }
   - { id: mlekarna-hlinsko, role: dodavatel-zakazky, popis: "Mlékárna Hlinsko z Agrofertu měla podle Deníku N na starosti státní zásoby sušeného mléka.", zdroje: [8] }
 ---
-A. Babiš byl od roku 2014 ministrem financí. Ministr financí podle E15 navrhuje vládě šéfa SSHR společně s ministrem průmyslu a obchodu, podle ČTK má při jeho nominaci poradní hlas.[^2][^7] Firmy Agrofertu podle ČTK vyhrávaly tendry SSHR na obilí, maso a biopaliva. Animalco v roce 2015 dodalo maso jako jediný možný kandidát.[^7] Madeta se do tendru na mléko v roce 2016 nepřihlásila, protože by pro ni byl nevýhodný.[^7] Agrofert byl od února 2017 ve svěřenských fondech. Audit Evropské komise z roku 2021 ale dospěl k závěru, že je A. Babiš ve střetu zájmů.[^8]
+A. Babiš byl od roku 2014 ministrem financí. Ministr financí podle E15 navrhuje vládě šéfa SSHR společně s ministrem průmyslu a obchodu, podle ČTK má při jeho nominaci poradní hlas.[^2][^7] Smlouva na skladování obilí je z roku 2005, tedy z doby před jeho působením ve vládě, a žádný úřad nezjistil, že by Babiš do rozhodování SSHR zasahoval. Firmy Agrofertu podle ČTK vyhrávaly tendry SSHR na obilí, maso a biopaliva. Animalco v roce 2015 dodalo maso jako jediný možný kandidát.[^7] Madeta se do tendru na mléko v roce 2016 nepřihlásila, protože by pro ni byl nevýhodný.[^7] Agrofert byl od února 2017 ve svěřenských fondech. Audit Evropské komise z roku 2021 dospěl k závěru, že je A. Babiš ve střetu zájmů; týkal se dotací z fondů EU, ne zakázek SSHR (samostatná kauza).[^8]
 
 Předseda SSHR Pavel Švagr v roce 2021 řekl, že u obilí soutěž nemá smysl, protože stát musí skladovat ve speciálních silech, v nichž má Agrofert rozhodující kapacity: „Buď si vybereme Agrofert, nebo nebudeme mít nic.“ SSHR podle něj nesleduje, komu firmy patří. Transparency International to kritizovala jako ignorování opatření proti střetu zájmů.[^8] Už v roce 2015 Švagr uvedl, že u smlouvy s Navosem jde spíš o rezervaci kapacit než o povinnost firmy držet určité množství.[^3]
 

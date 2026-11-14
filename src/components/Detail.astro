@@ -2,7 +2,7 @@
 import type { KauzaZaznam } from '../lib/validace';
 import { rozdelOdstavce, odstavecNaHtml } from '../lib/souvislosti';
 import { datumText, rozsahText, delkaText, polohaVKauze, popiskyRoku } from '../lib/casova-osa';
-import { popisekStavu } from '../lib/stavy';
+import { popisekStavu, pripominaPresumpci } from '../lib/stavy';
 import { popisekKriteria } from '../lib/kriteria';
 import { castkaText, popisekDruhu } from '../lib/castky';
 import type { VazbyKauzy } from '../lib/mapa';
@@ -99,7 +99,7 @@ const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="
         <div class={`stav-box${k.do === null ? ' otevrena' : ''}`}>
           <div class="stav">{popisekStavu(k.stav)}</div>
           {k.stavPoznamka && <p>{k.stavPoznamka}</p>}
-          {k.do === null && <p>Dokud soud pravomocně nerozhodne, platí presumpce neviny.</p>}
+          {k.do === null && pripominaPresumpci(k.stav) && <p>Dokud soud pravomocně nerozhodne, platí presumpce neviny.</p>}
           <div class="overeno">{k.overeno ? <>Naposledy ověřeno {datumText(k.overeno)}</> : <strong>Koncept, zatím neověřeno</strong>}</div>
         </div>
         <div class="stav-vpravo">

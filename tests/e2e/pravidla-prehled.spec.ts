@@ -17,8 +17,12 @@ test('menu vede na zákony a nařízení a přehled je seřazený od nejnovějš
   const prvni = page.locator('.pr-radek').first();
   await expect(prvni).toContainText('Poslanecký návrh zákona');
   await expect(prvni).toContainText('Schváleno Sněmovnou');
-  await expect(prvni).toContainText('Andrej Babiš, Agrofert');
-  await expect(prvni).toContainText('prospěch pravděpodobný');
+  await expect(prvni).toContainText('pravděpodobný prospěch pro Andreje Babiše a Agrofert');
+});
+
+test('podtitul říká oba důvody zařazení tak, jak je popisuje metodika', async ({ page }) => {
+  await page.goto('/pravidla/');
+  await expect(page.locator('.pr-hero .u2-pod')).toHaveText('Zákony a nařízení, které podle rozboru zdrojů prospívají Babišovi nebo Agrofertu, nebo mění kontrolu moci a instituce na to upozornily.');
 });
 
 test('řádek ukazuje průběh projednávání', async ({ page }) => {
@@ -59,7 +63,7 @@ test('filtry: hledání bez diakritiky, štítek, jen v projednávání, zrušen
 test('řádek označí důvody zařazení textem, bez prázdných oddělovačů', async ({ page }) => {
   await page.goto('/pravidla/?pohled=seznam');
   const omega = page.locator('.pr-radek[data-slug="zakon-omega"] .pr-nazev small');
-  await expect(omega).toContainText('prospěch pravděpodobný');
+  await expect(omega).toContainText('pravděpodobný prospěch pro Andreje Babiše a Agrofert');
   await expect(omega).toContainText('Kontrola moci: zpětná účinnost');
   const kappa = page.locator('.pr-radek[data-slug="usneseni-kappa"] .pr-nazev small');
   await expect(kappa).toHaveText('Usnesení vlády · Vyhlášeno · Kontrola moci: soudy');
@@ -94,6 +98,9 @@ test('filtr důvodu: každý čip zvlášť, oba, kombinace se štítkem a zruš
   const prospech = page.locator('.pr-filtry [data-duvod="prospech"]');
   const kontrola = page.locator('.pr-filtry [data-duvod="kontrola-moci"]');
   await expect(prospech).toHaveText('Prospěch');
+  // krátký popisek doplňuje nápověda celou větou (delší popisek by vytlačil ostatní čipy z řádku)
+  await expect(prospech).toHaveAttribute('title', /prospívají Babišovi nebo Agrofertu/);
+  await expect(kontrola).toHaveAttribute('title', /mění kontrolu moci a instituce na to upozornily/);
   await expect(kontrola).toHaveText('Kontrola moci');
   await kontrola.click();
   await expect(kontrola).toHaveAttribute('aria-pressed', 'true');
@@ -167,9 +174,9 @@ test.describe('mobil 390×700', () => {
     await page.goto('/pravidla/?pohled=seznam');
     const prvni = page.locator('.pr-radek').first();
     const text = await prvni.evaluate(e => (e as HTMLElement).innerText);
-    expect(text).toContain('prospěch pravděpodobný');
+    expect(text).toContain('pravděpodobný prospěch pro Andreje Babiše');
     expect(text).toContain('Schváleno Sněmovnou');
-    expect(text).toContain('Andrej Babiš, Agrofert');
+    expect(text).toContain('Agrofert');
     await overPosouvani(page);
   });
 

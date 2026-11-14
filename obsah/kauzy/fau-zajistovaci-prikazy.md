@@ -1,7 +1,7 @@
 ---
 typ: kauza
 nazev: "Kauza FAU: zajišťovací příkazy"
-shrnuti: Finanční a celní správa vydaly v září 2016 proti FAU se skladem v areálu Prechezy z Agrofertu zajišťovací příkazy za stovky milionů Kč a firma skončila v konkurzu. Soudy příkazy zrušily jako nezákonné, doměření DPH ale potvrdily. V roce 2026 byla FAU nepravomocně zproštěna obžaloby. Babiš vliv na úřady popírá.
+shrnuti: Finanční a celní správa vydaly v září 2016 proti FAU se skladem v areálu Prechezy z Agrofertu zajišťovací příkazy za stovky milionů Kč a firma skončila v konkurzu. Soudy příkazy zrušily jako nezákonné, doměření DPH ale potvrdily. Žádný úřad nezjistil, že by A. Babiš postup úřadů ovlivnil; Babiš to popírá.
 od: 2014
 do: null
 stav: jine
@@ -142,7 +142,7 @@ udalosti:
     zdroje: [4]
   - datum: 2017-08-27
     nazev: Nahrávka „naši klekli na FAU“
-    popis: Anonymní účet na Twitteru zveřejnil nahrávku, na které A. Babiš říká, že „naši klekli na tu FAU Přerov“. Kdy a s kým mluvil, nebylo jasné. Premiér Sobotka požádal ministra financí o prověření postupu daňové správy.
+    popis: Anonymní účet na Twitteru zveřejnil nahrávku, na níž podle ČT24 A. Babiš říká, že „naši klekli na tu FAU Přerov“. Kdy a s kým mluvil, nebylo jasné; Babiš v roce 2023 u soudu připustil, že na nahrávce mluví o FAU. Premiér Sobotka požádal ministra financí o prověření postupu daňové správy.
     zdroje: [5]
   - datum: 2017-09-05
     nazev: FAU žádá vrácení peněz
@@ -158,7 +158,7 @@ udalosti:
     zdroje: [2, 8, 9]
   - datum: 2018-03
     nazev: Obvinění jednatele
-    popis: Policie podle iROZHLAS obvinila jednatele FAU Vojtěcha Csabiho a další lidi kvůli neodvedení DPH přes 200 mil. Kč při obchodech s pohonnými hmotami.
+    popis: Policie podle ČT24 obvinila jednatele FAU a další lidi kvůli neodvedení DPH přes 200 mil. Kč při obchodech s pohonnými hmotami. Krajský soud v Olomouci je v červnu 2026 nepravomocně zprostil obžaloby.
     zdroje: [10]
   - datum: 2019-06
     nazev: Stát prohrává další spory
@@ -201,7 +201,7 @@ stanovisko:
   zdroje: [5, 13, 16, 4]
 kriterium: dve-redakce
 proc:
-  text: "Finanční a celní správa za ministra financí A. Babiše vydaly proti firmě se skladem v areálu Prechezy z Agrofertu zajišťovací příkazy, které soudy zrušily jako nezákonné. Babiš na nahrávce zveřejněné v roce 2017 říká, že „naši klekli“ na FAU, a bývalý šéf celní správy v roce 2023 uvedl, že se ho Babiš na FAU ptal. Úřední zjištění, že by Babiš postup úřadů ovlivnil, není."
+  text: "Finanční a celní správa vydaly v roce 2016 proti firmě FAU zajišťovací příkazy, které soudy zrušily jako nezákonné. Ministrem financí byl tehdy A. Babiš a FAU měla sklad a vlečku v areálu Prechezy z Agrofertu. Na nahrávce zveřejněné v roce 2017 Babiš mluví o FAU slovy „naši klekli“ a bývalý šéf celní správy v roce 2023 uvedl, že se ho Babiš na FAU ptal. Žádný úřad ani soud nezjistil, že by Babiš postup úřadů ovlivnil nebo řídil."
   zdroje: [1, 4, 5, 13]
 akteri:
   - { id: precheza, role: predmet-kauzy, popis: "Sklad a vlečka FAU ležely v areálu Prechezy z Agrofertu. Podle HN o sklad Precheza stála, Agrofert to popřel a Babiš u soudu uvedl, že mluvil o vlečce v Precheze.", zdroje: [4, 12] }
@@ -210,4 +210,4 @@ FAU s. r. o. je opavský obchodník s pohonnými hmotami. V areálu přerovské 
 
 Spor má dvě roviny, které je třeba rozlišovat. Soudy zrušily zajišťovací příkazy, tedy okamžité zajištění daně ještě před jejím stanovením. Doměření DPH asi 218 mil. Kč za rok 2013 kvůli účasti na podvodném řetězci ale soudy potvrdily.[^1][^3] Finanční správa trvala na tom, že šlo o daňový podvod, a rozsudek NSS z roku 2017 sice respektovala, ale v jeho odůvodnění s ním nesouhlasila.[^2] Podle ČT24 počet zajišťovacích příkazů vzrostl poté, co Babiš v lednu 2014 převzal ministerstvo financí. V roce 2025 jich úředníci vydali přes 800.[^16]
 
-Trestní řízení, ve kterém byli FAU a její jednatel obžalováni, je samostatné. Babiš v něm vypovídal jen jako svědek.[^12][^15] Obhajoba tvrdí, že svědek Babiš vědomě lhal, Babiš na dotazy k tomu podle Seznam Zpráv neodpověděl.[^12][^14] Podle Seznam Zpráv dříve u soudu vypovídal i celník Dalibor Kubín, který dva celní zajišťovací příkazy podepsal. Uvedl, že pokyn dostal telefonicky od ředitele celního úřadu a na důvody se neptal.[^13] Rozsudek z června 2026 není pravomocný, platí presumpce neviny.[^15][^17]
+Trestní řízení, ve kterém byli FAU a její jednatel obžalováni, je samostatné. Babiš v něm vypovídal jen jako svědek.[^12][^15] Obhajoba u soudu tvrdila, že svědek Babiš nevypovídal pravdu. Trestní stíhání pro křivou výpověď podle uvedených zdrojů zahájeno nebylo a Babiš na dotazy Seznam Zpráv neodpověděl.[^12][^14] Podle Seznam Zpráv dříve u soudu vypovídal i celník Dalibor Kubín, který dva celní zajišťovací příkazy podepsal. Uvedl, že pokyn dostal telefonicky od ředitele celního úřadu a na důvody se neptal.[^13] Rozsudek z června 2026 není pravomocný, platí presumpce neviny.[^15][^17]

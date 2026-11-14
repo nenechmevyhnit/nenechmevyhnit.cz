@@ -7,7 +7,7 @@ export const oProjektu = (sPravidly: boolean): { sekce: SekceStranky[] } => ({
     {
       id: "proc",
       nadpis: "Proč archiv vznikl",
-      shrnuti: "Kauzy zapadají. Za půl roku si nikdo nepamatuje, co se stalo, a právě na to se spoléhá.",
+      shrnuti: "Kauzy zapadají. Za půl roku si málokdo pamatuje, co se stalo.",
       html: `<p>Každý týden přijde nová kauza, novela nebo rozhodnutí a ta předchozí zapadne. Za půl roku si ji pamatuje málokdo, za tři roky skoro nikdo.${sPravidly ? ' Proto archiv vedle kauz zapisuje i zákony a nařízení, u kterých rozbor archivu ukazuje prospěch pro Andreje Babiše nebo Agrofert, a takové, které mění kontrolu moci a na které upozornily instituce.' : ''}</p>
 <p>Myšlenka vzešla z rozhovoru v podcastu <em>Kecy a politika</em>: někdo by měl tyhle věci soustavně zapisovat a archivovat, jinak zmizí. Tento web se o to pokouší, přehledně, v čase a se zdrojem u každého tvrzení.</p>
 <p>Název popisuje, jak archiv funguje. Nikomu neříká, co si má myslet. Ke každému tvrzení dává zdroj, ke každé kauze stanovisko dotčené strany a úsudek nechává na vás.</p>`,
@@ -35,6 +35,19 @@ export const oProjektu = (sPravidly: boolean): { sekce: SekceStranky[] } => ({
 <p>Proto tu také nenajdete lištu se souhlasem s cookies: není k čemu souhlasit.</p>`,
     },
     {
+      id: "dotcene-osoby",
+      nadpis: "Pokud o vás píšeme",
+      shrnuti: "Máte právo na opravu, na zveřejnění svého stanoviska a na námitku proti konkrétnímu zveřejnění.",
+      html: `<p>Archiv zpracovává osobní údaje pro novinářské účely podle § 17 zákona č. 110/2019 Sb., o zpracování osobních údajů. Pro takové zpracování platí obecné nařízení o ochraně osobních údajů (GDPR) jen v rozsahu, který tentýž zákon stanoví.</p>
+<p>Vycházíme z veřejných zdrojů: z úředních dokumentů, veřejných rejstříků a z médií. Zapisujeme jen to, co už bylo zveřejněno a co je k pochopení věci potřeba. Nikoho nesledujeme, údaje nikomu nepředáváme a nikoho podle nich automaticky nevyhodnocujeme.</p>
+<p>Pokud o vás archiv píše, můžete:</p>
+<ul><li><strong>žádat opravu věcné chyby.</strong> Opravy mají přednost před vším ostatním. U věcné opravy zůstane u záznamu viditelná poznámka, co a proč se změnilo,</li>
+<li><strong>poslat své stanovisko.</strong> Zveřejníme ho u záznamu, kterého se týká,</li>
+<li><strong>podat námitku proti konkrétnímu zveřejnění</strong> podle § 22 téhož zákona. Napište, o které zveřejnění jde a proč podle vás váš zájem převáží nad zájmem na tom, aby byla věc veřejně dostupná. Vždy vám odpovíme, jak jsme s námitkou naložili.</li></ul>
+<p>Na nezveřejněné koncepty a na zdroje se vztahuje ochrana zdroje a obsahu informací podle téhož zákona.</p>
+<p>Pište na <a href="mailto:nenechmevyhnit@gmail.com">nenechmevyhnit@gmail.com</a>. Dozor nad zpracováním osobních údajů vykonává <a href="https://uoou.gov.cz/">Úřad pro ochranu osobních údajů</a>.</p>`,
+    },
+    {
       id: "prispet",
       nadpis: "Jak přispět",
       shrnuti: "Navrhněte kauzu, doplnění nebo opravu e-mailem nebo přes GitHub.",
@@ -47,7 +60,7 @@ export const oProjektu = (sPravidly: boolean): { sekce: SekceStranky[] } => ({
       nadpis: "Sdílení a citace",
       shrnuti: "Texty archivu můžete volně sdílet a citovat s uvedením zdroje.",
       html: `<p>Texty archivu jsou pod licencí <strong>Creative Commons Uveďte původ 4.0</strong>. Můžete je sdílet, citovat i dál zpracovávat, stačí uvést „Posuďte sami“ a odkaz.</p>
-<p>Citované články a dokumenty patří svým autorům, odkazujeme na ně. Portrét na hlavní stránce: Vox España, Wikimedia Commons, licence CC0.</p>`,
+<p>Citované články a dokumenty patří svým autorům, odkazujeme na ně. Portrét na hlavní stránce: Vox España, Wikimedia Commons, licence CC0.${sPravidly ? ' Socha Spravedlnosti na stránce Zákony a nařízení: Renate007, Wikimedia Commons, licence CC BY-SA 4.0, upraveno (odstraněné pozadí).' : ''}</p>`,
     },
     {
       id: "kontakt",

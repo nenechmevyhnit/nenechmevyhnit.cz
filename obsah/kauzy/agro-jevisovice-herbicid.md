@@ -1,7 +1,7 @@
 ---
 typ: kauza
-nazev: Postřik úrody farmáře Rady
-shrnuti: Agro Jevišovice z Agrofertu v květnu 2015 postříkalo totálním herbicidem úrodu, kterou u Velkého Karlova zasela firma zemědělce Bohumíra Rady. Agrofert tvrdí, že Rada pozemky užíval neoprávněně. Rada škodu vyčíslil na přes 4 mil. Kč a podal trestní oznámení, policie věc koncem roku 2016 odložila.
+nazev: Postřik osevu u Velkého Karlova
+shrnuti: Agro Jevišovice z Agrofertu v květnu 2015 postříkalo totálním herbicidem osev, který u Velkého Karlova zasela firma zemědělce Bohumíra Rady. Agrofert tvrdí, že Rada pozemky užíval neoprávněně. Rada vyčíslil ztrátu na přes 4 mil. Kč a podal trestní oznámení, policie věc odložila. Škodu žádný úřad nestanovil.
 od: 2015
 do: 2018
 stav: odlozeno
@@ -84,11 +84,11 @@ zdroje:
 udalosti:
   - datum: 2015-05
     nazev: Postřik pole herbicidem
-    popis: Pracovníci Agra Jevišovice mezi 11. a 17. květnem 2015 postříkali totálním herbicidem osev, který firma Agro Boskovštejn zemědělce B. Rady zasela na pozemcích u Velkého Karlova na Znojemsku. Podle Deníku Referendum šlo o 116 ha pšenice a 170 ha kukuřice (podle ČTK o 115 ha pšenice a 170 ha kukuřice), ČT24 uvedla zničení úrody na více než 270 hektarech. Pracovníci podle záznamu Radova syna uvedli, že jednali na pokyn vedení.
+    popis: Pracovníci Agra Jevišovice mezi 11. a 17. květnem 2015 postříkali totálním herbicidem osev, který firma Agro Boskovštejn zemědělce B. Rady zasela na pozemcích u Velkého Karlova na Znojemsku. Podle Deníku Referendum šlo o 116 ha pšenice a 170 ha kukuřice (podle ČTK o 115 ha pšenice a 170 ha kukuřice), ČT24 uvedla zničení úrody na více než 270 hektarech. Podle Deníku Referendum, který měl k dispozici záznam pořízený Radovou stranou, pracovníci na místě uvedli, že jednali na pokyn vedení. Kdo postřik nařídil, žádný úřad neurčil.
     zdroje: [1, 2, 6]
   - datum: 2015-06-15
     nazev: Reportáže ČT a Deníku Referendum
-    popis: Reportéři ČT a Deník Referendum zveřejnili svá zjištění. Redakce DR navštívila pole 3. 6. 2015 a měla k dispozici memorandum, smlouvy a korespondenci obou firem. Znalec podle obou redakcí vyčíslil škodu na více než 4 mil. Kč. Agrofert postřik potvrdil a uvedl, že Rada pozemky užíval neoprávněně.
+    popis: Reportéři ČT a Deník Referendum zveřejnili svá zjištění. Redakce DR navštívila pole 3. 6. 2015 a měla k dispozici memorandum, smlouvy a korespondenci obou firem. Znalec podle obou redakcí vyčíslil ztrátu na více než 4 mil. Kč. Agrofert postřik potvrdil a uvedl, že Rada pozemky užíval neoprávněně.
     zdroje: [1, 2]
   - datum: 2015-10-26
     nazev: Otevřený dopis Agrofertu
@@ -111,13 +111,13 @@ stanovisko:
   zdroje: [1, 5, 6]
 kriterium: dve-redakce
 proc:
-  text: "Firma z Agrofertu bez dohody s druhou stranou zničila herbicidem úrodu, kterou na pozemcích, o jejichž užívání se firmy přely, zasela firma zemědělce B. Rady. Agrofert tvrdí, že nájem skončil a Rada zasel neoprávněně, Rada se odvolává na platnou smlouvu. Postřik doložily vlastním šetřením Reportéři ČT a Deník Referendum a Agrofert ho potvrdil."
+  text: "Firma z Agrofertu bez dohody s druhou stranou postříkala totálním herbicidem osev, který na pozemcích, o jejichž užívání se firmy přely, zasela firma zemědělce B. Rady. Agrofert tvrdí, že nájem skončil a Rada zasel neoprávněně, Rada se odvolává na platnou smlouvu. Postřik doložily vlastním šetřením Reportéři ČT a Deník Referendum a Agrofert ho potvrdil. Policie trestní oznámení koncem roku 2016 odložila, nikdo nebyl obviněn."
   zdroje: [1, 2]
 akteri:
-  - { id: agro-jevisovice, role: ucastnik-rizeni, popis: "Pracovníci Agra Jevišovice z Agrofertu postříkali v květnu 2015 Radovu úrodu herbicidem, policie trestní oznámení na zničení úrody odložila.", zdroje: [1, 2, 6] }
+  - { id: agro-jevisovice, role: ucastnik-rizeni, popis: "Pracovníci Agra Jevišovice z Agrofertu postříkali v květnu 2015 herbicidem osev zasetý firmou B. Rady. Policie trestní oznámení odložila, skutková podstata podle ní naplněna nebyla.", zdroje: [1, 2, 6] }
 ---
-Agrofert v lednu 2011 ohlásil, že chce prostřednictvím firmy Navos získat výlučnou kontrolu nad Agrem Jevišovice, spojení posuzoval ÚOHS.[^12] Podle ČT24 Rada firmu v lednu 2011 Babišovi skutečně prodal. Akcie převzala firma Navos ze skupiny Agrofert.[^1][^10] Spolu s prodejem akcií strany podepsaly memorandum, podle kterého měl Rada hospodařit na 1 500 hektarech půdy pronajímané Agrofertem.[^1] Memorandum podepsané 7. ledna 2011 měl Deník Referendum k dispozici. Podnájemní smlouvu podle něj zaregistrovali na pozemkovém úřadě jen na 1 200 ha.[^2] V době postřiku tedy Agro Jevišovice patřilo do skupiny Agrofert, kterou tehdy vlastnil A. Babiš. Ten Agrofert později převedl do svěřenského fondu.[^2][^7][^8]
+Agrofert v lednu 2011 ohlásil, že chce prostřednictvím firmy Navos získat výlučnou kontrolu nad Agrem Jevišovice, spojení posuzoval ÚOHS.[^12] Podle ČT24 Rada firmu v lednu 2011 Babišovi prodal. Akcie převzala firma Navos ze skupiny Agrofert.[^1][^10] Spolu s prodejem akcií strany podepsaly memorandum, podle kterého měl Rada hospodařit na 1 500 hektarech půdy pronajímané Agrofertem.[^1] Memorandum podepsané 7. ledna 2011 měl Deník Referendum k dispozici. Podnájemní smlouvu podle něj zaregistrovali na pozemkovém úřadě jen na 1 200 ha.[^2] V době postřiku tedy Agro Jevišovice patřilo do skupiny Agrofert, kterou tehdy vlastnil A. Babiš. Ten Agrofert později převedl do svěřenského fondu.[^2][^7][^8]
 
-Podle Agrofertu nájemní a podnájemní vztahy k pozemkům ve Velkém Karlově skončily k 1. říjnu 2014 v souvislosti s pozemkovými úpravami. Rada podle Agrofertu zasel neoprávněně a firma mu nabídla odškodné.[^2][^6] Rada tvrdí, že zasel v dobré víře podle platné smlouvy, a odškodné podle něj nepokrylo náklady vyčíslené znalcem.[^2] Agrofert v otevřeném dopise uvedl, že Rada mu dlužil 250 mil. Kč a bankám další peníze, že dluhy Agra Jevišovice při převzetí činily 504 mil. Kč a že převzetí stálo Agrofert celkem 830 mil. Kč.[^4] Echo24 poznamenalo, že fotografie, které Agrofert přiložil, neukazují, co a kde zachycují.[^4]
+Podle Agrofertu nájemní a podnájemní vztahy k pozemkům ve Velkém Karlově skončily k 1. říjnu 2014 v souvislosti s pozemkovými úpravami. Rada podle Agrofertu zasel neoprávněně a firma mu nabídla odškodné.[^2][^6] Rada tvrdí, že zasel v dobré víře podle platné smlouvy, a odškodné podle něj nepokrylo náklady vyčíslené znalcem.[^2] Agrofert v otevřeném dopise uvedl, že Rada mu dlužil 250 mil. Kč a bankám další peníze, že dluhy Agra Jevišovice při převzetí činily 504 mil. Kč a že převzetí stálo Agrofert celkem 830 mil. Kč.[^4] Jde o tvrzení jedné strany sporu, úředně doložená nejsou a Rada se k nim v uvedených zdrojích nevyjádřil. Echo24 uvedlo, že u fotografií přiložených Agrofertem není uvedeno, co a kde zachycují.[^4]
 
-Rada vede s Agrofertem i spor o samotné převzetí Agra Jevišovice v roce 2011. Tvrdí, že akcie byly na Navos převedeny v rozporu se smlouvou a vznikla mu škoda přes 11 mil. Kč.[^3][^11] Městské státní zastupitelství v Praze v červnu 2016 vrátilo policii odložené trestní oznámení k došetření.[^11] Podle Neovlivní.cz dozorový státní zástupce Jaroslav Šaroch později dospěl k závěru, že za převzetí nelze nikoho stíhat. Notář podle něj sice porušil povinnosti, když akcie vydal firmě Navos, trestán ale nebude. Rada podle Neovlivní.cz prohrál i občanskoprávní spory o převzetí akcií.[^10] V únoru 2020 Rada podal podnět ke kárnému řízení se Šarochem.[^9][^10]
+Rada vede s Agrofertem i spor o samotné převzetí Agra Jevišovice v roce 2011. Tvrdí, že akcie byly na Navos převedeny v rozporu se smlouvou a vznikla mu škoda přes 11 mil. Kč.[^3][^11] Městské státní zastupitelství v Praze v červnu 2016 vrátilo policii odložené trestní oznámení k došetření.[^11] Podle Neovlivní.cz dozorový státní zástupce Jaroslav Šaroch později dospěl k závěru, že za převzetí nelze nikoho stíhat, a to ani notáře, který akcie vydal firmě Navos. Rozhodnutí archiv nemá z primárního zdroje a notář se k němu podle uvedených zdrojů nevyjádřil. Občanskoprávní spory o převzetí akcií Rada podle Neovlivní.cz prohrál.[^10] V únoru 2020 Rada podal podnět ke kárnému řízení se Šarochem.[^9][^10]
