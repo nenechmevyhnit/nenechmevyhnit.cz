@@ -1,7 +1,7 @@
 ---
 typ: kauza
 nazev: Střet zájmů po roce 2025
-shrnuti: Po jmenování premiérem (9. 12. 2025) vložil A. Babiš Agrofert do svěřenského fondu RSVP Trust a střet zájmů považuje za vyřešený. Evropská komise v září 2026 uvedla, že je v potenciálním střetu zájmů, a část plateb pozastavila. EPPO od května 2026 vede trestní řízení kvůli dotacím Agrofertu.
+shrnuti: Po jmenování premiérem (9. 12. 2025) vložil A. Babiš Agrofert do svěřenského fondu RSVP Trust a střet zájmů považuje za vyřešený. Evropská komise v září 2026 uvedla, že je v potenciálním střetu zájmů, a část plateb pozastavila. EPPO vede od května 2026 řízení kvůli vyplácení dotací, nikoho neobvinilo.
 od: 2025
 do: null
 stav: provereni
@@ -75,11 +75,11 @@ udalosti:
     zdroje: [1]
   - datum: 2025-12-30
     nazev: "SynBiol zůstává mimo fond"
-    popis: "Babiš uvedl, že do svěřenského fondu vloží jen Agrofert. Holding SynBiol, pod nějž patří skupina Hartenberg s klinikami hrazenými i z veřejného zdravotního pojištění, si ponechá."
+    popis: "Babiš uvedl, že do svěřenského fondu vloží jen Agrofert. Holding SynBiol se skupinou Hartenberg si ponechá. Podle uvedených zdrojů patří do Hartenbergu i kliniky, jejichž péči hradí veřejné zdravotní pojištění."
     zdroje: [6, 7]
   - datum: 2026-02-20
     nazev: Akcie Agrofertu vloženy do RSVP Trust
-    popis: Babiš oznámil, že po získání souhlasů regulátorů tří členských států EU vložil všechny akcie Agrofertu do fondu RSVP Trust. Správcem je Wilfried Reinhard Elbs, protektorkou Věra Výtvarová. Statut fondu nebyl zveřejněn. Po dobu nezávislé správy, tedy během Babišova působení ve vládě, fond podle protektorky nemá žádné obmyšlené osoby.
+    popis: Babiš oznámil, že po získání souhlasů regulátorů tří členských států EU vložil všechny akcie Agrofertu do fondu RSVP Trust. Správcem fondu je podle ČT24 Wilfried Reinhard Elbs, funkci protektorky vykonává Věra Výtvarová; ani jeden z nich není účastníkem žádného z řízení uvedených v této kauze. Statut fondu nebyl zveřejněn. Po dobu nezávislé správy, tedy během Babišova působení ve vládě, fond podle protektorky nemá žádné obmyšlené osoby.
     zdroje: [1]
   - datum: 2026-04
     nazev: SZIF obnovil přidělování dotací
@@ -102,7 +102,7 @@ stanovisko:
   zdroje: [1, 2, 3]
 kriterium: dve-redakce
 proc:
-  text: "Evropská komise i po vložení Agrofertu do fondu RSVP Trust uvedla, že premiér A. Babiš je v potenciálním střetu zájmů, a pozastavila část plateb pro Agrofert. Úřad evropského veřejného žalobce vede trestní řízení kvůli dotacím Agrofertu."
+  text: "Evropská komise i po vložení Agrofertu do fondu RSVP Trust uvedla, že premiér A. Babiš je v potenciálním střetu zájmů, a pozastavila část plateb pro Agrofert. Úřad evropského veřejného žalobce vede ve fázi prověřování trestní řízení kvůli vyplácení dotací Agrofertu. Zahájení řízení neznamená obvinění."
   zdroje: [2, 3, 4]
 castky:
   - castka: 3180000

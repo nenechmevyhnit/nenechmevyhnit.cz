@@ -74,11 +74,16 @@ ${sPravidly ? '<p>Zákony, nařízení a další pravidla, která předkládá n
     {
       id: "postup",
       nadpis: "Jak vzniká záznam",
-      shrnuti: "Koncept, ověření každého zdroje člověkem, datum ověření, zveřejnění. Záznam bez zdroje nejde zveřejnit.",
-      html: `<ol class="kroky"><li>Vznikne koncept kauzy se zdroji. Do ověření není veřejný.</li>
-<li>Člověk otevře každý zdroj a ověří, že tvrzení skutečně podporuje.</li>
-<li>Zapíše se datum ověření a kauza se zveřejní.</li></ol>
-<p>Pravidla hlídá i automatická kontrola. Když kauze chybí zdroj, stanovisko dotčené strany, stav řízení nebo datum ověření, nejde ji zveřejnit. Ke zdrojům ukládáme archivní kopie pro případ, že původní článek zmizí.</p>`,
+      shrnuti: "Koncept, kontrola každého tvrzení proti zdroji, automatická kontrola, rozhodnutí člověka. Na přípravě se podílí umělá inteligence.",
+      html: `<ol class="kroky"><li>Vznikne koncept záznamu se zdroji. Do zveřejnění není veřejný.</li>
+<li>Samostatný druhý průchod otevře každý zdroj a porovná ho s tvrzením, které má podložit. Co zdroj neunese, se opraví nebo vypustí. Záznam o tomto průchodu si archiv ukládá.</li>
+<li>Automatická kontrola ověří, že nic povinného nechybí.</li>
+<li>Člověk projde výsledek s kontrolním listem a rozhodne, jestli záznam půjde ven. Zapíše se datum a záznam se zveřejní.</li></ol>
+<p>Pravidla hlídá i automatická kontrola. Když kauze chybí zdroj, stanovisko dotčené strany, stav řízení nebo datum ověření, nejde ji zveřejnit. Ke zdrojům ukládáme archivní kopie pro případ, že původní článek zmizí.</p>
+<h3 id="ai">Čím se záznamy připravují</h3>
+<p>Rešerši, první znění textu a porovnání tvrzení se zdroji dělá <strong>umělá inteligence</strong> pod vedením autora. Samo se nezveřejní nic: o každém záznamu rozhoduje člověk a nese za něj odpovědnost.</p>
+<p>Píšeme to sem proto, že to mění způsob, jak si archiv číst. Neručíme za to, že každý zdroj otevřel vlastníma očima člověk. Ručíme za to, že <strong>u každého tvrzení je uvedený zdroj, na který se můžete podívat sami</strong>. Tím archiv stojí a padá, a proto je odkaz na zdroj u všeho, co tu tvrdíme.</p>
+<p>Datum u „Naposledy ověřeno“ je den, kdy záznam v této podobě schválil člověk.</p>`,
     },
     {
       id: "opravy",

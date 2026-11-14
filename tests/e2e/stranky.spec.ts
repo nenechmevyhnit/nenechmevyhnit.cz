@@ -3,7 +3,7 @@ import { overBezPosouvani, overBezPosouvaniDoStrany } from './pomocne';
 
 test.use({ viewport: { width: 1366, height: 768 } });
 
-for (const [cesta, nadpis, karet] of [['/metodika/', 'Jak archiv vedeme', 9], ['/o-projektu/', 'Kdo, proč a jak', 7]] as const) {
+for (const [cesta, nadpis, karet] of [['/metodika/', 'Jak archiv vedeme', 9], ['/o-projektu/', 'Kdo, proč a jak', 8]] as const) {
   test(`${cesta}: karty, modal s plným zněním, bez posouvání`, async ({ page }) => {
     await page.goto(cesta);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(nadpis);
@@ -75,9 +75,30 @@ test('bez pravidel Metodika ani O projektu o oddílu Zákony a nařízení nemlu
   await expect(panel).toContainText('Kroky vlády jako celku zatím nezařazujeme.');
   await expect(panel).not.toContainText('vlastní část archivu');
   await page.goto('http://localhost:4322/o-projektu/');
-  await expect(page.locator('.v4-karta:not(.v4-cta)')).toHaveCount(7);
+  await expect(page.locator('.v4-karta:not(.v4-cta)')).toHaveCount(8);
   await page.locator('.v4-karta button[data-sekce="proc"]').click();
   await expect(page.locator('.v4-dlg-panel[data-sekce="proc"]')).not.toContainText('zákony a nařízení');
+});
+
+// Právní minimum: Metodika nesmí slibovat víc, než archiv dělá, a dotčené osoby musí najít svá práva.
+test('Metodika přiznává podíl umělé inteligence a nepředstírá ruční ověření', async ({ page }) => {
+  await page.goto('/metodika/#ai');
+  const panel = page.locator('.v4-dlg-panel[data-sekce="postup"]');
+  await expect(panel).toBeVisible();
+  await expect(panel.locator('#ai')).toHaveText('Čím se záznamy připravují');
+  await expect(panel).toContainText('umělá inteligence');
+  await expect(panel).toContainText('o každém záznamu rozhoduje člověk');
+  await expect(page.locator('body')).not.toContainText('Člověk otevře každý zdroj');
+});
+
+test('O projektu má práva dotčených osob', async ({ page }) => {
+  await page.goto('/o-projektu/#dotcene-osoby');
+  const panel = page.locator('.v4-dlg-panel[data-sekce="dotcene-osoby"]');
+  await expect(panel).toBeVisible();
+  await expect(panel.getByRole('heading', { level: 2 })).toHaveText('Pokud o vás píšeme');
+  await expect(panel).toContainText('§ 17 zákona č. 110/2019 Sb.');
+  await expect(panel).toContainText('podat námitku proti konkrétnímu zveřejnění');
+  await expect(panel).toContainText('Úřad pro ochranu osobních údajů');
 });
 
 test('Metodika obsahuje slovníček stavů', async ({ page }) => {

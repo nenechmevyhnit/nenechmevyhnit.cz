@@ -123,7 +123,7 @@ udalosti:
     zdroje: [4]
   - datum: 2017-03-10
     nazev: "Zprávy EY a PwC o příjmech"
-    popis: "Babiš zveřejnil zprávy EY a PwC, které měly doložit, že na dluhopisy měl vlastní peníze. Podle nich měl v letech 1996–2015 příjmy 2,4 mld. Kč. Firmy uvedly, že nejde o audit podle mezinárodních standardů. Údaje za roky 2014 a 2015 se lišily od jeho oznámení Sněmovně, Babiš rozdíl přičetl chybě účetní."
+    popis: "Babiš zveřejnil zprávy EY a PwC, jimiž dokládal, že na dluhopisy měl vlastní peníze. Podle nich měl v letech 1996–2015 příjmy 2,4 mld. Kč. Firmy uvedly, že nejde o audit podle mezinárodních standardů. Údaje za roky 2014 a 2015 se lišily od jeho oznámení Sněmovně, Babiš rozdíl přičetl chybě účetní."
     zdroje: [5, 6, 7]
   - datum: 2017-03-15
     nazev: "Usnesení Sněmovny"
@@ -161,7 +161,7 @@ castky:
   - castka: 90000000
     presnost: asi
     druh: objem
-    popis: roční výnos z Babišových dluhopisů osvobozený od daně
+    popis: roční výnos z dluhopisů, podle tehdejšího zákona nepodléhal dani
     zdroje: [1]
 akteri:
   - { id: agrofert, role: predmet-kauzy, popis: "Agrofert koncem roku 2012 vydal korunové dluhopisy s výnosem osvobozeným od daně, které nakoupil jeho majitel A. Babiš.", zdroje: [1, 3] }

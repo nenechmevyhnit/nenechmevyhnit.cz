@@ -1,7 +1,7 @@
 ---
 typ: kauza
 nazev: Zakázky Lesů ČR pro Uniles
-shrnuti: Uniles z Agrofertu opakovaně vyhrával tendry Lesů ČR. Když byl Babiš ve vládě, dostaly firmy Agrofertu od LČR zakázky za téměř 5,6 mld. Kč. Zda šlo o porušení zákona o střetu zájmů, úřady nerozhodly. Po jmenování Babiše premiérem jim LČR zakázky zakázaly, od 30. 4. 2026 zákaz zrušily. Agrofert střet zájmů odmítá.
+shrnuti: Uniles z Agrofertu opakovaně vyhrával tendry Lesů ČR. Podle Seznam Zpráv dostaly firmy Agrofertu od LČR za Babišova působení ve vládě zakázky za téměř 5,6 mld. Kč. O porušení zákona o střetu zájmů úřady nerozhodly. LČR jim zakázky po jmenování Babiše premiérem zakázaly, od 30. 4. 2026 zákaz zrušily.
 od: 2014
 do: null
 stav: jine
@@ -165,14 +165,14 @@ castky:
     zdroje: [7]
 akteri:
   - { id: uniles, role: dodavatel-zakazky, popis: "Uniles z Agrofertu opakovaně vyhrál zakázky na lesní práce v tendrech Lesů ČR na léta 2015–2029.", zdroje: [1, 3, 5, 6] }
-  - { id: agrofert, role: dodavatel-zakazky, popis: "Firmy Agrofertu dostaly od Lesů ČR v době, kdy byl A. Babiš ve vládě, zakázky za téměř 5,6 mld. Kč.", zdroje: [7] }
+  - { id: agrofert, role: dodavatel-zakazky, popis: "Firmy Agrofertu dostaly podle Seznam Zpráv od Lesů ČR v době, kdy byl A. Babiš ve vládě, zakázky za téměř 5,6 mld. Kč.", zdroje: [7] }
 navazuje:
-  - { kauza: vymahani-zemedelskych-dotaci, role: souvisejici-rizeni, popis: "Lesy ČR zrušily zákaz zakázek pro Agrofert s oporou v posudcích zpracovaných pro SZIF, týden po jeho rozhodnutí nevymáhat dotace Agrofertu.", zdroje: [13] }
+  - { kauza: vymahani-zemedelskych-dotaci, role: souvisejici-rizeni, popis: "Lesy ČR zrušily zákaz zakázek pro Agrofert s oporou v týchž posudcích, které byly zpracovány pro SZIF. Rozhodnutí SZIF nevymáhat dotace padlo týden předtím.", zdroje: [13] }
   - { kauza: stret-zajmu-audit-ek, role: souvisejici-rizeni, popis: "Ministerstvo zemědělství odmítlo vztáhnout na zakázky Lesů ČR rozsudek Městského soudu o Babišově střetu zájmů s tím, že se týkal dotace.", zdroje: [7] }
-  - { kauza: rsvp-trust-eppo, role: souvisejici-rizeni, popis: "Lesy ČR zrušily zákaz zakázek pro firmy Agrofertu poté, co A. Babiš vložil holding do svěřenského fondu RSVP Trust.", zdroje: [13] }
+  - { kauza: rsvp-trust-eppo, role: souvisejici-rizeni, popis: "Lesy ČR zrušily zákaz zakázek pro firmy Agrofertu s odkazem na právní posouzení; vložení holdingu do svěřenského fondu RSVP Trust mu předcházelo.", zdroje: [13] }
 ---
 Babiš vstoupil do lesnického byznysu v roce 2011 koupí firem Uniles a Wotan Forest. Při tendru v roce 2014 už Uniles patřil Agrofertu.[^1][^2] Podle LČR Uniles s podnikem spolupracoval zhruba dvacet let, tedy dávno před převzetím Agrofertem.[^2] Agrofert drží 75,05 % akcií Unilesu, zbytek patří obchodníkovi se dřevem Wood & Paper.[^8] Wotan Forest od LČR dřevo nakupuje.[^13]
 
-Zákon o střetu zájmů zakazuje firmám, v nichž má člen vlády aspoň čtvrtinový podíl, ucházet se o veřejné zakázky.[^8][^11] Agrofert tvrdí, že Babiš vložením holdingu do svěřenských fondů v únoru 2017 zákonu vyhověl.[^3][^5] Nejvyšší státní zastupitelství, Městský soud v Praze a audit Evropské komise naopak dospěly k závěru, že Babiš Agrofert ovládá, případně že byl ve střetu zájmů (podrobně kauza Střet zájmů a audit Evropské komise).[^7] Městský soud podle Seznam Zpráv uvedl, že porušení zákona se týká dotací i zakázek. Ministerstvo zemědělství namítalo, že rozsudek se týkal dotace, a na zakázky LČR proto nedopadá.[^7]
+Zákon o střetu zájmů zakazuje firmám, v nichž má člen vlády aspoň čtvrtinový podíl, ucházet se o veřejné zakázky.[^8][^11] Agrofert tvrdí, že Babiš vložením holdingu do svěřenských fondů v únoru 2017 zákonu vyhověl.[^3][^5] Podle Seznam Zpráv naopak Městský soud v Praze dospěl k závěru, že Babiš byl ve střetu zájmů; k ovládání Agrofertu se dříve vyjádřilo Nejvyšší státní zastupitelství a audit Evropské komise. Jednotlivá zjištění včetně primárních zdrojů jsou v kauze Střet zájmů a audit Evropské komise.[^7] Městský soud podle Seznam Zpráv uvedl, že zákaz podle zákona o střetu zájmů dopadá na dotace i na veřejné zakázky. Ministerstvo zemědělství namítalo, že rozsudek se týkal dotace, a na zakázky LČR proto nedopadá.[^7]
 
-Zakázky firmám Agrofertu po jmenování Babiše premiérem zakázal i státní podnik Vojenské lesy a statky. Zákaz zrušil 20. 2. 2026, v den vložení Agrofertu do svěřenského fondu. Státní zemědělský a intervenční fond koncem dubna 2026 rozhodl, že Agrofert nemusí vracet přímé platby z let 2017–2021 (podrobně kauza Střet zájmů po roce 2025).[^13]
+Zakázky firmám Agrofertu po jmenování Babiše premiérem zakázal i státní podnik Vojenské lesy a statky. Zákaz zrušil 20. 2. 2026. Týž den A. Babiš vložil Agrofert do svěřenského fondu; o důvodech rozhodnutí podniku časová souslednost sama nic neříká. Státní zemědělský a intervenční fond koncem dubna 2026 rozhodl, že Agrofert nemusí vracet přímé platby z let 2017–2021 (podrobně kauza Střet zájmů po roce 2025).[^13]
