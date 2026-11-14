@@ -88,6 +88,7 @@ Soubor `obsah/hlasovani/<id>.yml` vyrábí skript (oddíl 5) a ručně se neupra
 
 ```yaml
 # Vygenerováno skriptem scripts/stahni-hlasovani.ts z otevřených dat PSP. Ručně neupravovat.
+# Ověřit: https://www.psp.cz/sqw/hlasy.sqw?g=88900
 komora: psp
 obdobi: 10
 schuze: 34
@@ -137,7 +138,7 @@ Zkratka, která ve slovníku chybí, je chyba buildu („doplňte klub do hlasov
 `scripts/stahni-hlasovani.ts` (v `package.json` jako `hlasovani`):
 
 1. Projde `obsah/pravidla/*.md` a sebere všechna id hlasování. Adresář obsahu jde změnit parametrem `--obsah <adresář>`, třeba pro `_koncepty/obsah`.
-2. Pro id, která nemají snímek, stáhne `hl-<rok>ps.zip` a `poslanci.zip` do dočasné složky v `os.tmpdir()` (vždy čerstvě). Rok období určí slovník `10 → 2025`.
+2. Pro id, která nemají snímek, stáhne `hl-<rok>ps.zip` a `poslanci.zip` (vždy čerstvě, jen do paměti). Rok období určí slovník `10 → 2025`.
 3. Rozbalí potřebné soubory (knihovna `fflate` jako vývojová závislost), dekóduje windows-1250 (`TextDecoder`) a sestaví snímek podle oddílu 4.
 4. Zapíše `obsah/hlasovani/<id>.yml` a vypíše souhrn (id, výsledek, pro : proti).
 
@@ -203,15 +204,15 @@ Statická stránka (`src/pages/hlasovani/[id].astro`) pro každý snímek, na kt
 1. **Drobečková navigace:** název části v menu › název pravidla › Hlasování č. 311. Když na hlasování odkazuje víc pravidel, drobečková navigace končí u části v menu.
 2. **Nadpis:** „Hlasování č. 311, 34. schůze Poslanecké sněmovny“, pod ním datum a čas.
 3. **O čem se hlasovalo:** za každé navázané pravidlo štítek typu, věta `co` a odkaz zpět na pravidlo. U procedurálního hlasování věta z detailu pravidla.
-4. **Výsledek:** přijato nebo zamítnuto, pro, proti, zdržel se, nehlasoval, omluven, nepřihlášen a kvórum. Pod tím krátká legenda kategorií včetně vysvětlení „zdržel se nebo nehlasoval“ (oddíl 3) a odkaz na `/metodika/#hlasovani`.
-5. **Filtr a kluby:** na počítači tabulka klubů (klub, pro, proti, zdržel se nebo nehlasoval, nepřítomen) s prvním řádkem „Všichni“. Řádek je zároveň přepínač filtru (`aria-pressed`). Na mobilu (390×700) jsou místo tabulky čipy „Všichni (200) · ANO (80) …“ v jednom řádku se šipkami ‹ › jako u filtrů na hlavní stránce.
-6. **Seznam poslanců:** seskupený podle hlasu (Pro, Proti, Zdržel se nebo nehlasoval, Omluven, Nepřihlášen), uvnitř skupiny podle příjmení. Klub je u jména vidět, jen když je vybráno „Všichni“. Seznam pokračuje do sloupců a posouvá se do strany, nadpis skupiny zůstává se svými jmény.
+4. **Výsledek:** přijato nebo zamítnuto, pro, proti, zdržel se, nehlasoval, omluven, nepřihlášen a kvórum.
+5. **Filtr a kluby:** na počítači tabulka klubů (klub, pro, proti, zdržel se nebo nehlasoval, nepřítomen) s prvním řádkem „Všichni“. Název klubu v řádku je odkaz na kotvu (`#ano`), kliknout jde na celý řádek. Se skriptem odkaz přepíná filtr a vybraný klub má `aria-current="true"`. Na mobilu (390×700) jsou místo tabulky čipy „Všichni (200) · ANO (80) …“ v jednom řádku, který se posouvá do strany (jako témata ve filtru změn pravidel).
+6. **Seznam poslanců:** na začátku krátká legenda kategorií včetně vysvětlení „zdržel se nebo nehlasoval“ (oddíl 3) a odkaz na `/metodika/#hlasovani`. Legenda je součástí seznamu a posouvá se s ním, aby hlavička zůstala nízká. Poslanci jsou seskupení podle hlasu (Pro, Proti, Zdržel se nebo nehlasoval, Omluven, Nepřihlášen), uvnitř skupiny podle příjmení. Klub je u jména vidět, jen když je vybráno „Všichni“. Seznam pokračuje do sloupců a posouvá se do strany, nadpis skupiny zůstává se svými jmény.
 7. **Zdroj:** „Otevřená data Poslanecké sněmovny, staženo 14. 11. 2026“ a odkaz „Ověřit na psp.cz“ (`hlasy.sqw?g=<idPsp>`).
 
 **Filtr a adresa:**
 - Vybraný klub se čte z kotvy (`#ano`). Neznámá nebo prázdná kotva znamená „Všichni“.
 - Přepnutí filtru změní kotvu přes `history.replaceState`, takže odkaz jde sdílet a tlačítko Zpět vede na pravidlo.
-- **Bez JavaScriptu** jsou všechny kluby v seznamu jako oddíly s `id` podle slugu (každý oddíl seskupený podle hlasu). Kotva posune seznam na oddíl klubu. Tabulka klubů má odkazy na kotvy místo přepínačů.
+- **Bez JavaScriptu** jsou všechny kluby v seznamu jako oddíly s `id` podle slugu (každý oddíl seskupený podle hlasu). Kotva posune seznam na oddíl klubu, odkazy v tabulce klubů fungují jako obyčejné kotvy.
 
 ### Vzhled
 
@@ -234,7 +235,7 @@ Nový oddíl **„Hlasování“** (kotva `#hlasovani`) pod oddílem o změnách
    - 13. 10. 2026: `psp-10-34-32`, procedurální, návrh R. Králíčka (ANO) na pořadí bodů 34. schůze včetně 1. čtení tisku 221,
    - 3. 11. 2026: `psp-10-34-311` (návrh T. Malé), `psp-10-34-328` (návrh Z. Hřiba a V. Rakušana na vyřazení), `psp-10-34-385` (návrh I. Bartoše na vyřazení, 4. 11.), všechna procedurální.
 
-   Změnit `obsah/pravidla/novela-stretu-zajmu-2026.md` i kopii v `_koncepty/obsah/pravidla/`, kterou čte denní sledování. Pak `npm run hlasovani` a kontrola souhrnů proti psp.cz.
+   Změnit `obsah/pravidla/novela-stretu-zajmu-2026.md`, pak `npm run hlasovani` a kontrola souhrnů proti psp.cz. Kopie v `_koncepty/obsah/pravidla/` se doplní až po sloučení do main: větve `zmeny-pravidel` a `oblasti` čtou `_koncepty` se striktním schématem bez pole `hlasovani` a jejich náhled konceptů by jinak přestal fungovat. Denní sledování čte koncepty přes gray-matter bez schématu, takže ho to neomezí.
 4. **PR** zakládá uživatel.
 
 **Riziko slučování:** větev `oblasti` a necommitnutá práce ve `-pravidla` mění `DetailPravidla.astro` a styly pravidel. Záložka Hlasování proto bude vlastní komponenta (`ZalozkaHlasovani.astro`) a do `DetailPravidla.astro` přibude jen položka záložky, panel a řádek v události.
@@ -251,7 +252,7 @@ Nový oddíl **„Hlasování“** (kotva `#hlasovani`) pod oddílem o změnách
   - kontroly buildu z oddílu 6 včetně varování u snímku bez odkazu,
   - odvozené hodnoty pro web: souhrn podle klubů, pořadí klubů, věta pro čtečky.
 
-  Vstupy jsou malé výřezy souborů PSP v `tests/fixtures/psp/`.
+  Vstupy jsou malé syntetické tabulky PSP sestavené přímo v testu (200 poslanců, dva kluby), dekódování windows-1250 se testuje na bajtech.
 - **E2e (Playwright)** na fixtures (`tests/fixtures/obsah/hlasovani/`): vymyšlené hlasování s několika poslanci s vymyšlenými jmény a se zkratkami klubů ze slovníku. Fixture pravidlo `zakon-omega` dostane jedno procedurální hlasování a jedno o obsahu.
   - záložka Hlasování: počet v názvu, bloky od nejnovějšího, kluby s počty, věta u procedurálního hlasování, aria věta klubu,
   - řádek „Hlasování: č. …“ v Průběhu vede na stránku hlasování,
@@ -262,7 +263,7 @@ Nový oddíl **„Hlasování“** (kotva `#hlasovani`) pod oddílem o změnách
   - **žádné svislé posouvání** `/hlasovani/<fixture>/` a `/pravidla/zakon-omega/` s otevřenou záložkou Hlasování na všech velikostech z hlavní specifikace a na 390×700 (`bez-posouvani.spec.ts`),
   - axe bez závažných chyb.
 - Testy se spouštějí podle zavedeného postupu: vitest z cesty `C:\`, Playwright na vlastním portu z buildu, aby se nepletly se souběžnými relacemi.
-- **lychee** v CI zkontroluje i odkazy `hlasy.sqw?g=…`.
+- **lychee** v CI zkontroluje i odkazy `hlasy.sqw?g=…`: krok „Změněné kauzy a pravidla“ v `.github/workflows/kontrola.yml` zahrne i `obsah/hlasovani/*.yml`, jejichž hlavička odkaz obsahuje.
 
 ## 10. Rozhodnutí z brainstormingu
 
