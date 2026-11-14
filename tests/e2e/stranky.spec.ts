@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { overBezPosouvani } from './pomocne';
+import { overBezPosouvani, overBezPosouvaniDoStrany } from './pomocne';
 
 test.use({ viewport: { width: 1366, height: 768 } });
 
@@ -86,7 +86,7 @@ test('Metodika obsahuje slovníček stavů', async ({ page }) => {
   await expect(page.locator('.v4-dlg-panel[data-sekce="stavy"] .slovnicek dt')).toHaveCount(9);
 });
 
-for (const [sirka, vyska] of [[1366, 768], [1256, 528], [990, 660], [390, 700]] as const) {
+for (const [sirka, vyska] of [[1366, 768], [1256, 528], [990, 660]] as const) {
   test(`${sirka}×${vyska}: delší text v modalu Metodiky se neořízne, pokračuje do strany s nápovědou`, async ({ page }) => {
     await page.setViewportSize({ width: sirka, height: vyska });
     await page.goto('/metodika/');
@@ -113,6 +113,29 @@ for (const [sirka, vyska] of [[1366, 768], [1256, 528], [990, 660], [390, 700]] 
     await expect(posledni).toBeInViewport();
   });
 }
+
+// Mobil: plné znění oddílu se posouvá dolů (menu oddílů zůstane nahoře), ne ve sloupcích do strany.
+test('mobil 390×700: plné znění v modalu Metodiky se posouvá dolů, nic se neořízne', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 700 });
+  await page.goto('/metodika/');
+  await page.locator('.v4-karta button[data-sekce]').first().click();
+  const tlacitka = page.locator('.v4-dlg-menu button');
+  for (let i = 0; i < await tlacitka.count(); i++) {
+    const id = await tlacitka.nth(i).getAttribute('data-sekce');
+    await tlacitka.nth(i).click();
+    const panel = page.locator(`.v4-dlg-panel[data-sekce="${id}"]`);
+    await expect(panel).toBeVisible();
+    const p = await panel.evaluate(el => ({ sw: el.scrollWidth, cw: el.clientWidth, oy: getComputedStyle(el).overflowY }));
+    expect(p.sw, `oddíl ${id} se nesmí posouvat do strany`).toBeLessThanOrEqual(p.cw);
+    expect(p.oy).toBe('auto');
+    await expect(panel.locator('.posun-napoveda')).toBeHidden();
+  }
+  await page.locator('.v4-dlg-menu button[data-sekce="jazyk"]').click();
+  const posledni = page.locator('.v4-dlg-panel[data-sekce="jazyk"] p').last();
+  await posledni.scrollIntoViewIfNeeded();
+  await expect(posledni).toBeInViewport();
+  await expect(page.locator('.v4-dlg-menu')).toBeInViewport();
+});
 
 test('kolečko myši posouvá delší oddíl modalu do strany', async ({ page }) => {
   await page.goto('/metodika/#jazyk');
@@ -216,8 +239,7 @@ test.describe('mobil 390×700: hlavní stránka', () => {
     await expect(page.locator('.pocet:visible')).toBeVisible();
     await page.getByLabel('jen neuzavřené').check();
     await expect(page.locator('.f-zrusit:visible')).toBeVisible();
-    const { svisle, vyska } = await page.evaluate(() => ({ svisle: document.scrollingElement!.scrollHeight, vyska: innerHeight }));
-    expect(svisle).toBeLessThanOrEqual(vyska);
+    await overBezPosouvaniDoStrany(page);
   });
 });
 

@@ -140,7 +140,8 @@ Obsah modalu:
 - **Barvy (T2):** pozadí `#F5F5F8`, plochy `#FFFFFF`, hlavní modrá `#282661`, text `#16153A` / `#33325A`, linky `#D3D3E2`, popisky `#5C5B7A`, „dosud“ `#8F8DC4`. Červená `#DB1F2D` jen ve značce, linkách hlavičky a nadtitulcích, nikdy ve stavu kauzy. Barva nesmí hodnotit stav řízení.
 - **Písma:** Redaction 10 (nadpisy i text, latin-ext) a JetBrains Mono (data, roky, popisky). Obě se hostují ve vlastním repozitáři, žádné Google Fonts za běhu.
 - **Portrét (P4):** černobílá fotografie A. Babiše (Wikimedia Commons, Vox España, CC0). Je vyříznutá bez pozadí (`design/nastroje/vyrez_portretu.py`), pevně za obsahem v pravé části okna a měkce se ztrácí vlevo a dole. Horní pás s menu zůstává čistý. Osa má lehce průsvitné pozadí (84 %) a texty nad portrétem světlou auru. Kredit fotky je v řádku patičky. Před spuštěním se postava vyřízne ručně a pečlivěji (vlasy).
-- **Žádné svislé posouvání stránky, nikde.** Rozvržení vyplní výšku okna (`100dvh`). Do strany se smí posouvat jen osa a delší texty v modalech. Celá osa musí být vidět bez posouvání na těchto velikostech okna (vnitřní rozměr): 1256×528, 1342×565, 1342×676 a 1896×868. Na mobilu (390×700) je osa zúžená a název kauzy je nad pruhem.
+- **Na počítači žádné svislé posouvání stránky.** Rozvržení vyplní výšku okna (`100dvh`). Do strany se smí posouvat jen osa a delší texty v modalech. Celá osa musí být vidět bez posouvání na těchto velikostech okna (vnitřní rozměr): 1256×528, 1342×565, 1342×676 a 1896×868.
+- **Na mobilu (do 760 px) se stránka posouvá dolů, do strany nikdy** (změna 13. 11. 2026). Na výšku telefonu se pevné rozvržení nevešlo: osa ukázala dvě až tři kauzy a v detailu zbylo na záložku pár řádků, takže zdroje nebyly vidět a text byl useknutý. Osa je zúžená, název kauzy je nad pruhem a na stránce je 10 kauz. Detail kauzy se posouvá jako celek, záložky mají přirozenou výšku, lišta záložek se přilepí nahoře a zavírací tlačítko zůstává v rohu. Plné znění v modalech Metodiky a O projektu se posouvá dolů. Ověřuje se na 390×700, 375×667, 360×640 a 320×568.
 - **Animace:**
   - načtení: úvod vyjede, názvy naskočí a pruhy postupně dorostou zleva,
   - výběr kauzy: pásmo přejede na novou kauzu,
@@ -175,7 +176,8 @@ Obsah modalu:
 - **Playwright:**
   - osa vykreslí všechny kauzy seřazené podle začátku, filtry (hledání bez diakritiky, čipy NEBO, jen neuzavřené, zrušení, prázdný stav),
   - otevření detailu z řádku i přímou adresou, listování událostmi, přepnutí na zdroj, zavření a zrušení výběru,
-  - **žádné svislé posouvání:** `document.scrollingElement.scrollHeight <= innerHeight` na všech velikostech z oddílu 7, a celá osa je ve viewportu,
+  - **žádné svislé posouvání na počítači:** `document.scrollingElement.scrollHeight <= innerHeight` na počítačových velikostech z oddílu 7, a celá osa je ve viewportu,
+  - **mobil:** na mobilních velikostech z oddílu 7 se nic neposouvá do strany a žádná záložka detailu ani karta není oříznutá,
   - axe bez závažných chyb přístupnosti.
 - **lychee:** kontrola odkazů v CI.
 

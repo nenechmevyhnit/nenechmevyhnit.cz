@@ -8,6 +8,18 @@ export const VELIKOSTI = [
   { width: 390, height: 700 },
 ];
 
+/** Počítač: všechno se vejde na výšku okna, stránka se svisle neposouvá. */
+export const POCITACE = VELIKOSTI.filter(v => v.width > 760);
+
+/** Telefony: stránka se posouvá dolů, nikdy do strany. 360 px je nejběžnější Android, 375 × 667 iPhone SE
+ *  (a zhruba výška, která na iPhonu zbude v Safari s lištami), 320 px nejužší displej, se kterým počítáme. */
+export const MOBILY = [
+  { width: 390, height: 700 },
+  { width: 375, height: 667 },
+  { width: 360, height: 640 },
+  { width: 320, height: 568 },
+];
+
 export async function overBezPosouvani(page: Page) {
   const { svisle, vyska } = await page.evaluate(() => ({
     svisle: document.scrollingElement!.scrollHeight,
@@ -47,4 +59,12 @@ export async function presahPanelu(page: Page, hlidatKontejnery = false): Promis
     }
     return Math.round(max);
   }, hlidatKontejnery);
+}
+
+export async function overBezPosouvaniDoStrany(page: Page) {
+  const { sirka, okno } = await page.evaluate(() => ({
+    sirka: document.scrollingElement!.scrollWidth,
+    okno: window.innerWidth,
+  }));
+  expect(sirka, 'stránka se nesmí posouvat do strany').toBeLessThanOrEqual(okno);
 }
