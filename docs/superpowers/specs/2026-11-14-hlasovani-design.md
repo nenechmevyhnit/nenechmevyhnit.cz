@@ -185,16 +185,15 @@ Režim konceptů (`NV_KONCEPTY`) čte snímky z `<NV_OBSAH>/hlasovani/` a pravid
   ```
   3. 11. 2026 · hlasování č. 311 · procedurální
   Návrh T. Malé (ANO) zařadit 1. čtení jako poslední bod jednacího dne
-  Přijato 86 : 69
+  Přijato 86 : 69 · pro : proti · Všichni poslanci →
   [ANO 62 : 0] [SPD 14 : 0] [Motoristé 10 : 0] [ODS 0 : 25] [STAN 0 : 20] …
-  pro : proti · Všichni poslanci →
   ```
   (Počty v ukázce jsou ilustrační.)
   - Každý klub je odkaz na `/hlasovani/<id>/#<slug-klubu>`. „Všichni poslanci“ vede na `/hlasovani/<id>/`.
   - Kluby jsou seřazené podle počtu poslanců v hlasování, nezařazení na konci.
-  - Pro čtečky obrazovky má každý klub celou větu, například „ANO: 62 pro, 0 proti, 3 zdrželi se nebo nehlasovali, 1 omluven“.
+  - Pro čtečky obrazovky má každý klub za viditelným textem skrytý rozpis, takže přístupný název začíná tím, co je vidět (WCAG 2.5.3), například „ANO 62 : 0 (62 pro, 0 proti, 3 zdrželi se nebo nehlasovali, 1 omluven)“.
   - U procedurálního hlasování je pod blokem věta: „Procedurální hlasování rozhoduje o pořadu nebo způsobu projednání, ne o obsahu návrhu.“
-  - Když se hlasování nevejdou na výšku, panel pokračuje do sloupců a posouvá se do strany, stejně jako záložka Zdroje (`column-width`, blok hlasování se nedělí). Na mobilu (do 760 px) jde záložka pod sebou a posouvá se dolů s celým detailem, stejně jako ostatní záložky.
+  - Když se hlasování nevejdou na výšku, panel pokračuje do sloupců a posouvá se do strany, stejně jako záložka Zdroje (`column-width` 400 px, aby čipy klubů zabraly méně řádků; blok hlasování se nedělí, pokud se vejde na výšku panelu). Na mobilu (do 760 px) jde záložka pod sebou a posouvá se dolů s celým detailem, stejně jako ostatní záložky.
 - **Průběh:** událost s hlasováním dostane pod zdroje jeden řádek „Hlasování: č. 311 · č. 328 · č. 385“. Čísla vedou na stránky hlasování.
 - Hlavička, ostatní záložky a patička se nemění.
 
@@ -251,18 +250,18 @@ Nový oddíl **„Hlasování“** (kotva `#hlasovani`) pod oddílem o změnách
   - chyby skriptu: neexistující, zmatečné a ruční hlasování, neznámý kód, nesedící součty, jiný počet poslanců než 200,
   - schéma snímku a pole `hlasovani` (typ, délka `co`),
   - kontroly buildu z oddílu 6 včetně varování u snímku bez odkazu,
-  - odvozené hodnoty pro web: souhrn podle klubů, pořadí klubů, věta pro čtečky.
+  - odvozené hodnoty pro web: souhrn podle klubů, pořadí klubů, rozpis pro čtečky.
 
   Vstupy jsou malé syntetické tabulky PSP sestavené přímo v testu (200 poslanců, dva kluby), dekódování windows-1250 se testuje na bajtech.
 - **E2e (Playwright)** na fixtures (`tests/fixtures/obsah/hlasovani/`): vymyšlené hlasování s několika poslanci s vymyšlenými jmény a se zkratkami klubů ze slovníku. Fixture pravidlo `zakon-omega` dostane jedno procedurální hlasování a jedno o obsahu.
-  - záložka Hlasování: počet v názvu, bloky od nejnovějšího, kluby s počty, věta u procedurálního hlasování, aria věta klubu,
+  - záložka Hlasování: počet v názvu, bloky od nejnovějšího, kluby s počty, věta u procedurálního hlasování, přístupný název klubu začínající viditelným textem,
   - řádek „Hlasování: č. …“ v Průběhu vede na stránku hlasování,
   - proklik na klub otevře stránku s vybraným klubem a jeho poslanci, ostatní jsou skrytí,
   - přepnutí filtru změní kotvu, načtení adresy s kotvou vybere klub, neznámá kotva ukáže všechny,
   - bez JavaScriptu (`javaScriptEnabled: false`) jsou vidět oddíly všech klubů,
   - odkaz zpět na pravidlo a odkaz na psp.cz,
   - na počítači (`POCITACE`) **žádné svislé posouvání** `/hlasovani/<fixture>/` a `/pravidla/zakon-omega/` s otevřenou záložkou Hlasování, na telefonech (`MOBILY`: 390×700, 375×667, 360×640, 320×568) žádné posouvání do strany, čipy klubů se zalamují (`bez-posouvani.spec.ts`, `hlasovani-stranka.spec.ts`, `hlasovani-detail.spec.ts`),
-  - axe bez závažných chyb.
+  - axe bez závažných chyb, i s otevřenou záložkou Hlasování.
 - Testy se spouštějí podle zavedeného postupu: vitest z cesty `C:\`, Playwright na vlastním portu z buildu, aby se nepletly se souběžnými relacemi.
 - **lychee** v CI zkontroluje i odkazy `hlasy.sqw?g=…`: krok „Změněné kauzy a pravidla“ v `.github/workflows/kontrola.yml` zahrne i `obsah/hlasovani/*.yml`, jejichž hlavička odkaz obsahuje.
 

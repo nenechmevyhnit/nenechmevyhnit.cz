@@ -11,20 +11,29 @@ test('záložka Hlasování: za Průběhem, bloky od nejnovějšího, výsledek 
   await expect(bloky).toHaveCount(2);
   await expect(bloky.nth(0).locator('.hl-meta')).toHaveText('20. 9. 2026 · hlasování č. 3 · o obsahu');
   await expect(bloky.nth(0).locator('.hl-co')).toHaveText('Fiktivní návrh zákona jako celek ve třetím čtení');
-  await expect(bloky.nth(0).locator('.hl-vysledek')).toHaveText('Přijato 7 : 3');
-  await expect(bloky.nth(0).locator('.hl-kluby a')).toHaveText(['ANO 5 : 0', 'ODS 1 : 2', 'STAN 0 : 1', 'Piráti 0 : 0', 'Nezařazení 1 : 0']);
+  await expect(bloky.nth(0).locator('.hl-vysledek')).toHaveText('Přijato 7 : 3 · pro : proti · Všichni poslanci →');
+  await expect(bloky.nth(0).locator('.hl-pata')).toHaveCount(0);
+  await expect(bloky.nth(0).locator('.hl-kluby a .hl-cisla')).toHaveText(['5 : 0', '1 : 2', '0 : 1', '0 : 0', '1 : 0']);
+  await expect(bloky.nth(0).locator('.hl-kluby a')).toHaveText([
+    'ANO 5 : 0 (5 pro, 0 proti)', 'ODS 1 : 2 (1 pro, 2 proti)', 'STAN 0 : 1 (0 pro, 1 proti, 1 omluven)',
+    'Piráti 0 : 0 (0 pro, 0 proti, 1 nepřihlášen)', 'Nezařazení 1 : 0 (1 pro, 0 proti)',
+  ]);
   await expect(bloky.nth(0).locator('.hl-proc')).toHaveCount(0);
   await expect(bloky.nth(1).locator('.hl-meta')).toHaveText('12. 6. 2026 · hlasování č. 12 · procedurální');
-  await expect(bloky.nth(1).locator('.hl-kluby a')).toHaveText(['ANO 4 : 0', 'ODS 0 : 2', 'STAN 0 : 1', 'Piráti 0 : 1', 'Nezařazení 1 : 0']);
+  await expect(bloky.nth(1).locator('.hl-kluby a .hl-cisla')).toHaveText(['4 : 0', '0 : 2', '0 : 1', '0 : 1', '1 : 0']);
   await expect(bloky.nth(1).locator('.hl-proc')).toHaveText('Procedurální hlasování rozhoduje o pořadu nebo způsobu projednání, ne o obsahu návrhu.');
 });
 
-test('klub má pro čtečky celou větu a vede na stránku hlasování s kotvou', async ({ page }) => {
+test('přístupný název klubu začíná viditelným textem, rozpis je jen pro čtečky; odkaz vede na stránku hlasování s kotvou', async ({ page }) => {
   await page.goto('/pravidla/zakon-omega/');
   await page.getByRole('tab', { name: 'Hlasování (2)' }).click();
   const panel = page.locator('.m2-panel[data-p="hlasovani"]');
-  await expect(panel.getByRole('link', { name: 'ANO: 4 pro, 0 proti, 1 omluven', exact: true })).toHaveAttribute('href', '/hlasovani/psp-10-5-12/#ano');
-  await expect(panel.getByRole('link', { name: 'ODS: 0 pro, 2 proti, 1 zdržel se nebo nehlasoval', exact: true })).toHaveAttribute('href', '/hlasovani/psp-10-5-12/#ods');
+  const ano = panel.getByRole('link', { name: 'ANO 4 : 0 (4 pro, 0 proti, 1 omluven)', exact: true });
+  await expect(ano).toHaveAttribute('href', '/hlasovani/psp-10-5-12/#ano');
+  await expect(ano).not.toHaveAttribute('aria-label');
+  await expect(ano.locator('.jen-ctecka')).toHaveText('(4 pro, 0 proti, 1 omluven)');
+  await expect(panel.getByRole('link', { name: 'ODS 0 : 2 (0 pro, 2 proti, 1 zdržel se nebo nehlasoval)', exact: true })).toHaveAttribute('href', '/hlasovani/psp-10-5-12/#ods');
+  await expect(panel.locator('.hl-kluby a[aria-label]')).toHaveCount(0);
   await expect(panel.getByRole('link', { name: 'Všichni poslanci →' }).first()).toHaveAttribute('href', '/hlasovani/psp-10-7-3/');
 });
 
@@ -46,6 +55,17 @@ test('detail otevřený ze seznamu (obsah načtený skriptem) má záložku Hlas
   await page.goto('/pravidla/?pohled=seznam');
   await page.locator('.pr-radek[data-slug="zakon-omega"] .pr-btn').click();
   await expect(page.locator('dialog#detail')).toBeVisible();
+  await page.getByRole('tab', { name: 'Hlasování (2)' }).click();
+  const kluby = page.locator('.m2-panel[data-p="hlasovani"] .hl-kluby').first();
+  await expect(kluby).toBeVisible();
+  expect(await kluby.evaluate(e => getComputedStyle(e).display)).toBe('flex');
+});
+
+test('detail otevřený ze stránky oblasti přes „Celý rozbor →“ má záložku Hlasování se styly', async ({ page }) => {
+  // stránka oblasti nemá DetailPravidla, detail změny se do dialogu načte skriptem
+  await page.goto('/pravidla/oblasti/dotace-stret-zajmu/');
+  await page.locator('dialog#detail .ob-zmeny li[data-slug="zakon-omega"] a.ob-rozbor').click();
+  await expect(page).toHaveURL(/\/pravidla\/zakon-omega\/$/);
   await page.getByRole('tab', { name: 'Hlasování (2)' }).click();
   const kluby = page.locator('.m2-panel[data-p="hlasovani"] .hl-kluby').first();
   await expect(kluby).toBeVisible();

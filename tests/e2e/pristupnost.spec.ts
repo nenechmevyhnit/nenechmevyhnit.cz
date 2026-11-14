@@ -15,6 +15,18 @@ for (const cesta of ['/', '/?pohled=mapa', '/?pohled=mapa&vyber=alfa-dotace', '/
   });
 }
 
+// skryté panely axe přeskakuje, záložku Hlasování proto otevřeme
+test('záložka Hlasování v detailu pravidla bez závažných chyb přístupnosti', async ({ page }) => {
+  await page.goto('/pravidla/zakon-omega/');
+  await expect(page.locator('body')).toHaveClass(/nacteno/, { timeout: 5000 });
+  await page.getByRole('tab', { name: 'Hlasování (2)' }).click();
+  await expect(page.locator('.m2-panel[data-p="hlasovani"]')).toBeVisible();
+  await page.waitForTimeout(400);
+  const vysledek = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
+  const zavazne = vysledek.violations.filter(v => v.impact === 'serious' || v.impact === 'critical');
+  expect(zavazne.map(v => `${v.id}: ${v.nodes.map(n => n.target.join(' ')).join(', ')}`)).toEqual([]);
+});
+
 test('ovládání klávesnicí: Tab dojde na řádek osy a Enter otevře detail', async ({ page }) => {
   await page.goto('/');
   await page.locator('.radek a.radek-btn').first().focus();

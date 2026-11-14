@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
-  souhrnKlubu, vetaKlubu, nepritomni, skupinyPoslancu, hlasovaniPravidla, navazanaPravidla, vybranyKlub,
+  souhrnKlubu, rozpisKlubu, nepritomni, skupinyPoslancu, hlasovaniPravidla, navazanaPravidla, vybranyKlub,
   popisekTypu, popisekVysledku, nadpisHlasovani, cisloHlasovani, odkazPsp, VETA_PROCEDURALNI,
 } from '../../src/lib/hlasovani';
 import { snimekSchema, type Snimek } from '../../src/lib/schema-hlasovani';
@@ -28,18 +28,22 @@ describe('souhrnKlubu', () => {
   });
 });
 
-describe('vetaKlubu', () => {
+describe('rozpisKlubu', () => {
   const [ano, ods, nez] = souhrnKlubu(snimek());
-  it('celá věta pro čtečky', () => {
-    expect(vetaKlubu(ano)).toBe('ANO: 2 pro, 0 proti');
-    expect(vetaKlubu(ods)).toBe('ODS: 0 pro, 1 proti, 1 omluven');
-    expect(vetaKlubu(nez)).toBe('Nezařazení: 0 pro, 0 proti, 1 zdržel se nebo nehlasoval');
+  it('rozpis pro čtečky bez názvu klubu (ten je ve viditelném textu odkazu)', () => {
+    expect(rozpisKlubu(ano)).toBe('2 pro, 0 proti');
+    expect(rozpisKlubu(ods)).toBe('0 pro, 1 proti, 1 omluven');
+    expect(rozpisKlubu(nez)).toBe('0 pro, 0 proti, 1 zdržel se nebo nehlasoval');
+  });
+  it('nepřítomné a nehlasující kategorie s nulou vynechá, pro a proti uvede vždy', () => {
+    expect(rozpisKlubu({ ...nez, zdrzelNehlasoval: 0 })).toBe('0 pro, 0 proti');
+    expect(rozpisKlubu({ ...ano, neprihlasen: 1 })).toBe('2 pro, 0 proti, 1 nepřihlášen');
   });
   it('skloňování', () => {
-    expect(vetaKlubu({ ...nez, zdrzelNehlasoval: 3, omluven: 2, neprihlasen: 5 }))
-      .toBe('Nezařazení: 0 pro, 0 proti, 3 zdrželi se nebo nehlasovali, 2 omluveni, 5 nepřihlášeno');
-    expect(vetaKlubu({ ...nez, zdrzelNehlasoval: 5, neprihlasen: 1 }))
-      .toBe('Nezařazení: 0 pro, 0 proti, 5 zdrželo se nebo nehlasovalo, 1 nepřihlášen');
+    expect(rozpisKlubu({ ...nez, zdrzelNehlasoval: 3, omluven: 2, neprihlasen: 5 }))
+      .toBe('0 pro, 0 proti, 3 zdrželi se nebo nehlasovali, 2 omluveni, 5 nepřihlášeno');
+    expect(rozpisKlubu({ ...nez, zdrzelNehlasoval: 5, neprihlasen: 1 }))
+      .toBe('0 pro, 0 proti, 5 zdrželo se nebo nehlasovalo, 1 nepřihlášen');
   });
 });
 

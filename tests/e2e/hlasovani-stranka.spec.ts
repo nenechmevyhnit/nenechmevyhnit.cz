@@ -40,7 +40,7 @@ test('výchozí filtr Všichni: poslanci podle hlasu s klubem u jména', async (
 test('proklik na klub z detailu pravidla otevře stránku s vybraným klubem', async ({ page }) => {
   await page.goto('/pravidla/zakon-omega/');
   await page.getByRole('tab', { name: 'Hlasování (2)' }).click();
-  await page.getByRole('link', { name: 'ODS: 1 pro, 2 proti', exact: true }).click();
+  await page.getByRole('link', { name: 'ODS 1 : 2 (1 pro, 2 proti)', exact: true }).click();
   await expect(page).toHaveURL(/\/hlasovani\/psp-10-7-3\/#ods$/);
   const ods = page.locator('section#ods');
   await expect(ods).toBeVisible();

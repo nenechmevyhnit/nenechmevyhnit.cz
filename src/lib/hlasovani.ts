@@ -36,13 +36,14 @@ export function souhrnKlubu(s: Snimek): SouhrnKlubu[] {
     Number(a.zkratka === null) - Number(b.zkratka === null) || b.celkem - a.celkem || a.popisek.localeCompare(b.popisek, 'cs'));
 }
 
-/** Věta pro čtečky obrazovky, např. „ANO: 62 pro, 0 proti, 3 zdrželi se nebo nehlasovali, 1 omluven“. */
-export function vetaKlubu(k: SouhrnKlubu): string {
+/** Rozpis hlasů klubu pro čtečky obrazovky bez názvu klubu, např. „62 pro, 0 proti, 3 zdrželi se nebo nehlasovali, 1 omluven“.
+ *  Odkaz klubu ho připojí skrytý za viditelný text, takže přístupný název začíná tím, co je vidět (WCAG 2.5.3). */
+export function rozpisKlubu(k: SouhrnKlubu): string {
   const casti = [`${k.pro} pro`, `${k.proti} proti`];
   if (k.zdrzelNehlasoval) casti.push(sklonuj(k.zdrzelNehlasoval, ['zdržel se nebo nehlasoval', 'zdrželi se nebo nehlasovali', 'zdrželo se nebo nehlasovalo']));
   if (k.omluven) casti.push(sklonuj(k.omluven, ['omluven', 'omluveni', 'omluveno']));
   if (k.neprihlasen) casti.push(sklonuj(k.neprihlasen, ['nepřihlášen', 'nepřihlášeni', 'nepřihlášeno']));
-  return `${k.popisek}: ${casti.join(', ')}`;
+  return casti.join(', ');
 }
 
 export const nepritomni = (s: Snimek): { omluven: number; neprihlasen: number } => ({

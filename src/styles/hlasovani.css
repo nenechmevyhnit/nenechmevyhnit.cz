@@ -1,20 +1,23 @@
 /* Hlasování: záložka v detailu pravidla a stránka hlasování (spec hlasování, oddíl 7).
    Bez stranických barev; „pro“ a „proti“ nerozlišuje zelená ani červená, hlas pro návrh není hodnocení. */
 
-/* záložka v detailu pravidla: co se nevejde na výšku, pokračuje do sloupců a posouvá se do strany (jako Zdroje) */
-.pravidlo .m2-panel[data-p="hlasovani"] { overflow-x: auto; overflow-y: hidden; column-width: 320px; column-gap: 32px; column-fill: auto; }
+/* záložka v detailu pravidla: co se nevejde na výšku, pokračuje do sloupců a posouvá se do strany (jako Zdroje).
+   Široký sloupec, aby se čipy klubů vešly do méně řádků a blok hlasování se vešel na výšku panelu.
+   Na mobilu (do 760 px) jde záložka pod sebou a posouvá se dolů s celým detailem (upravy.css, Mobil). */
+.pravidlo .m2-panel[data-p="hlasovani"] { overflow-x: auto; overflow-y: hidden; column-width: 400px; column-gap: 32px; column-fill: auto; }
 .hl-seznam { list-style: none; margin: 0; padding: 0; }
 .hl-blok { break-inside: avoid; margin: 0 0 14px; padding: 0 0 14px; border-bottom: 1px dashed var(--linka); }
 .hl-meta { margin: 0; font: 12px/1.5 var(--f-mono); color: var(--meta); }
 .hl-typ { border: 1px solid var(--inkoust); padding: 0 5px; color: var(--inkoust); white-space: nowrap; }
 .hl-co { margin: 4px 0; font-size: 15px; }
 .hl-vysledek { margin: 0 0 6px; font-size: 15px; }
+.hl-blok .hl-vysledek .hl-legenda { font-size: 13px; color: var(--meta); }
+.hl-blok .hl-vysledek a { font-size: 13px; }
 .hl-kluby { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 0 0 6px; padding: 0; }
 .hl-kluby a { display: inline-block; border: 1px solid var(--linka); background: var(--plocha); padding: 2px 8px; font-size: 13px; color: var(--inkoust); text-decoration: none; }
 .hl-kluby a:hover { border-color: var(--modra); }
 .hl-cisla { font-family: var(--f-mono); }
-.hl-pata { margin: 0; font-size: 13px; color: var(--meta); }
-.hl-pata a, .hl-odkazy a { color: var(--modra); }
+.hl-blok .hl-vysledek a, .hl-odkazy a { color: var(--modra); }
 .hl-proc { margin: 6px 0 0; font-size: 13px; font-style: italic; color: var(--text2); }
 .hl-odkazy { margin-top: 6px; font-size: 14px; }
 
