@@ -19,3 +19,18 @@ test('stránka kauzy nese platný Article s citacemi a drobečky', async ({ page
   expect(d.breadcrumb.itemListElement).toHaveLength(3);
   expect(d.datePublished).toBeUndefined();
 });
+
+test('stránka kauzy má vlastní náhledový obrázek s rozměry', async ({ page }) => {
+  await page.goto('/kauzy/alfa-dotace/');
+  const obsah = (vlastnost: string) => page.locator(`meta[property="${vlastnost}"]`).getAttribute('content');
+  expect(await obsah('og:image')).toBe('https://posudtesami.cz/obrazky/nahledy/alfa-dotace.png');
+  expect(await obsah('og:image:width')).toBe('1200');
+  expect(await obsah('og:image:height')).toBe('630');
+  expect(await obsah('og:image:alt')).toContain('Testovací kauza Alfa');
+});
+
+test('titulní stránka má záložní náhled', async ({ page }) => {
+  await page.goto('/');
+  expect(await page.locator('meta[property="og:image"]').getAttribute('content'))
+    .toBe('https://posudtesami.cz/obrazky/nahled.png');
+});

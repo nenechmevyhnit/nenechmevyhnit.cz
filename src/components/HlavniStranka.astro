@@ -24,7 +24,8 @@ const titulek = otevrena
 const popis = otevrena ? otevrena.kauza.shrnuti : WEB.popis;
 ---
 <Zaklad titulek={titulek} popis={popis} cesta={otevrena ? `/kauzy/${otevrena.slug}/` : '/'} styly="hlavni" aktivni="kauzy" otevrena={otevrena?.slug}
-  jsonLd={otevrena ? kauzaJsonLd(otevrena) : webJsonLd()}>
+  jsonLd={otevrena ? kauzaJsonLd(otevrena) : webJsonLd()}
+  nahledSoubor={otevrena ? `/obrazky/nahledy/${otevrena.slug}.png` : undefined}>
   <main class="hlavni-obsah">
     <Uvod jakoNadpis={!otevrena} />
     <h2 class="jen-ctecka">Hledání a filtry</h2>
