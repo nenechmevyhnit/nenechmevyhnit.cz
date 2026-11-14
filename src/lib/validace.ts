@@ -177,10 +177,20 @@ export function overOblasti(adresar: string, soubory: { slug: string; soubor: st
     }));
     nactene.set(id, { ...r.data, hodnoceni });
   }
+  // Přechodné pravidlo (14. 11. 2026): oblasti a proVas mají všechny zveřejněné změny, nebo žádná. Dokud je
+  // nemá žádná, pohled Oblasti se nezobrazí; jakmile je dostane jedna, musí je mít všechny (spec oblastí, 7.3).
+  const zapnuto = pravidla.some(z => z.pravidlo.oblasti || z.pravidlo.proVas);
+  if (!rezim.koncepty && !zapnuto && pravidla.length > 0)
+    varovani.push({ soubor: join(adresar, 'pravidla'), zprava: 'Žádná změna zatím nemá oblasti ani text „Co by to znamenalo pro vás“, pohled Oblasti se nezobrazí' });
   for (const z of pravidla) {
     const soubor = join(adresar, 'pravidla', `${z.slug}.md`);
-    if (rezim.koncepty && !z.pravidlo.oblasti) varovani.push({ soubor, zprava: 'Změna zatím nemá oblasti (v pohledu Oblasti se nezobrazí)' });
-    if (rezim.koncepty && !z.pravidlo.proVas) varovani.push({ soubor, zprava: 'Změna zatím nemá text „Co by to znamenalo pro vás“' });
+    if (rezim.koncepty) {
+      if (!z.pravidlo.oblasti) varovani.push({ soubor, zprava: 'Změna zatím nemá oblasti (v pohledu Oblasti se nezobrazí)' });
+      if (!z.pravidlo.proVas) varovani.push({ soubor, zprava: 'Změna zatím nemá text „Co by to znamenalo pro vás“' });
+    } else if (zapnuto) {
+      if (!z.pravidlo.oblasti) chyby.push({ soubor, zprava: 'Změna musí patřit aspoň do jedné oblasti (oblasti)' });
+      if (!z.pravidlo.proVas) chyby.push({ soubor, zprava: 'Změna musí mít text „Co by to znamenalo pro vás“ (proVas)' });
+    }
   }
   for (const id of OBLASTI) {
     if (nactene.has(id) || !pravidla.some(z => z.pravidlo.oblasti?.includes(id))) continue;

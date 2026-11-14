@@ -141,7 +141,7 @@ Formát zdrojů je stejný jako u změn pravidel.
 ### 7.3 Validace
 
 **Build selže, když:**
-- změna nemá `oblasti` nebo `proVas` (kromě režimu konceptů, viz níže),
+- změna nemá `oblasti` nebo `proVas` (kromě režimu konceptů a přechodného pravidla, viz níže),
 - slug v `oblasti` nebo název souboru oblasti není v `OBLASTI`, nebo se slug v `oblasti` opakuje,
 - `proVas.text` má víc než 400 znaků, `uvod.text` víc než 400, `citace` víc než 500,
 - `proVas`, `uvod` nebo hodnocení nemá zdroj, nebo odkaz míří na neexistující zdroj,
@@ -149,6 +149,8 @@ Formát zdrojů je stejný jako u změn pravidel.
 - `typ` hodnocení není `vlada`, `instituce` ani `odbornik`, nebo `vlada`/`odbornik` nemá `funkce`,
 - oblast má hodnocení, ale žádné typu `vlada`,
 - `pravidla` u hodnocení obsahuje slug, který neexistuje nebo nepatří do této oblasti.
+
+**Přechodné pravidlo** (rozhodnutí 14. 11. 2026, aby kód oblastí mohl na web dřív než jejich obsah): `oblasti` a `proVas` mají buď všechny zveřejněné změny, nebo žádná. Dokud je nemá žádná, build jen vypíše varování a pohled Oblasti se nezobrazí (přehled začíná Seznamem). Jakmile je dostane jedna změna, chybějí-li ostatním, build selže. Hlídá to `overOblasti` ve `src/lib/validace.ts`, schéma jedné změny je nevyžaduje.
 
 **Režim konceptů** (`NV_KONCEPTY=ano`): chybějící `oblasti`, `proVas` nebo úvod oblasti jen vypíše varování. Změna bez oblasti se nezobrazí v pohledu Oblasti, v Seznamu a na ose ano. Nástroj `_koncepty/nastroje/over-pravidla.ts` hlásí totéž jako varování.
 

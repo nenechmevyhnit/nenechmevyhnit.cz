@@ -100,6 +100,33 @@ describe('overOblasti', () => {
   });
 });
 
+describe('přechodné pravidlo: oblasti a proVas mají všechny zveřejněné změny, nebo žádná', () => {
+  const bez = (slug: string, upravy: Record<string, unknown> = { oblasti: undefined, proVas: undefined }): PravidloZaznam =>
+    ({ slug, pravidlo: pravidloSchema.parse({ ...platnePravidlo(), ...upravy }), telo: '' });
+  it('žádná změna nemá oblasti ani proVas: bez chyby, jedno varování, že se pohled Oblasti nezobrazí', () => {
+    const r = overOblasti('obsah', [], [bez('a'), bez('b')]);
+    expect(r.chyby).toEqual([]);
+    expect(r.varovani).toHaveLength(1);
+    expect(zpravy(r.varovani)).toMatch(/pohled Oblasti se nezobrazí/);
+    expect(r.oblasti).toEqual([]);
+  });
+  it('jakmile má oblasti jedna změna, chybí oblasti i proVas ostatním jako chyba', () => {
+    const r = overOblasti('obsah', [soubor('dotace-stret-zajmu')], [zaznam('s-oblasti', ['dotace-stret-zajmu']), bez('bez-oblasti')]);
+    expect(r.chyby.filter(c => c.soubor.includes('bez-oblasti')).map(c => c.zprava)).toEqual([
+      'Změna musí patřit aspoň do jedné oblasti (oblasti)',
+      'Změna musí mít text „Co by to znamenalo pro vás“ (proVas)',
+    ]);
+  });
+  it('samotný text proVas u jedné změny povinnost také zapne', () => {
+    const r = overOblasti('obsah', [], [bez('jen-provas', { oblasti: undefined }), bez('nic')]);
+    expect(r.chyby.map(c => `${c.soubor.replace(/\\/g, '/')}: ${c.zprava}`)).toEqual([
+      'obsah/pravidla/jen-provas.md: Změna musí patřit aspoň do jedné oblasti (oblasti)',
+      'obsah/pravidla/nic.md: Změna musí patřit aspoň do jedné oblasti (oblasti)',
+      'obsah/pravidla/nic.md: Změna musí mít text „Co by to znamenalo pro vás“ (proVas)',
+    ]);
+  });
+});
+
 describe('overAdresar s oblastmi', () => {
   it('fixtures: čtyři oblasti bez chyb', () => {
     const r = overAdresar('tests/fixtures/obsah');

@@ -35,7 +35,7 @@ const vytvorPravidloSchema = (koncepty: boolean) => z
     pripojenoK: z.object({ nazev: text(), zdroje: odkazy('Připojení k zákonu') }).strict().optional(),
     ucinnostOd: ucinnost.optional(),
     stitky: z.array(z.string().regex(/^[a-z0-9-]+$/)).min(1),
-    /** Oblasti státu (specifikace oblastí, oddíl 7.1). Ve schématu nepovinné, mimo koncepty je vynutí superRefine. */
+    /** Oblasti státu (specifikace oblastí, oddíl 7.1). Ve schématu nepovinné, povinnost hlídá overOblasti (validace.ts). */
     oblasti: z.array(z.enum(OBLASTI)).min(1, 'Seznam oblastí nesmí být prázdný').optional(),
     proVas: proVasSchema.optional(),
     overeno: koncepty ? datumPresne.nullable().default(null) : datumPresne,
@@ -79,10 +79,9 @@ const vytvorPravidloSchema = (koncepty: boolean) => z
     p.vyhrady.forEach(v => over(v.zdroje, `Výhrada („${v.kdo}“)`));
     p.kauzy.forEach(k => over(k.zdroje, `Vazba na kauzu „${k.kauza}“`));
 
-    // Oblasti a text pro čtenáře (specifikace oblastí, oddíl 7.3); koncepty je smějí mít rozpracované
+    // Oblasti a text pro čtenáře (specifikace oblastí, oddíl 7.3). Jejich povinnost hlídá overOblasti
+    // napříč změnami (přechodně: všechny zveřejněné změny, nebo žádná).
     if (p.proVas) over(p.proVas.zdroje, 'Co by to znamenalo pro vás');
-    if (!koncepty && !p.oblasti) chyba('Změna musí patřit aspoň do jedné oblasti (oblasti)');
-    if (!koncepty && !p.proVas) chyba('Změna musí mít text „Co by to znamenalo pro vás“ (proVas)');
     if (p.oblasti && new Set(p.oblasti).size !== p.oblasti.length) chyba('Pole oblasti obsahuje stejnou oblast dvakrát');
 
     if (!p.prospech && !p.kontrolaMoci) chyba('Záznam musí mít aspoň jeden důvod zařazení: prospech nebo kontrolaMoci');

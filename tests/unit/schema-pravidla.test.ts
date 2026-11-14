@@ -140,9 +140,8 @@ describe('oblasti a „Co by to znamenalo pro vás“', () => {
     expect(p.oblasti).toEqual(['dotace-stret-zajmu']);
     expect(p.proVas!.zdroje).toEqual([1]);
   });
-  it('mimo režim konceptů jsou oblasti i proVas povinné', () => {
-    expect(chyby(s(p => { delete p.oblasti; })).join(' ')).toMatch(/aspoň do jedné oblasti/);
-    expect(chyby(s(p => { delete p.proVas; })).join(' ')).toMatch(/Co by to znamenalo pro vás/);
+  it('schéma jedné změny oblasti ani proVas nevyžaduje (povinnost „všechny, nebo žádná“ hlídá overOblasti)', () => {
+    expect(chyby(s(p => { delete p.oblasti; delete p.proVas; }))).toEqual([]);
   });
   it('v režimu konceptů smějí chybět', () => {
     expect(chyby(s(p => { delete p.oblasti; delete p.proVas; }), pravidloSchemaKoncepty)).toEqual([]);
