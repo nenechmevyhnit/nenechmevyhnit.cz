@@ -4,7 +4,7 @@ import { VELIKOSTI, overBezPosouvani } from './pomocne';
 test.use({ viewport: { width: 1366, height: 768 } });
 
 test('přepínač Seznam · Časová osa a adresa ?pohled=osa', async ({ page }) => {
-  await page.goto('/pravidla/');
+  await page.goto('/pravidla/?pohled=seznam');
   const prepinac = page.getByRole('group', { name: 'Zobrazení změn pravidel' });
   await expect(prepinac.getByRole('button', { name: 'Seznam' })).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('.osa-pravidel')).toBeHidden();
@@ -13,7 +13,7 @@ test('přepínač Seznam · Časová osa a adresa ?pohled=osa', async ({ page })
   await expect(page.locator('.osa-pravidel')).toBeVisible();
   await expect(page.locator('.pravidla-obal')).toBeHidden();
   await prepinac.getByRole('button', { name: 'Seznam' }).click();
-  await expect(page).toHaveURL(/\/pravidla\/$/);
+  await expect(page).toHaveURL(/\/pravidla\/\?pohled=seznam$/);
   await expect(page.locator('.pravidla-obal')).toBeVisible();
 });
 
@@ -110,11 +110,12 @@ test('body mají přístupný název s názvem pravidla a datem', async ({ page 
 
 test.describe('bez JavaScriptu', () => {
   test.use({ javaScriptEnabled: false });
-  test('není přepínač ani osa, seznam je vidět', async ({ page }) => {
+  test('není přepínač ani osa, vidět jsou oblasti (seznam ukáže až skript)', async ({ page }) => {
     await page.goto('/pravidla/?pohled=osa');
     await expect(page.locator('.pr-pohled')).toBeHidden();
     await expect(page.locator('.osa-pravidel')).toBeHidden();
-    await expect(page.locator('.pravidla-obal')).toBeVisible();
+    await expect(page.locator('.oblasti-pohled')).toBeVisible();
+    await expect(page.locator('.pravidla-obal')).toBeHidden();
   });
 });
 
@@ -258,7 +259,7 @@ test('filtry skrývají řádky osy, počítadlo a prázdný stav platí i pro o
 });
 
 test('Seznam → Osa → Seznam zachová filtr i počítadlo', async ({ page }) => {
-  await page.goto('/pravidla/');
+  await page.goto('/pravidla/?pohled=seznam');
   await page.locator('.pr-filtry [data-stitek="soudy"]').click();
   await expect(page.locator('.pr-filtry .pocet')).toHaveText('Zobrazeno 1 z 4');
   await page.getByRole('button', { name: 'Časová osa' }).click();
@@ -269,7 +270,7 @@ test('Seznam → Osa → Seznam zachová filtr i počítadlo', async ({ page }) 
 });
 
 test('Zpět po přepnutí na osu vrátí seznam a /pravidla/ (a naopak osu)', async ({ page }) => {
-  await page.goto('/pravidla/');
+  await page.goto('/pravidla/?pohled=seznam');
   await page.evaluate(() => { (window as any).bezNacteni = true; });
   await page.locator('.pr-radek[data-slug="zakon-omega"] a.pr-btn').click();
   await expect(page.locator('dialog#detail')).toBeVisible();
@@ -278,7 +279,7 @@ test('Zpět po přepnutí na osu vrátí seznam a /pravidla/ (a naopak osu)', as
   await expect(page.locator('.osa-pravidel')).toBeVisible();
   await page.goBack();
   await page.goBack();
-  await expect(page).toHaveURL(/\/pravidla\/$/);
+  await expect(page).toHaveURL(/\/pravidla\/\?pohled=seznam$/);
   await expect(page.locator('dialog#detail')).toBeHidden();
   await expect(page.locator('.pravidla-obal')).toBeVisible();
   await expect(page.locator('.osa-pravidel')).toBeHidden();

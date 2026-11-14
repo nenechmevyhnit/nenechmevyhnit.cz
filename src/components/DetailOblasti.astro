@@ -1,0 +1,91 @@
+---
+import SeznamZdroju from './SeznamZdroju.astro';
+import { datumText } from '../lib/casova-osa';
+import { popisekCesty } from '../lib/pravidla-slovnik';
+import { stavPravidla, popisekKroku } from '../lib/pravidla-stavy';
+import { posledniDatum } from '../lib/pravidla';
+import { bezPripominek, textPoctu, skupinyHodnoceni, type OblastDetail } from '../lib/oblasti';
+
+/** Detail oblasti (specifikace oblastí, oddíl 8.2). Stránka má dialog otevřený už v HTML kvůli návštěvníkům bez JavaScriptu. */
+interface Props { oblast: OblastDetail }
+const { oblast: o } = Astro.props;
+const REPO = 'https://github.com/posudtesami/posudtesami.cz';
+const d = o.data;
+const hodnoceni = d?.hodnoceni ?? [];
+const skupiny = skupinyHodnoceni(hodnoceni);
+const nazvyZmen = new Map(o.zmeny.map(z => [z.slug, z.pravidlo.nazev]));
+const chipy = (cisla: number[]) => cisla.map(c => `<a href="#zdroj-${c}" class="chip" data-zdroj="${c}" aria-label="Zdroj ${c}">${c}</a>`).join('');
+// zdroje textu „pro vás“ patří ke změně, ne k oblasti: číslo otevře rozbor změny na daném zdroji
+const chipyZmeny = (slug: string, cisla: number[]) => cisla.map(c => `<a href="/pravidla/${slug}/" class="chip" data-pravidlo="${slug}" data-zdroj-zmeny="${c}" aria-label="Zdroj ${c} v rozboru změny">${c}</a>`).join('');
+const zalozky = [
+  { id: 'zmeny', nazev: `Co se mění (${o.zmeny.length})` },
+  ...(hodnoceni.length > 0 ? [{ id: 'hodnoceni', nazev: `Jak to hodnotí (${hodnoceni.length})` }] : []),
+  ...(d ? [{ id: 'zdroje', nazev: `Zdroje (${d.zdroje.length})` }] : []),
+];
+---
+<dialog class="detail m2 oblast" id="detail" aria-labelledby="detail-nadpis" data-slug={`oblasti/${o.id}`} open>
+  <button class="zavrit" type="button" aria-label="Zavřít detail">×</button>
+  <header class="m2-hlava">
+    <p class="u2-nad">Oblast</p>
+    <h2 id="detail-nadpis">{o.nazev}</h2>
+    {d
+      ? <p class="perex" id="detail-perex"><strong>K čemu to je:</strong> {d.uvod.text}<span class="chipy" set:html={chipy(d.uvod.zdroje)}></span></p>
+      : <p class="perex" id="detail-perex">{o.popisek}</p>}
+    <button class="perex-vice" type="button" aria-expanded="false" aria-controls="detail-perex" hidden>celé shrnutí</button>
+    <p class="ob-pocty-detail">Od prosince 2025: {textPoctu(o.pocty)}</p>
+  </header>
+  <div class="zalozky" role="tablist">
+    {zalozky.map((z, i) => <button role="tab" type="button" data-p={z.id} aria-selected={String(i === 0)}>{z.nazev}</button>)}
+  </div>
+  <div class="m2-panel" data-p="zmeny" role="tabpanel">
+    <h3 class="panel-nadpis">Co se mění</h3>
+    <ol class="ob-zmeny">
+      {o.zmeny.map(z => (
+        <li data-slug={z.slug}>
+          <p class="ob-meta">{datumText(posledniDatum(z))} · {popisekCesty(z.pravidlo.cesta)} · {popisekKroku(stavPravidla(z.pravidlo.udalosti))}{bezPripominek(z.pravidlo.cesta) && <> · <span class="stitek-bp">bez připomínkového řízení</span></>}</p>
+          <h4>{z.pravidlo.nazev}</h4>
+          {z.pravidlo.proVas
+            ? <p class="pro-vas"><strong>Co by to znamenalo pro vás:</strong> {z.pravidlo.proVas.text}<span class="chipy" set:html={chipyZmeny(z.slug, z.pravidlo.proVas.zdroje)}></span></p>
+            : <p class="pro-vas chybi">Text „Co by to znamenalo pro vás“ zatím chybí (koncept).</p>}
+          <a class="ob-rozbor" href={`/pravidla/${z.slug}/`} data-pravidlo={z.slug} aria-haspopup="dialog">Celý rozbor →</a>
+        </li>
+      ))}
+    </ol>
+  </div>
+  {hodnoceni.length > 0 && (
+    <div class="m2-panel" data-p="hodnoceni" role="tabpanel" hidden>
+      <h3 class="panel-nadpis">Jak to hodnotí</h3>
+      {skupiny.map(s => (
+        <section class="ob-skupina">
+          <h4>{s.nazev}</h4>
+          <ul class="ob-hodnoceni">
+            {s.polozky.map(h => {
+              const zmeny = h.pravidla.filter(slug => nazvyZmen.has(slug));
+              return (
+                <li>
+                  <blockquote>„{h.citace}“</blockquote>
+                  <p class="ob-kdo"><strong>{h.kdo}</strong>{h.funkce && <>, {h.funkce}</>}, {datumText(h.datum)}<span class="chipy" set:html={chipy(h.zdroje)}></span>
+                    {zmeny.length > 0 && <> · {zmeny.length === 1 ? 'Ke změně' : 'Ke změnám'}: {zmeny.map((slug, i) => <>{i > 0 && ', '}<a href={`/pravidla/${slug}/`} data-pravidlo={slug} aria-haspopup="dialog">{nazvyZmen.get(slug)}</a></>)}</>}
+                  </p>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ))}
+      <p class="kriterium">Výběr citací podle metodiky, ne hodnocení archivu. <a href="/metodika/#oblasti">Koho citujeme</a></p>
+    </div>
+  )}
+  {d && (
+    <div class="m2-panel" data-p="zdroje" role="tabpanel" hidden>
+      <h3 class="panel-nadpis">{`Zdroje (${d.zdroje.length})`}</h3>
+      <SeznamZdroju zdroje={d.zdroje} />
+      <div class="overeno">{d.overeno ? <>Naposledy ověřeno {datumText(d.overeno)}</> : <strong>Koncept, zatím neověřeno</strong>}</div>
+      <div class="paticka-detailu">
+        <a href={`${REPO}/commits/main/obsah/oblasti/${o.id}.md`}>Historie změn této oblasti</a>
+        <a href={`${REPO}/issues/new?template=oprava.yml&title=${encodeURIComponent('Oprava: ' + o.nazev)}`}>Nahlásit chybu</a>
+        <a href="#" data-sdilet>Zkopírovat odkaz na oblast</a>
+      </div>
+    </div>
+  )}
+</dialog>

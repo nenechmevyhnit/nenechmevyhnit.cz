@@ -117,11 +117,13 @@ body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
 }
 
 /* nízké a široké okno: hlavička a listování zabírají méně místa, aby se do Průběhu vešla cesta předložení i událost */
-@media (max-height: 640px) and (min-width: 761px) {
+@media (max-height: 700px) and (min-width: 761px) {
   .pravidlo .m2-hlava { padding-top: 16px; }
   .pravidlo .m2-hlava h2 { font-size: 28px; margin: 4px 0 6px; }
   .pravidlo .prubeh-detail { margin: 8px 0 0; }
   .pravidlo .m2-panel { padding-top: 14px; padding-bottom: 14px; }
+}
+@media (max-height: 640px) and (min-width: 761px) {
   .pravidlo .m2-panel[data-p="chrono"]:not([hidden]) { grid-template-columns: minmax(260px, 380px) 1fr; }
   .pravidlo .m2-panel[data-p="chrono"] .cesta-box { padding: 4px 14px; font-size: 15px; line-height: 1.3; }
   .pravidlo .m2-panel[data-p="chrono"] .vynechano { font-size: 13px; }
@@ -181,4 +183,67 @@ body .filtry.pr-filtry .f-cipy { overflow-x: auto; scrollbar-width: thin; }
   .op-uvod { font-size: 12px; padding: 4px 8px; }
   .op-legenda { font-size: 11px; gap: 2px 10px; padding: 4px 8px; }
   .op-priklad { display: none; }
+}
+
+/* Pohled Oblasti (specifikace oblastí, oddíl 8.1): karty se posouvají uvnitř, stránka zůstává bez posuvníku. */
+.oblasti-pohled { flex: 1; min-height: 0; display: flex; flex-direction: column; margin-top: 12px; }
+.oblasti-pohled[hidden] { display: none; }
+.ob-uvod-prehledu { margin: 0 0 10px; max-width: 60em; font-size: 14px; color: var(--text2); }
+.ob-karty { flex: 1; min-height: 0; overflow-y: auto; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; align-content: start; }
+.ob-karta[hidden] { display: none; }
+.ob-btn { display: flex; flex-direction: column; gap: 4px; height: 100%; box-sizing: border-box; padding: 12px 14px; background: var(--plocha); border: 1px solid var(--linka); color: inherit; text-decoration: none; }
+.ob-btn:hover, .ob-karta.vybrana .ob-btn { background: color-mix(in srgb, var(--modra) 6%, var(--plocha)); }
+.ob-btn:focus-visible { outline: 2px solid var(--modra); outline-offset: -2px; }
+.ob-btn strong { font: 700 17px/1.2 var(--f-nadpis); color: var(--modra); }
+.ob-popisek { font-size: 14px; line-height: 1.35; color: var(--text2); }
+.ob-pocty { margin-top: auto; padding-top: 6px; font: 12px/1.4 var(--f-mono); color: var(--meta); }
+.ob-prazdno { padding: 18px; color: var(--meta); }
+.ob-prazdno[hidden] { display: none; }
+.stitek-bp { border: 1px solid var(--linka); padding: 0 5px; white-space: nowrap; }
+@media (max-width: 760px) {
+  .ob-uvod-prehledu { display: none; }
+  .ob-karty { grid-template-columns: 1fr; }
+}
+
+/* Detail oblasti (specifikace oblastí, oddíl 8.2): delší obsah pokračuje ve sloupcích do strany jako Zdroje. */
+.m2-hlava .ob-pocty-detail { margin: 6px 0 0; font: 12px/1.4 var(--f-mono); color: var(--meta); }
+.m2-panel[data-p="zmeny"], .m2-panel[data-p="hodnoceni"] { overflow-x: auto; overflow-y: hidden; column-width: 320px; column-gap: 36px; column-fill: auto; }
+.ob-zmeny, .ob-hodnoceni { list-style: none; margin: 0; padding: 0; }
+.ob-zmeny > li, .ob-hodnoceni > li, .ob-skupina h4 { break-inside: avoid; }
+.ob-zmeny > li { padding: 0 0 14px; margin: 0 0 14px; border-bottom: 1px solid var(--linka); }
+.ob-meta { margin: 0 0 2px; font: 12px/1.4 var(--f-mono); color: var(--meta); }
+.ob-zmeny h4 { margin: 0 0 6px; font: 700 16px/1.25 var(--f-nadpis); }
+.pro-vas { margin: 0 0 6px; padding: 8px 10px; background: color-mix(in srgb, var(--modra) 5%, var(--plocha)); border-left: 3px solid var(--modra); font-size: 15px; line-height: 1.45; }
+.pro-vas.chybi { border-left-color: var(--linka); color: var(--meta); }
+.ob-rozbor { font: 12px var(--f-mono); color: var(--modra); }
+.ob-skupina h4 { margin: 0 0 6px; font-size: 14px; }
+.ob-hodnoceni > li { margin: 0 0 12px; }
+.ob-hodnoceni blockquote { margin: 0 0 2px; font-style: italic; }
+.ob-kdo { margin: 0; font-size: 13px; color: var(--text2); }
+.m2-panel[data-p="hodnoceni"] .kriterium { break-inside: avoid; }
+
+/* Bez JavaScriptu přehled ukazuje jen Oblasti, bez přepínače a filtrů (specifikace oblastí, oddíl 8.1). */
+html:not(.js) body .pr-filtry { display: none; }
+
+/* Detail pravidla: text pro čtenáře a oblasti. Oblasti jsou na horním řádku vedle cesty a stavu.
+   Na nízkých oknech je text „pro vás“ jeden celý řádek (bez rozříznutých písmen) a tlačítko „celý text“
+   (skript ho ukáže, jen když text pokračuje) ho rozbalí. */
+.m2-hlava .pro-vas-obal { display: flex; align-items: flex-start; gap: 10px; max-width: 720px; margin: 8px 0 0; }
+.m2-hlava .pro-vas { flex: 1 1 auto; min-width: 0; margin: 0; font-size: 14px; }
+.m2-hlava .pro-vas-vice { flex: none; margin: 0; padding: 4px 0; border: 0; background: none; font: italic 14px var(--f-text); color: var(--modra); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; white-space: nowrap; }
+.m2-hlava .pro-vas-vice[hidden] { display: none; }
+.m2-hlava .pr-oblasti a { color: var(--modra); }
+@media (max-height: 700px) {
+  .m2-hlava .pro-vas-obal { margin-top: 4px; }
+  .m2-hlava .pro-vas { padding: 4px 10px; line-height: 20px; max-height: 28px; overflow: hidden; font-size: 13px; }
+  .m2-hlava .pro-vas-obal.rozbalene .pro-vas { max-height: 30dvh; overflow-y: auto; }
+}
+/* mobil a nízké okno: shrnutí jsou vidět dva řádky (zbytek za tlačítkem „celé shrnutí“), aby se do Průběhu vešla cesta předložení */
+@media (max-height: 700px) and (max-width: 760px) {
+  body .m2-hlava:not(.rozbalene) .perex { max-height: 3em; }
+  /* listování v Průběhu: název sousední události na jeden řádek, menší okraje */
+  .pravidlo .m2-panel[data-p="chrono"] { padding-top: 10px; padding-bottom: 10px; }
+  .pravidlo .m2-panel[data-p="chrono"] .listovani { padding-top: 6px; }
+  .pravidlo .m2-panel[data-p="chrono"] .listovani button { padding: 4px 10px; }
+  .pravidlo .m2-panel[data-p="chrono"] .listovani button span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 }

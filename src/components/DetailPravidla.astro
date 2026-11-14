@@ -5,7 +5,7 @@ import VazbyPravidla from './VazbyPravidla.astro';
 import SeznamZdroju from './SeznamZdroju.astro';
 import { rozdelOdstavce, odstavecNaHtml } from '../lib/souvislosti';
 import { datumText } from '../lib/casova-osa';
-import { popisekCesty, popisekKomu, popisekZaveru, vynechaneKontroly, popisekZnaku, popisekDruhuZnaku, upozornovatel, popisekTypuUpozornovatele } from '../lib/pravidla-slovnik';
+import { popisekCesty, popisekKomu, popisekZaveru, vynechaneKontroly, popisekZnaku, popisekDruhuZnaku, upozornovatel, popisekTypuUpozornovatele, oblast } from '../lib/pravidla-slovnik';
 import { stavPravidla, popisekKroku } from '../lib/pravidla-stavy';
 import { nactiKauzy } from '../lib/kauzy';
 
@@ -34,10 +34,18 @@ const prvni = zalozky[0]?.id;
     <>
       <button class="zavrit" type="button" aria-label="Zavřít detail">×</button>
       <header class="m2-hlava">
-        <div class="roky">{popisekCesty(p.cesta)} · {popisekKroku(stavPravidla(p.udalosti))}</div>
+        <div class="roky">{popisekCesty(p.cesta)} · {popisekKroku(stavPravidla(p.udalosti))}{p.oblasti && p.oblasti.length > 0 && (
+          <span class="pr-oblasti"> · Oblasti: {p.oblasti.map((o, i) => <>{i > 0 && ', '}<a href={`/pravidla/oblasti/${o}/`} data-oblast-odkaz={o} aria-haspopup="dialog">{oblast(o).nazev}</a></>)}</span>
+        )}</div>
         <h2 id="detail-nadpis">{p.nazev}</h2>
         <p class="perex" id="detail-perex">{p.shrnuti}</p>
         <button class="perex-vice" type="button" aria-expanded="false" aria-controls="detail-perex" hidden>celé shrnutí</button>
+        {p.proVas && (
+          <div class="pro-vas-obal">
+            <p class="pro-vas" id="detail-pro-vas"><strong>Co by to znamenalo pro vás:</strong> {p.proVas.text}<span class="chipy" set:html={chipy(p.proVas.zdroje)}></span></p>
+            <button class="pro-vas-vice" type="button" aria-expanded="false" aria-controls="detail-pro-vas" hidden>celý text</button>
+          </div>
+        )}
         <PrubehPravidla druh={p.druh} udalosti={p.udalosti} interaktivni />
         {p.planovano && <p class="planovano">Stav k {datumText(p.planovano.stavK)}: {p.planovano.text}<span class="chipy" set:html={chipy(p.planovano.zdroje)}></span></p>}
       </header>

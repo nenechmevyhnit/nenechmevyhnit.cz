@@ -10,6 +10,7 @@ test('menu vede na změny pravidel a přehled je seřazený od nejnovější zm�
   await page.getByRole('navigation', { name: 'Hlavní' }).getByRole('link', { name: 'Změny pravidel' }).click();
   await expect(page).toHaveURL(/\/pravidla\/$/);
   await expect(page).toHaveTitle('Změny pravidel — Posuďte sami');
+  await page.getByRole('button', { name: 'Seznam' }).click();
   await expect(page.getByRole('navigation', { name: 'Hlavní' }).getByRole('link', { name: 'Změny pravidel' })).toHaveAttribute('aria-current', 'page');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Které změny pravidel prospívají Babišovi a Agrofertu nebo mění kontrolu moci');
   await expect(page.locator('.pr-radek .pr-nazev strong')).toHaveText(NAZVY);
@@ -21,7 +22,7 @@ test('menu vede na změny pravidel a přehled je seřazený od nejnovější zm�
 });
 
 test('řádek ukazuje průběh projednávání', async ({ page }) => {
-  await page.goto('/pravidla/');
+  await page.goto('/pravidla/?pohled=seznam');
   const omega = page.locator('.pr-radek[data-slug="zakon-omega"] .prubeh');
   await expect(omega.locator('li:not(.konec)')).toHaveCount(5);
   await expect(omega.locator('li.hotovo')).toHaveCount(2);
@@ -30,7 +31,7 @@ test('řádek ukazuje průběh projednávání', async ({ page }) => {
 });
 
 test('filtry: hledání bez diakritiky, štítek, jen v projednávání, zrušení a prázdný stav', async ({ page }) => {
-  await page.goto('/pravidla/');
+  await page.goto('/pravidla/?pohled=seznam');
   const viditelne = page.locator('.pr-radek:not([hidden])');
   const hledat = page.getByRole('searchbox', { name: 'Hledat ve změnách pravidel' });
   await expect(page.locator('.pr-filtry .pocet')).toHaveText('Zobrazeno 4 z 4');
@@ -55,7 +56,7 @@ test('filtry: hledání bez diakritiky, štítek, jen v projednávání, zrušen
 });
 
 test('řádek označí důvody zařazení textem, bez prázdných oddělovačů', async ({ page }) => {
-  await page.goto('/pravidla/');
+  await page.goto('/pravidla/?pohled=seznam');
   const omega = page.locator('.pr-radek[data-slug="zakon-omega"] .pr-nazev small');
   await expect(omega).toContainText('prospěch pravděpodobný');
   await expect(omega).toContainText('Kontrola moci: zpětná účinnost');
@@ -66,13 +67,13 @@ test('řádek označí důvody zařazení textem, bez prázdných oddělovačů'
 });
 
 test('řádek s prospěchem ukazuje shrnutí „proč“, řádek jen s kontrolou moci ne', async ({ page }) => {
-  await page.goto('/pravidla/');
+  await page.goto('/pravidla/?pohled=seznam');
   await expect(page.locator('.pr-radek[data-slug="zakon-omega"] .pr-proc-radek')).toHaveText(/dlužníkem/);
   await expect(page.locator('.pr-radek[data-slug="usneseni-kappa"] .pr-proc-radek')).toHaveCount(0);
 });
 
 test('na počítači je dlouhé shrnutí oříznuté v jednom řádku třemi tečkami', async ({ page }) => {
-  await page.goto('/pravidla/');
+  await page.goto('/pravidla/?pohled=seznam');
   const proc = page.locator('.pr-radek[data-slug="zakon-omega"] .pr-proc-radek');
   const m = await proc.evaluate(e => {
     const cs = getComputedStyle(e);
@@ -87,7 +88,7 @@ test('na počítači je dlouhé shrnutí oříznuté v jednom řádku třemi te�
 });
 
 test('filtr důvodu: každý čip zvlášť, oba, kombinace se štítkem a zrušení', async ({ page }) => {
-  await page.goto('/pravidla/');
+  await page.goto('/pravidla/?pohled=seznam');
   const viditelne = page.locator('.pr-radek:not([hidden])');
   const prospech = page.locator('.pr-filtry [data-duvod="prospech"]');
   const kontrola = page.locator('.pr-filtry [data-duvod="kontrola-moci"]');
@@ -111,7 +112,7 @@ test('filtr důvodu: každý čip zvlášť, oba, kombinace se štítkem a zruš
 });
 
 test('Zrušit filtry má rezervované místo, dokud filtr nic neomezuje, a do té doby není ani v tabulátoru', async ({ page }) => {
-  await page.goto('/pravidla/');
+  await page.goto('/pravidla/?pohled=seznam');
   const zrusit = page.locator('.pr-filtry .f-zrusit');
   const hledat = page.locator('.pr-filtry .f-hledat');
   const pred = await hledat.boundingBox();
@@ -124,7 +125,7 @@ test('Zrušit filtry má rezervované místo, dokud filtr nic neomezuje, a do t�
 });
 
 test('řádek na počítači nabízí „Detail →“', async ({ page }) => {
-  await page.goto('/pravidla/');
+  await page.goto('/pravidla/?pohled=seznam');
   await expect(page.locator('.pr-radek').first().locator('.otevrit')).toHaveText('Detail →');
 });
 
@@ -132,7 +133,7 @@ test.describe('mobil 390×700', () => {
   test.use({ viewport: { width: 390, height: 700 } });
 
   test('řádek ukazuje stav, komu a závěr jako text a bez posouvání stránky', async ({ page }) => {
-    await page.goto('/pravidla/');
+    await page.goto('/pravidla/?pohled=seznam');
     const prvni = page.locator('.pr-radek').first();
     const text = await prvni.evaluate(e => (e as HTMLElement).innerText);
     expect(text).toContain('prospěch pravděpodobný');
@@ -142,7 +143,7 @@ test.describe('mobil 390×700', () => {
   });
 
   test('dlouhé shrnutí „proč“ je oříznuté na dva řádky a stránka se neposouvá', async ({ page }) => {
-    await page.goto('/pravidla/');
+    await page.goto('/pravidla/?pohled=seznam');
     const proc = page.locator('.pr-radek[data-slug="zakon-omega"] .pr-proc-radek');
     const m = await proc.evaluate(e => {
       const cs = getComputedStyle(e) as CSSStyleDeclaration & { webkitLineClamp: string };
@@ -155,14 +156,14 @@ test.describe('mobil 390×700', () => {
   });
 
   test('řádek jen s kontrolou moci ukazuje důvod jako text', async ({ page }) => {
-    await page.goto('/pravidla/');
+    await page.goto('/pravidla/?pohled=seznam');
     const text = await page.locator('.pr-radek[data-slug="usneseni-kappa"]').evaluate(e => (e as HTMLElement).innerText);
     expect(text).toContain('Kontrola moci: soudy');
     await overBezPosouvani(page);
   });
 
   test('názvy fází průběhu se v řádku nezkracují třemi tečkami', async ({ page }) => {
-    await page.goto('/pravidla/');
+    await page.goto('/pravidla/?pohled=seznam');
     const oriznute = await page.locator('.pr-radek .prubeh .f-nazev').evaluateAll(a => a.filter(e => e.scrollWidth > e.clientWidth + 1).map(e => e.textContent));
     expect(oriznute).toEqual([]);
     expect(await page.locator('.pr-radek .prubeh .f-nazev').first().evaluate(e => getComputedStyle(e).textOverflow)).not.toBe('ellipsis');
@@ -179,7 +180,7 @@ test('prázdný archiv nemá položku menu ani stránku pravidel', async ({ page
 for (const v of VELIKOSTI) {
   test(`${v.width}×${v.height}: přehled se neposouvá dolů a poslední řádek jde zobrazit`, async ({ page }) => {
     await page.setViewportSize(v);
-    await page.goto('/pravidla/');
+    await page.goto('/pravidla/?pohled=seznam');
     await overBezPosouvani(page);
     const posledni = page.locator('.pr-radek').last();
     await posledni.scrollIntoViewIfNeeded();

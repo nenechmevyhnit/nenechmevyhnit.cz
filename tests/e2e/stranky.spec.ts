@@ -3,7 +3,7 @@ import { overBezPosouvani } from './pomocne';
 
 test.use({ viewport: { width: 1366, height: 768 } });
 
-for (const [cesta, nadpis, karet] of [['/metodika/', 'Jak archiv vedeme', 8], ['/o-projektu/', 'Kdo, proč a jak', 7]] as const) {
+for (const [cesta, nadpis, karet] of [['/metodika/', 'Jak archiv vedeme', 9], ['/o-projektu/', 'Kdo, proč a jak', 7]] as const) {
   test(`${cesta}: karty, modal s plným zněním, bez posouvání`, async ({ page }) => {
     await page.goto(cesta);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(nadpis);
@@ -27,6 +27,13 @@ test('/metodika/#pravidla otevře oddíl Změny pravidel', async ({ page }) => {
   await expect(panel.getByRole('heading', { level: 2 })).toHaveText('Změny pravidel');
   await expect(panel).toContainText('Závěr je rozbor archivu, ne úřední zjištění.');
   await expect(panel.locator('.slovnicek dt')).toHaveText(['prospěch doložen', 'prospěch pravděpodobný']);
+});
+
+test('/metodika/#oblasti otevře oddíl Oblasti', async ({ page }) => {
+  await page.goto('/metodika/#oblasti');
+  const panel = page.locator('.v4-dlg-panel[data-sekce="oblasti"]');
+  await expect(panel).toBeVisible();
+  await expect(panel.getByRole('heading', { level: 2 })).toHaveText('Oblasti');
 });
 
 test('/metodika/#kontrola-moci otevře oddíl Změny pravidel na pododdílu Dopad na kontrolu moci', async ({ page }) => {
@@ -180,7 +187,7 @@ test.describe('mobil 390×700', () => {
     await page.goto('/metodika/');
     const karty = page.locator('.v4-karta:not(.v4-cta)');
     const pocet = await karty.count();
-    expect(pocet).toBe(8);
+    expect(pocet).toBe(9);
     for (let i = 0; i < pocet; i++) {
       await karty.nth(i).click({ position: { x: 20, y: 20 } });
       await expect(page.locator('dialog.v4-dlg')).toBeVisible();
@@ -221,4 +228,15 @@ test('Metodika vysvětluje vazby mezi kauzami v oddílu Co do archivu patří', 
   await expect(panel.getByRole('heading', { name: 'Vazby mezi kauzami' })).toBeVisible();
   await expect(panel).toContainText('Vazba sama o sobě neznamená vinu ani spoluodpovědnost.');
   await expect(panel).toContainText('Vztahy firem, osob a nástrojů mají navíc období');
+});
+
+test('Metodika má oddíl Oblasti se seznamem oblastí a pravidly citací', async ({ page }) => {
+  await page.goto('/metodika/');
+  await page.locator('.v4-karta button[data-sekce="oblasti"]').click();
+  const oddil = page.locator('.v4-dlg-panel[data-sekce="oblasti"]');
+  await expect(oddil).toBeVisible();
+  for (const nazev of ['Dotace a střet zájmů', 'Veřejnoprávní média', 'Občanská společnost']) await expect(oddil).toContainText(nazev);
+  await expect(oddil).toContainText('Výběr citací podle metodiky, ne hodnocení archivu.');
+  await page.locator('.v4-dlg-menu button[data-sekce="pravidla"]').click();
+  await expect(page.locator('.v4-dlg-panel[data-sekce="pravidla"]')).toContainText('státní služba (přijímání, hodnocení a odvolávání státních zaměstnanců)');
 });
