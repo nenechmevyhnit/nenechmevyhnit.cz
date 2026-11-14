@@ -35,6 +35,19 @@ export const oProjektu = (sPravidly: boolean): { sekce: SekceStranky[] } => ({
 <p>Proto tu také nenajdete lištu se souhlasem s cookies: není k čemu souhlasit.</p>`,
     },
     {
+      id: "dotcene-osoby",
+      nadpis: "Pokud o vás píšeme",
+      shrnuti: "Máte právo na opravu, na zveřejnění svého stanoviska a na námitku proti konkrétnímu zveřejnění.",
+      html: `<p>Archiv zpracovává osobní údaje pro novinářské účely podle § 17 zákona č. 110/2019 Sb., o zpracování osobních údajů. Pro takové zpracování platí obecné nařízení o ochraně osobních údajů (GDPR) jen v rozsahu, který tentýž zákon stanoví.</p>
+<p>Vycházíme z veřejných zdrojů: z úředních dokumentů, veřejných rejstříků a z médií. Zapisujeme jen to, co už bylo zveřejněno a co je k pochopení věci potřeba. Nikoho nesledujeme, údaje nikomu nepředáváme a nikoho podle nich automaticky nevyhodnocujeme.</p>
+<p>Pokud o vás archiv píše, můžete:</p>
+<ul><li><strong>žádat opravu věcné chyby.</strong> Opravy mají přednost před vším ostatním. U věcné opravy zůstane u záznamu viditelná poznámka, co a proč se změnilo,</li>
+<li><strong>poslat své stanovisko.</strong> Zveřejníme ho u záznamu, kterého se týká,</li>
+<li><strong>podat námitku proti konkrétnímu zveřejnění</strong> podle § 22 téhož zákona. Napište, o které zveřejnění jde a proč podle vás váš zájem převáží nad zájmem na tom, aby byla věc veřejně dostupná. Vždy vám odpovíme, jak jsme s námitkou naložili.</li></ul>
+<p>Na nezveřejněné koncepty a na zdroje se vztahuje ochrana zdroje a obsahu informací podle téhož zákona.</p>
+<p>Pište na <a href="mailto:nenechmevyhnit@gmail.com">nenechmevyhnit@gmail.com</a>. Dozor nad zpracováním osobních údajů vykonává <a href="https://uoou.gov.cz/">Úřad pro ochranu osobních údajů</a>.</p>`,
+    },
+    {
       id: "prispet",
       nadpis: "Jak přispět",
       shrnuti: "Navrhněte kauzu, doplnění nebo opravu e-mailem nebo přes GitHub.",
